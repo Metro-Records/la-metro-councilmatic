@@ -5,11 +5,11 @@
 ###############################
 
 OCD_CITY_COUNCIL_ID = 'ocd-organization/ef168607-9135-4177-ad8e-c1f7a4806c3a'
-CITY_COUNCIL_NAME = 'Chicago City Council'
+CITY_COUNCIL_NAME = 'LA Metro'
 OCD_JURISDICTION_ID = 'ocd-jurisdiction/country:us/state:il/place:chicago/government'
 LEGISLATIVE_SESSIONS = ['2007', '2011', '2015'] # the last one in this list should be the current legislative session
-CITY_NAME = 'Chicago'
-CITY_NAME_SHORT = 'Chicago'
+CITY_NAME = 'Los Angeles'
+CITY_NAME_SHORT = 'LA'
 
 # VOCAB SETTINGS FOR FRONT-END DISPLAY
 CITY_VOCAB = {
@@ -20,7 +20,7 @@ CITY_VOCAB = {
     'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
 }
 
-APP_NAME = 'chicago'
+APP_NAME = 'lametro'
 
 
 #########################
@@ -40,7 +40,7 @@ SITE_META = {
 LEGISTAR_URL = ''           # e.g. 'https://chicago.legistar.com/Legislation.aspx'
 
 
-# this is for the boundaries of municipal districts, to add 
+# this is for the boundaries of municipal districts, to add
 # shapes to posts & ultimately display a map with the council
 # member listing. the boundary set should be the relevant
 # slug from the ocd api's boundary service
@@ -84,12 +84,12 @@ IMAGES = {
 
 # this is the name of the meetings where the entire city council meets
 # as stored in legistar
-CITY_COUNCIL_MEETING_NAME = 'City Council'
+CITY_COUNCIL_MEETING_NAME = 'Board Meeting'
 
 # this is the name of the role of committee chairs, e.g. 'CHAIRPERSON' or 'Chair'
 # as stored in legistar
 # if this is set, committees will display chairs
-COMMITTEE_CHAIR_TITLE = 'Chairman'
+COMMITTEE_CHAIR_TITLE = 'Chair'
 
 # this is the anme of the role of committee members,
 # as stored in legistar
@@ -102,20 +102,140 @@ COMMITTEE_MEMBER_TITLE = 'Member'
 # describing legislation types on the default about page template
 LEGISLATION_TYPE_DESCRIPTIONS = [
     {
-        'name': 'Ordinance',
-        'search_term': 'Ordinance',
-        'fa_icon': 'file-text-o',
+        'name': 'Agreement',
+        'search_term': 'Agreement',
+        'fa_icon': 'dollar',
         'html_desc': True,
         'desc': '',
     },
     {
-        'name': 'Claim',
-        'search_term': 'Claim',
+        'name': 'Application',
+        'search_term': 'Application',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+        {
+        'name': 'Appointment',
+        'search_term': 'Appointment',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+        {
+        'name': 'Budget',
+        'search_term': 'Budget',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+        {
+        'name': 'Contract',
+        'search_term': 'Contract',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+        {
+        'name': 'Fare/Tariff/Service Change',
+        'search_term': 'Fare/Tariff/Service Change',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+        {
+        'name': 'Federal Legislation / State Legislation (Position)',
+        'search_term': 'Federal Legislation / State Legislation (Position)',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Formula Allocation / Local Return',
+        'search_term': 'Formula Allocation / Local Return',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Informational Report',
+        'search_term': 'Informational Report',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Minutes',
+        'search_term': 'Minutes',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Motion/Motion Response',
+        'search_term': 'Motion/Motion Response',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Oral Report/Presentation',
+        'search_term': 'Oral Report/Presentation',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Ordinance',
+        'search_term': 'Ordinance',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Plan',
+        'search_term': 'Plan',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Policy',
+        'search_term': 'Policy',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Program',
+        'search_term': 'Program',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Project',
+        'search_term': 'Project',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Public Hearing',
+        'search_term': 'Public Hearing',
+        'fa_icon': 'dollar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Resolution',
+        'search_term': 'Resolution',
         'fa_icon': 'dollar',
         'html_desc': True,
         'desc': '',
     },
 ]
+
 
 # these keys should match committee slugs
 COMMITTEE_DESCRIPTIONS = {
@@ -126,7 +246,7 @@ COMMITTEE_DESCRIPTIONS = {
 ABOUT_BLURBS = {
     "COMMITTEES" :      "",
     "EVENTS":           "",
-    "COUNCIL_MEMBERS":  "",    
+    "COUNCIL_MEMBERS":  "",
 }
 
 # these override the headshots that are automatically populated
