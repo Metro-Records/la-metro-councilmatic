@@ -14,7 +14,7 @@ CITY_NAME_SHORT = 'LA'
 # VOCAB SETTINGS FOR FRONT-END DISPLAY
 CITY_VOCAB = {
     'MUNICIPAL_DISTRICT': 'Ward',       # e.g. 'District'
-    'SOURCE': 'Chicago City Clerk',
+    'SOURCE': 'LA Metro',
     'COUNCIL_MEMBER': 'Alderman',       # e.g. 'Council Member'
     'COUNCIL_MEMBERS': 'Aldermen',      # e.g. 'Council Members'
     'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
