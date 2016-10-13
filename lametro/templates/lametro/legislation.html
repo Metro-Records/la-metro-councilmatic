@@ -211,7 +211,8 @@
                     Legislation text
                 </h3>
                 <p>
-                    <a id="pdf-download-link" target='_blank' href='{{legislation.full_text_doc_url}}'><i class='fa fa-fw fa-download'></i> Download PDF</a>
+                    <a id="pdf-download-link" target='_blank' href='{{legislation.full_text_doc_url.legistar_doc_url}}'><i class='fa fa-fw fa-download'></i> Download PDF</a>
+
                 </p>
                 <iframe
                     id="pdf-embed"
@@ -219,7 +220,8 @@
                     frameborder="0"
                     seamless="true"
                     width="100%"
-                    height="600px">
+                    height="600px"
+                    src="{{ legislation.full_text_doc_url }}">
                 </iframe>
 
                 <div class="divider"></div>
