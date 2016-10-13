@@ -5,3 +5,10 @@ from datetime import datetime
 import pytz
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
+
+class LAMetroBill(Bill):
+
+	class Meta: 
+		proxy = True
+
+	
