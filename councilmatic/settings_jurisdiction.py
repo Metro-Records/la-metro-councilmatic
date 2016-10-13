@@ -50,10 +50,10 @@ BOUNDARY_SET = ''           # e.g. 'chicago-wards-2015'
 # this is for configuring a map of council districts using data from the posts
 # set MAP_CONFIG = None to hide map
 MAP_CONFIG = {
-    'center': [41.8369, -87.6847],
-    'zoom': 10,
-    'color': "#54afe8",
-    'highlight_color': "#C00000",
+    # 'center': [41.8369, -87.6847],
+    # 'zoom': 10,
+    # 'color': "#54afe8",
+    # 'highlight_color': "#C00000",
 }
 
 
