@@ -61,7 +61,7 @@ FOOTER_CREDITS = [
     {
         'name':     '', # e.g. 'DataMade'
         'url':      '', # e.g. 'http://datamade.us'
-        'image':    '', # e.g. 'datamade-logo.png'
+        'image':    'datamade-logo.png', # e.g. 'datamade-logo.png'
     },
 ]
 
