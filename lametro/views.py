@@ -11,10 +11,14 @@ class LABoardMemberView(CouncilMembersView):
     model = LAMetroPost
 
     def get_queryset(self):
-        get_kwarg = {'ocd_id': settings.OCD_CITY_COUNCIL_ID}
-        return Organization.objects.get(**get_kwarg).memberships.all()
-        #return Post.objects.all()
+        return LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+#    def get_context_data(self, *args, **kwargs):
+#        context = super().get_context_data(**kwargs)
+#
+#        return context
+
+#    def format_label(self, label):
+#        '''
+#        Put long labels on two lines!
+#        '''
