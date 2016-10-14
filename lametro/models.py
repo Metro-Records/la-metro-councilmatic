@@ -26,12 +26,10 @@ class LAMetroBill(Bill):
         description = action.description
         bill_type = self.bill_type
 
-        if bill_type.lower() in ['informational report', 'public hearing', 'minutes', 'appointment', 'oral report / presentation', 'motion / motion response']:
+        if bill_type.lower() in ['informational report', 'public hearing', 'appointment', 'oral report / presentation']:
             return None
-        elif self._status(description):
-            return self._status(description)
         else:
-            return None
+            return self._status(description)
 
     def _status(self, description):
         if description:
@@ -43,7 +41,8 @@ class LAMetroBill(Bill):
                 return 'Active'
             elif 'withdrawn' in description.lower():
               return 'Withdrawn'
-        return False
+        else:
+            return None
 
     # LA METRO CUSTOMIZATION
     @property
