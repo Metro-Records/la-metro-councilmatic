@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import render
 from councilmatic_core.views import BillDetailView, CouncilMembersView
 from councilmatic_core.models import *
-from lametro.models import LAMetroBill, LAMetroBill
+from lametro.models import LAMetroBill, LAMetroPost
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill
@@ -11,6 +11,7 @@ class LABillDetail(BillDetailView):
     def get_context_data(self, **kwargs):
           context = super(BillDetailView, self).get_context_data(**kwargs)
           context['actions'] = self.get_object().actions.all().order_by('-order')
+          context['attachments'] = self.get_object().attachments.all().order_by('document__note')
 
           return context
 

@@ -176,13 +176,13 @@
                 <div class="divider"></div>
             {% endif %}
 
-            {% if legislation.attachments %}
+            {% if attachments %}
                 <h3>
                     <i class='fa fa-fw fa-paperclip'></i>
-                    Attachments ({{ legislation.attachments | length }})
+                    Attachments ({{ attachments | length }})
                 </h3>
                 <ul>
-                    {% for doc in legislation.attachments %}
+                    {% for doc in attachments %}
                         <li>
                             <a href="{{doc.document.url}}" target="blank">{{ doc.document.note }}</a>
                         </li>
