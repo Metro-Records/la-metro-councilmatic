@@ -20,24 +20,30 @@ class LAMetroBill(Bill):
     # LA METRO CUSTOMIZATION
     @property
     def inferred_status(self):
-        # TODO: Figure out when a bill is active or stale or if this matters at all. Pasted below comes from Chicago.
-        # We can expect only one action per bill. LA Metro does not provide a robust history.
-        actions = self.actions.all().order_by('-order')
-
-        description_hist = [a.description for a in actions]
-
-        last_action_date = actions[0].date if actions else None
-
+        # Get most recent action.
+        action = self.actions.all().order_by('-order').first()
+        # Get description of that action.
+        description = action.description
         bill_type = self.bill_type
 
         if bill_type.lower() in ['informational report', 'public hearing', 'minutes', 'appointment', 'oral report / presentation', 'motion / motion response']:
             return None
-        # if self._terminal_status(classification_hist, bill_type):
-        #     return self._terminal_status(classification_hist, bill_type)
-        # elif self._is_stale(last_action_date):
-        #     return 'Stale'
+        elif self._status(description):
+            return self._status(description)
         else:
-            return 'Active'
+            return None
+
+    def _status(self, description):
+        if description:
+            if 'approved' in description.lower():
+                return 'Approved'
+            elif 'adopted' in description.lower():
+                return 'Adopted'
+            elif description.lower() in ['recommended', 'discussed', 'referred', 'forwarded']:
+                return 'Active'
+            elif 'withdrawn' in description.lower():
+              return 'Withdrawn'
+        return False
 
     # LA METRO CUSTOMIZATION
     @property

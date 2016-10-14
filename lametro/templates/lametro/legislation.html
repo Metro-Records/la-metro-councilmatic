@@ -61,7 +61,7 @@
                     <table class='table table-responsive' id='council-members'>
                         <thead>
                             <tr>
-                                <!-- <th></th> -->
+                                <th></th>
                                 <th>
                                     {% if legislation.sponsorships.all|length > 1 %}
                                     Sponsors ({{legislation.sponsorships.all|length}})
@@ -78,16 +78,15 @@
                             {% for s in legislation.sponsorships.all %}
                                 {% if s.is_primary %}
                                 <tr>
-                                    <!-- <td>
+                                    <td>
                                         <div class="thumbnail-square">
                                             <img src='{{s.person.headshot_url}}' alt='{{s.person.name}}' title='{{s.person.name}}' class='img-responsive img-thumbnail' />
                                         </div>
-                                    </td> -->
+                                    </td>
                                     <td>
                                         {{ s.person.link_html | safe }} <span class="badge badge-default">Primary Sponsor</span>
                                     </td>
                                     <!-- <td> -->
-                                        <!-- This does not work without POSTS -->
                                         <!-- {#s.person.current_council_seat#} -->
                                     <!-- </td> -->
                                 </tr>
@@ -105,7 +104,6 @@
                                         {{ s.person.link_html | safe }}
                                     </td>
                                     <td>
-                                        <!-- This does not work without POSTS -->
                                         <!-- {#s.person.current_council_seat#} -->
                                     </td>
                                 </tr>
@@ -302,6 +300,7 @@
             "searching": false,
             "bLengthChange": false,
             "paging": false,
+            "order": [[ 1, "desc" ]]
             // "aoColumns": [
             //     { "bSortable": false },
             //     null,
