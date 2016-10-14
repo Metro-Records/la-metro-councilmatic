@@ -15,8 +15,8 @@ CITY_NAME_SHORT = 'LA'
 CITY_VOCAB = {
     'MUNICIPAL_DISTRICT': 'Ward',       # e.g. 'District'
     'SOURCE': 'LA Metro',
-    'COUNCIL_MEMBER': 'Alderman',       # e.g. 'Council Member'
-    'COUNCIL_MEMBERS': 'Aldermen',      # e.g. 'Council Members'
+    'COUNCIL_MEMBER': 'Board member',       # e.g. 'Council Member'
+    'COUNCIL_MEMBERS': 'Board of Directors',      # e.g. 'Council Members'
     'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
 }
 

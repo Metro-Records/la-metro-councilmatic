@@ -90,3 +90,41 @@ class LAMetroPost(Post):
         formatted_label = '<br>'.join(label_parts)
         return formatted_label
 
+class LAMetroPerson(Person):
+
+    class Meta:
+        proxy = True
+
+#    @property
+#    def latest_council_membership(self):
+#        if hasattr(settings, 'OCD_CITY_COUNCIL_ID'):
+#            filter_kwarg = {'_organization__ocd_id': settings.OCD_CITY_COUNCIL_ID}
+#        else:
+#            filter_kwarg = {'_organization__name': settings.OCD_CITY_COUNCIL_NAME}#
+
+#        city_council_memberships = self.memberships.filter(**filter_kwarg)#
+
+#        if city_council_memberships.count():
+#            print(city_council_memberships.order_by('-start_date', '-end_date').first().__dict__)
+#            return city_council_memberships.order_by('-start_date', '-end_date').first()
+
+        #return None
+
+#    @property
+#    def current_council_seat(self):
+#        print('\n\n\n\nOVER HERE\n\n\n\n')
+#        return None
+
+#    @property
+#    def latest_council_seat(self):
+#        m = self.latest_council_membership
+#        if m:
+#            return m.post.label
+#        return ''#
+
+
+    @property
+    def latest_council_seat(self):
+        m = self.latest_council_membership
+        print(m.__dict__)
+        return 'king of the world'
