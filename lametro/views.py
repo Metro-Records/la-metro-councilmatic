@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.shortcuts import render
-from councilmatic_core.views import BillDetailView, CouncilMembersView
+from councilmatic_core.views import BillDetailView, CouncilMembersView, AboutView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost
 
@@ -21,4 +21,5 @@ class LABoardMemberView(CouncilMembersView):
     def get_queryset(self):
         return LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
 
-# class LASearchView():
+class LAMetroAboutView(AboutView):
+    template_name = 'lametro/about.html'
