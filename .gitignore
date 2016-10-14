@@ -9,3 +9,5 @@ static/**
 **/static/images/ocd-person/*.jpg
 
 solr-4.10.4/**
+
+**/__pycache__
