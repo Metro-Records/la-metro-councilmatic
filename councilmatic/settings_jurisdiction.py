@@ -15,8 +15,8 @@ CITY_NAME_SHORT = 'LA'
 CITY_VOCAB = {
     'MUNICIPAL_DISTRICT': 'Ward',       # e.g. 'District'
     'SOURCE': 'LA Metro',
-    'COUNCIL_MEMBER': 'Alderman',       # e.g. 'Council Member'
-    'COUNCIL_MEMBERS': 'Aldermen',      # e.g. 'Council Members'
+    'COUNCIL_MEMBER': 'Board Member',       # e.g. 'Council Member'
+    'COUNCIL_MEMBERS': 'Board Members',      # e.g. 'Council Members'
     'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
 }
 
@@ -61,7 +61,7 @@ FOOTER_CREDITS = [
     {
         'name':     '', # e.g. 'DataMade'
         'url':      '', # e.g. 'http://datamade.us'
-        'image':    '', # e.g. 'datamade-logo.png'
+        'image':    'datamade-logo.png', # e.g. 'datamade-logo.png'
     },
 ]
 
@@ -102,50 +102,15 @@ COMMITTEE_MEMBER_TITLE = 'Member'
 # describing legislation types on the default about page template
 LEGISLATION_TYPE_DESCRIPTIONS = [
     {
-        'name': 'Agreement',
-        'search_term': 'Agreement',
-        'fa_icon': 'dollar',
-        'html_desc': True,
-        'desc': '',
-    },
-    {
-        'name': 'Application',
-        'search_term': 'Application',
-        'fa_icon': 'dollar',
-        'html_desc': True,
-        'desc': '',
-    },
-        {
-        'name': 'Appointment',
-        'search_term': 'Appointment',
-        'fa_icon': 'dollar',
-        'html_desc': True,
-        'desc': '',
-    },
-        {
         'name': 'Budget',
         'search_term': 'Budget',
         'fa_icon': 'dollar',
         'html_desc': True,
         'desc': '',
     },
-        {
-        'name': 'Contract',
-        'search_term': 'Contract',
-        'fa_icon': 'dollar',
-        'html_desc': True,
-        'desc': '',
-    },
-        {
+    {
         'name': 'Fare/Tariff/Service Change',
         'search_term': 'Fare/Tariff/Service Change',
-        'fa_icon': 'dollar',
-        'html_desc': True,
-        'desc': '',
-    },
-        {
-        'name': 'Federal Legislation / State Legislation (Position)',
-        'search_term': 'Federal Legislation / State Legislation (Position)',
         'fa_icon': 'dollar',
         'html_desc': True,
         'desc': '',
@@ -158,79 +123,115 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
         'desc': '',
     },
     {
+        'name': 'Agreement',
+        'search_term': 'Agreement',
+        'fa_icon': 'file-text-o',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Application',
+        'search_term': 'Application',
+        'fa_icon': 'file-text-o',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Contract',
+        'search_term': 'Contract',
+        'fa_icon': 'file-text-o',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
         'name': 'Informational Report',
         'search_term': 'Informational Report',
-        'fa_icon': 'dollar',
+        'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': '',
     },
     {
-        'name': 'Minutes',
-        'search_term': 'Minutes',
-        'fa_icon': 'dollar',
-        'html_desc': True,
-        'desc': '',
-    },
-    {
-        'name': 'Motion/Motion Response',
-        'search_term': 'Motion/Motion Response',
-        'fa_icon': 'dollar',
-        'html_desc': True,
-        'desc': '',
-    },
-    {
-        'name': 'Oral Report/Presentation',
-        'search_term': 'Oral Report/Presentation',
-        'fa_icon': 'dollar',
+        'name': 'Federal Legislation / State Legislation (Position)',
+        'search_term': 'Federal Legislation / State Legislation (Position)',
+        'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': '',
     },
     {
         'name': 'Ordinance',
         'search_term': 'Ordinance',
-        'fa_icon': 'dollar',
+        'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': '',
     },
     {
         'name': 'Plan',
         'search_term': 'Plan',
-        'fa_icon': 'dollar',
+        'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': '',
     },
     {
         'name': 'Policy',
         'search_term': 'Policy',
-        'fa_icon': 'dollar',
+        'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': '',
     },
     {
         'name': 'Program',
         'search_term': 'Program',
-        'fa_icon': 'dollar',
+        'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': '',
     },
     {
         'name': 'Project',
         'search_term': 'Project',
-        'fa_icon': 'dollar',
+        'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': '',
     },
     {
+        'name': 'Appointment',
+        'search_term': 'Appointment',
+        'fa_icon': 'user',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Minutes',
+        'search_term': 'Minutes',
+        'fa_icon': 'calendar',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Motion/Motion Response',
+        'search_term': 'Motion/Motion Response',
+        'fa_icon': 'bullhorn',
+        'html_desc': True,
+        'desc': '',
+    },
+    {
+        'name': 'Oral Report/Presentation',
+        'search_term': 'Oral Report/Presentation',
+        'fa_icon': 'bullhorn',
+        'html_desc': True,
+        'desc': '',
+    },
+
+    {
         'name': 'Public Hearing',
         'search_term': 'Public Hearing',
-        'fa_icon': 'dollar',
+        'fa_icon': 'bullhorn',
         'html_desc': True,
         'desc': '',
     },
     {
         'name': 'Resolution',
         'search_term': 'Resolution',
-        'fa_icon': 'dollar',
+        'fa_icon': 'commenting-o',
         'html_desc': True,
         'desc': '',
     },
