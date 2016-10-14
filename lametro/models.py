@@ -100,8 +100,8 @@ class LAMetroPerson(Person):
         if hasattr(settings, 'OCD_CITY_COUNCIL_ID'):
             filter_kwarg = {'_organization__ocd_id': settings.OCD_CITY_COUNCIL_ID}
         else:
-            filter_kwarg = {'_organization__name': settings.OCD_CITY_COUNCIL_NAME}#
-        city_council_memberships = self.memberships.filter(**filter_kwarg)#
+            filter_kwarg = {'_organization__name': settings.OCD_CITY_COUNCIL_NAME}
+        city_council_memberships = self.memberships.filter(**filter_kwarg)
         if city_council_memberships.count():
             return city_council_memberships.order_by('-end_date').first()
         return None
@@ -110,8 +110,8 @@ class LAMetroPerson(Person):
     def current_council_seat(self):
         '''
         current_council_seat operated on assumption that board members
-        represent a jurisdiction; that's not the case w la metro. the
-        option should be current member, or former member.
+        represent a jurisdiction; that's not the case w la metro. just
+        need to know whether member is current or not...
         '''
         m = self.latest_council_membership
         if m:

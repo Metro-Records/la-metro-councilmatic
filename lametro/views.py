@@ -23,9 +23,6 @@ class LABoardMembersView(CouncilMembersView):
         return LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
 
 class LAPersonDetailView(PersonDetailView):
-    '''
-
-    '''
     model = LAMetroPerson
 
     def get_context_data(self, **kwargs):
@@ -34,11 +31,14 @@ class LAPersonDetailView(PersonDetailView):
         person = context['person']
 
         title = ''
+        m = person.latest_council_membership
         if person.current_council_seat:
-            m = person.latest_council_membership.post
-            title = '%s as %s' % (m.role, m.label)
+            if m.post:
+                title = '%s as %s' % (m.role, m.post.label)
+            else:
+                title = m.role
         else:
-            title = 'Former %s' % person.latest_council_membership.post.role
+            title = 'Former %s' % m.role
         context['title'] = title
 
         return context
