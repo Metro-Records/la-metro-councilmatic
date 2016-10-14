@@ -95,36 +95,31 @@ class LAMetroPerson(Person):
     class Meta:
         proxy = True
 
-#    @property
-#    def latest_council_membership(self):
-#        if hasattr(settings, 'OCD_CITY_COUNCIL_ID'):
-#            filter_kwarg = {'_organization__ocd_id': settings.OCD_CITY_COUNCIL_ID}
-#        else:
-#            filter_kwarg = {'_organization__name': settings.OCD_CITY_COUNCIL_NAME}#
+    @property
+    def latest_council_membership(self):
+        if hasattr(settings, 'OCD_CITY_COUNCIL_ID'):
+            filter_kwarg = {'_organization__ocd_id': settings.OCD_CITY_COUNCIL_ID}
+        else:
+            filter_kwarg = {'_organization__name': settings.OCD_CITY_COUNCIL_NAME}#
+        city_council_memberships = self.memberships.filter(**filter_kwarg)#
+        if city_council_memberships.count():
+            return city_council_memberships.order_by('-end_date').first()
+        return None
 
-#        city_council_memberships = self.memberships.filter(**filter_kwarg)#
-
-#        if city_council_memberships.count():
-#            print(city_council_memberships.order_by('-start_date', '-end_date').first().__dict__)
-#            return city_council_memberships.order_by('-start_date', '-end_date').first()
-
-        #return None
-
-#    @property
-#    def current_council_seat(self):
-#        print('\n\n\n\nOVER HERE\n\n\n\n')
-#        return None
-
-#    @property
-#    def latest_council_seat(self):
-#        m = self.latest_council_membership
-#        if m:
-#            return m.post.label
-#        return ''#
-
+    @property
+    def current_council_seat(self):
+        '''
+        current_council_seat operated on assumption that board members
+        represent a jurisdiction; that's not the case w la metro. the
+        option should be current member, or former member.
+        '''
+        m = self.latest_council_membership
+        if m:
+            end_date = m.end_date
+            today = date.today()
+            return True if today < end_date else False
+        return None
 
     @property
     def latest_council_seat(self):
-        m = self.latest_council_membership
-        print(m.__dict__)
-        return 'king of the world'
+        pass
