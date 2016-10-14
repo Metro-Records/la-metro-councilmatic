@@ -21,3 +21,4 @@ class LABoardMemberView(CouncilMembersView):
     def get_queryset(self):
         return LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
 
+# class LASearchView():
