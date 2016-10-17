@@ -36,23 +36,6 @@ class LAMetroBill(Bill):
         else:
             return self._status(description)
 
- # def inferred_status(self):
- #        actions = self.actions.all().order_by('-order')
- #        classification_hist = [a.classification for a in actions]
- #        last_action_date = actions[0].date if actions else None
- #        bill_type = self.bill_type
-
- #        if bill_type.lower() in ['communication', 'oath of office']:
- #            return None
- #        if self._terminal_status(classification_hist, bill_type):
- #            return self._terminal_status(classification_hist, bill_type)
- #        elif self._is_stale(last_action_date):
- #            return 'Stale'
- #        else:
- #            return 'Active'
-
-
-
     def _status(self, description):
         if description:
             if 'approved' in description.lower():
@@ -110,4 +93,3 @@ class LAMetroPost(Post):
         label_parts = label.split(', ')
         formatted_label = '<br>'.join(label_parts)
         return formatted_label
-
