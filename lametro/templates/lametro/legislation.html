@@ -71,30 +71,24 @@
                                     Sponsor
                                     {% endif %}
                                 </th>
-                                <!-- <th>
-                                    {{CITY_VOCAB.MUNICIPAL_DISTRICT}}
-                                </th> -->
                             </tr>
                         </thead>
                         <tbody>
-                            {% for s in legislation.sponsorships.all %}
+                            {% for s in sponsorships %}
                                 {% if s.is_primary %}
-                                <tr>
-                                    <td>
-                                        <div class="thumbnail-square">
-                                            <img src='{{s.person.headshot_url}}' alt='{{s.person.name}}' title='{{s.person.name}}' class='img-responsive img-thumbnail' />
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {{ s.person.link_html | safe }} <span class="badge badge-default">Primary Sponsor</span>
-                                    </td>
-                                    <!-- <td> -->
-                                        <!-- {#s.person.current_council_seat#} -->
-                                    <!-- </td> -->
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="thumbnail-square">
+                                                <img src='{{s.person.headshot_url}}' alt='{{s.person.name}}' title='{{s.person.name}}' class='img-responsive img-thumbnail' />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{ s.person.link_html | safe }} <span class="badge badge-default">Primary Sponsor</span>
+                                        </td>
+                                    </tr>
                                 {% endif %}
                             {% endfor %}
-                            {% for s in legislation.sponsorships.all %}
+                            {% for s in sponsorships %}
                                 {% if not s.is_primary %}
                                 <tr>
                                     <td>
@@ -104,9 +98,6 @@
                                     </td>
                                     <td>
                                         {{ s.person.link_html | safe }}
-                                    </td>
-                                    <td>
-                                        <!-- {#s.person.current_council_seat#} -->
                                     </td>
                                 </tr>
                                 {% endif %}
@@ -225,7 +216,7 @@
                         </iframe>
                     {% else %}
                         <p>
-                            <a id="pdf-download-link" target='_blank' href='{{legislation.full_text_doc_url}}'><i class='fa fa-fw fa-download'></i> Download full document</a>
+                            <a id="pdf-download-link" target='_blank' href='{{legislation.full_text_doc_url}}'><i class='fa fa-fw fa-download'></i> Download full text</a>
                         </p>
                     {% endif %}
                 {% endwith %}

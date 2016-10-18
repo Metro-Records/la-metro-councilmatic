@@ -15,6 +15,8 @@ class LABillDetail(BillDetailView):
           context = super(BillDetailView, self).get_context_data(**kwargs)
           context['actions'] = self.get_object().actions.all().order_by('-order')
           context['attachments'] = self.get_object().attachments.all().order_by(Lower('document__note'))
+          item = context['legislation']
+          context['sponsorships'] = item.sponsorships.all().distinct('_person')
 
           return context
 
