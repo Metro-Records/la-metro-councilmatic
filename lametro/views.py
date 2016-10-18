@@ -32,7 +32,7 @@ class LACommitteeDetailView(CommitteeDetailView):
     template_name = 'lametro/committee.html'
 
     def get_context_data(self, **kwargs):
-        context = super(CommitteeDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         committee = context['committee']
 
@@ -41,7 +41,7 @@ class LACommitteeDetailView(CommitteeDetailView):
             sql = ('''
               SELECT
                 p.*,
-                mm.role,
+                m.role,
                 mm.label
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
@@ -65,9 +65,11 @@ class LACommitteeDetailView(CommitteeDetailView):
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.id])
 
             columns = [c[0] for c in cursor.description]
-            id_tuple = namedtuple('label', columns)
-            objs = [id_tuple(*r) for r in cursor]
 
-            context['objs'] = objs
+            results_tuple = namedtuple('Result', columns)
+
+            objects_list = [results_tuple(*r) for r in cursor]
+
+            context['objects_list'] = objects_list
 
         return context

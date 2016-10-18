@@ -1,18 +1,14 @@
 {% extends "base_with_margins.html" %}
 {% load extras %}
+{% load lametro_extras %}
 {% load staticfiles %}
 {% block title %}{{committee.name}}{% endblock %}
 {% block content %}
-{% for o in objs %}
-    {{ o.name }}
-    <br>
-{% endfor %}
-{{ objs | length }}
 
     <div class="row-fluid">
         <div class="col-sm-8">
             <br/>
-            <h1>{{committee.name}}</h1>
+            <h1>{{committee.name }}</h1>
             {% if committee_description %}
                 <p>{{committee_description}}</p>
             {% endif %}
@@ -61,12 +57,16 @@
                                 </td>
                             </tr>
                         {% endfor %}
-                        <tr>
-                            <td colspan="3" align="center">
-                                <a href="" id="more-actions"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
-                                <a href="" id="fewer-actions"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
-                            </td>
-                        </tr>
+
+                        {% if committee.recent_activity|length > 4  %}
+                            <tr>
+                                <td colspan="3" align="center">
+                                    <a href="" id="more-actions"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
+                                    <a href="" id="fewer-actions"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+
                     </tbody>
                 </table>
             </div>
@@ -94,61 +94,61 @@
             <hr />
             <h4><i class='fa fa-fw fa-group'></i> Committee Members ({{ committee.memberships.all|length }})</h4>
 
-            <!-- EDIT THIS TABLE -->
+
             <table class='table' id='council-members'>
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Committee Member</th>
-                        <th>
-                            {{CITY_VOCAB.MUNICIPAL_DISTRICT}}
-                        </th>
-                        <th>Role</th>
+                        <th>Member</th>
+                        <th>Title</th>
+                        <th class='no-wrap'>Committee Role</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for membership in committee.chairs %}
-                        <tr>
-                            <td>
-                                <div class="thumbnail-square">
-                                    <img src='{{membership.person.headshot_url}}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
-                                </div>
-                            </td>
-                            <td>
-                                {{ membership.person.link_html | safe }}
-                            </td>
-                            <td>
-                                <!-- current_council_seat: not useful for LA Metro, since now that method only returns False or None. -->
-                                <!-- {{membership.person.current_council_seat}} -->
-                                <!-- {{ membership.person.id }} -->
-                            </td>
-                            <td>
-                                Chairperson
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    {% for membership in committee.non_chair_members %}
-                        <tr>
-                            <td>
-                                <div class="thumbnail-square">
-                                    <img src='{{membership.person.headshot_url}}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
-                                </div>
-                            </td>
-                            <td>
-                                {{ membership.person.link_html | safe }}
-                            </td>
-                            <td>
-                                <!-- {{membership.person.current_council_seat}} -->
-                                <!-- {{ membership.person }} -->
-                                <!-- {{ membership.person.id }} -->
-                            </td>
-                            <td>
-                                Member
-                            </td>
-                        </tr>
+                    {% for result in objects_list %}
+                        {% with role=result.role|lower %}
+                            {% if "chair" in role %}
+                            <tr>
+                                <td>
+                                    <div class="thumbnail-square">
+                                        <img src='{{ result.id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
+                                    </div>
+                                </td>
+                                <td>
+                                    {{ result.id | call_link_html | safe }}
+                                </td>
+                                <td>
+                                    {{ result.label }}
+                                </td>
+                                <td>
+                                    Chairperson
+                                </td>
+                            </tr>
+                            {% endif %}
+
+                            {% if "chair" not in role %}
+                            <tr>
+                                <td>
+                                    <div class="thumbnail-square">
+                                        <img src='{{ result.id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
+                                    </div>
+                                </td>
+                                <td>
+                                    {{ result.id | call_link_html | safe }}
+                                </td>
+                                <td>
+                                    {{ result.label }}
+                                </td>
+                                <td>
+                                    Member
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endwith %}
                     {% endfor %}
                 </tbody>
             </table>
+
         </div>
     </div>
 
