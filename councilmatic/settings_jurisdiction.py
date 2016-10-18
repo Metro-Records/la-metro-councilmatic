@@ -240,7 +240,15 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
 
 # these keys should match committee slugs
 COMMITTEE_DESCRIPTIONS = {
-    # e.g. "committee-on-aviation" : "The Committee on Aviation has jurisdiction over matters relating to aviation and airports.",
+    'ad-hoc-congestion-reduction-committee': '',
+    'ad-hoc-regional-rail-committee': '',
+    'ad-hoc-sustainability-committee': '',
+    'ad-hoc-transit-policing-oversight-committee': '',
+    'construction-committee': '',
+    'executive-management-committee': '',
+    'finance-budget-and-audit-committee': '',
+    'planning-and-programming-committee': '',
+    'system-safety-security-and-operations-committee': ''
 }
 
 # these blurbs populate the wells on the committees, events, & council members pages
