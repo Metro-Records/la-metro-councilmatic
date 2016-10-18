@@ -15,7 +15,7 @@ class LAMetroBill(Bill):
     @property
     def friendly_name(self):
         nums_only = self.identifier.split(' ')[-1]
-        return self.bill_type+' '+nums_only
+        return self.bill_type + ' ' + nums_only
 
     # LA METRO CUSTOMIZATION
     @property
