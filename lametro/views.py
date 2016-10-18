@@ -41,6 +41,13 @@ class LAPersonDetailView(PersonDetailView):
             title = 'Former %s' % m.role
         context['title'] = title
 
+        if person.committee_sponsorships:
+            context['sponsored_legislation'] = [
+                s.bill for s in sorted(person.committee_sponsorships, key=lambda obj: obj.date, reverse=True)[:10]
+            ]
+        else:
+            context['sponsored_legislation'] = []
+
         return context
 
 

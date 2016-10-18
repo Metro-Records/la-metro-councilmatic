@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from councilmatic_core.models import Bill, Event, Post, Person
+from councilmatic_core.models import Bill, Event, Post, Person, Organization
 from datetime import datetime, date
 import pytz
 
@@ -25,7 +25,6 @@ class LAMetroBill(Bill):
         # Get description of that action.
         description = action.description
         bill_type = self.bill_type
-
         if bill_type.lower() in ['informational report', 'public hearing', 'minutes', 'appointment', 'oral report / presentation', 'motion / motion response']:
             return None
         elif self._status(description):
@@ -123,3 +122,26 @@ class LAMetroPerson(Person):
     @property
     def latest_council_seat(self):
         pass
+
+    @property
+    def committee_sponsorships(self):
+        '''
+        should we omit 'board of directors' as a committee?
+        they are primary sponsor of a lot of activity, so the first
+        10 items in this feed looks p much the same for every member
+        and is thus not that useful, whereas committee-specific
+        feeds are a bit more distinctive (altho committees seem
+        to sponsor much less legislation... with the most recent
+        being from february - do they only meet at certain times?)
+        '''
+        m = self.memberships.all()
+        if m:
+            oids = [o._organization_id for o in m]
+            # uncomment next line to omit board of directors from feed
+            # oids.remove(Organization.objects.filter(name='Board of Directors')[0].id)
+            leg = []
+            for id_ in oids:
+                committee = Organization.objects.filter(id=id_)[0]
+                leg += committee.recent_activity
+            return leg
+        return None
