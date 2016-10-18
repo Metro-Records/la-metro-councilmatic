@@ -9,7 +9,7 @@ app_timezone = pytz.timezone(settings.TIME_ZONE)
 class LAMetroBill(Bill):
 
     class Meta:
-		proxy = True
+        proxy = True
 
     # LA METRO CUSTOMIZATION
     @property
