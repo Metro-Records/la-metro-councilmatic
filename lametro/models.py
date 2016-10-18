@@ -9,13 +9,13 @@ app_timezone = pytz.timezone(settings.TIME_ZONE)
 class LAMetroBill(Bill):
 
     class Meta:
-		    proxy = True
+        proxy = True
 
     # LA METRO CUSTOMIZATION
     @property
     def friendly_name(self):
         nums_only = self.identifier.split(' ')[-1]
-        return self.bill_type+' '+nums_only
+        return self.bill_type + ' ' + nums_only
 
     # LA METRO CUSTOMIZATION
     @property
