@@ -18,3 +18,9 @@ def call_link_html(person_id):
     person = Person.objects.get(id=person_id)
     link = person.link_html
     return link
+
+@register.filter
+def make_formatted_label(label):
+    label_parts = label.split(', ')
+    formatted_label = '</br>'.join(label_parts)
+    return formatted_label
