@@ -34,18 +34,28 @@ NOTE: This is not a comprehensive overview of how to customize councilmatic :spe
 4. **update deployment settings**
   :speech_balloon:
 
-5. **set up your database**
+5. **Set up your database**
 
-If you do not want to add custom models, then you may skip this step.
+Some of your models may require customization, but if you do not want to add custom models, then you may skip this step.
 
-To override a model property, for example:
+Override a model by creating a subclass of the original database model.
 
-```
+```Python
 class LAMetroBill(Bill):
 
   class Meta:
-  proxy = True
+    proxy = True
 
+```
+
+Then, add custom property methods. Here are a few to consider.
+
+**inferred_status**
+
+This method belongs to the Bill model. It identifies the status of the legislation, as in the case of LA Metro: Approved, Adopted, Active, or Withdrawn. If you update this method, then you also need to rebuild the search index, by running:
+
+```
+python manage.py rebuild_index
 ```
 
 6. **import data**

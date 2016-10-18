@@ -73,3 +73,4 @@ class LACommitteeDetailView(CommitteeDetailView):
             context['objects_list'] = objects_list
 
         return context
+
