@@ -177,7 +177,7 @@
                 <ul>
                     {% for doc in attachments %}
                         <li>
-                            <a href="{{doc.document.url}}" target="blank">{{ doc.document.note }}</a>
+                            <a href="{{doc.url}}" target="blank">{{ doc.note }}</a>
                         </li>
                     {% endfor %}
                 </ul>
