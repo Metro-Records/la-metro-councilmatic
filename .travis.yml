@@ -1,0 +1,26 @@
+branches:
+  only:
+  - "/^v0.*$/"
+  - codedeploy
+  - master
+language: python
+python:
+- '3.5'
+install:
+- pip install --upgrade pip
+- pip install --upgrade -r requirements.txt
+addons:
+  postgresql: '9.4'
+before_script:
+- mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
+script: python manage.py migrate
+deploy:
+  provider: codedeploy
+  access_key_id: AKIAIHMNDWBVABNSZW2Q
+  secret_access_key:
+    secure: aCB/sg7sSp2KJ039y2Gx8glxZDvbn+d+wopuPXfz1R8yYMtW6MlLUjHgupMKeY3S8JVSYxldVoOXdLRUPgeO53WTmBHpt6xO/HRh+hZXoAmw32xuZAL+eCBqD5vtTy8Kk5kI2esY1NjpP0JB7z+cZxvUVjP7VnRunqQ1JxJ1/9qbCajyBJAc+7330iCdnZUp80QYUbfb4gI87b319on8nfY/TFYXmUQPD032VcQ2NUPx39YpSCu9qnOX53EaZ4Bsxvz9aF3UEsYwouIn0naF8Zd0hl99/W5idBBcPcD4Kvnkh1AAvDYVKmGjJwn9RDFZZDUsukcYzl63NqHDVkNiV0njJzDe61EkwE2LH08WT3biAF0KNOcaiyDhIeaemI1rvXIGM0eklBR7WK8mlVxMfG9rwsyPiLosDDDpMKTI/9dPtflHCl+pFbcoP8nJhLEsqH7eJyg+BCveakYrd21AFrMtOYfsAjHMJulYuFmXoCUMse8w99U2Qf6q6b/2i7tme+ve85SQBP0PCNkuaRHme3u7/WmrBFQlmUnn+rLA36KgUXwOZLGdzUvuxvNo2+4uROOOjR4v5nZDcwR03I7ebquAufvUrcQfnbspBXjGDt9IqHKyjeNudzr8H8AY+f+VI2sZTsdWToVeOLnjgbHLfEu2laLiYQTY2gsQ6iavDWU=
+  revision_type: github
+  application: lametro-councilmatic
+  deployment_group: lametro-group
+  on:
+    tags: true
