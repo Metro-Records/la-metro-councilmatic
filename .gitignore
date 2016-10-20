@@ -13,3 +13,6 @@ solr-4.10.4/**
 **/__pycache__
 
 downloads
+/keyrings/live/pubring.gpg~
+/keyrings/live/pubring.kbx~
+/keyrings/live/secring.gpg
