@@ -1,5 +1,5 @@
 env:
-- if [[ $TRAVIS_BRANCH == "master" ]]; then DEPLOYMENT_GROUP="lametro-staging" elif [[ $TRAVIS_BRANCH == "deploy" ]]; then DEPLOYMENT_GROUP="lametro-production"; fi
+- if [[ "$TRAVIS_BRANCH" == "master" ]]; then DEPLOYMENT_GROUP="lametro-staging" elif [[ "$TRAVIS_BRANCH" == "deploy" ]]; then DEPLOYMENT_GROUP="lametro-production"; fi
 
 branches:
   only:
