@@ -9,13 +9,13 @@ register = template.Library()
 
 @register.filter
 def call_headshot_url(person_id):
-    person = Person.objects.get(id=person_id)
+    person = Person.objects.get(ocd_id=person_id)
     url = person.headshot_url
     return url
 
 @register.filter
 def call_link_html(person_id):
-    person = Person.objects.get(id=person_id)
+    person = Person.objects.get(ocd_id=person_id)
     link = person.link_html
     return link
 

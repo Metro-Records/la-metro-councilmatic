@@ -44,7 +44,7 @@
                 </p>
             {% else %}
                 <p>
-                    {{ legislation.description }}
+                    {{ legislation.description|truncatewords:200 }}
                 </p>
             {% endif %}
             {% endblock %}

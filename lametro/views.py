@@ -54,18 +54,17 @@ class LACommitteeDetailView(CommitteeDetailView):
                   pt.label
                 FROM councilmatic_core_membership AS m
                 JOIN councilmatic_core_post AS pt
-                ON m.post_id=pt.id
-                WHERE m.organization_id = (
-                  SELECT id from councilmatic_core_organization
-                  WHERE ocd_id= %s)
+                  ON m.post_id=pt.ocd_id
+                WHERE m.organization_id = %s
               ) AS mm
                 USING(person_id)
               JOIN councilmatic_core_person AS p
-                ON m.person_id = p.id
+                ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
+              AND m.end_date > NOW()::date
             ''')
 
-            cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.id])
+            cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
             columns = [c[0] for c in cursor.description]
 
@@ -74,6 +73,8 @@ class LACommitteeDetailView(CommitteeDetailView):
             objects_list = [results_tuple(*r) for r in cursor]
 
             context['objects_list'] = objects_list
+            
+            print(context['objects_list'])
 
         return context
 
