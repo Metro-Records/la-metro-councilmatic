@@ -61,7 +61,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               JOIN councilmatic_core_person AS p
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
-              AND m.end_date > NOW()::date
+              AND m.end_date::date > NOW()::date
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
