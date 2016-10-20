@@ -24,8 +24,8 @@
             <hr />
 
             <h4><i class='fa fa-fw fa-list-ul'></i> Recent Legislative Activity
-          <a href="actions/rss/" title="RSS feed for Recent Legislative Activity by {{committee.name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
-      </h4>
+                <a href="actions/rss/" title="RSS feed for Recent Legislative Activity by {{committee.name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
+            </h4>
             {% if committee.recent_activity %}
             <div class="table-responsive">
                 <table class='table' id='committee-actions'>
@@ -91,7 +91,7 @@
             {% endif %}
 
             <hr />
-            <h4><i class='fa fa-fw fa-group'></i> Committee Members ({{ committee.memberships.all|length }})</h4>
+            <h4><i class='fa fa-fw fa-group'></i> Committee Members ({{ objects_list|length }})</h4>
 
 
             <table class='table' id='council-members'>
@@ -110,11 +110,11 @@
                             <tr>
                                 <td>
                                     <div class="thumbnail-square">
-                                        <img src='{{ result.id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
+                                        <img src='{{ result.ocd_id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
                                     </div>
                                 </td>
                                 <td>
-                                    {{ result.id | call_link_html | safe }}
+                                    {{ result.ocd_id | call_link_html | safe }}
                                 </td>
                                 <td>
                                     {% if result.label %}
@@ -125,7 +125,7 @@
 
                                 </td>
                                 <td>
-                                    Chairperson
+                                    {{ result.role }}
                                 </td>
                             </tr>
                             {% endif %}
@@ -134,11 +134,11 @@
                             <tr>
                                 <td>
                                     <div class="thumbnail-square">
-                                        <img src='{{ result.id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
+                                        <img src='{{ result.ocd_id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
                                     </div>
                                 </td>
                                 <td>
-                                    {{ result.id | call_link_html | safe }}
+                                    {{ result.ocd_id | call_link_html | safe }}
                                 </td>
                                 <td>
                                     {% if result.label %}
@@ -148,7 +148,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    Member
+                                    {{ result.role }}
                                 </td>
                             </tr>
                             {% endif %}

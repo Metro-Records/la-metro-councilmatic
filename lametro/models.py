@@ -62,13 +62,22 @@ class LAMetroBill(Bill):
         # base_url = 'http://127.0.0.1:5000/lametro/document/'
 
         if self.documents.filter(document_type='V').all():
-            legistar_doc_url = self.documents.filter(document_type='V').first().document.url
+            legistar_doc_url = self.documents.filter(document_type='V').first().url
             doc_url = '{0}?filename={2}&document_url={1}'.format(base_url,
                                                                  legistar_doc_url,
                                                                  self.identifier)
             return doc_url
         else:
             return None
+    
+    @property
+    def controlling_body(self):
+        """
+        grabs the organization that's currently 'responsible' for a bill
+        """
+        
+        return self.from_organization
+
 
 class LAMetroPost(Post):
 
@@ -82,7 +91,7 @@ class LAMetroPost(Post):
         if most_recent_member.end_date:
             today = date.today()
             end_date = most_recent_member.end_date
-            if today > end_date:
+            if today < end_date:
                 return None
             else:
                 return most_recent_member
