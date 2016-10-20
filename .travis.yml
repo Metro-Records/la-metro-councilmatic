@@ -1,6 +1,6 @@
 env:
-- if [[ "$TRAVIS_BRANCH" == "master" ]]; then DEPLOYMENT_GROUP="lametro-staging"; fi
-- if [[ "$TRAVIS_BRANCH" == "deploy" ]]; then DEPLOYMENT_GROUP="lametro-production"; fi
+  global:
+    - if [[ "$TRAVIS_BRANCH" == "master" ]]; then DEPLOYMENT_GROUP="lametro-staging"; elif [[ "$TRAVIS_BRANCH" == "deploy" ]]; then DEPLOYMENT_GROUP="lametro-production"; fi
 
 branches:
   only:
@@ -18,6 +18,7 @@ addons:
 before_script:
 - mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
 - echo $DEPLOYMENT_GROUP
+- echo $TRAVIS_BRANCH
 script: python manage.py migrate
 deploy:
   provider: codedeploy
