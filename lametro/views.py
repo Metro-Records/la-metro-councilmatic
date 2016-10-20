@@ -74,7 +74,5 @@ class LACommitteeDetailView(CommitteeDetailView):
 
             context['objects_list'] = objects_list
             
-            print(context['objects_list'])
-
         return context
 
