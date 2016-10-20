@@ -1,4 +1,4 @@
-# councilmatic-starter-template
+# LA Metro Councilmatic
 starter code &amp; documentation for new councilmatic instances
 
 :warning: STATUS: currently in development :warning:
