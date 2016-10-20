@@ -1,1 +1,2 @@
 configs/settings_deployment.py
+scripts/after_install.sh
