@@ -7,10 +7,12 @@ mkdir -p /home/datamade/la-metro-councilmatic
 
 if [ "$DEPLOYMENT_GROUP_NAME" == "staging" ]
 then
+    rm -Rf /home/datamade/lametro-staging
     mkdir -p /home/datamade/lametro-staging
 fi
 if [ "$DEPLOYMENT_GROUP_NAME" == "production" ]
 then
+    rm -Rf /home/datamade/lametro
     mkdir -p /home/datamade/lametro
 fi
 
