@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from councilmatic_core.models import Bill, Event, Post, Person
+from councilmatic_core.models import Bill, Event, Post, Person, Organization
 from datetime import datetime, date
 import pytz
 
@@ -69,15 +69,14 @@ class LAMetroBill(Bill):
             return doc_url
         else:
             return None
-    
+
     @property
     def controlling_body(self):
         """
         grabs the organization that's currently 'responsible' for a bill
         """
-        
-        return self.from_organization
 
+        return self.from_organization
 
 class LAMetroPost(Post):
 
@@ -102,3 +101,60 @@ class LAMetroPost(Post):
         label_parts = label.split(', ')
         formatted_label = '<br>'.join(label_parts)
         return formatted_label
+
+class LAMetroPerson(Person):
+
+    class Meta:
+        proxy = True
+
+    @property
+    def latest_council_membership(self):
+        if hasattr(settings, 'OCD_CITY_COUNCIL_ID'):
+            filter_kwarg = {'_organization__ocd_id': settings.OCD_CITY_COUNCIL_ID}
+        else:
+            filter_kwarg = {'_organization__name': settings.OCD_CITY_COUNCIL_NAME}
+        city_council_memberships = self.memberships.filter(**filter_kwarg)
+        if city_council_memberships.count():
+            return city_council_memberships.order_by('-end_date').first()
+        return None
+
+    @property
+    def current_council_seat(self):
+        '''
+        current_council_seat operated on assumption that board members
+        represent a jurisdiction; that's not the case w la metro. just
+        need to know whether member is current or not...
+        '''
+        m = self.latest_council_membership
+        if m:
+            end_date = m.end_date
+            today = date.today()
+            return True if today < end_date else False
+        return None
+
+    @property
+    def latest_council_seat(self):
+        pass
+
+    @property
+    def committee_sponsorships(self):
+        '''
+        should we omit 'board of directors' as a committee?
+        they are primary sponsor of a lot of activity, so the first
+        10 items in this feed looks p much the same for every member
+        and is thus not that useful, whereas committee-specific
+        feeds are a bit more distinctive (altho committees seem
+        to sponsor much less legislation... with the most recent
+        being from february - do they only meet at certain times?)
+        '''
+        m = self.memberships.all()
+        if m:
+            oids = [o._organization_id for o in m]
+            # uncomment next line to omit board of directors from feed
+            # oids.remove(Organization.objects.filter(name='Board of Directors')[0].id)
+            leg = []
+            for id_ in oids:
+                committee = Organization.objects.filter(id=id_)[0]
+                leg += committee.recent_activity
+            return leg
+        return None

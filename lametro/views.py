@@ -1,11 +1,13 @@
+import re
+
 from django.conf import settings
 from django.shortcuts import render
 from django.db import connection
 from django.db.models.functions import Lower
 from collections import namedtuple
-from councilmatic_core.views import BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView
+from councilmatic_core.views import BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, PersonDetailView
 from councilmatic_core.models import *
-from lametro.models import LAMetroBill, LAMetroPost
+from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill
@@ -20,7 +22,7 @@ class LABillDetail(BillDetailView):
 
           return context
 
-class LABoardMemberView(CouncilMembersView):
+class LABoardMembersView(CouncilMembersView):
     model = LAMetroPost
 
     def get_queryset(self):
@@ -28,7 +30,6 @@ class LABoardMemberView(CouncilMembersView):
 
 class LAMetroAboutView(AboutView):
     template_name = 'lametro/about.html'
-
 
 class LACommitteeDetailView(CommitteeDetailView):
 
@@ -73,6 +74,29 @@ class LACommitteeDetailView(CommitteeDetailView):
             objects_list = [results_tuple(*r) for r in cursor]
 
             context['objects_list'] = objects_list
-            
+
         return context
 
+class LAPersonDetailView(PersonDetailView):
+    model = LAMetroPerson
+    person = context['person']
+
+    title = ''
+    m = person.latest_council_membership
+    if person.current_council_seat:
+        if m.post:
+            title = '%s as %s' % (m.role, m.post.label)
+        else:
+            title = m.role
+    else:
+        title = 'Former %s' % m.role
+    context['title'] = title
+
+    if person.committee_sponsorships:
+        context['sponsored_legislation'] = [
+            s.bill for s in sorted(person.committee_sponsorships, key=lambda obj: obj.date, reverse=True)[:10]
+        ]
+    else:
+        context['sponsored_legislation'] = []
+
+    return context

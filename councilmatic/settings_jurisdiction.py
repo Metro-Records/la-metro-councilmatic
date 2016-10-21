@@ -16,12 +16,11 @@ CITY_VOCAB = {
     'MUNICIPAL_DISTRICT': 'Ward',       # e.g. 'District'
     'SOURCE': 'LA Metro',
     'COUNCIL_MEMBER': 'Board Member',       # e.g. 'Council Member'
-    'COUNCIL_MEMBERS': 'Board Members',      # e.g. 'Council Members'
+    'COUNCIL_MEMBERS': 'Board of Directors',      # e.g. 'Council Members'
     'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
 }
 
 APP_NAME = 'lametro'
-
 
 #########################
 # The rest are optional #
