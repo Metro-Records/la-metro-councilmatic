@@ -1,8 +1,11 @@
+import pytz
+import re
+
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+
 from councilmatic_core.models import Bill, Event, Post, Person, Organization
-from datetime import datetime, date
-import pytz
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -84,13 +87,9 @@ class LAMetroPost(Post):
         proxy = True
 
     @property
-    def current_member(self):
-        most_recent_member = self.memberships.order_by(
-            '-end_date', '-start_date').first()
-        if most_recent_member.end_date:
-            today = date.today()
-            end_date = most_recent_member.end_date
-            return most_recent_member if today < end_date else None
+    def current_members(self):
+        today = timezone.now().date()
+        return self.memberships.filter(end_date__gte=today)
 
     @property
     def formatted_label(self):
@@ -125,7 +124,7 @@ class LAMetroPerson(Person):
         m = self.latest_council_membership
         if m:
             end_date = m.end_date
-            today = date.today()
+            today = timezone.now().date()
             return True if today < end_date else False
         return None
 
@@ -158,3 +157,16 @@ class LAMetroPerson(Person):
                     pass
             return leg
         return None
+
+class LAMetroEvent(Event):
+
+    class Meta:
+        proxy = True
+
+    @property
+    def sub_agenda_items(self):
+        cleaned = []
+        for item in self.clean_agenda_items:
+            i = re.sub('\n+', '\n', item.description)
+            cleaned.append(i.split('\n'))
+        return cleaned
