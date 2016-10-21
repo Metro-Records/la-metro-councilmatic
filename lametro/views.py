@@ -78,25 +78,29 @@ class LACommitteeDetailView(CommitteeDetailView):
         return context
 
 class LAPersonDetailView(PersonDetailView):
+
     model = LAMetroPerson
-    person = context['person']
 
-    title = ''
-    m = person.latest_council_membership
-    if person.current_council_seat:
-        if m.post:
-            title = '%s as %s' % (m.role, m.post.label)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        person = context['person']
+
+        title = ''
+        m = person.latest_council_membership
+        if person.current_council_seat:
+            if m.post:
+                title = '%s as %s' % (m.role, m.post.label)
+            else:
+                title = m.role
         else:
-            title = m.role
-    else:
-        title = 'Former %s' % m.role
-    context['title'] = title
+            title = 'Former %s' % m.role
+        context['title'] = title
 
-    if person.committee_sponsorships:
-        context['sponsored_legislation'] = [
-            s.bill for s in sorted(person.committee_sponsorships, key=lambda obj: obj.date, reverse=True)[:10]
-        ]
-    else:
-        context['sponsored_legislation'] = []
+        if person.committee_sponsorships:
+            context['sponsored_legislation'] = [
+                s.bill for s in sorted(person.committee_sponsorships, key=lambda obj: obj.date, reverse=True)[:10]
+            ]
+        else:
+            context['sponsored_legislation'] = []
 
-    return context
+        return context
