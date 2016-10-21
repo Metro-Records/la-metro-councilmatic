@@ -158,15 +158,3 @@ class LAMetroPerson(Person):
             return leg
         return None
 
-class LAMetroEvent(Event):
-
-    class Meta:
-        proxy = True
-
-    @property
-    def sub_agenda_items(self):
-        cleaned = []
-        for item in self.clean_agenda_items:
-            i = re.sub('\n+', '\n', item.description)
-            cleaned.append(i.split('\n'))
-        return cleaned

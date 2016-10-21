@@ -7,7 +7,7 @@ from django.db.models.functions import Lower
 from collections import namedtuple
 from councilmatic_core.views import BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, PersonDetailView, EventDetailView
 from councilmatic_core.models import *
-from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
+from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill
@@ -111,16 +111,5 @@ class LAPersonDetailView(PersonDetailView):
         # to be consistent w other attribute names? (currently overriden in
         # template, but last_action is referenced in several other places
         # in django-councilmatic)
-
-        return context
-
-class LAEventDetailView(EventDetailView):
-
-    model = LAMetroEvent
-    template_name = 'lametro/event.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        event = context['event']
 
         return context
