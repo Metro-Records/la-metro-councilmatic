@@ -23,7 +23,6 @@ deploy:
   application: lametro-councilmatic
   deployment_group: la_metro_staging
   on:
-    tags: true
     branch: master
 deploy:
   provider: codedeploy
