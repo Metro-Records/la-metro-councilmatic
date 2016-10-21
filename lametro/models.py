@@ -90,10 +90,7 @@ class LAMetroPost(Post):
         if most_recent_member.end_date:
             today = date.today()
             end_date = most_recent_member.end_date
-            if today < end_date:
-                return None
-            else:
-                return most_recent_member
+            return most_recent_member if today < end_date else None
 
     @property
     def formatted_label(self):
@@ -151,10 +148,13 @@ class LAMetroPerson(Person):
         if m:
             oids = [o._organization_id for o in m]
             # uncomment next line to omit board of directors from feed
-            # oids.remove(Organization.objects.filter(name='Board of Directors')[0].id)
+            oids.remove(Organization.objects.filter(name='Board of Directors')[0].ocd_id)
             leg = []
             for id_ in oids:
-                committee = Organization.objects.filter(id=id_)[0]
-                leg += committee.recent_activity
+                try:
+                    committee = Organization.objects.filter(ocd_id=id_)[0]
+                    leg += committee.recent_activity
+                except IndexError: # handle errant oid in my db; pls resolve
+                    pass
             return leg
         return None

@@ -79,6 +79,7 @@ class LACommitteeDetailView(CommitteeDetailView):
 
 class LAPersonDetailView(PersonDetailView):
 
+    template_name = 'lametro/person.html'
     model = LAMetroPerson
 
     def get_context_data(self, **kwargs):
@@ -86,15 +87,16 @@ class LAPersonDetailView(PersonDetailView):
         person = context['person']
 
         title = ''
+        qualifying_post = '' # board membership criteria met by person in question
         m = person.latest_council_membership
         if person.current_council_seat:
+            title = m.role
             if m.post:
-                title = '%s as %s' % (m.role, m.post.label)
-            else:
-                title = m.role
+                qualifying_post = m.post.label
         else:
             title = 'Former %s' % m.role
         context['title'] = title
+        context['qualifying_post'] = qualifying_post
 
         if person.committee_sponsorships:
             context['sponsored_legislation'] = [
@@ -102,5 +104,12 @@ class LAPersonDetailView(PersonDetailView):
             ]
         else:
             context['sponsored_legislation'] = []
+
+        # TO-DO
+        # resolve last_action_date conflict -- should i code in here,
+        # override the template, or change the method in django-councilmatic
+        # to be consistent w other attribute names? (currently overriden in
+        # template, but last_action is referenced in several other places
+        # in django-councilmatic)
 
         return context
