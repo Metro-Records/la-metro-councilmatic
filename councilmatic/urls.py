@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.views.generic.base import RedirectView
 from haystack.query import SearchQuerySet
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
-from lametro.views import LABillDetail, LABoardMembersView, LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView
+from lametro.views import LAMetroIndexView, LABillDetail, LABoardMembersView, LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView
 
 sqs = SearchQuerySet().facet('bill_type')\
                       .facet('sponsorships', sort='index')\
@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', CouncilmaticFacetedSearchView(searchqueryset=sqs,
                                        form_class=CouncilmaticSearchForm), name='search'),
+    url(r'^$', LAMetroIndexView.as_view(), name='index'),
     url(r'^about/$', LAMetroAboutView.as_view(), name='about'),
     url(r'^legislation/(?P<slug>[^/]+)/$', LABillDetail.as_view(), name='bill_detail'),
     url(r'^committees/$', LACommitteesView.as_view(), name='committees'),

@@ -6,9 +6,12 @@ from django.shortcuts import render
 from django.db import connection
 from django.db.models.functions import Lower
 from collections import namedtuple
-from councilmatic_core.views import BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView
+from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson
+
+class LAMetroIndexView(IndexView):
+    template_name = 'lametro/index.html'
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill
