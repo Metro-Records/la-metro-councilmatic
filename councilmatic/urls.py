@@ -1,25 +1,13 @@
-"""councilmatic URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.8/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Add an import:  from blog import urls as blog_urls
-    2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
-"""
-
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic.base import RedirectView
+from django.conf import settings
+
 from haystack.query import SearchQuerySet
+
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
-from lametro.views import LAMetroIndexView, LABillDetail, LABoardMembersView, LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView
+from lametro.views import LAMetroIndexView, LABillDetail, LABoardMembersView, \
+    LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView
 
 sqs = SearchQuerySet().facet('bill_type')\
                       .facet('sponsorships', sort='index')\
@@ -29,7 +17,7 @@ sqs = SearchQuerySet().facet('bill_type')\
                       .facet('legislative_session')\
                       .highlight()
 
-urlpatterns = [
+patterns = ([
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', CouncilmaticFacetedSearchView(searchqueryset=sqs,
                                        form_class=CouncilmaticSearchForm), name='search'),
@@ -41,5 +29,9 @@ urlpatterns = [
     url(r'^board-members/$', LABoardMembersView.as_view(), name='council_members'),
     url(r'^person/(?P<slug>[^/]+)/$', LAPersonDetailView.as_view(), name='person'),
     url(r'^event/(?P<slug>[^/]+)/$', EventDetailView.as_view(), name='event'),
+], settings.APP_NAME)
+
+urlpatterns = [
+    url(r'', include(patterns)),
     url(r'', include('councilmatic_core.urls')),
 ]
