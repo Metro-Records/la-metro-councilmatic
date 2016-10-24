@@ -34,45 +34,12 @@ class LAMetroAboutView(AboutView):
 
 class LACommitteesView(CommitteesView):
 
-    # this = Organization.objects.filter(classification='committee').order_by('name').filter(memberships__isnull=False).distinct()
-    # now = datetime.now()
-
-    # that = Organization.objects.filter(classification='committee').order_by('name').filter(memberships__isnull=False).filter(memberships__end_date__gte=now).distinct()
-
     def get_queryset(self):
-        with connection.cursor() as cursor:
+        now = datetime.now()
 
-            sql = ('''
-              SELECT DISTINCT o.name, o.slug
-              FROM councilmatic_core_organization AS o
-              JOIN councilmatic_core_membership AS m
-              ON o.ocd_id=m.organization_id
-              WHERE m.end_date::date > NOW()::date
-              ''')
+        committees = Organization.objects.filter(classification='committee').order_by('name').filter(memberships__isnull=False).filter(memberships__end_date__gte=now).distinct()
 
-            cursor.execute(sql)
-
-            # committees = cursor.fetchall()
-
-            # print(committees)
-            # print(Organization.committees)
-            columns = [c[0] for c in cursor.description]
-            print(columns)
-
-            committees_tuple = namedtuple('Committee', columns)
-
-            print(cursor)
-
-            # committees = [committees_tuple(*c) for c in cursor]
-
-            # print(committees)
-
-            now = datetime.now()
-
-            committees = Organization.objects.filter(classification='committee').order_by('name').filter(memberships__isnull=False).filter(memberships__end_date__gte=now).distinct()
-
-
-            return committees
+        return committees
 
 class LACommitteeDetailView(CommitteeDetailView):
 
