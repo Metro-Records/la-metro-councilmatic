@@ -34,7 +34,7 @@
                     <a href="/about">About</a>
                 </li>
                 <li>
-                    <a href="#about-city-council">What is La Metro, and how does it work?</a>
+                    <a href="#about-city-council">What is {{ CITY_COUNCIL_NAME }}, and how does it work?</a>
                 </li>
                 <li>
                     <a href="#tags">Legislation tags</a>
@@ -64,10 +64,10 @@
 <div class="row-fluid">
     <div class="col-sm-8 no-pad-mobile" id="about-city-council">
         <br/><br/>
-        <h3>What is La Metro, and how does it work?</h3>
+        <h3>What is {{ CITY_COUNCIL_NAME }}, and how does it work?</h3>
 
         <h4>Types of legislation</h4>
-        <p>Below are the categories of legislation in Chicago:</p>
+        <p>Below are the categories of legislation in {{ CITY_COUNCIL_NAME }}:</p>
 
         {% include 'partials/component_bill_type_table.html' %}
 
@@ -101,7 +101,7 @@
 
         <h3>Data</h3>
 
-        <p>The data from this website comes from the <a href="http://https://metro.legistar.com/" target="_blank">Chicago City Council legislation site</a>, a system built by <a href='http://www.granicus.com/' target="_blank">Granicus</a> using their <a href='http://www.granicus.com/solutions/legislative-management/' target="_blank">Legistar Legislative Management Suite</a>.</p>
+        <p>The data from this website comes from the <a href="http://https://metro.legistar.com/" target="_blank">{{ CITY_COUNCIL_NAME }} legislation site</a>, a system built by <a href='http://www.granicus.com/' target="_blank">Granicus</a> using their <a href='http://www.granicus.com/solutions/legislative-management/' target="_blank">Legistar Legislative Management Suite</a>.</p>
 
         <!-- <p>This data is then collected daily with the help of the <a href='http://webapi.legistar.com/' target="_blank">Legistar Web API</a> and stored using the <a href="http://opencivicdata.org/about/" target="_blank">Open Civic Data</a> standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government and was built in collaboration with <a href="http://sunlightfoundation.com/" target="_blank">The Sunlight Foundation</a>, <a href="https://developers.google.com/civic-information/?hl=en" target="_blank">Google</a>, <a href="http://www.granicus.com/" target="_blank">Granicus</a> and <a href="http://www.opennorth.ca/" target="_blank">Open North</a>.
         </p> -->
@@ -130,7 +130,7 @@
 
         <h3>Contact us</h3>
 
-        <p>Have a question about information you were seeking to find, or explanations of how LA Metro works? Send us an email <a href='mailto:info@datamade.us'>info@datamade.us</a>.</p>
+        <p>Have a question about information you were seeking to find, or explanations of how {{ CITY_COUNCIL_NAME }} works? Send us an email <a href='mailto:info@datamade.us'>info@datamade.us</a>.</p>
 
         <p>Developers: if you notice a bug, file an issue on our <a href='https://github.com/datamade/la-metro-councilmatic/issues' target="_blank">issue tracker</a>!</p>
 
