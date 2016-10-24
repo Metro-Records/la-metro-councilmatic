@@ -1,8 +1,11 @@
+import pytz
+import re
+
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+
 from councilmatic_core.models import Bill, Event, Post, Person, Organization
-from datetime import datetime, date
-import pytz
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -84,16 +87,9 @@ class LAMetroPost(Post):
         proxy = True
 
     @property
-    def current_member(self):
-        most_recent_member = self.memberships.order_by(
-            '-end_date', '-start_date').first()
-        if most_recent_member.end_date:
-            today = date.today()
-            end_date = most_recent_member.end_date
-            if today < end_date:
-                return None
-            else:
-                return most_recent_member
+    def current_members(self):
+        today = timezone.now().date()
+        return self.memberships.filter(end_date__gte=today)
 
     @property
     def formatted_label(self):
@@ -128,7 +124,7 @@ class LAMetroPerson(Person):
         m = self.latest_council_membership
         if m:
             end_date = m.end_date
-            today = date.today()
+            today = timezone.now().date()
             return True if today < end_date else False
         return None
 
@@ -151,10 +147,14 @@ class LAMetroPerson(Person):
         if m:
             oids = [o._organization_id for o in m]
             # uncomment next line to omit board of directors from feed
-            # oids.remove(Organization.objects.filter(name='Board of Directors')[0].id)
+            oids.remove(Organization.objects.filter(name='Board of Directors')[0].ocd_id)
             leg = []
             for id_ in oids:
-                committee = Organization.objects.filter(id=id_)[0]
-                leg += committee.recent_activity
+                try:
+                    committee = Organization.objects.filter(ocd_id=id_)[0]
+                    leg += committee.recent_activity
+                except IndexError: # handle errant oid in my db; pls resolve
+                    pass
             return leg
         return None
+

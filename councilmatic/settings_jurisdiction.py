@@ -8,12 +8,12 @@ OCD_CITY_COUNCIL_ID = 'ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
 CITY_COUNCIL_NAME = 'LA Metro'
 OCD_JURISDICTION_ID = 'ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority'
 LEGISLATIVE_SESSIONS = ['2014', '2015', '2016'] # the last one in this list should be the current legislative session
-CITY_NAME = 'Los Angeles'
-CITY_NAME_SHORT = 'LA'
+CITY_NAME = 'LA Metro'
+CITY_NAME_SHORT = 'LA Metro'
 
 # VOCAB SETTINGS FOR FRONT-END DISPLAY
 CITY_VOCAB = {
-    'MUNICIPAL_DISTRICT': 'Ward',       # e.g. 'District'
+    'MUNICIPAL_DISTRICT': 'District',       # e.g. 'District'
     'SOURCE': 'LA Metro',
     'COUNCIL_MEMBER': 'Board Member',       # e.g. 'Council Member'
     'COUNCIL_MEMBERS': 'Board of Directors',      # e.g. 'Council Members'
