@@ -28,7 +28,7 @@ APP_NAME = 'lametro'
 
 # this is for populating meta tags
 SITE_META = {
-    'site_name' : '',       # e.g. 'Chicago Councilmatc'
+    'site_name' : 'LA Metro Councilmatic',       # e.g. 'Chicago Councilmatc'
     'site_desc' : '',       # e.g. 'City Council, demystified. Keep tabs on Chicago legislation, aldermen, & meetings.'
     'site_author' : '',     # e.g. 'DataMade'
     'site_url' : '',        # e.g. 'https://chicago.councilmatic.org'
@@ -71,7 +71,7 @@ SEARCH_PLACEHOLDER_TEXT = '' # e.g. 'police, zoning, O2015-7825, etc.'
 
 # these should live in APP_NAME/static/
 IMAGES = {
-    'favicon': 'images/favicon.ico',
+    #'favicon': 'images/favicon.ico',
     'logo': 'images/logo.png',
 }
 
