@@ -14,7 +14,7 @@ class LABillDetail(BillDetailView):
     template_name = 'lametro/legislation.html'
 
     def get_context_data(self, **kwargs):
-          context = super(BillDetailView, self).get_context_data(**kwargs)
+          context = super().get_context_data(**kwargs)
           context['actions'] = self.get_object().actions.all().order_by('-order')
           context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
           item = context['legislation']

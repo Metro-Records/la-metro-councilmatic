@@ -14,12 +14,6 @@ def call_headshot_url(person_id):
     return url
 
 @register.filter
-def call_link_html(person_id):
-    person = Person.objects.get(ocd_id=person_id)
-    link = person.link_html
-    return link
-
-@register.filter
 def make_formatted_label(label):
     label_parts = label.split(', ')
     formatted_label = '</br>'.join(label_parts)
