@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 from django.conf import settings
 from django.shortcuts import render
@@ -6,9 +7,12 @@ from django.db import connection
 from django.db.models.functions import Lower
 from django.utils import timezone
 from collections import namedtuple
-from councilmatic_core.views import BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, PersonDetailView, EventDetailView, CommitteesView
+from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson
+
+class LAMetroIndexView(IndexView):
+    template_name = 'lametro/index.html'
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill
@@ -31,6 +35,21 @@ class LABoardMembersView(CouncilMembersView):
 
 class LAMetroAboutView(AboutView):
     template_name = 'lametro/about.html'
+
+class LACommitteesView(CommitteesView):
+    template_name = 'lametro/committees.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['today'] = timezone.now().date()
+        return context
+
+    def get_queryset(self):
+        now = datetime.now()
+
+        committees = Organization.objects.filter(classification='committee').order_by('name').filter(memberships__isnull=False).filter(memberships__end_date__gte=now).distinct()
+
+        return committees
 
 class LACommitteeDetailView(CommitteeDetailView):
 
@@ -114,14 +133,3 @@ class LAPersonDetailView(PersonDetailView):
         # in django-councilmatic)
 
         return context
-
-class LACommitteesView(CommitteesView):
-
-    template_name = 'lametro/committees.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['today'] = timezone.now().date()
-        return context
-
-
