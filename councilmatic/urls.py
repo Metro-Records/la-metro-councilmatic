@@ -32,7 +32,7 @@ sqs = SearchQuerySet().facet('bill_type')\
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', CouncilmaticFacetedSearchView(searchqueryset=sqs,
-                                       form_class=CouncilmaticSearchForm)),
+                                       form_class=CouncilmaticSearchForm), name='search'),
     url(r'^about/$', LAMetroAboutView.as_view(), name='about'),
     url(r'^legislation/(?P<slug>[^/]+)/$', LABillDetail.as_view(), name='bill_detail'),
     url(r'^committee/(?P<slug>[^/]+)/$', LACommitteeDetailView.as_view(), name='committee'),
