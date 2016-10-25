@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from itertools import groupby
 
 from django.conf import settings
 from django.shortcuts import render
@@ -19,7 +20,7 @@ class LABillDetail(BillDetailView):
     template_name = 'lametro/legislation.html'
 
     def get_context_data(self, **kwargs):
-          context = super().get_context_data(**kwargs)
+          context = super(BillDetailView, self).get_context_data(**kwargs)
           context['actions'] = self.get_object().actions.all().order_by('-order')
           context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
           item = context['legislation']
@@ -42,14 +43,37 @@ class LACommitteesView(CommitteesView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['today'] = timezone.now().date()
+
+        with connection.cursor() as cursor:
+
+            sql = ('''
+              SELECT DISTINCT on (o.ocd_id, m.person_id) o.*, m.person_id, m.role, p.name
+              FROM councilmatic_core_organization AS o
+              JOIN councilmatic_core_membership AS m
+              ON o.ocd_id=m.organization_id
+              JOIN councilmatic_core_person as p
+              ON p.ocd_id=m.person_id
+              WHERE m.end_date::date > NOW()::date
+              AND o.classification='committee'
+              ORDER BY o.ocd_id, m.person_id, m.end_date;
+                ''')
+
+            cursor.execute(sql)
+
+            columns = [c[0] for c in cursor.description]
+            committees_tuple = namedtuple('Committee', columns, rename=True)
+
+            data = [committees_tuple(*r) for r in cursor]
+
+            groups = []
+
+            for key, group in groupby(data, lambda x: x[1]):
+                groups.append(list(group))
+
+            committees_list = groups
+            context["committees_list"] = committees_list
+
         return context
-
-    def get_queryset(self):
-        now = datetime.now()
-
-        committees = Organization.objects.filter(classification='committee').order_by('name').filter(memberships__isnull=False).filter(memberships__end_date__gte=now).distinct()
-
-        return committees
 
 class LACommitteeDetailView(CommitteeDetailView):
 
