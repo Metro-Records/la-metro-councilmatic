@@ -25,96 +25,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for committee in committees %}
+                        {% for committee in committees_list %}
                             <tr>
                                 <td align="left">
-                                    <a href="/committee/{{committee.slug}}/">{{ committee.name | committee_topic_only }}</a>
+                                    <a href="{% url 'lametro:committee' committee.0.slug %}">{{ committee.0.name | committee_topic_only }}</a>
                                 </td>
                                 <td align="left">
-                                    {% for chair in committee.chairs.all %}
-                                        {% if chair.end_date > today %}
-                                            {{ chair.person.link_html | safe }}<br />
+                                    {% for person in committee %}
+                                        {% if person.role == 'Chair' %}
+                                        <!-- "9" acts as a placeholder for "name", to account for duplicate fields in SQL call (line 64 of views.py) -->
+                                            {{ person.9 }}
                                         {% endif %}
                                     {% endfor %}
                                 </td>
-                                <td>{{ committee.memberships.all | length }}</td>
+                                <td>{{ committee | length }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-
-            {% if subcommittees %}
-            <h2>Subcommittees</h2>
-            <div class="table-responsive">
-                <table class='table' id='subcommittees'>
-                    <thead>
-                        <tr>
-                            <th>Subcommittee</th>
-                            <th>Chairperson(s)</th>
-                            <th>Members</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for committee in subcommittees %}
-                            {% if committee.memberships.all|length > 0 %}
-                            <tr>
-                                <td align="left">
-                                    <a href="/committee/{{committee.slug}}/">{{ committee.name | committee_topic_only}}</a>
-                                </td>
-                                <td align="left">
-                                    {% for chair in committee.chairs %}
-                                        {% if chair.end_date > today %}
-                                            {{ chair.person.link_html | safe }}<br />
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                                <td>{{ committee.memberships.all | length }}</td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-
-
-            {% if taskforces %}
-            <h2>Task Forces</h2>
-            <div class="table-responsive">
-                <table class='table' id='taskforces'>
-                    <thead>
-                        <tr>
-                            <th>Task Force</th>
-                            <th>Chairperson(s)</th>
-                            <th>Members</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for committee in taskforces %}
-                            {% if committee.memberships.all|length > 0 %}
-                            <tr>
-                                <td>
-                                    <a href="/committee/{{committee.slug}}/">{{ committee.name }}</a>
-                                </td>
-                                <td>
-                                    {% for chair in committee.chairs.all %}
-                                        {% if chair.end_date > today %}
-                                            {{ chair.person.link_html | safe }}<br />
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                                <td>{{ committee.memberships.all | length }}</td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-
         </div>
-
 
         <div class="col-sm-4">
             <div class='well info-blurb'>
@@ -123,9 +53,9 @@
                 {{ ABOUT_BLURBS.COMMITTEES | safe }}
 
                 {% if taskforces %}
-                <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees | length }} Committees, {{subcommittees | length }} Subcommittees and {{taskforces | length }} Task Forces.</p>
+                <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees_list | length }} Committees, {{subcommittees | length }} Subcommittees and {{taskforces | length }} Task Forces.</p>
                 {% else %}
-                <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees | length }} Committees{% if subcommittees %} and {{subcommittees | length }} Subcommittees{% endif %}.</p>
+                <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees_list | length }} Committees{% if subcommittees %} and {{subcommittees | length }} Subcommittees{% endif %}.</p>
                 {% endif %}
 
                 <p><a href='/about/#about-city-council'>More on how City Council works &raquo;</a></p>
