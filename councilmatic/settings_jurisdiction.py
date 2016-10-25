@@ -56,13 +56,13 @@ MAP_CONFIG = {
 }
 
 
-FOOTER_CREDITS = [
-    {
-        'name':     '', # e.g. 'DataMade'
-        'url':      '', # e.g. 'http://datamade.us'
-        'image':    'datamade-logo.png', # e.g. 'datamade-logo.png'
-    },
-]
+# FOOTER_CREDITS = [
+    # {
+    #     'name':     '', # e.g. 'DataMade'
+    #     'url':      '', # e.g. 'http://datamade.us'
+    #     'image':    '', # e.g. 'datamade-logo.png'
+    # },
+# ]
 
 # this is the default text in search bars
 SEARCH_PLACEHOLDER_TEXT = '' # e.g. 'police, zoning, O2015-7825, etc.'
