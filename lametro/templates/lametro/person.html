@@ -114,7 +114,9 @@
                         </span>
                     </a>
                 </li>
-                <li role="presentation" {% if request.GET.view == 'committees' %}class='active' {% endif %}>    <a href="/person/{{person.slug}}/?view=committees">
+                <li role="presentation" {% if request.GET.view == 'committees' %}class='active' {% endif %}>
+                    <a href="{% url 'lametro:person' person.slug %}?view=committees">
+
                         <span class="small-pill">
                             <i class='fa fa-fw fa-group'></i>
                             Committees
@@ -162,7 +164,7 @@
                                     <td>
                                         {{membership.organization.link_html|safe}}
                                     </td>
-                                    <td>Chairperson</td>
+                                    <td>{{membership.role}}</td>
                                 </tr>
                             {% endfor %}
                             {% for membership in person.member_role_memberships %}
@@ -170,7 +172,7 @@
                                     <td>
                                         {{membership.organization.link_html|safe}}
                                     </td>
-                                    <td>Member</td>
+                                    <td>{{membership.role}}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

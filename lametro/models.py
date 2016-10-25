@@ -158,3 +158,25 @@ class LAMetroPerson(Person):
             return leg
         return None
 
+    @property
+    def chair_role_memberships(self):
+        if hasattr(settings, 'COMMITTEE_CHAIR_TITLE'):
+            today = timezone.now().date()
+
+            return self.memberships.all().filter(end_date__gte=today,role__contains=settings.COMMITTEE_CHAIR_TITLE).filter( _organization__classification='committee').distinct('_organization')
+        else:
+            return []
+
+    @property
+    def member_role_memberships(self):
+        if hasattr(settings, 'COMMITTEE_MEMBER_TITLE'):
+            today = timezone.now().date()
+
+            return self.memberships.all().filter(end_date__gte=today,role__contains=settings.COMMITTEE_MEMBER_TITLE).filter( _organization__classification='committee').distinct('_organization')
+        else:
+            return []
+
+
+
+
+
