@@ -60,12 +60,10 @@ class LACommitteesView(CommitteesView):
 
             cursor.execute(sql)
 
-            columns = [c[0] for c in cursor.description]
-            committees_tuple = namedtuple('Committee', columns, rename=True)
-
-            data = [committees_tuple(*r) for r in cursor]
-
-            groups = []
+            columns           = [c[0] for c in cursor.description]
+            committees_tuple  = namedtuple('Committee', columns, rename=True)
+            data              = [committees_tuple(*r) for r in cursor]
+            groups            = []
 
             for key, group in groupby(data, lambda x: x[1]):
                 groups.append(list(group))

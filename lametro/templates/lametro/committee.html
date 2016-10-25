@@ -114,7 +114,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{ result.link_html | safe }}
+                                    {% if result.slug %}
+                                        <a href="{% url 'lametro:person' result.slug %}">{{ result.name }}</a>
+                                    {% else %}
+                                        {{ result.name }}
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if result.label %}
@@ -138,7 +142,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{ result.link_html | safe }}
+                                    {% if result.slug %}
+                                        <a href="{% url 'lametro:person' result.slug %}">{{ result.name }}</a>
+                                    {% else %}
+                                        {{ result.name }}
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if result.label %}
