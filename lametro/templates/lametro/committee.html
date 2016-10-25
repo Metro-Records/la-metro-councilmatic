@@ -92,8 +92,6 @@
 
             <hr />
             <h4><i class='fa fa-fw fa-group'></i> Committee Members ({{ objects_list|length }})</h4>
-
-
             <table class='table' id='council-members'>
                 <thead>
                     <tr>
@@ -105,62 +103,30 @@
                 </thead>
                 <tbody>
                     {% for result in objects_list %}
-                        {% with role=result.role|lower %}
-                            {% if "chair" in role %}
-                            <tr>
-                                <td>
-                                    <div class="thumbnail-square">
-                                        <img src='{{ result.ocd_id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
-                                    </div>
-                                </td>
-                                <td>
-                                    {% if result.slug %}
-                                        <a href="{% url 'lametro:person' result.slug %}">{{ result.name }}</a>
-                                    {% else %}
-                                        {{ result.name }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if result.label %}
-                                        {{ result.label | make_formatted_label | safe }}
-                                    {% else %}
-                                        None
-                                    {% endif %}
-
-                                </td>
-                                <td>
-                                    {{ result.role }}
-                                </td>
-                            </tr>
-                            {% endif %}
-
-                            {% if "chair" not in role %}
-                            <tr>
-                                <td>
-                                    <div class="thumbnail-square">
-                                        <img src='{{ result.ocd_id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
-                                    </div>
-                                </td>
-                                <td>
-                                    {% if result.slug %}
-                                        <a href="{% url 'lametro:person' result.slug %}">{{ result.name }}</a>
-                                    {% else %}
-                                        {{ result.name }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if result.label %}
-                                        {{ result.label | make_formatted_label | safe }}
-                                    {% else %}
-                                        None
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{ result.role }}
-                                </td>
-                            </tr>
-                            {% endif %}
-                        {% endwith %}
+                        <tr>
+                            <td data-order='{{ forloop.counter }}'>
+                                <div class="thumbnail-square">
+                                    <img src='{{ result.ocd_id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
+                                </div>
+                            </td>
+                            <td>
+                                {% if result.slug %}
+                                    <a href="{% url 'lametro:person' result.slug %}">{{ result.name }}</a>
+                                {% else %}
+                                    {{ result.name }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if result.label %}
+                                    {{ result.label | make_formatted_label | safe }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ result.role }}
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -181,7 +147,6 @@
             "searching": false,
             "bLengthChange": false,
             "paging": false,
-            "aaSorting": [ [3,'asc'] ],
             "aoColumns": [
                 { "bSortable": false },
                 null,

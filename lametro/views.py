@@ -105,6 +105,13 @@ class LACommitteeDetailView(CommitteeDetailView):
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
+              ORDER BY
+                CASE
+                  WHEN m.role='Chair' THEN 1
+                  WHEN m.role='Vice Chair' THEN 2
+                  WHEN m.role='Member' THEN 3
+                  ELSE 4
+                END
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
@@ -114,6 +121,8 @@ class LACommitteeDetailView(CommitteeDetailView):
             results_tuple = namedtuple('Result', columns)
 
             objects_list = [results_tuple(*r) for r in cursor]
+
+            print(objects_list)
 
             context['objects_list'] = objects_list
 
