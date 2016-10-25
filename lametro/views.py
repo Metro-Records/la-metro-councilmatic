@@ -42,8 +42,8 @@ class LACommitteesView(CommitteesView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['today'] = timezone.now().date()
-
+        # Want to remove AD-HOC?
+        # WHERE m.end_date::date > NOW()::date
         with connection.cursor() as cursor:
 
             sql = ('''
@@ -53,8 +53,9 @@ class LACommitteesView(CommitteesView):
               ON o.ocd_id=m.organization_id
               JOIN councilmatic_core_person as p
               ON p.ocd_id=m.person_id
-              WHERE m.end_date::date > NOW()::date
-              AND o.classification='committee'
+              WHERE o.classification='committee'
+              AND m.end_date::date > NOW()::date
+              OR o.name LIKE '%Ad-Hoc%'
               ORDER BY o.ocd_id, m.person_id, m.end_date;
                 ''')
 
