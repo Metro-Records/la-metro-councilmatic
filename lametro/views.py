@@ -42,8 +42,7 @@ class LACommitteesView(CommitteesView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Want to remove AD-HOC?
-        # WHERE m.end_date::date > NOW()::date
+
         with connection.cursor() as cursor:
 
             sql = ('''
@@ -123,6 +122,43 @@ class LACommitteeDetailView(CommitteeDetailView):
             objects_list = [results_tuple(*r) for r in cursor]
 
             context['objects_list'] = objects_list
+
+            sql = ('''
+              SELECT
+                p.*,
+                m.role,
+                mm.label
+              FROM councilmatic_core_membership AS m
+              LEFT JOIN (
+                SELECT
+                  person_id,
+                  m.role,
+                  pt.label
+                FROM councilmatic_core_membership AS m
+                JOIN councilmatic_core_post AS pt
+                  ON m.post_id=pt.ocd_id
+                WHERE m.organization_id = %s
+              ) AS mm
+                USING(person_id)
+              JOIN councilmatic_core_person AS p
+                ON m.person_id = p.ocd_id
+              WHERE m.organization_id = %s
+              ORDER BY
+                CASE
+                  WHEN m.role='Chair' THEN 1
+                  WHEN m.role='Vice Chair' THEN 2
+                  WHEN m.role='Member' THEN 3
+                  ELSE 4
+                END
+            ''')
+
+            cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
+
+            columns           = [c[0] for c in cursor.description]
+            committees_tuple  = namedtuple('Committee', columns, rename=True)
+            data              = [committees_tuple(*r) for r in cursor]
+
+            context['ad_hoc_list'] = data
 
         return context
 
