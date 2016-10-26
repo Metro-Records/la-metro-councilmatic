@@ -7,7 +7,7 @@
     <div class="row-fluid">
         <div class="col-sm-12">
             <br class="non-mobile-only"/>
-            <h1>City Council Committees</h1>
+            <h1>LA Metro Committees</h1>
             <hr />
         </div>
     </div>
@@ -45,7 +45,6 @@
                             <tr>
                                 <td align="left">
                                     <a href="{% url 'lametro:committee' committee.0.slug %}">{{ committee.0.name | committee_topic_only }}</a></br>
-                                    <small>Committee not active</small>
                                 </td>
                                 <td align="left">
                                     {% for person in committee %}
@@ -74,7 +73,7 @@
                 <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees_list | length }} Committees{% if subcommittees %} and {{subcommittees | length }} Subcommittees{% endif %}.</p>
                 {% endif %}
 
-                <p><a href='/about/#about-city-council'>More on how City Council works &raquo;</a></p>
+                <p><a href='/about/#about-la-metro'>More on how LA Metro works &raquo;</a></p>
             </div>
         </div>
     </div>
