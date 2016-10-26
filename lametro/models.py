@@ -62,7 +62,6 @@ class LAMetroBill(Bill):
     @property
     def full_text_doc_url(self):
         base_url = 'https://pic.datamade.us/lametro/document/'
-        # base_url = 'http://127.0.0.1:5000/lametro/document/'
 
         if self.documents.filter(document_type='V').all():
             legistar_doc_url = self.documents.filter(document_type='V').first().url
