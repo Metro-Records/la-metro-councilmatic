@@ -42,7 +42,6 @@ class LACommitteesView(CommitteesView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['today'] = timezone.now().date()
 
         with connection.cursor() as cursor:
 
@@ -53,19 +52,17 @@ class LACommitteesView(CommitteesView):
               ON o.ocd_id=m.organization_id
               JOIN councilmatic_core_person as p
               ON p.ocd_id=m.person_id
-              WHERE m.end_date::date > NOW()::date
-              AND o.classification='committee'
+              WHERE o.classification='committee'
+              AND m.end_date::date > NOW()::date
               ORDER BY o.ocd_id, m.person_id, m.end_date;
                 ''')
 
             cursor.execute(sql)
 
-            columns = [c[0] for c in cursor.description]
-            committees_tuple = namedtuple('Committee', columns, rename=True)
-
-            data = [committees_tuple(*r) for r in cursor]
-
-            groups = []
+            columns           = [c[0] for c in cursor.description]
+            committees_tuple  = namedtuple('Committee', columns, rename=True)
+            data              = [committees_tuple(*r) for r in cursor]
+            groups            = []
 
             for key, group in groupby(data, lambda x: x[1]):
                 groups.append(list(group))
@@ -107,6 +104,13 @@ class LACommitteeDetailView(CommitteeDetailView):
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
+              ORDER BY
+                CASE
+                  WHEN m.role='Chair' THEN 1
+                  WHEN m.role='Vice Chair' THEN 2
+                  WHEN m.role='Member' THEN 3
+                  ELSE 4
+                END
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
@@ -119,6 +123,43 @@ class LACommitteeDetailView(CommitteeDetailView):
 
             context['objects_list'] = objects_list
 
+            sql = ('''
+              SELECT
+                p.*,
+                m.role,
+                mm.label
+              FROM councilmatic_core_membership AS m
+              LEFT JOIN (
+                SELECT
+                  person_id,
+                  m.role,
+                  pt.label
+                FROM councilmatic_core_membership AS m
+                JOIN councilmatic_core_post AS pt
+                  ON m.post_id=pt.ocd_id
+                WHERE m.organization_id = %s
+              ) AS mm
+                USING(person_id)
+              JOIN councilmatic_core_person AS p
+                ON m.person_id = p.ocd_id
+              WHERE m.organization_id = %s
+              ORDER BY
+                CASE
+                  WHEN m.role='Chair' THEN 1
+                  WHEN m.role='Vice Chair' THEN 2
+                  WHEN m.role='Member' THEN 3
+                  ELSE 4
+                END
+            ''')
+
+            cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
+
+            columns           = [c[0] for c in cursor.description]
+            committees_tuple  = namedtuple('Committee', columns, rename=True)
+            data              = [committees_tuple(*r) for r in cursor]
+
+            context['ad_hoc_list'] = data
+
         return context
 
 class LAPersonDetailView(PersonDetailView):
@@ -127,6 +168,7 @@ class LAPersonDetailView(PersonDetailView):
     model = LAMetroPerson
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
         person = context['person']
 

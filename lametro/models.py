@@ -62,7 +62,6 @@ class LAMetroBill(Bill):
     @property
     def full_text_doc_url(self):
         base_url = 'https://pic.datamade.us/lametro/document/'
-        # base_url = 'http://127.0.0.1:5000/lametro/document/'
 
         if self.documents.filter(document_type='V').all():
             legistar_doc_url = self.documents.filter(document_type='V').first().url
@@ -143,11 +142,12 @@ class LAMetroPerson(Person):
         to sponsor much less legislation... with the most recent
         being from february - do they only meet at certain times?)
         '''
-        m = self.memberships.all()
+
+        m = self.memberships.all().filter( _organization__classification='committee').distinct('_organization')
+
         if m:
             oids = [o._organization_id for o in m]
-            # uncomment next line to omit board of directors from feed
-            oids.remove(Organization.objects.filter(name='Board of Directors')[0].ocd_id)
+
             leg = []
             for id_ in oids:
                 try:
@@ -157,4 +157,28 @@ class LAMetroPerson(Person):
                     pass
             return leg
         return None
+
+    @property
+    def chair_role_memberships(self):
+        if hasattr(settings, 'COMMITTEE_CHAIR_TITLE'):
+            # Keep comments, in case we want to remove AD-HOC.
+            # today = timezone.now().date()
+            # return self.memberships.all().filter(end_date__gte=today, role__contains=settings.COMMITTEE_CHAIR_TITLE).filter( _organization__classification='committee').distinct('_organization')
+            return self.memberships.all().filter(role__contains=settings.COMMITTEE_CHAIR_TITLE).filter( _organization__classification='committee').distinct('_organization')
+        else:
+            return []
+
+    @property
+    def member_role_memberships(self):
+        if hasattr(settings, 'COMMITTEE_MEMBER_TITLE'):
+            # Do we want to remove AD-HOC?
+            # today = timezone.now().date()
+            # return self.memberships.all().filter(end_date__gte=today, role__contains=settings.COMMITTEE_MEMBER_TITLE).filter( _organization__classification='committee').distinct('_organization')
+            return self.memberships.all().filter(role__contains=settings.COMMITTEE_MEMBER_TITLE).filter( _organization__classification='committee').distinct('_organization')
+        else:
+            return []
+
+
+
+
 

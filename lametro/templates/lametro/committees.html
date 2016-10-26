@@ -7,7 +7,7 @@
     <div class="row-fluid">
         <div class="col-sm-12">
             <br class="non-mobile-only"/>
-            <h1>City Council Committees</h1>
+            <h1>LA Metro Committees</h1>
             <hr />
         </div>
     </div>
@@ -41,6 +41,21 @@
                                 <td>{{ committee | length }}</td>
                             </tr>
                         {% endfor %}
+                        {% for committee in ad_hoc_list %}
+                            <tr>
+                                <td align="left">
+                                    <a href="{% url 'lametro:committee' committee.0.slug %}">{{ committee.0.name | committee_topic_only }}</a></br>
+                                </td>
+                                <td align="left">
+                                    {% for person in committee %}
+                                        {% if person.role == 'Chair' %}
+                                            {{ person.9 }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ committee | length }}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -58,7 +73,7 @@
                 <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees_list | length }} Committees{% if subcommittees %} and {{subcommittees | length }} Subcommittees{% endif %}.</p>
                 {% endif %}
 
-                <p><a href='/about/#about-city-council'>More on how City Council works &raquo;</a></p>
+                <p><a href='/about/#about-la-metro'>More on how LA Metro works &raquo;</a></p>
             </div>
         </div>
     </div>
@@ -75,7 +90,7 @@
             "searching": false,
             "bLengthChange": false,
             "paging": false,
-            "aaSorting": [ [0,'asc'] ],
+            "aaSorting": [ [0,'desc'] ],
             "aoColumns": [
                 null,
                 null,
