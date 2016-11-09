@@ -3,9 +3,13 @@ from haystack import indexes
 from lametro.models import LAMetroBill
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
-    
+
     def get_model(self):
         return LAMetroBill
-    
+
     def prepare_controlling_body(self, obj):
         return obj.controlling_body
+
+    def prepare_sponsorships(self, obj):
+        return [sponsorship.person for sponsorship in obj.sponsorships.all()]
+
