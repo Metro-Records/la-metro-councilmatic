@@ -58,40 +58,6 @@ class LAMetroBill(Bill):
 
         return self.documents.filter(document_type='V').all()
 
-    # LA METRO CUSTOMIZATION
-    @property
-    def full_text_doc_url(self):
-        base_url = 'https://pic.datamade.us/lametro/document/'
-
-        full_str = self.ocr_full_text
-        array = full_str.split("..")
-        for a in array:
-            print(a)
-            print("$$$")
-            arr = a.split( )
-            if len(arr) != 0:
-                arr.pop(0)
-
-            # print(arr)
-
-            string = " ".join(arr)
-            print(string)
-            # print("$$$$")
-
-        html = re.sub("[.]{2}", "</br></br>", full_str)
-        return(html)
-        # return self.ocr_full_text
-        # print(self.ocr_full_text)
-
-        # if self.documents.filter(document_type='V').all():
-        #     legistar_doc_url = self.documents.filter(document_type='V').first().url
-        #     doc_url = '{0}?filename={2}&document_url={1}'.format(base_url,
-        #                                                          legistar_doc_url,
-        #                                                          self.identifier)
-        #     return doc_url
-        # else:
-        #     return None
-
     @property
     def controlling_body(self):
         """
