@@ -21,12 +21,13 @@ class LABillDetail(BillDetailView):
     template_name = 'lametro/legislation.html'
 
     def get_context_data(self, **kwargs):
-          context = super(BillDetailView, self).get_context_data(**kwargs)
+          context = super().get_context_data(**kwargs)
           context['actions'] = self.get_object().actions.all().order_by('-order')
           context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
           item = context['legislation']
           context['sponsorships'] = item.sponsorships.all().distinct('_person')
 
+          print(context['sponsorships'])
           return context
 
 class LABoardMembersView(CouncilMembersView):
@@ -207,10 +208,16 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
         extra = super(CouncilmaticFacetedSearchView, self).extra_context()
         extra['request'] = self.request
-        extra['facets'] = self.results.facet_counts()
 
-        print("helloooo")
-        print(extra['facets'])
+        # Remove 'controlling_body' from facets.
+        facets_lst = self.results.facet_counts()
+
+        for key, value in facets_lst.items():
+            if key == 'fields':
+                del value['controlling_body']
+                facets_lst['fields'] = value
+
+                extra['facets'] = facets_lst
 
         q_filters = ''
         url_params = [(p, val) for (p, val) in self.request.GET.items(
@@ -239,7 +246,5 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         extra['current_council_members'] = {
             p.current_member.person.name: p.label for p in Post.objects.all() if p.current_member
         }
-
-
 
         return extra

@@ -1,5 +1,6 @@
 from councilmatic_core.haystack_indexes import BillIndex
 from haystack import indexes
+from councilmatic_core.models import Action
 from lametro.models import LAMetroBill
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
@@ -8,8 +9,8 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return LAMetroBill
 
     def prepare_controlling_body(self, obj):
-        return obj.controlling_body
+        return None
 
     def prepare_sponsorships(self, obj):
-        return [sponsorship.person for sponsorship in obj.sponsorships.all()]
-
+        actions = Action.objects.filter(_bill_id=obj.ocd_id)
+        return [action.organization for action in actions]
