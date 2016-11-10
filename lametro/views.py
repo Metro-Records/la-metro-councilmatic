@@ -83,6 +83,14 @@ class LACommitteeDetailView(CommitteeDetailView):
 
         committee = context['committee']
 
+        if getattr(settings, 'COMMITTEE_DESCRIPTIONS', None):
+            print(settings.COMMITTEE_DESCRIPTIONS)
+            print(committee.slug)
+            description = settings.COMMITTEE_DESCRIPTIONS.get(committee.slug)
+            context['committee_description'] = description
+
+        print(context['committee_description'])
+
         with connection.cursor() as cursor:
 
             sql = ('''
