@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 from itertools import groupby
+import urllib
 
 from django.conf import settings
 from django.shortcuts import render
@@ -8,7 +9,7 @@ from django.db import connection
 from django.db.models.functions import Lower
 from django.utils import timezone
 from collections import namedtuple
-from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView
+from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson
 
@@ -20,12 +21,13 @@ class LABillDetail(BillDetailView):
     template_name = 'lametro/legislation.html'
 
     def get_context_data(self, **kwargs):
-          context = super(BillDetailView, self).get_context_data(**kwargs)
+          context = super().get_context_data(**kwargs)
           context['actions'] = self.get_object().actions.all().order_by('-order')
           context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
           item = context['legislation']
           context['sponsorships'] = item.sponsorships.all().distinct('_person')
 
+          print(context['sponsorships'])
           return context
 
 class LABoardMembersView(CouncilMembersView):
@@ -199,3 +201,50 @@ class LAPersonDetailView(PersonDetailView):
         # in django-councilmatic)
 
         return context
+
+
+class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
+    def extra_context(self):
+
+        extra = super(CouncilmaticFacetedSearchView, self).extra_context()
+        extra['request'] = self.request
+
+        # Remove 'controlling_body' from facets.
+        facets_lst = self.results.facet_counts()
+
+        for key, value in facets_lst.items():
+            if key == 'fields':
+                del value['controlling_body']
+                facets_lst['fields'] = value
+
+                extra['facets'] = facets_lst
+
+        q_filters = ''
+        url_params = [(p, val) for (p, val) in self.request.GET.items(
+        ) if p != 'page' and p != 'selected_facets' and p != 'amp' and p != '_']
+        selected_facet_vals = self.request.GET.getlist('selected_facets')
+        search_term = self.request.GET.get('q')
+        for facet_val in selected_facet_vals:
+            url_params.append(('selected_facets', facet_val))
+        if url_params:
+            q_filters = urllib.parse.urlencode(url_params)
+
+        extra['q_filters'] = q_filters
+
+        selected_facets = {}
+
+        for val in self.request.GET.getlist("selected_facets"):
+            if val:
+                [k, v] = val.split('_exact:', 1)
+                try:
+                    selected_facets[k].append(v)
+                except KeyError:
+                    selected_facets[k] = [v]
+
+        extra['selected_facets'] = selected_facets
+
+        extra['current_council_members'] = {
+            p.current_member.person.name: p.label for p in Post.objects.all() if p.current_member
+        }
+
+        return extra

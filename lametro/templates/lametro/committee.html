@@ -119,7 +119,7 @@
                                 </td>
                                 <td>
                                     {% if result.label %}
-                                        {{ result.label | make_formatted_label | safe }}
+                                        {{ result.label | format_label | safe }}
                                     {% else %}
                                         None
                                     {% endif %}
@@ -147,7 +147,7 @@
                                 </td>
                                 <td>
                                     {% if result.label %}
-                                        {{ result.label | make_formatted_label | safe }}
+                                        {{ result.label | format_label | safe }}
                                     {% else %}
                                         None
                                     {% endif %}

@@ -58,20 +58,6 @@ class LAMetroBill(Bill):
 
         return self.documents.filter(document_type='V').all()
 
-    # LA METRO CUSTOMIZATION
-    @property
-    def full_text_doc_url(self):
-        base_url = 'https://pic.datamade.us/lametro/document/'
-
-        if self.documents.filter(document_type='V').all():
-            legistar_doc_url = self.documents.filter(document_type='V').first().url
-            doc_url = '{0}?filename={2}&document_url={1}'.format(base_url,
-                                                                 legistar_doc_url,
-                                                                 self.identifier)
-            return doc_url
-        else:
-            return None
-
     @property
     def controlling_body(self):
         """
