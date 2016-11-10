@@ -257,10 +257,17 @@ ABOUT_BLURBS = {
     "COUNCIL_MEMBERS":  "",
 }
 
-# these override the headshots that are automatically populated
-# the keys should match a person's slug
 MANUAL_HEADSHOTS = {
-    # e.g. 'emanuel-rahm': {'source': 'cityofchicago.org', 'image': 'manual-headshots/emanuel-rahm.jpg' },
+    'ara-najarian-a9c58166e1da': {'source': '', 'image': 'manual-headshots/ara-najarian.jpg' },
+    'diane-dubois-69f4999a6bff': {'source': '', 'image': 'manual-headshots/diane-dubois.jpg'},
+    'jacquelyn-dupont-walker-851703b7b19d': {'source': '', 'image': 'manual-headshots/jacquelyn-dupont-walker.jpg'},
+    'eric-garcetti-55692d5b2974': {'source': '', 'image': 'manual-headshots/eric-garcetti.jpg'},
+    'mark-ridley-thomas-0a007970f029': {'source': '', 'image': 'manual-headshots/mark-ridley-thomas.jpg'},
+    'michael-antonovich-cf1d45635033': {'source': '', 'image': 'manual-headshots/michael-antonovich.jpg'},
+    'don-knabe-bff1c136c0d9': {'source': '', 'image': 'manual-headshots/don-knabe.jpg'},
+    'sheila-kuehl-9c9abd7a6ff8': {'source': '', 'image': 'manual-headshots/sheila-kuehl.jpg'},
+    'james-butts-dc85ae14f195': {'source': '', 'image': 'manual-headshots/james-butts.jpg'},
+    'hilda-l-solis-b1533a264870': {'source': '', 'image': 'manual-headshots/hilda-l-solis.jpg'}
 }
 
 # notable positions that aren't district representatives, e.g. mayor & city clerk
