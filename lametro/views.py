@@ -25,7 +25,9 @@ class LABillDetail(BillDetailView):
           context['actions'] = self.get_object().actions.all().order_by('-order')
           context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
           item = context['legislation']
-          context['sponsorships'] = item.sponsorships.all().distinct('_person')
+          actions = Action.objects.filter(_bill_id=item.ocd_id)
+          organization_lst = [action.organization for action in actions]
+          context['sponsorships'] = set(organization_lst)
 
           return context
 
@@ -83,12 +85,8 @@ class LACommitteeDetailView(CommitteeDetailView):
         committee = context['committee']
 
         if getattr(settings, 'COMMITTEE_DESCRIPTIONS', None):
-            print(settings.COMMITTEE_DESCRIPTIONS)
-            print(committee.slug)
             description = settings.COMMITTEE_DESCRIPTIONS.get(committee.slug)
             context['committee_description'] = description
-
-        print(context['committee_description'])
 
         with connection.cursor() as cursor:
 
