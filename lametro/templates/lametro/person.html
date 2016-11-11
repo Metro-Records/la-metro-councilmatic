@@ -1,5 +1,6 @@
 {% extends "base_with_margins.html" %}
 {% load extras %}
+{% load lametro_extras %}
 {% load staticfiles %}
 {% block title %}{{ person.name }}{% endblock %}
 
@@ -128,9 +129,9 @@
             {% if request.GET.view == 'bills' or request.GET.view == None %}
                 <h3>
                     Sponsored legislation
-                    <small><a href='/search/?q=&selected_facets=sponsorships_exact:{{person.name}}'>View all <i class='fa fa-fw fa-chevron-right'></i></a></small>
+                    <!-- We cannot link to "View all sponsored legislation," since the haystack search will not account for something like this, e.g., everything from board of directors, everything from planning and programming...it just shows legislation, in which both committees are sponsors. -->
                 </h3>
-                <p>Legislation sponsored by committees to which {{person.name}} belongs.</p><br/>
+                <p>Most recent legislation sponsored by committees to which {{person.name}} belongs.</p><br/>
 
                 {% for legislation in sponsored_legislation %}
                     {% include "partials/legislation_item.html" %}
@@ -138,11 +139,12 @@
 
                 <hr />
                 <p class="non-mobile-only">
-                    <a class='btn btn-primary' href='/search/?q=&selected_facets=sponsorships_exact:{{person.name}}'>View all legislation sponsored by committees to which {{person.name}} belongs<i class='fa fa-fw fa-chevron-right'></i></a>
+                    <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more about committees to which {{person.name}} belongs and view all legislation they sponsor.<i class='fa fa-fw fa-chevron-right'></i></a>
                 </p>
                 <p class="mobile-only">
-                    <a class='btn btn-primary' href='/search/?q=&selected_facets=sponsorships_exact:{{person.name}}'>All sponsored legislation<i class='fa fa-fw fa-chevron-right'></i></a>
+                    <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more<i class='fa fa-fw fa-chevron-right'></i></a>
                 </p>
+
             {% endif %}
 
             {% if request.GET.view == 'committees' %}
