@@ -27,7 +27,6 @@ class LABillDetail(BillDetailView):
           item = context['legislation']
           context['sponsorships'] = item.sponsorships.all().distinct('_person')
 
-          print(context['sponsorships'])
           return context
 
 class LABoardMembersView(CouncilMembersView):

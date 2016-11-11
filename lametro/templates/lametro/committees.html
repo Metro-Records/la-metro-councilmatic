@@ -67,11 +67,7 @@
 
                 {{ ABOUT_BLURBS.COMMITTEES | safe }}
 
-                {% if taskforces %}
-                <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees_list | length }} Committees, {{subcommittees | length }} Subcommittees and {{taskforces | length }} Task Forces.</p>
-                {% else %}
-                <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees_list | length }} Committees{% if subcommittees %} and {{subcommittees | length }} Subcommittees{% endif %}.</p>
-                {% endif %}
+                <p>{{CITY_COUNCIL_NAME}} is currently composed of {{committees_list | length }} Committees{% if subcommittees %} and {{subcommittees | length }} Subcommittees{% endif %}. Committees set policy and discuss matters related to the transit system in Los Angeles County.</p>
 
                 <p><a href='/about/#about-la-metro'>More on how LA Metro works &raquo;</a></p>
             </div>
