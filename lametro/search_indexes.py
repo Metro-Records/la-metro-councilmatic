@@ -14,3 +14,20 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     def prepare_sponsorships(self, obj):
         actions = Action.objects.filter(_bill_id=obj.ocd_id)
         return [action.organization for action in actions]
+
+    def prepare_last_action_date(self, obj):
+        actions = Action.objects.filter(_bill_id=obj.ocd_id)
+
+        try:
+          actions = actions.reverse()[0].date
+        except:
+          actions
+
+
+        # dates = [action.date for action in actions]
+        print(actions)
+
+        # from datetime import datetime, timedelta
+        # if not obj.last_action_date:
+        #     return datetime.now().replace(tzinfo=app_timezone) - timedelta(days=36500)
+        # return obj.last_action_date

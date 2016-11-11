@@ -16,7 +16,11 @@ sqs = SearchQuerySet().facet('bill_type')\
                       .facet('inferred_status')\
                       .facet('topics')\
                       .facet('legislative_session')\
-                      .highlight()
+                      .order_by('legislative_session')\
+                      .highlight()\
+
+
+                    # sqs = SearchQuerySet().models(YourModel).order_by('-in_stock', 'score')
 
 patterns = ([
     url(r'^admin/', include(admin.site.urls)),
