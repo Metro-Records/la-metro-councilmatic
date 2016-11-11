@@ -275,3 +275,5 @@ MANUAL_HEADSHOTS = {
 EXTRA_TITLES = {
     # e.g. 'emanuel-rahm': 'Mayor',
 }
+
+USING_NOTIFICATIONS = False
