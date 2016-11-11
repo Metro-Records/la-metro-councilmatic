@@ -200,6 +200,8 @@ class LAPersonDetailView(PersonDetailView):
         else:
             context['sponsored_legislation'] = []
 
+        committees_lst = [action._organization.name for action in person.committee_sponsorships]
+        context['committees_lst'] = list(set(committees_lst))
         # TO-DO
         # resolve last_action_date conflict -- should i code in here,
         # override the template, or change the method in django-councilmatic
