@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.views.generic.base import RedirectView
 from django.conf import settings
 
-from haystack.query import SearchQuerySet
+from haystack.query import SearchQuerySet, EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
 from lametro.views import LAMetroIndexView, LABillDetail, LABoardMembersView, \
@@ -15,12 +15,13 @@ sqs = SearchQuerySet().facet('bill_type')\
                       .facet('controlling_body')\
                       .facet('inferred_status')\
                       .facet('topics')\
-                      .facet('legislative_session')\
-                      .order_by('legislative_session')\
+                      .facet('legislative_session', sort='index')\
                       .highlight()\
+                      # .order_by('-last_action_date')\
+                      # .order_by('-bill_type')\
 
 
-                    # sqs = SearchQuerySet().models(YourModel).order_by('-in_stock', 'score')
+
 
 patterns = ([
     url(r'^admin/', include(admin.site.urls)),

@@ -19,15 +19,8 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         actions = Action.objects.filter(_bill_id=obj.ocd_id)
 
         try:
-          actions = actions.reverse()[0].date
+          action = actions.reverse()[0].date
         except:
-          actions
+          action = ''
 
-
-        # dates = [action.date for action in actions]
-        print(actions)
-
-        # from datetime import datetime, timedelta
-        # if not obj.last_action_date:
-        #     return datetime.now().replace(tzinfo=app_timezone) - timedelta(days=36500)
-        # return obj.last_action_date
+        return action
