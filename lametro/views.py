@@ -208,31 +208,17 @@ class LAPersonDetailView(PersonDetailView):
 
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
-    # def build_form(self, form_kwargs=None):
-    #     if form_kwargs is None:
-    #         form_kwargs = {}
-
-    #     # This way the form can always receive a list containing zero or more
-    #     # facet expressions:
-    #     print("ahhhhh")
-    #     print(self.request.GET.getlist('sort_by'))
-    #     # form_kwargs['sort_by'] = self.request.GET.getlist("sort_by")
-    #     form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
-
-    #     return super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs)
-
-
     def build_form(self, form_kwargs=None):
 
         form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
 
-        # For faceted search.
+        # For faceted search functionality.
         if form_kwargs is None:
             form_kwargs = {}
 
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
 
-        # For other search.
+        # For remaining search functionality.
         data = None
         kwargs = {
             'load_all': self.load_all,
@@ -260,12 +246,6 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             kwargs['searchqueryset'] = sqs
             # To sort results, with select_facets.
             try:
-                # if 'date' in dataDict['sort_by']:
-                #     kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
-                # if 'title' in dataDict['sort_by']:
-                #     kwargs['searchqueryset'] = sqs.order_by('bill_type')
-                # if 'date' in dataDict['sort_by'] and 'title' in dataDict['sort_by']:
-                #     kwargs['searchqueryset'] = sqs.order_by('-last_action_date').order_by('bill_type')
                 lst = []
                 for el in dataDict['sort_by']:
                     # Do this, because sometimes the 'el' may include a '?' from the URL
@@ -275,32 +255,9 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                         lst.append('bill_type')
 
                 sqs = sqs.order_by(*lst)
-                    # if 'date' in el and 'title' in el:
-                    #     kwargs['searchqueryset'] = sqs.order_by('-last_action_date', 'bill_type')
-                print("hereeee")
-                print(lst)
-                kwargs['searchqueryset'] = sqs
 
+                kwargs['searchqueryset'] = sqs
             except:
                 kwargs['searchqueryset'] = sqs
 
         return self.form_class(data, **kwargs)
-
-    # def extra_context(self):
-    #     extra = super().extra_context()
-    #     extra['request'] = self.request
-
-    #     # Remove 'controlling_body' from facets.
-    #     facets_lst = self.results.facet_counts()
-
-    #     for key, value in facets_lst.items():
-    #         if key == 'fields':
-    #             del value['controlling_body']
-    #             facets_lst['fields'] = value
-
-    #             extra['facets'] = facets_lst
-
-    #     if 'sort_by' in self.request.GET:
-    #         facets_lst['sort_by'] = 'date'
-
-    #     return extra
