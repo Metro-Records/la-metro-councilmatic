@@ -238,25 +238,19 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             data = self.request.GET
             dataDict = dict(data)
 
-        # To sort all results, without selected_facets.
-        if 'sort_by' in self.request.GET:
-            kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
-
         if self.searchqueryset is not None:
             kwargs['searchqueryset'] = sqs
-            # To sort results, with select_facets.
+
             try:
-                lst = []
                 for el in dataDict['sort_by']:
                     # Do this, because sometimes the 'el' may include a '?' from the URL
                     if 'date' in el:
-                        lst.append('-last_action_date')
+                        kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
                     if 'title' in el:
-                        lst.append('bill_type')
+                        kwargs['searchqueryset'] = sqs.order_by('bill_type')
+                    if 'relevance' in el:
+                        kwargs['searchqueryset'] = sqs
 
-                sqs = sqs.order_by(*lst)
-
-                kwargs['searchqueryset'] = sqs
             except:
                 kwargs['searchqueryset'] = sqs
 
