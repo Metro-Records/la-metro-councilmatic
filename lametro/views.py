@@ -3,6 +3,8 @@ from datetime import datetime
 from itertools import groupby
 import urllib
 
+from haystack.query import SearchQuerySet
+
 from django.conf import settings
 from django.shortcuts import render
 from django.db import connection
@@ -200,58 +202,56 @@ class LAPersonDetailView(PersonDetailView):
 
         committees_lst = [action._organization.name for action in person.committee_sponsorships]
         context['committees_lst'] = list(set(committees_lst))
-        # TO-DO
-        # resolve last_action_date conflict -- should i code in here,
-        # override the template, or change the method in django-councilmatic
-        # to be consistent w other attribute names? (currently overriden in
-        # template, but last_action is referenced in several other places
-        # in django-councilmatic)
 
         return context
 
 
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
-    def extra_context(self):
 
-        extra = super(CouncilmaticFacetedSearchView, self).extra_context()
-        extra['request'] = self.request
+    def build_form(self, form_kwargs=None):
 
-        # Remove 'controlling_body' from facets.
-        facets_lst = self.results.facet_counts()
+        form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
 
-        for key, value in facets_lst.items():
-            if key == 'fields':
-                del value['controlling_body']
-                facets_lst['fields'] = value
+        # For faceted search functionality.
+        if form_kwargs is None:
+            form_kwargs = {}
 
-                extra['facets'] = facets_lst
+        form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
 
-        q_filters = ''
-        url_params = [(p, val) for (p, val) in self.request.GET.items(
-        ) if p != 'page' and p != 'selected_facets' and p != 'amp' and p != '_']
-        selected_facet_vals = self.request.GET.getlist('selected_facets')
-        search_term = self.request.GET.get('q')
-        for facet_val in selected_facet_vals:
-            url_params.append(('selected_facets', facet_val))
-        if url_params:
-            q_filters = urllib.parse.urlencode(url_params)
-
-        extra['q_filters'] = q_filters
-
-        selected_facets = {}
-
-        for val in self.request.GET.getlist("selected_facets"):
-            if val:
-                [k, v] = val.split('_exact:', 1)
-                try:
-                    selected_facets[k].append(v)
-                except KeyError:
-                    selected_facets[k] = [v]
-
-        extra['selected_facets'] = selected_facets
-
-        extra['current_council_members'] = {
-            p.current_member.person.name: p.label for p in Post.objects.all() if p.current_member
+        # For remaining search functionality.
+        data = None
+        kwargs = {
+            'load_all': self.load_all,
         }
 
-        return extra
+        sqs = SearchQuerySet().facet('bill_type')\
+                      .facet('sponsorships', sort='index')\
+                      .facet('inferred_status')\
+                      .facet('topics')\
+                      .facet('legislative_session', sort='index')\
+                      .highlight()\
+
+        if form_kwargs:
+            kwargs.update(form_kwargs)
+
+        if len(self.request.GET):
+            data = self.request.GET
+            dataDict = dict(data)
+
+        if self.searchqueryset is not None:
+            kwargs['searchqueryset'] = sqs
+
+            try:
+                for el in dataDict['sort_by']:
+                    # Do this, because sometimes the 'el' may include a '?' from the URL
+                    if 'date' in el:
+                        kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
+                    if 'title' in el:
+                        kwargs['searchqueryset'] = sqs.order_by('bill_type')
+                    if 'relevance' in el:
+                        kwargs['searchqueryset'] = sqs
+
+            except:
+                kwargs['searchqueryset'] = sqs
+
+        return self.form_class(data, **kwargs)

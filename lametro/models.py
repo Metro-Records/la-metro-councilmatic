@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-from councilmatic_core.models import Bill, Event, Post, Person, Organization
+from councilmatic_core.models import Bill, Event, Post, Person, Organization, Action
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -60,11 +60,18 @@ class LAMetroBill(Bill):
 
     @property
     def controlling_body(self):
-        """
-        grabs the organization that's currently 'responsible' for a bill
-        """
 
         return self.from_organization
+
+    def get_last_action_date(self):
+        actions = Action.objects.filter(_bill_id=self.ocd_id)
+
+        try:
+          action = actions.reverse()[0].date
+        except:
+          action = ''
+
+        return action
 
 class LAMetroPost(Post):
 

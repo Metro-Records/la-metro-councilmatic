@@ -14,3 +14,13 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     def prepare_sponsorships(self, obj):
         actions = Action.objects.filter(_bill_id=obj.ocd_id)
         return [action.organization for action in actions]
+
+    def prepare_last_action_date(self, obj):
+        actions = Action.objects.filter(_bill_id=obj.ocd_id)
+
+        try:
+          action = actions.reverse()[0].date
+        except:
+          action = ''
+
+        return action

@@ -3,24 +3,29 @@ from django.contrib import admin
 from django.views.generic.base import RedirectView
 from django.conf import settings
 
-from haystack.query import SearchQuerySet
+from haystack.query import SearchQuerySet, EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
 from lametro.views import LAMetroIndexView, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, LAMetroCouncilmaticFacetedSearchView
 from lametro.feeds import *
 
-sqs = SearchQuerySet().facet('bill_type')\
-                      .facet('sponsorships', sort='index')\
-                      .facet('controlling_body')\
-                      .facet('inferred_status')\
-                      .facet('topics')\
-                      .facet('legislative_session')\
-                      .highlight()
+# sqs = SearchQuerySet().facet('bill_type')\
+#                       .facet('sponsorships', sort='index')\
+#                       .facet('controlling_body')\
+#                       .facet('inferred_status')\
+#                       .facet('topics')\
+#                       .facet('legislative_session', sort='index')\
+#                       .highlight()\
+                      # .order_by('-last_action_date')\
+                      # .order_by('-bill_type')\
+
+
+
 
 patterns = ([
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^search/', LAMetroCouncilmaticFacetedSearchView(searchqueryset=sqs,
+    url(r'^search/', LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet,
                                        form_class=CouncilmaticSearchForm), name='search'),
     url(r'^$', LAMetroIndexView.as_view(), name='index'),
     url(r'^about/$', LAMetroAboutView.as_view(), name='about'),
