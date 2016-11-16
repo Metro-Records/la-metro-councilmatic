@@ -21,8 +21,6 @@ from lametro.feeds import *
                       # .order_by('-bill_type')\
 
 
-
-
 patterns = ([
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet,
