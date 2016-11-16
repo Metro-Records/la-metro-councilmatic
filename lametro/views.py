@@ -209,7 +209,6 @@ class LAPersonDetailView(PersonDetailView):
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
     def build_form(self, form_kwargs=None):
-
         form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
 
         # For faceted search functionality.
