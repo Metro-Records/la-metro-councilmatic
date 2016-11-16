@@ -268,7 +268,11 @@ MANUAL_HEADSHOTS = {
     'don-knabe-bff1c136c0d9': {'source': '', 'image': 'manual-headshots/don-knabe.jpg'},
     'sheila-kuehl-9c9abd7a6ff8': {'source': '', 'image': 'manual-headshots/sheila-kuehl.jpg'},
     'james-butts-dc85ae14f195': {'source': '', 'image': 'manual-headshots/james-butts.jpg'},
-    'hilda-l-solis-b1533a264870': {'source': '', 'image': 'manual-headshots/hilda-l-solis.jpg'}
+    'hilda-l-solis-b1533a264870': {'source': '', 'image': 'manual-headshots/hilda-l-solis.jpg'},
+    'carrie-bowen-42b40b4f42e1': {'source': '', 'image': 'manual-headshots/carrie-bowen.jpg'},
+    'paul-krekorian-6946f7e6401b': {'source': '', 'image': 'manual-headshots/paul-krekorian.jpg'},
+    'mike-bonin-00ef9b2a3527': {'source': '', 'image': 'manual-headshots/mike-bonin.jpg'},
+    'john-fasana-f9f830cb255d': {'source': '', 'image': 'manual-headshots/john-fasana.jpg'},
 }
 
 # notable positions that aren't district representatives, e.g. mayor & city clerk
