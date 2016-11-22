@@ -263,7 +263,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             'load_all': self.load_all,
         }
 
-        sqs = SearchQuerySet().facet('bill_type')\
+        sqs = SearchQuerySet().facet('bill_type', sort='index')\
                       .facet('sponsorships', sort='index')\
                       .facet('inferred_status')\
                       .facet('topics')\
@@ -284,9 +284,17 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                 for el in dataDict['sort_by']:
                     # Do this, because sometimes the 'el' may include a '?' from the URL
                     if 'date' in el:
-                        kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
+                        try:
+                            dataDict['ascending']
+                            kwargs['searchqueryset'] = sqs.order_by('last_action_date')
+                        except:
+                            kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
                     if 'title' in el:
-                        kwargs['searchqueryset'] = sqs.order_by('bill_type')
+                        try:
+                            dataDict['descending']
+                            kwargs['searchqueryset'] = sqs.order_by('-sort_name')
+                        except:
+                            kwargs['searchqueryset'] = sqs.order_by('sort_name')
                     if 'relevance' in el:
                         kwargs['searchqueryset'] = sqs
 
@@ -294,3 +302,5 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                 kwargs['searchqueryset'] = sqs
 
         return self.form_class(data, **kwargs)
+
+
