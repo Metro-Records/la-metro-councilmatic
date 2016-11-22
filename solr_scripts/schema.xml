@@ -183,6 +183,8 @@
 
     <field name="friendly_name" type="text_en" indexed="true" stored="true" multiValued="false" />
 
+    <field name="sort_name" type="string" indexed="true" stored="true" multiValued="false" />
+
     <field name="identifier" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="inferred_status" type="text_en" indexed="true" stored="true" multiValued="false" />
