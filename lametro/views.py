@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from itertools import groupby
 import urllib
+import json
 
 from haystack.query import SearchQuerySet
 
@@ -10,6 +11,7 @@ from django.shortcuts import render
 from django.db import connection
 from django.db.models.functions import Lower
 from django.utils import timezone
+from django.utils.text import slugify
 from collections import namedtuple
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
@@ -38,6 +40,45 @@ class LABoardMembersView(CouncilMembersView):
 
     def get_queryset(self):
         return LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(LABoardMembersView, self).get_context_data(**kwargs)
+        context['seo'] = self.get_seo_blob()
+
+        context['map_geojson'] = None
+
+        if settings.MAP_CONFIG:
+            map_geojson = {
+                'type': 'FeatureCollection',
+                'features': []
+            }
+
+            for post in self.object_list:
+                if post.shape:
+                    council_member = "Vacant"
+                    detail_link = ""
+                    if post.current_members:
+                        for membership in post.current_members:
+                            council_member = membership.person.name
+                            detail_link = membership.person.slug
+
+                    feature = {
+                        'type': 'Feature',
+                        'geometry': json.loads(post.shape),
+                        'properties': {
+                            'district': post.label,
+                            'council_member': council_member,
+                            'detail_link': '/person/' + detail_link,
+                            'select_id': 'polygon-{}'.format(slugify(post.label)),
+                        }
+                    }
+
+                    map_geojson['features'].append(feature)
+
+            context['map_geojson'] = json.dumps(map_geojson)
+
+        return context
+
 
 class LAMetroAboutView(AboutView):
     template_name = 'lametro/about.html'
