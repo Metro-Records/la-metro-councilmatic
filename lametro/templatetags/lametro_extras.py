@@ -20,6 +20,11 @@ def format_label(label):
     return formatted_label
 
 @register.filter
+def format_district(label):
+    label_parts = label.split(', ')
+    return label_parts[-1]
+
+@register.filter
 def format_full_text(full_text):
     txt_as_array = full_text.split("..")
     results = ""

@@ -121,6 +121,13 @@ class LAMetroPerson(Person):
         return None
 
     @property
+    def current_district(self):
+        m = self.latest_council_membership
+        if m and m.post:
+            return m.post.label
+        return ''
+
+    @property
     def latest_council_seat(self):
         pass
 

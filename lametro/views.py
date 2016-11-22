@@ -11,6 +11,7 @@ from django.shortcuts import render
 from django.db import connection
 from django.db.models.functions import Lower
 from django.utils import timezone
+from django.utils.text import slugify
 from collections import namedtuple
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
@@ -53,13 +54,13 @@ class LABoardMembersView(CouncilMembersView):
             }
 
             for post in self.object_list:
-                print(post.shape)
                 if post.shape:
                     council_member = "Vacant"
                     detail_link = ""
-                    if post.current_member:
-                        council_member = post.current_member.person.name
-                        detail_link = post.current_member.person.slug
+                    if post.current_members:
+                        for membership in post.current_members:
+                            council_member = membership.person.name
+                            detail_link = membership.person.slug
 
                     feature = {
                         'type': 'Feature',

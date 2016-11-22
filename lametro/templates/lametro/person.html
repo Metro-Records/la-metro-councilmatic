@@ -51,8 +51,8 @@
             {% if map_geojson %}
                 <hr />
                 <h4>
-                    {% if person.current_council_seat %}
-                        {{ person.current_council_seat }} map
+                    {% if person.current_district %}
+                        {{ person.current_district | format_district }} map
                     {% endif %}
                 </h4>
                 <div id='map-detail'></div>
