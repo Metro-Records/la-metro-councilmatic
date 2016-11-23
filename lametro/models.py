@@ -171,9 +171,6 @@ class LAMetroPerson(Person):
     @property
     def member_role_memberships(self):
         if hasattr(settings, 'COMMITTEE_MEMBER_TITLE'):
-            # Do we want to remove AD-HOC?
-            # today = timezone.now().date()
-            # return self.memberships.all().filter(end_date__gte=today, role__contains=settings.COMMITTEE_MEMBER_TITLE).filter( _organization__classification='committee').distinct('_organization')
             return self.memberships.all().filter(role__contains=settings.COMMITTEE_MEMBER_TITLE).filter( _organization__classification='committee').distinct('_organization')
         else:
             return []

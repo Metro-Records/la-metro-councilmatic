@@ -2,19 +2,20 @@
 
 {% if upcoming_board_meeting %}
 
+    <h2>
+        <span class="non-mobile-only"><i class="fa fa-university" aria-hidden="true"></i></span>
+        Next Board Meeting
+    </h2>
 
-            <h2>
-                <span class="non-mobile-only"><i class="fa fa-university" aria-hidden="true"></i></span>
-                Next Board Meeting
-            </h2>
-
+    <div class="panel panel-default">
+        <div class="panel-body">
             <div class="row">
               <br/>
-              <div class="col-xs-4">
-                <p>
+              <div class="col-xs-8">
+                <h4>
                   {{ upcoming_board_meeting.link_html | safe }}<br/>
                   <span class="small text-muted">{{upcoming_board_meeting.description}}</span>
-                </p>
+                </h4>
 
                 <p class="small text-muted">
                     <i class="fa fa-fw fa-calendar-o"></i> {{upcoming_board_meeting.start_time | date:"D n/d/Y"}}<br/>
@@ -25,14 +26,12 @@
               </div>
             </div>
 
-
             {% include "partials/agenda_items.html" %}
 
-
-
+        </div>
+    </div>
 
 {% endif %}
-
 
 
 {% if upcoming_committee_meetings %}

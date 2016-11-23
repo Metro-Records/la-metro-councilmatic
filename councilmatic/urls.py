@@ -10,16 +10,6 @@ from lametro.views import LAMetroIndexView, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, LAMetroCouncilmaticFacetedSearchView
 from lametro.feeds import *
 
-# sqs = SearchQuerySet().facet('bill_type')\
-#                       .facet('sponsorships', sort='index')\
-#                       .facet('controlling_body')\
-#                       .facet('inferred_status')\
-#                       .facet('topics')\
-#                       .facet('legislative_session', sort='index')\
-#                       .highlight()\
-                      # .order_by('-last_action_date')\
-                      # .order_by('-bill_type')\
-
 patterns = ([
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet,

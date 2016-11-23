@@ -29,10 +29,6 @@ class LAMetroIndexView(IndexView):
 
         return extra
 
-
-
-
-
 class LABillDetail(BillDetailView):
     model = LAMetroBill
     template_name = 'lametro/legislation.html'

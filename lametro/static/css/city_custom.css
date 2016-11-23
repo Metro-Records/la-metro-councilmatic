@@ -12,10 +12,10 @@
           rgba(211, 211, 211, 0.3)
         ),
         url('../images/la-metro-regional-rail-map.gif');
-}
-
-#section-events {
-    margin-bottom: 10px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 328px;
 }
 
 #section-intro {
@@ -24,9 +24,14 @@
 }
 
 #section-events {
-    /*background-color: #DBEEFA;*/
+    background-color: #F8F8F8;
+    padding-bottom: 20px;
 }
 
 #map-screenshot{
     width: 90%;
+}
+
+.panel-body {
+    padding-top: 0px;
 }
