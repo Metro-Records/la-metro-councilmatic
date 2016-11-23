@@ -83,7 +83,7 @@ IMAGES = {
 
 # this is the name of the meetings where the entire city council meets
 # as stored in legistar
-CITY_COUNCIL_MEETING_NAME = 'Board Meeting'
+CITY_COUNCIL_MEETING_NAME = 'Board of Directors'
 
 # this is the name of the role of committee chairs, e.g. 'CHAIRPERSON' or 'Chair'
 # as stored in legistar

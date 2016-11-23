@@ -7,7 +7,7 @@
             <div class='col-sm-10 col-sm-offset-1'>
                 <br/>
                 <h2>
-                    <h1>{{ CITY_COUNCIL_NAME }} Board Members</h1>
+                    <h1>LA Metropolitan Transportation Authority</h1>
                 </h2>
                 <br/>
                 <p class="h3">
@@ -27,7 +27,59 @@
         </div>
     </div>
 
-    {% if next_council_meeting or upcoming_committee_meetings %}
+
+    <div class="container-fluid" id="section-intro">
+        <div class="row-fluid">
+            <div class='col-sm-10 col-sm-offset-1'>
+                <div class="divider"></div>
+
+                <div class='row'>
+                    <div class='col-sm-8'>
+                        <p>The <a href="https://www.metro.net/" target="_blank">Los Angeles County Metropolitan Transportation Authority</a>, commonly known as Metro, consists of several <a href="{% url 'lametro:council_members' %}">Board Members</a>, who set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County.</p>
+
+                        <p>
+                            <strong>LA Metro Councilmatic</strong> tracks all things related to LA Metro:
+                            <ul>
+                                <li>
+                                    the <a href="{% url 'lametro:search' %}">legislation</a> introduced and passed
+                                </li>
+                                <li>
+                                    its various <a href="{% url 'lametro:committees' %}">committees</a> and the <a href="{% url 'events' %}">meetings</a> they hold
+                                </li>
+                                <li>
+                                    the <a href="{% url 'lametro:council_members' %}">board members</a> themselves
+                                </li>
+                            </ul>
+                        </p>
+                        <p>
+                            <span class="non-mobile-only">
+                                Read more about how <a href="{% url 'lametro:about' %}">LA Metro works &raquo;</a>
+                            </span>
+                            <span class="mobile-only">
+                                <a href="{% url 'lametro:about' %}">More on how LA Metro works &raquo;</a>
+                            </span>
+
+                        </p>
+                    </div>
+
+                    <div class= 'col-sm-4 desktop-only'>
+
+                        <p>
+                            <a href="{% url 'lametro:council_members' %}" target="_blank"><img id="map-screenshot" src='/static/images/screenshot-placeholder.png' class='img-responsive img-rounded' title='LA Metro Districts' alt="Districts to which board members belong" /></a>
+                            <em>Districts to which board members belong</em>
+                        </p>
+
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+    {% if upcoming_committee_meetings or upcoming_board_meeting %}
     <div class="container-fluid" id="section-events">
         <div class="row-fluid">
             <div class='col-sm-10 col-sm-offset-1'>
@@ -48,4 +100,33 @@
     </div>
     {% endif %}
 
+{% endblock %}
+
+
+{% block extra_js %}
+    <script>
+
+        function collapseActivity(){
+            $(".list-item:gt(4)").hide();
+            $("#more-list-items").show();
+            $("#fewer-list-items").hide();
+        }
+        function expandActivity(){
+            $(".list-item:gt(4)").show();
+            $("#more-list-items").hide();
+            $("#fewer-list-items").show();
+        }
+
+        collapseActivity();
+
+        $("#more-list-items").click(function() {
+            expandActivity();
+            return false;
+        });
+        $("#fewer-list-items").click(function() {
+            collapseActivity();
+            return false;
+        });
+
+    </script>
 {% endblock %}
