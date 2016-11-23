@@ -78,7 +78,8 @@
         </div>
     </div>
 
-    {% if next_council_meeting or upcoming_committee_meetings %}
+
+    {% if upcoming_committee_meetings or upcoming_board_meeting %}
     <div class="container-fluid" id="section-events">
         <div class="row-fluid">
             <div class='col-sm-10 col-sm-offset-1'>
@@ -99,4 +100,59 @@
     </div>
     {% endif %}
 
+{% endblock %}
+
+
+{% block extra_js %}
+    <script>
+
+        function collapseActivity(item){
+            $(".list-item-" + item + ":gt(4)").hide();
+            $("#more-list-items-" + item).show();
+            $("#fewer-list-items-" + item).hide();
+        }
+        function expandActivity(item){
+            $(".list-item-" + item + ":gt(4)").show();
+            $("#more-list-items-" + item).hide();
+            $("#fewer-list-items-" + item).show();
+        }
+
+        collapseActivity("1");
+        collapseActivity("2");
+        collapseActivity("3");
+
+        $("#more-list-items-1").click(function() {
+            expandActivity("1");
+            return false;
+        });
+        $("#fewer-list-items-1").click(function() {
+            collapseActivity("1");
+            return false;
+        });
+
+
+        $("#more-list-items-2").click(function() {
+            expandActivity("2");
+            return false;
+        });
+        $("#fewer-list-items-2").click(function() {
+            collapseActivity("2");
+            return false;
+        });
+
+
+        $("#more-list-items-3").click(function() {
+            expandActivity("3");
+            return false;
+        });
+        $("#fewer-list-items-3").click(function() {
+            collapseActivity("3");
+            return false;
+        });
+
+
+        // for reference purposes
+        console.log( "OCD ID: {{committee.ocd_id}}" )
+
+    </script>
 {% endblock %}

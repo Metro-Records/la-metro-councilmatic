@@ -3,6 +3,7 @@ from datetime import datetime
 from itertools import groupby
 import urllib
 import json
+from datetime import date, timedelta, datetime
 
 from haystack.query import SearchQuerySet
 
@@ -15,10 +16,22 @@ from django.utils.text import slugify
 from collections import namedtuple
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
-from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson
+from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
 
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
+
+    event_model = LAMetroEvent
+
+    def extra_context(self):
+        extra = {}
+        extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
+
+        return extra
+
+
+
+
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill

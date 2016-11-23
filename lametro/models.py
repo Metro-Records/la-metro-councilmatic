@@ -178,7 +178,15 @@ class LAMetroPerson(Person):
         else:
             return []
 
+class LAMetroEvent(Event):
 
+    class Meta:
+        proxy = True
 
+    @classmethod
+    def upcoming_board_meeting(cls):
+        return cls.objects.filter(start_time__gt=timezone.now())\
+                  .filter(name__icontains="Board of Directors")\
+                  .order_by('start_time').first()
 
 
