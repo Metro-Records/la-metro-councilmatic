@@ -1,0 +1,68 @@
+<div class="row">
+  <br/>
+  <div class="col-xs-4">
+    <small>
+      <i class="fa fa-fw fa-calendar-o"></i>
+      <span class="non-mobile-only">
+        {{event.start_time | date:"D"}}
+      </span>
+      {{event.start_time | date:"m/d"}}
+
+      <span class="non-mobile-only">
+        <i class="fa fa-fw fa-clock-o"></i>
+      </span>
+      {{event.start_time| date:"g:ia"}}<br/>
+      <span class="desktop-only text-muted">
+        {{event.location_name}}<br />
+      </span>
+    </small>
+  </div>
+  <div class="col-xs-8">
+    <p>
+      {{ event.link_html | safe }}<br/>
+      <span class="small text-muted">{{event.description}}</span>
+    </p>
+  </div>
+</div>
+
+{% if event.clean_agenda_items %}
+<div class="row">
+  <div class="col-xs-8">
+
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#{{ forloop.counter }}" aria-expanded="true" aria-controls="{{ forloop.counter }}">
+                View agenda
+              </a>
+            </h4>
+          </div>
+
+            <div id="{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">
+
+              <p>
+                <ol>
+                    {% for agenda_item in event.clean_agenda_items %}
+                        <li>
+                            {% if agenda_item.related_bills.all %}
+                                <a href="/legislation/{{agenda_item.related_bills.first.bill.slug}}/">
+                                    {{agenda_item.related_bills.first.bill.friendly_name}}
+                                </a>
+                                <br/>
+                            {% endif %}
+                            {{agenda_item.description}}
+                        </li>
+                    {% endfor %}
+                </ol>
+              </p>
+              </div>
+            </div>
+
+        </div>
+      </div>
+
+  </div>
+</div>
+{% endif %}

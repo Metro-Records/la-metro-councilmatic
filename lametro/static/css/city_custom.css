@@ -2,7 +2,7 @@
 /* anything in this file will override custom.css in django-councilmatic */
 
 .no-wrap {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 #section-photo {
@@ -15,5 +15,18 @@
 }
 
 #section-events {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+#section-intro {
+    line-height: 1.6em;
+    padding-top: 1.6em;
+}
+
+#section-events {
+    /*background-color: #DBEEFA;*/
+}
+
+#map-screenshot{
+    width: 90%;
 }
