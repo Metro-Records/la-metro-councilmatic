@@ -45,6 +45,8 @@ class LABillDetail(BillDetailView):
           return context
 
 class LABoardMembersView(CouncilMembersView):
+    template_name = 'lametro/board_members.html'
+
     model = LAMetroPost
 
     def get_queryset(self):

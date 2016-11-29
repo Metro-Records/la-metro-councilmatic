@@ -63,6 +63,7 @@
         }
     function onEachFeature(feature, layer) {
         if (feature.properties) {
+            console.log(layer)
 
             var center = layer.getBounds().getCenter();
 
@@ -93,12 +94,13 @@
                     else {
                         e.target.setStyle({'fillOpacity': 0.2, 'color': "{{MAP_CONFIG.color}}"});
                     }
-                })
+                });
 
                 layer.on('tableover', function(e){
                     console.log(e)
                     infoBox.update(e.target.feature.properties);
-                    e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"})
+                    // e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"})
+                    e.target.setStyle({'fillOpacity': 0.6, 'color': "yellow"})
                 });
 
                 layer.on('tableout', function(e){
@@ -153,8 +155,11 @@
               }))}).addTo(map);
 
               // find the district here
-              search_result        = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], districts);
-              search_result_sector = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], sectors);
+              var search_result        = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], districts);
+              var search_result_sector = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], sectors);
+
+              var districtNumber = "Nothing to search"
+              var sectorName     = "Nothing to search"
 
               if ((search_result.length > 0) || (search_result_sector.length > 0)) {
                 map.removeLayer(districts);
@@ -165,19 +170,20 @@
                     search_result.addTo(map);
                     map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
-                    if (council_member_table) {
-                        council_member_table.search("\\b" + search_result.feature.properties.district + "\\b", true, false).draw();
-                    }
+                    districtNumber = convertToSearchTerm(search_result.feature.properties.district)
                 }
 
                 if (search_result_sector.length > 0) {
                     search_result = search_result_sector[0]
                     search_result.addTo(map);
-                    map.fitBounds(search_result.getBounds(), {padding: [50,50]});
+                    map.fitBounds(search_result.getBounds(), {padding: [50,50]});ß
 
-                    if (council_member_table) {
-                        council_member_table.search("\\b" + search_result.feature.properties.district + "\\b", true, false).draw();
-                    }
+                    sectorName = convertToSearchTerm(search_result.feature.properties.district)
+                }
+
+                if (council_member_table) {
+                    // search the table with the OR operator
+                    council_member_table.search("^(?=.*?(" + districtNumber + "|" + sectorName + ")).*?", true, false).draw();
                 }
 
               }
@@ -237,6 +243,12 @@
     function convertToPlainString(text) {
         if (text == undefined) return '';
         return decodeURIComponent(text);
+    }
+
+    // formats the district property as a searchable term
+    function convertToSearchTerm(string) {
+        termArray = string.split(", ")
+        return termArray.slice(-1).pop()
     }
 
     function initialize(){
