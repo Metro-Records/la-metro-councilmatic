@@ -51,7 +51,7 @@
     }
 
     infoBox.clear = function(){
-      this._div.innerHTML = '<h4>{{CITY_NAME_SHORT}} Council {{CITY_VOCAB.MUNICIPAL_DISTRICT}}s</h4><p><i class="fa fa-hand-pointer-o fa-fw"></i><span class="non-mobile-only">Hover</span><span class="mobile-only">Tap a ward</span> for details</p>';
+      this._div.innerHTML = '<h4>{{CITY_NAME_SHORT}} {{CITY_VOCAB.MUNICIPAL_DISTRICT}}s</h4><p><i class="fa fa-hand-pointer-o fa-fw"></i><span class="non-mobile-only">Hover</span><span class="mobile-only">Tap a ward</span> for details</p>';
     }
 
     infoBox.addTo(map);
@@ -63,8 +63,6 @@
         }
     function onEachFeature(feature, layer) {
         if (feature.properties) {
-            console.log(layer)
-
             var center = layer.getBounds().getCenter();
 
             if (map){
@@ -79,9 +77,10 @@
                 layer.on('mouseover', function(e){
                     infoBox.update(e.target.feature.properties);
                     if (e.target.feature.properties.select_id.includes("sector")) {
-                        e.target.setStyle({'fillOpacity': 0.6, 'color': "yellow"});
+                        e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
                     }
                     else {
+                        layer.bringToFront()
                         e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
                     }
                 });
@@ -89,24 +88,35 @@
                 layer.on('mouseout', function(e){
                     infoBox.clear();
                     if (e.target.feature.properties.select_id.includes("sector")) {
-                        e.target.setStyle({'fillOpacity': 0.6, 'color': "green"});
+                        e.target.setStyle({'fillOpacity': 0.4, 'color': "#08519c"});
                     }
                     else {
-                        e.target.setStyle({'fillOpacity': 0.2, 'color': "{{MAP_CONFIG.color}}"});
+                        layer.bringToBack()
+                        e.target.setStyle({'fillOpacity': 0.4, 'color': "#3182bd"});
                     }
                 });
 
                 layer.on('tableover', function(e){
-                    console.log(e)
                     infoBox.update(e.target.feature.properties);
-                    // e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"})
-                    e.target.setStyle({'fillOpacity': 0.6, 'color': "yellow"})
+                    if (e.target.feature.properties.select_id.includes("sector")) {
+                        e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
+                    }
+                    else {
+                        layer.bringToFront()
+                        e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
+                    }
                 });
 
                 layer.on('tableout', function(e){
                     infoBox.clear();
                     map.closePopup(e.target.layerPopup);
-                    e.target.setStyle({'fillOpacity': 0.2, 'color': "{{MAP_CONFIG.color}}"});
+                    if (e.target.feature.properties.select_id.includes("sector")) {
+                        e.target.setStyle({'fillOpacity': 0.4, 'color': "#08519c"});
+                    }
+                    else {
+                        layer.bringToBack()
+                        e.target.setStyle({'fillOpacity': 0.4, 'color': "#3182bd"});
+                    }
                 });
             }
         }
@@ -115,10 +125,10 @@
 
     districts = L.geoJson({{ map_geojson|safe }}, {
         style: {
-                "color": "{{MAP_CONFIG.color}}",
+                "color": "#3182bd",
                 "weight": 1,
                 "opacity": 1,
-                "fillOpacity": .2
+                "fillOpacity": 0.4,
             },
         onEachFeature: onEachFeature
     });
@@ -126,10 +136,10 @@
 
     sectors = L.geoJson({{ map_geojson_sectors|safe }}, {
         style: {
-                "color": "green",
+                "color": "#08519c",
                 "weight": 1,
                 "opacity": 1,
-                "fillOpacity": .2
+                "fillOpacity": 0.4,
             },
         onEachFeature: onEachFeature
     });
@@ -170,15 +180,15 @@
                     search_result.addTo(map);
                     map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
-                    districtNumber = convertToSearchTerm(search_result.feature.properties.district)
+                    var districtNumber = convertToSearchTerm(search_result.feature.properties.district)
                 }
 
                 if (search_result_sector.length > 0) {
                     search_result = search_result_sector[0]
                     search_result.addTo(map);
-                    map.fitBounds(search_result.getBounds(), {padding: [50,50]});ß
+                    map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
-                    sectorName = convertToSearchTerm(search_result.feature.properties.district)
+                    var sectorName = convertToSearchTerm(search_result.feature.properties.district)
                 }
 
                 if (council_member_table) {

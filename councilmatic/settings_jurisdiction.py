@@ -47,14 +47,11 @@ LEGISTAR_URL = ''           # e.g. 'https://chicago.legistar.com/Legislation.asp
 
 BOUNDARY_SET = ['la-metro-supervisory-districts', 'la-metro-committee-districts']
 
-
-# this is for configuring a map of council districts using data from the posts
-# set MAP_CONFIG = None to hide map
 MAP_CONFIG = {
     'center': [34.0522, -118.2437],
     'zoom': 10,
     'color': "#54afe8",
-    'highlight_color': "#C00000",
+    'highlight_color': '#eb6864'
 }
 
 # FOOTER_CREDITS = [
