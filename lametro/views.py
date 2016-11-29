@@ -45,6 +45,8 @@ class LABillDetail(BillDetailView):
           return context
 
 class LABoardMembersView(CouncilMembersView):
+    template_name = 'lametro/board_members.html'
+
     model = LAMetroPost
 
     def get_queryset(self):
@@ -57,10 +59,16 @@ class LABoardMembersView(CouncilMembersView):
         context['map_geojson'] = None
 
         if settings.MAP_CONFIG:
+
             map_geojson = {
-                'type': 'FeatureCollection',
-                'features': []
-            }
+                            'type': 'FeatureCollection',
+                            'features': []
+                          }
+
+            map_geojson_sectors = {
+                                    'type': 'FeatureCollection',
+                                    'features': []
+                                  }
 
             for post in self.object_list:
                 if post.shape:
@@ -79,11 +87,16 @@ class LABoardMembersView(CouncilMembersView):
                             'council_member': council_member,
                             'detail_link': '/person/' + detail_link,
                             'select_id': 'polygon-{}'.format(slugify(post.label)),
-                        }
+                        },
                     }
 
-                    map_geojson['features'].append(feature)
+                    if 'council_district' in post.division_ocd_id:
+                        map_geojson['features'].append(feature)
 
+                    if 'la_metro_sector' in post.division_ocd_id:
+                        map_geojson_sectors['features'].append(feature)
+
+            context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
             context['map_geojson'] = json.dumps(map_geojson)
 
         return context
