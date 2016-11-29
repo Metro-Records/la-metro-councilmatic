@@ -13,7 +13,7 @@
             <p>Councilmatic helps you:</p>
             <ul>
                 <li>
-                    Keep up with what your local representatives is up to
+                    Keep up with what your local representatives are up to
                 </li>
                 <li>
                     See the schedule of public events
@@ -66,6 +66,9 @@
         <br/><br/>
         <h3>What is {{ CITY_COUNCIL_NAME }}, and how does it work?</h3>
         <p>The <a href="https://www.metro.net/" target="_blank">Los Angeles County Metropolitan Transportation Authority</a>, or Metro as it is commonly known, was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County.  It supports the transportation improvement programs of the 88 cities and 16 municipal transit operators in Los Angeles County, as well as LA's paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p>
+
+        <p>The <a href="{% url 'lametro:council_members' %}">Board of Directors</a> is the governing body of LA Metro, with representation from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and an ex-oficio member representing the Governor. Each Metro Board Chair serves a one year term, from July 1st to June 30th, and rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members. The full Board typically meets once a month to review presented budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.
+        </p>
 
         <h4>Types of legislation</h4>
         <p>Below are the categories of legislative activity in {{ CITY_COUNCIL_NAME }}:</p>
@@ -131,7 +134,7 @@
 
         <h3>Contact us</h3>
 
-        <p>Have a question about information you were seeking to find, or explanations of how {{ CITY_COUNCIL_NAME }} works? Send us an email <a href='mailto:info@datamade.us'>info@datamade.us</a>.</p>
+        <p>Have a question about information you were seeking to find, or explanations of how LA Metro’s legislation process works? Send us an email <a href="mailto:boardreport@metro.net">boardreport@metro.net</a>.</p>
 
         <p>Developers: if you notice a bug, file an issue on our <a href='https://github.com/datamade/la-metro-councilmatic/issues' target="_blank">issue tracker</a>!</p>
 
@@ -145,7 +148,7 @@
 
         <h3>Bring Councilmatic to your city!</h3>
 
-        <p>We are committeed to spreading the <a href="https://www.councilmatic.org/" target="_blank">Councilmatic platform</a> to every city so everyone can stay informed on the actions of their local city council.</p>
+        <p>We are committeed to spreading the <a href="https://www.councilmatic.org/" target="_blank">Councilmatic platform</a> to every city so everyone can stay informed on the actions of their local government.</p>
 
         <p>
             If you're interested in bringing Councilmatic to your city, sent us an email at <a href="mailto:info@councilmatic.org">info@councilmatic.org</a>!
@@ -161,9 +164,9 @@
         <h3>Credits</h3>
         <p><strong>Councilmatic</strong> was originally created by <a href='https://twitter.com/mjumbewu' target="_blank">Mjumbe Poe</a> for <a href='http://philly.councilmatic.org' target="_blank">Philidelphia</a>, during his time as a 2011 <a href='http://www.codeforamerica.org/' target="_blank">Code For America</a> Fellow. It was the first fully-developed open data site for municipal legislation in the United States.</p>
 
-        <!-- <p><strong>Chicago Councilmatic</strong> was <a href='http://derekeder.com/blog/keeping-tabs-on-your-local-city-council-with-councilmatic/' target="_blank">first rolled out in June 2013</a> by Derek Eder and Forest Gregg under <a href='http://opencityapps.org' target="_blank">Open City</a>.</p>
+        <!-- <p><strong>LA Metro Councilmatic</strong> was <a href='http://derekeder.com/blog/keeping-tabs-on-your-local-city-council-with-councilmatic/' target="_blank">first rolled out in June 2013</a> by Derek Eder and Forest Gregg under <a href='http://opencityapps.org' target="_blank">Open City</a>.</p> -->
 
-        <h4>Photo credits</h4>
+        <!-- <h4>Photo credits</h4>
 
         <ul class="small plain-list text-muted">
             <li>Chicago City Hall: Chicago Ideas</li>

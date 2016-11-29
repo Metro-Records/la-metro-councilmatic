@@ -8,13 +8,14 @@
 
 <script>
 
-    var locationScope   = '{{CITY_NAME}}'.toLowerCase();
-    var currentPinpoint = null;
-    var centerMark      = null;
-    var districts       = null;
-    var sectors         = null;
-    var search_result   = null;
-    var geocoder        = new google.maps.Geocoder();
+    var locationScope    = '{{CITY_NAME}}'.toLowerCase();
+    var currentPinpoint  = null;
+    var centerMark       = null;
+    var districts        = null;
+    var sectors          = null;
+    var search_result    = null;
+    var search_result_sector = null;
+    var geocoder         = new google.maps.Geocoder();
 
     var map = L.map('map', {
         scrollWheelZoom: false,
@@ -92,7 +93,7 @@
                     }
                     else {
                         layer.bringToBack()
-                        e.target.setStyle({'fillOpacity': 0.4, 'color': "#3182bd"});
+                        e.target.setStyle({'fillOpacity': 0.3, 'color': "#3182bd"});
                     }
                 });
 
@@ -115,7 +116,7 @@
                     }
                     else {
                         layer.bringToBack()
-                        e.target.setStyle({'fillOpacity': 0.4, 'color': "#3182bd"});
+                        e.target.setStyle({'fillOpacity': 0.3, 'color': "#3182bd"});
                     }
                 });
             }
@@ -128,7 +129,7 @@
                 "color": "#3182bd",
                 "weight": 1,
                 "opacity": 1,
-                "fillOpacity": 0.4,
+                "fillOpacity": 0.3,
             },
         onEachFeature: onEachFeature
     });
@@ -165,8 +166,8 @@
               }))}).addTo(map);
 
               // find the district here
-              var search_result        = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], districts);
-              var search_result_sector = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], sectors);
+              search_result        = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], districts);
+              search_result_sector = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], sectors);
 
               var districtNumber = "Nothing to search"
               var sectorName     = "Nothing to search"
@@ -213,9 +214,11 @@
 
     function clearSearch(){
         if (search_result)
-          map.removeLayer(search_result);
+            map.removeLayer(search_result);
+        if (search_result_sector)
+            map.removeLayer(search_result_sector);
         if (centerMark)
-          map.removeLayer(centerMark);
+            map.removeLayer(centerMark);
 
         council_member_table.search('').draw();
     }
