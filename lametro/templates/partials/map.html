@@ -35,6 +35,9 @@
     var layer = new L.Google('ROADMAP', {mapOptions: {styles: google_map_styles}});
     map.addLayer(layer);
 
+    var searchResultsLayer = new L.LayerGroup();
+    searchResultsLayer.addTo(map);
+
     var infoBox = L.control({'position': 'topright'});
 
     infoBox.onAdd = function() {
@@ -178,7 +181,10 @@
 
                 if (search_result.length > 0) {
                     search_result = search_result[0]
-                    search_result.addTo(map);
+
+                    // search_result.addTo(map);
+                    search_result.addTo(searchResultsLayer);
+
                     map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
                     var districtNumber = convertToSearchTerm(search_result.feature.properties.district)
@@ -186,7 +192,10 @@
 
                 if (search_result_sector.length > 0) {
                     search_result = search_result_sector[0]
-                    search_result.addTo(map);
+
+                    // search_result.addTo(map);
+                    search_result.addTo(searchResultsLayer);
+
                     map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
                     var sectorName = convertToSearchTerm(search_result.feature.properties.district)
@@ -213,10 +222,9 @@
     }
 
     function clearSearch(){
-        if (search_result)
-            map.removeLayer(search_result);
-        if (search_result_sector)
-            map.removeLayer(search_result_sector);
+        if (search_result || search_result_sector) {
+            searchResultsLayer.clearLayers();
+        }
         if (centerMark)
             map.removeLayer(centerMark);
 
