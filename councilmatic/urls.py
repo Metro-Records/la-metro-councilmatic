@@ -8,10 +8,13 @@ from haystack.query import SearchQuerySet, EmptySearchQuerySet
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
 from lametro.views import LAMetroIndexView, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, LAMetroCouncilmaticFacetedSearchView
+from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 from lametro.feeds import *
 
 patterns = ([
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^search/rss/',
+        CouncilmaticFacetedSearchFeed(), name='councilmatic_search_feed'),
     url(r'^search/', LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet,
                                        form_class=CouncilmaticSearchForm), name='search'),
     url(r'^$', LAMetroIndexView.as_view(), name='index'),
