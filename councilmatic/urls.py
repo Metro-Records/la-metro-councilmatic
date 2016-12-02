@@ -7,7 +7,7 @@ from haystack.query import SearchQuerySet, EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
 from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
-from lametro.views import LAMetroIndexView, LABillDetail, LABoardMembersView, \
+from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, LAMetroCouncilmaticFacetedSearchView
 from lametro.feeds import *
 
@@ -24,7 +24,7 @@ patterns = ([
     url(r'^committee/(?P<slug>[^/]+)/$', LACommitteeDetailView.as_view(), name='committee'),
     url(r'^board-members/$', LABoardMembersView.as_view(), name='council_members'),
     url(r'^person/(?P<slug>[^/]+)/$', LAPersonDetailView.as_view(), name='person'),
-    url(r'^event/(?P<slug>[^/]+)/$', EventDetailView.as_view(), name='event'),
+    url(r'^event/(?P<slug>[^/]+)/$', LAMetroEventDetail.as_view(), name='event'),
     url(r'^person/(?P<slug>[^/]+)/rss/$', LAMetroPersonDetailFeed(), name='person_feed'),
 ], settings.APP_NAME)
 

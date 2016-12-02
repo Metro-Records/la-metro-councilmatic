@@ -185,5 +185,3 @@ class LAMetroEvent(Event):
         return cls.objects.filter(start_time__gt=timezone.now())\
                   .filter(name__icontains="Board of Directors")\
                   .order_by('start_time').first()
-
-

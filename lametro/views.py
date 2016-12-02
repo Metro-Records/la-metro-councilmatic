@@ -44,6 +44,9 @@ class LABillDetail(BillDetailView):
 
           return context
 
+class LAMetroEventDetail(EventDetailView):
+    template_name = 'lametro/event.html'
+
 class LABoardMembersView(CouncilMembersView):
     template_name = 'lametro/board_members.html'
 
