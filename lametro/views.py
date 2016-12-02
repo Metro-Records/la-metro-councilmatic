@@ -105,6 +105,14 @@ class LABoardMembersView(CouncilMembersView):
 class LAMetroAboutView(AboutView):
     template_name = 'lametro/about.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['timestamp'] = datetime.now(app_timezone).strftime('%m%d%Y%s')
+
+        return context
+
+
 class LACommitteesView(CommitteesView):
     template_name = 'lametro/committees.html'
 

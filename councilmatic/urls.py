@@ -19,7 +19,7 @@ patterns = ([
                                        form_class=CouncilmaticSearchForm), name='search'),
     url(r'^$', LAMetroIndexView.as_view(), name='index'),
     url(r'^about/$', LAMetroAboutView.as_view(), name='about'),
-    url(r'^legislation/(?P<slug>[^/]+)/$', LABillDetail.as_view(), name='bill_detail'),
+    url(r'^board-report/(?P<slug>[^/]+)/$', LABillDetail.as_view(), name='bill_detail'),
     url(r'^committees/$', LACommitteesView.as_view(), name='committees'),
     url(r'^committee/(?P<slug>[^/]+)/$', LACommitteeDetailView.as_view(), name='committee'),
     url(r'^board-members/$', LABoardMembersView.as_view(), name='council_members'),
