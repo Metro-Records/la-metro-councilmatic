@@ -5,7 +5,7 @@
               {% if agenda_item.description|lower != 'page break' %}
               <li class="list-item small">
                   {% if agenda_item.related_bills.all %}
-                      <a href="/legislation/{{agenda_item.related_bills.first.bill.slug}}/">
+                      <a href="/board-report/{{agenda_item.related_bills.first.bill.slug}}/">
                           {{agenda_item.related_bills.first.bill.friendly_name}}
                       </a>
                       <br/>

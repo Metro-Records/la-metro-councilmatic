@@ -5,16 +5,16 @@
 ###############################
 
 OCD_CITY_COUNCIL_ID = 'ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
-CITY_COUNCIL_NAME = 'LA Metro'
+CITY_COUNCIL_NAME = 'Metro'
 OCD_JURISDICTION_ID = 'ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority'
 LEGISLATIVE_SESSIONS = ['2014', '2015', '2016'] # the last one in this list should be the current legislative session
-CITY_NAME = 'LA Metro'
-CITY_NAME_SHORT = 'LA Metro'
+CITY_NAME = 'Metro'
+CITY_NAME_SHORT = 'Metro'
 
 # VOCAB SETTINGS FOR FRONT-END DISPLAY
 CITY_VOCAB = {
     'MUNICIPAL_DISTRICT': 'District',       # e.g. 'District'
-    'SOURCE': 'LA Metro',
+    'SOURCE': 'Metro',
     'COUNCIL_MEMBER': 'Board Member',       # e.g. 'Council Member'
     'COUNCIL_MEMBERS': 'Board of Directors',      # e.g. 'Council Members'
     'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
@@ -28,7 +28,7 @@ APP_NAME = 'lametro'
 
 # this is for populating meta tags
 SITE_META = {
-    'site_name' : 'LA Metro Councilmatic',       # e.g. 'Chicago Councilmatc'
+    'site_name' : 'Metro Board',       # e.g. 'Chicago Councilmatc'
     'site_desc' : '',       # e.g. 'City Council, demystified. Keep tabs on Chicago legislation, aldermen, & meetings.'
     'site_author' : '',     # e.g. 'DataMade'
     'site_url' : '',        # e.g. 'https://chicago.councilmatic.org'

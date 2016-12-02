@@ -34,3 +34,11 @@ def format_full_text(full_text):
         results += " ".join(sliced_arr) + "<br /><br />"
 
     return results
+
+@register.filter
+def full_text_doc_url(url):
+    base_url = 'https://pic.datamade.us/lametro/document/'
+    doc_url = '{0}?filename=agenda&document_url={1}'.format(base_url,
+                                                             url)
+
+    return doc_url
