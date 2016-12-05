@@ -36,26 +36,7 @@
             </p>
             {% endif %}
 
-            <!-- {# if event.clean_agenda_items %}
-            <h4>Agenda</h4>
-            <p>
-                <ol>
-                    {# for agenda_item in event.clean_agenda_items %}
-                        {# if agenda_item.description|lower != 'page break' %}
-                        <li>
-                            {# if agenda_item.related_bills.all %}
-                                <a href="/legislation/{{agenda_item.related_bills.first.bill.slug}}/">
-                                    {{agenda_item.related_bills.first.bill.friendly_name}}
-                                </a>
-                                <br/>
-                            {# endif %}
-                            {{agenda_item.description}}
-                        </li>
-                        {# endif %}
-                    {# endfor %}
-                </ol>
-            </p>
-            {# endif %} -->
+
 
             {% if event.documents.all %}
                 <h4>Agenda</h4>
@@ -76,6 +57,27 @@
                     </iframe>
 
                 {% endfor %}
+            {% else %}
+                {% if event.clean_agenda_items %}
+                <h4>Agenda</h4>
+                <p>
+                    <ol>
+                        {% for agenda_item in event.clean_agenda_items %}
+                            {% if agenda_item.description|lower != 'page break' and  agenda_item.description|lower != ' ' %}
+                            <li>
+                                {% if agenda_item.related_bills.all %}
+                                    <a href="/legislation/{{agenda_item.related_bills.first.bill.slug}}/">
+                                        {{agenda_item.related_bills.first.bill.friendly_name}}
+                                    </a>
+                                    <br/>
+                                {% endif %}
+                                {{agenda_item.description}}
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ol>
+                </p>
+                {% endif %}
             {% endif %}
 
         </div>

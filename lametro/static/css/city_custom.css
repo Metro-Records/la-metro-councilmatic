@@ -36,7 +36,7 @@
     padding-top: 0px;
 }
 
-.btn-info {
+/*.btn-info {
     background-color: #3182bd;
     border-color: #3182bd;
 }
@@ -45,6 +45,15 @@
     outline: 0 none;
     background-color: #3182bd;
     border-color: #3182bd;
-}
+}*/
 
 #map { margin-bottom: 2em; }
+
+.infobox {
+    width: 22px;
+    margin: 0;
+}
+
+.leaflet-control-attribution {
+    display: none;
+}
