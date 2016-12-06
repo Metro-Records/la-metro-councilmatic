@@ -51,8 +51,8 @@
             {% if map_geojson %}
                 <hr />
                 <h4>
-                    {% if person.current_council_seat %}
-                        {{ person.current_council_seat }} map
+                    {% if person.current_district %}
+                        {{ person.current_district | format_district }} map
                     {% endif %}
                 </h4>
                 <div id='map-detail'></div>
@@ -236,8 +236,8 @@
             map.addLayer(layer);
             var geojson = L.geoJson({{ map_geojson|safe }}, {
                 style: {
-                        "color": "{{MAP_CONFIG.highlight_color}}",
-                        "weight": 2,
+                        "color": "#3182bd",
+                        "weight": 1.2,
                         "opacity": 1,
                         "fillOpacity": .4
                     }

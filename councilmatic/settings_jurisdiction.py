@@ -5,16 +5,16 @@
 ###############################
 
 OCD_CITY_COUNCIL_ID = 'ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
-CITY_COUNCIL_NAME = 'LA Metro'
+CITY_COUNCIL_NAME = 'Metro'
 OCD_JURISDICTION_ID = 'ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority'
 LEGISLATIVE_SESSIONS = ['2014', '2015', '2016'] # the last one in this list should be the current legislative session
-CITY_NAME = 'LA Metro'
-CITY_NAME_SHORT = 'LA Metro'
+CITY_NAME = 'Metro'
+CITY_NAME_SHORT = 'Metro'
 
 # VOCAB SETTINGS FOR FRONT-END DISPLAY
 CITY_VOCAB = {
     'MUNICIPAL_DISTRICT': 'District',       # e.g. 'District'
-    'SOURCE': 'LA Metro',
+    'SOURCE': 'Metro',
     'COUNCIL_MEMBER': 'Board Member',       # e.g. 'Council Member'
     'COUNCIL_MEMBERS': 'Board of Directors',      # e.g. 'Council Members'
     'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
@@ -28,7 +28,7 @@ APP_NAME = 'lametro'
 
 # this is for populating meta tags
 SITE_META = {
-    'site_name' : 'LA Metro Councilmatic',       # e.g. 'Chicago Councilmatc'
+    'site_name' : 'Metro Board',       # e.g. 'Chicago Councilmatc'
     'site_desc' : '',       # e.g. 'City Council, demystified. Keep tabs on Chicago legislation, aldermen, & meetings.'
     'site_author' : '',     # e.g. 'DataMade'
     'site_url' : '',        # e.g. 'https://chicago.councilmatic.org'
@@ -44,17 +44,15 @@ LEGISTAR_URL = ''           # e.g. 'https://chicago.legistar.com/Legislation.asp
 # member listing. the boundary set should be the relevant
 # slug from the ocd api's boundary service
 # available boundary sets here: http://ocd.datamade.us/boundary-sets/
-BOUNDARY_SET = ''           # e.g. 'chicago-wards-2015'
 
-# this is for configuring a map of council districts using data from the posts
-# set MAP_CONFIG = None to hide map
+BOUNDARY_SET = ['la-metro-supervisory-districts', 'la-metro-committee-districts']
+
 MAP_CONFIG = {
-    # 'center': [41.8369, -87.6847],
-    # 'zoom': 10,
-    # 'color': "#54afe8",
-    # 'highlight_color': "#C00000",
+    'center': [34.0522, -118.2437],
+    'zoom': 10,
+    'color': "#54afe8",
+    'highlight_color': '#eb6864'
 }
-
 
 # FOOTER_CREDITS = [
     # {
@@ -83,7 +81,7 @@ IMAGES = {
 
 # this is the name of the meetings where the entire city council meets
 # as stored in legistar
-CITY_COUNCIL_MEETING_NAME = 'Board Meeting'
+CITY_COUNCIL_MEETING_NAME = 'Board of Directors'
 
 # this is the name of the role of committee chairs, e.g. 'CHAIRPERSON' or 'Chair'
 # as stored in legistar
@@ -254,7 +252,7 @@ COMMITTEE_DESCRIPTIONS = {
 # these blurbs populate the wells on the committees, events, & council members pages
 ABOUT_BLURBS = {
     "COMMITTEES" :      "",
-    "EVENTS":           "",
+    "EVENTS": "<p>Committee meetings are the first level of review for Metro business matters being brought to the Board of Directors for their review and decision.</p><p>Committee meetings take place on Wednesday and Thursday, the week before the Regular Board Meeting. A unanimous vote at the Committee level will place an item on the Consent Calendar of the Board of Directors.</p><p>The full Board of Directors typically meets once a month to review presented budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p>",
     "COUNCIL_MEMBERS":  "",
 }
 

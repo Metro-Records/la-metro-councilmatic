@@ -6,7 +6,12 @@
         <div class="panel-heading" data-toggle="collapse" data-target="#filter-{{facet_name}}">
             <h3 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Filter by {{facet_label}}
+                    Filter by
+                    {% if 'Legislation' in facet_label %}
+                        Report Type
+                    {% else %}
+                        {{facet_label}}
+                    {% endif %}
                     <i class="fa fa-fw {% if facet_name in selected_facets %}fa-minus {% else %} fa-plus {% endif %} pull-right"></i>
                 </a>
             </h3>

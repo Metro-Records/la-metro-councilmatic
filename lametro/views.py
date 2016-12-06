@@ -2,6 +2,8 @@ import re
 from datetime import datetime
 from itertools import groupby
 import urllib
+import json
+from datetime import date, timedelta, datetime
 
 from haystack.query import SearchQuerySet
 
@@ -10,13 +12,22 @@ from django.shortcuts import render
 from django.db import connection
 from django.db.models.functions import Lower
 from django.utils import timezone
+from django.utils.text import slugify
 from collections import namedtuple
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
-from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson
+from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
 
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
+
+    event_model = LAMetroEvent
+
+    def extra_context(self):
+        extra = {}
+        extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
+
+        return extra
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill
@@ -33,14 +44,77 @@ class LABillDetail(BillDetailView):
 
           return context
 
+class LAMetroEventDetail(EventDetailView):
+    template_name = 'lametro/event.html'
+
 class LABoardMembersView(CouncilMembersView):
+    template_name = 'lametro/board_members.html'
+
     model = LAMetroPost
 
     def get_queryset(self):
         return LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(LABoardMembersView, self).get_context_data(**kwargs)
+        context['seo'] = self.get_seo_blob()
+
+        context['map_geojson'] = None
+
+        if settings.MAP_CONFIG:
+
+            map_geojson = {
+                            'type': 'FeatureCollection',
+                            'features': []
+                          }
+
+            map_geojson_sectors = {
+                                    'type': 'FeatureCollection',
+                                    'features': []
+                                  }
+
+            for post in self.object_list:
+                if post.shape:
+                    council_member = "Vacant"
+                    detail_link = ""
+                    if post.current_members:
+                        for membership in post.current_members:
+                            council_member = membership.person.name
+                            detail_link = membership.person.slug
+
+                    feature = {
+                        'type': 'Feature',
+                        'geometry': json.loads(post.shape),
+                        'properties': {
+                            'district': post.label,
+                            'council_member': council_member,
+                            'detail_link': '/person/' + detail_link,
+                            'select_id': 'polygon-{}'.format(slugify(post.label)),
+                        },
+                    }
+
+                    if 'council_district' in post.division_ocd_id:
+                        map_geojson['features'].append(feature)
+
+                    if 'la_metro_sector' in post.division_ocd_id:
+                        map_geojson_sectors['features'].append(feature)
+
+            context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
+            context['map_geojson'] = json.dumps(map_geojson)
+
+        return context
+
+
 class LAMetroAboutView(AboutView):
     template_name = 'lametro/about.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['timestamp'] = datetime.now(app_timezone).strftime('%m%d%Y%s')
+
+        return context
+
 
 class LACommitteesView(CommitteesView):
     template_name = 'lametro/committees.html'

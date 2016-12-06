@@ -1,0 +1,27 @@
+{% if upcoming_board_meeting.clean_agenda_items %}
+      <h4>Agenda</h4>
+      <ol>
+          {% for agenda_item in upcoming_board_meeting.clean_agenda_items %}
+              {% if agenda_item.description|lower != 'page break' %}
+              <li class="list-item small">
+                  {% if agenda_item.related_bills.all %}
+                      <a href="/board-report/{{agenda_item.related_bills.first.bill.slug}}/">
+                          {{agenda_item.related_bills.first.bill.friendly_name}}
+                      </a>
+                      <br/>
+                  {% endif %}
+
+                  {{agenda_item.description}}
+              </li>
+              {% endif %}
+          {% endfor %}
+      </ol>
+  {% endif %}
+
+
+  {% if upcoming_board_meeting.clean_agenda_items|length > 4  %}
+      <p colspan="3" align="center">
+          <a href="" class="btn-sm btn-info" id="more-list-items"><i class="fa fa-fw fa-chevron-down"></i>Full agenda</a>
+          <a href="" class="btn-sm btn-info" id="fewer-list-items"><i class="fa fa-fw fa-chevron-up"></i>Less</a>
+      </p>
+  {% endif %}

@@ -121,6 +121,13 @@ class LAMetroPerson(Person):
         return None
 
     @property
+    def current_district(self):
+        m = self.latest_council_membership
+        if m and m.post:
+            return m.post.label
+        return ''
+
+    @property
     def latest_council_seat(self):
         pass
 
@@ -164,14 +171,17 @@ class LAMetroPerson(Person):
     @property
     def member_role_memberships(self):
         if hasattr(settings, 'COMMITTEE_MEMBER_TITLE'):
-            # Do we want to remove AD-HOC?
-            # today = timezone.now().date()
-            # return self.memberships.all().filter(end_date__gte=today, role__contains=settings.COMMITTEE_MEMBER_TITLE).filter( _organization__classification='committee').distinct('_organization')
             return self.memberships.all().filter(role__contains=settings.COMMITTEE_MEMBER_TITLE).filter( _organization__classification='committee').distinct('_organization')
         else:
             return []
 
+class LAMetroEvent(Event):
 
+    class Meta:
+        proxy = True
 
-
-
+    @classmethod
+    def upcoming_board_meeting(cls):
+        return cls.objects.filter(start_time__gt=timezone.now())\
+                  .filter(name__icontains="Board of Directors")\
+                  .order_by('start_time').first()

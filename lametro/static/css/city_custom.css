@@ -2,7 +2,7 @@
 /* anything in this file will override custom.css in django-councilmatic */
 
 .no-wrap {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 #section-photo {
@@ -12,8 +12,48 @@
           rgba(211, 211, 211, 0.3)
         ),
         url('../images/la-metro-regional-rail-map.gif');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 328px;
+}
+
+#section-intro {
+    line-height: 1.6em;
+    padding-top: 1.6em;
 }
 
 #section-events {
-  margin-bottom: 10px;
+    background-color: #F8F8F8;
+    padding-bottom: 20px;
+}
+
+#map-screenshot{
+    width: 90%;
+}
+
+.panel-body {
+    padding-top: 0px;
+}
+
+/*.btn-info {
+    background-color: #3182bd;
+    border-color: #3182bd;
+}
+
+.btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active {
+    outline: 0 none;
+    background-color: #3182bd;
+    border-color: #3182bd;
+}*/
+
+#map { margin-bottom: 2em; }
+
+.infobox {
+    width: 22px;
+    margin: 0;
+}
+
+.leaflet-control-attribution {
+    display: none;
 }
