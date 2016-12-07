@@ -16,22 +16,13 @@
     {% if map_geojson %}
     <div class="row">
         <div class="col-sm-6">
-            <h1>
+            <h1 class="map-heading">
                 {{ CITY_VOCAB.COUNCIL_MEMBERS }}
 
-               <!--  <div class="pull-right" id='toggleControls'>
-
-                    <label class="checkbox-inline">
-                        <input id="sectorToggle" type="checkbox" checked data-toggle="toggle" data-on='<i class="fa fa-minus-square" aria-hidden="true"></i> Sectors' data-off='<i class="fa fa-plus-square" aria-hidden="true"></i> Sectors' data-size="mini">
-                    </label>
-
-                    <label class="checkbox-inline">
-                        <input id="districtToggle" type="checkbox" checked data-toggle="toggle" data-on='<i class="fa fa-minus-square" aria-hidden="true"></i> Districts' data-off='<i class="fa fa-plus-square" aria-hidden="true"></i> Districts' data-size="mini">
-                    </label>
-
-                </div> -->
-
+                <h2 class="map-info"><small> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn about this map</small></h2>
             </h1>
+
+
         </div>
         <div class="col-sm-6">
             <h4>Look up a Metro board member</h4>
@@ -64,8 +55,6 @@
     <div class="row-fluid">
         {% if map_geojson %}
             <div class='col-sm-6 no-pad-mobile'>
-
-
 
                 <div id="map"></div>
             </div>
