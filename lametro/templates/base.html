@@ -22,32 +22,43 @@
 
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid container-fluid-nav">
-            <div id="nav-title">
-                <a class="navbar-brand" href="/">
-                    <img id="logo" src="{% static IMAGES.logo %}"></img>
-                    <span id="logo-text">Metro Board</span>
-                </a>
-            </div>
-            <ul id="nav-items">
-                <li>
-                    <a href="{% url 'lametro:about' %}">About</a>
-                </li>
-                <li>
-                    <a href='{% url 'lametro:council_members' %}'>{{ CITY_VOCAB.COUNCIL_MEMBERS }}</a>
-                </li>
-                <li>
-                    <a href='{% url 'committees' %}'>Committees</a>
-                </li>
-                <li>
-                    <a href='{% url 'events' %}'>{{ CITY_VOCAB.EVENTS }}</a>
-                </li>
-                <li>
-                    <a href="{% url 'lametro:search' %}">Board Reports</a>
-                </li>
-            </ul>
 
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="/">
+                <img id="logo" src="{% static IMAGES.logo %}"></img>
+                <span id="logo-text">Metro Board</span>
+              </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="{% url 'lametro:about' %}">About</a>
+                    </li>
+                    <li>
+                        <a href='{% url 'lametro:council_members' %}'>{{ CITY_VOCAB.COUNCIL_MEMBERS }}</a>
+                    </li>
+                    <li>
+                        <a href='{% url 'committees' %}'>Committees</a>
+                    </li>
+                    <li>
+                        <a href='{% url 'events' %}'>{{ CITY_VOCAB.EVENTS }}</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'lametro:search' %}">Board Reports</a>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
         </div>
     </nav>
+
 
     {% block full_content %}
     {% endblock %}

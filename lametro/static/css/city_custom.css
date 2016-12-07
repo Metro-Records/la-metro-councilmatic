@@ -28,32 +28,39 @@
     padding-bottom: 20px;
 }
 
-#map-screenshot{
-    width: 90%;
-}
-
-.panel-body {
-    padding-top: 0px;
-}
-
-/*.btn-info {
-    background-color: #3182bd;
-    border-color: #3182bd;
-}
-
-.btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active {
-    outline: 0 none;
-    background-color: #3182bd;
-    border-color: #3182bd;
-}*/
-
 #map { margin-bottom: 2em; }
+
+#map-screenshot { width: 90%; }
+
+.map-heading {
+    display: inline-block;
+    padding-right: 12px;
+}
+
+.map-info {
+    display: inline-block;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+}
+
+.panel-body { padding-top: 0px; }
 
 .infobox {
     width: 22px;
     margin: 0;
 }
 
-.leaflet-control-attribution {
-    display: none;
+.leaflet-control-attribution { display: none; }
+
+@media only screen and (max-width : 767px) {
+
+    .navbar-brand {
+        width: 50%;
+        padding-top: 19px;
+    }
+
+    .home-header {
+        font-size: 32px;
+    }
 }
+

@@ -4,14 +4,44 @@
 
     <h2>
         <span class="non-mobile-only"><i class="fa fa-university" aria-hidden="true"></i></span>
-        Next Board Meeting
+        About Our Board Meetings
     </h2>
+
 
     <div class="panel panel-default">
         <div class="panel-body">
+
+            {% if current_board_meeting %}
+                <div class="row">
+                  <br/>
+                  <div class="col-xs-8">
+                    <h4>Current Meeting</h4>
+                    <h4>
+                      {{ current_board_meeting.link_html | safe }}<br/>
+                      <span class="small text-muted">{{current_board_meeting.description}}</span>
+                    </h4>
+
+                    <p class="small text-muted">
+                        <i class="fa fa-fw fa-calendar-o"></i> {{current_board_meeting.start_time | date:"D n/d/Y"}}<br/>
+                        <i class="fa fa-fw fa-clock-o"></i> {{current_board_meeting.start_time | date:"g:i a"}}<br/>
+                        <i class="fa fa-fw fa-map-marker"></i> {{current_board_meeting.location_name}}<br />
+                    </p>
+
+                  </div>
+                </div>
+            {% endif %}
+
+
+
+
             <div class="row">
               <br/>
               <div class="col-xs-8">
+
+                {% if current_board_meeting %}
+                    <h4>Upcoming Meeting</h4>
+                {% endif %}
+
                 <h4>
                   {{ upcoming_board_meeting.link_html | safe }}<br/>
                   <span class="small text-muted">{{upcoming_board_meeting.description}}</span>
