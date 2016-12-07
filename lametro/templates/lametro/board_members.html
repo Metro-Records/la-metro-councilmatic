@@ -19,9 +19,8 @@
             <h1 class="map-heading">
                 {{ CITY_VOCAB.COUNCIL_MEMBERS }}
 
-                <h2 class="map-info"><small> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn about this map</small></h2>
+                <h2 class="map-info" data-container="body" data-toggle="popover" data-placement="right" title="What does this map represent?" data-content="<div style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 12px;'>This map shows two layers: (1) one that shows cities, which nominate a representative from their “sector,” as defined by the California League of Cities, and (2) another that shows all of the incorporated cities in Los Angeles County. The nomination comes from the geographic sector with a majority weighted population vote (1 per 10k pop.), but the confirmation vote that puts them in office comes from all 87 cities (again by weighted majority pop vote, 1 per 10k pop). These results exclude the City of Los Angeles, since they already have the mayor and three appointees on the board.</div>"><small> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn more</small></h2>
             </h1>
-
 
         </div>
         <div class="col-sm-6">
@@ -97,6 +96,8 @@
         });
 
         $( document ).ready(function() {
+            $('.map-info').popover({'trigger': 'hover', 'html': true})
+
             $('.thumbnail-square img').each(function() {
               if ($(this).width() > $(this).height()) {
                 $(this).addClass('landscape');
