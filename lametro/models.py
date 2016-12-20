@@ -189,7 +189,7 @@ class LAMetroEvent(Event):
 
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) + timedelta(days=50) + timedelta(hours=1)
+        # faketime = datetime.now(app_timezone) + timedelta(days=37) - timedelta(hours=2)
 
         # return cls.objects.filter(start_time__gt=faketime)\
         #           .filter(name__icontains="Board of Directors")\
@@ -205,7 +205,7 @@ class LAMetroEvent(Event):
                   .order_by('start_time').first()
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) + timedelta(days=50) + timedelta(hours=1)
+        # faketime = datetime.now(app_timezone) + timedelta(days=37) - timedelta(hours=2)
         # meeting_time = faketime - timedelta(hours=3)
 
         # return cls.objects.filter(start_time__lt=faketime)\
