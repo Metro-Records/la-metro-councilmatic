@@ -18,6 +18,8 @@ from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersVie
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
 
+from councilmatic.settings_jurisdiction import MEMBER_BIOS
+
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
 
@@ -277,6 +279,9 @@ class LAPersonDetailView(PersonDetailView):
 
         committees_lst = [action._organization.name for action in person.committee_sponsorships]
         context['committees_lst'] = list(set(committees_lst))
+
+        if person.slug in MEMBER_BIOS:
+            context['member_bio'] = MEMBER_BIOS[person.slug]
 
         return context
 
