@@ -42,3 +42,4 @@ def full_text_doc_url(url):
                                                              url)
 
     return doc_url
+

@@ -48,6 +48,17 @@
                 {% endif %}
             </p>
 
+            <hr />
+
+            {% if member_bio %}
+                <h4>About {{ person.name }}</h4>
+                <p class="small">{{ member_bio | safe }}</p>
+            {% endif %}
+
+            <p class='small'>
+                <a href='{{person.source_url}}' target="_blank"><i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website</a>
+            </p>
+
             {% if map_geojson %}
                 <hr />
                 <h4>
@@ -58,15 +69,12 @@
                 <div id='map-detail'></div>
             {% endif %}
 
-            <hr />
             {% if person.headshot_source %}
                 <p class='small'>
                     <i class='fa fa-fw fa-camera'></i> Credit: {{person.headshot_source}}
                 </p>
             {% endif %}
-            <p class='small'>
-                <a href='{{person.source_url}}' target="_blank"><i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website</a>
-            </p>
+
         </div>
 
         <div class="col-sm-4 mobile-only">
