@@ -43,7 +43,10 @@
     -webkit-margin-after: 0em;
 }
 
-.panel-body { padding-top: 0px; }
+.panel-body {
+    padding: 28px;
+    padding-top: 0px;
+}
 
 .infobox {
     width: 22px;
