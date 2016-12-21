@@ -254,6 +254,7 @@ class LAPersonDetailView(PersonDetailView):
     model = LAMetroPerson
 
     def get_context_data(self, **kwargs):
+        post_model = LAMetroPost
 
         context = super().get_context_data(**kwargs)
         person = context['person']
@@ -265,6 +266,7 @@ class LAPersonDetailView(PersonDetailView):
             title = m.role
             if m.post:
                 qualifying_post = m.post.label
+
         else:
             title = 'Former %s' % m.role
         context['title'] = title
