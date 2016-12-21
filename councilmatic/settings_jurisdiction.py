@@ -45,7 +45,7 @@ LEGISTAR_URL = ''           # e.g. 'https://chicago.legistar.com/Legislation.asp
 # slug from the ocd api's boundary service
 # available boundary sets here: http://ocd.datamade.us/boundary-sets/
 
-BOUNDARY_SET = ['la-metro-supervisory-districts', 'la-metro-committee-districts']
+BOUNDARY_SET = ['la-metro-supervisory-districts', 'la-metro-committee-districts', 'city-of-la']
 
 MAP_CONFIG = {
     'center': [34.0522, -118.2437],

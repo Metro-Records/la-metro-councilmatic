@@ -76,7 +76,13 @@ class LABoardMembersView(CouncilMembersView):
                                     'features': []
                                   }
 
+            map_geojson_city = {
+                                 'type': 'FeatureCollection',
+                                 'features': []
+                               }
+
             for post in self.object_list:
+
                 if post.shape:
                     council_member = "Vacant"
                     detail_link = ""
@@ -102,8 +108,12 @@ class LABoardMembersView(CouncilMembersView):
                     if 'la_metro_sector' in post.division_ocd_id:
                         map_geojson_sectors['features'].append(feature)
 
-            context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
+                    if post.division_ocd_id == 'ocd-division/country:us/state:ca/place:los_angeles':
+                        map_geojson_city['features'].append(feature)
+
             context['map_geojson'] = json.dumps(map_geojson)
+            context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
+            context['map_geojson_city'] = json.dumps(map_geojson_city)
 
         return context
 
