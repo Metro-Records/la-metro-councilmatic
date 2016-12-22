@@ -57,7 +57,7 @@
 
                 <div id="toggleControls" class="" data-toggle="buttons">
                   <label id="districtToggle" class="btn btn-xs btn-district active">
-                    <input type="radio" name="options" autocomplete="off" checked> Districts
+                    <input type="radio" name="options" autocomplete="off" checked><i class="fa fa-check" aria-hidden="true"></i> Districts
                   </label>
                   <label id="sectorToggle" class="btn btn-xs btn-sector">
                     <input type="radio" name="options" autocomplete="off"> Sectors
@@ -66,6 +66,8 @@
                     <input type="radio" name="options" autocomplete="off"> City of LA
                   </label>
                 </div>
+
+                <div id="searchOn" class="well small" style="display: none;">Displaying address search. Reset your results to see all areas.</div>
 
                 <div id="map"></div>
             </div>
@@ -99,7 +101,7 @@
             "info": false,
             "bLengthChange": false,
             "paging": false,
-            "aaSorting": [ [2,'asc'] ],
+            "aaSorting": [ [1,'asc'] ],
             "aoColumns": [
                 { "bSortable": false },
                 null,
