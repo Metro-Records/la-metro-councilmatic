@@ -64,6 +64,52 @@
 
 div.order-nav { margin-top: 21px; }
 
+.btn-district {
+    background-color: #3D8A8E;
+    color: #fff;
+    padding: 4px 12px;
+}
+
+.btn-district:hover, .btn-district.active {
+    background-color: #43999D;
+}
+
+.btn-sector {
+    background-color: #4D649E;
+    color: #fff;
+    padding: 4px 12px;
+}
+
+.btn-sector:hover, .btn-sector.active {
+    background-color: #4976AB;
+}
+
+.btn-city {
+    background-color: #EB6864;
+    color: #fff;
+    padding: 4px 12px;
+}
+
+.btn-city:hover, .btn-city.active {
+    background-color: #EF8481;
+}
+
+div#toggleControls {
+    margin-bottom: 1em;
+}
+
+.badge.district-badge {
+    background-color: #3D8A8E;
+}
+
+.badge.sector-badge {
+    background-color: #4D649E;
+}
+
+.badge.city-badge {
+    background-color: #EB6864;
+}
+
 /* Media queries */
 @media only screen and (max-width : 767px) {
 

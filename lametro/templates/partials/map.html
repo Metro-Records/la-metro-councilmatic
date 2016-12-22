@@ -18,6 +18,9 @@
     var search_result    = null;
     var search_result_sector = null;
     var geocoder         = new google.maps.Geocoder();
+    var districtColor    = "#3D8A8E";
+    var sectorColor      = "#4D649E";
+    var cityColor        = "#EB6864";
 
     var map = L.map('map', {
         scrollWheelZoom: false,
@@ -40,36 +43,13 @@
     var searchResultsLayer = new L.LayerGroup();
     searchResultsLayer.addTo(map);
 
-    // var infoBox = L.control({'position': 'topright'});
     var infoBox = L.control({'position': 'bottomleft'});
-
-    // var toggleBox = L.control({'position': 'bottomleft'});
-    // var toggleBox = L.control({'position': 'topright'});
 
     infoBox.onAdd = function() {
         this._div = L.DomUtil.create('div', 'infobox');
         this.update();
         return this._div;
     }
-
-    // toggleBox.onAdd = function() {
-    //     toggleDiv = L.DomUtil.create('div', 'toggleBox');
-
-    //     hide = "<i class='fa fa-minus-square' aria-hidden='true'></i> Sectors"
-
-    //     toggleDiv.innerHTML = '<div class="pull-right" id="toggleControls"> \
-    //                 <label class="checkbox"> \
-    //                     <input id="sectorToggle" type="checkbox" checked data-toggle="toggle" data-on="<i class=&quot;fa fa-minus-square&quot; aria-hidden=&quot;true&quot;></i> Sectors" data-off="<i class=&quot;fa fa-plus-square&quot; aria-hidden=&quot;true&quot;></i> Sectors" data-size="small" data-onstyle="info"> \
-    //                 </label> \
-    //                 <label class="checkbox"> \
-    //                     <input id="districtToggle" type="checkbox" checked data-toggle="toggle" data-on="<i class=&quot;fa fa-minus-square&quot; aria-hidden=&quot;true&quot;></i> Districts" data-off="<i class=&quot;fa fa-plus-square&quot; aria-hidden=&quot;true&quot;></i> Districts" data-size="small" data-onstyle="info"> \
-    //                 </label> \
-    //                 <label class="checkbox"> \
-    //                     <input id="cityToggle" type="checkbox" checked data-toggle="toggle" data-on="<i class=&quot;fa fa-minus-square&quot; aria-hidden=&quot;true&quot;></i> City" data-off="<i class=&quot;fa fa-plus-square&quot; aria-hidden=&quot;true&quot;></i> City" data-size="small" data-onstyle="info"> \
-    //                 </label> \
-    //                 </div>'
-    //     return toggleDiv;
-    // }
 
     infoBox.update = function(properties){
         if(properties){
@@ -83,7 +63,6 @@
       this._div.innerHTML = '<p><i class="fa fa-hand-pointer-o fa-fw"></i><span class="non-mobile-only">Hover</span><span class="mobile-only">Tap a ward</span> for details</p>';
     }
 
-    // toggleBox.addTo(map);
     infoBox.addTo(map);
     infoBox.clear();
 
@@ -91,94 +70,6 @@
         {
         'className' : 'custom'
         }
-    // function onEachFeature(feature, layer) {
-    //     if (feature.properties) {
-    //         var center = layer.getBounds().getCenter();
-
-    //         if (map){
-    //             layer.layerPopup = L.popup(customOptions, layer)
-    //                                 .setLatLng(center)
-    //                                 .setContent(feature.properties.popupContent);
-
-    //             layer.on('click', function(e){
-    //                 window.location = feature.properties.detail_link
-    //             });
-
-    //             layer.on('mouseover', function(e){
-    //                 infoBox.update(e.target.feature.properties);
-    //                 if (e.target.feature.properties.select_id.includes("sector")) {
-    //                     e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
-    //                 }
-    //                 else if (e.target.feature.properties.select_id.includes("district")) {
-    //                     layer.bringToFront()
-    //                     e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
-    //                 }
-    //                 else {
-    //                     layer.bringToFront()
-    //                     e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
-    //                 }
-    //             });
-
-    //             layer.on('mouseout', function(e){
-    //                 infoBox.clear();
-    //                 if (e.target.feature.properties.select_id.includes("sector")) {
-    //                     layer.bringToBack()
-    //                     e.target.setStyle({'fillOpacity': 0.4, 'color': "#08519c"});
-    //                 }
-    //                 else if (e.target.feature.properties.select_id.includes("district")) {
-    //                     layer.bringToBack()
-    //                     e.target.setStyle({'fillOpacity': 0.3, 'color': "#3182bd"});
-    //                 }
-    //                 else {
-    //                     layer.bringToBack()
-    //                     e.target.setStyle({'fillOpacity': 0.7, 'color': "#08519c"});
-    //                 }
-    //             });
-
-    //             layer.on('tableover', function(e){
-    //                 infoBox.update(e.target.feature.properties);
-    //                 districtsOn = $("label#districtToggle").hasClass('active');
-    //                 sectorsOn   = $("label#sectorToggle").hasClass('active');
-    //                 cityOn      = $("label#cityToggle").hasClass('active');
-
-    //                 if (e.target.feature.properties.select_id.includes("sector") && sectorsOn) {
-    //                     console.log("hovering on sectors..")
-    //                     e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
-    //                 }
-    //                 else if (e.target.feature.properties.select_id.includes("district") && districtsOn) {
-    //                     // layer.bringToFront()
-    //                     console.log("hovering on districts")
-    //                     e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
-    //                 }
-    //                 else {
-    //                     // layer.bringToFront()
-    //                     e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
-    //                 }
-    //             });
-
-    //             layer.on('tableout', function(e){
-    //                 infoBox.clear();
-    //                 map.closePopup(e.target.layerPopup);
-    //                 sectorsOn   = $("label#sectorToggle").hasClass('active');
-    //                 districtsOn = $("label#districtToggle").hasClass('active');
-    //                 cityOn      = $("label#cityToggle").hasClass('active');
-
-    //                 if (e.target.feature.properties.select_id.includes("sector") && sectorsOn) {
-    //                     // layer.bringToBack()
-    //                     e.target.setStyle({'fillOpacity': 0.4, 'color': "#08519c"});
-    //                 }
-    //                 else if (e.target.feature.properties.select_id.includes("district") && districtsOn) {
-    //                     // layer.bringToBack()
-    //                     e.target.setStyle({'fillOpacity': 0.3, 'color': "#3182bd"});
-    //                 }
-    //                 else {
-    //                     // layer.bringToBack()
-    //                     e.target.setStyle({'fillOpacity': 0.7, 'color': "#08519c"});
-    //                 }
-    //             });
-    //         }
-    //     }
-    // }
 
     function onEachFeatureDistricts(feature, layer) {
         if (feature.properties) {
@@ -195,23 +86,23 @@
 
                 layer.on('mouseover', function(e){
                     infoBox.update(e.target.feature.properties);
-                    e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
+                    e.target.setStyle({'fillOpacity': 0.8, 'color': districtColor});
                 });
 
                 layer.on('mouseout', function(e){
                     infoBox.clear();
-                    e.target.setStyle({'fillOpacity': 0.3, 'color': "#3182bd"});
+                    e.target.setStyle({'fillOpacity': 0.2, 'color': districtColor});
                 });
 
                 layer.on('tableover', function(e){
                     infoBox.update(e.target.feature.properties);
-                    e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
+                    e.target.setStyle({'fillOpacity': 0.8, 'color': districtColor});
                 });
 
                 layer.on('tableout', function(e){
                     infoBox.clear();
                     map.closePopup(e.target.layerPopup);
-                    e.target.setStyle({'fillOpacity': 0.3, 'color': "#3182bd"});
+                    e.target.setStyle({'fillOpacity': 0.2, 'color': districtColor});
                 });
             }
         }
@@ -232,29 +123,27 @@
 
                 layer.on('mouseover', function(e){
                     infoBox.update(e.target.feature.properties);
-                    e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
+                    e.target.setStyle({'fillOpacity': 0.8, 'color': sectorColor});
                 });
 
                 layer.on('mouseout', function(e){
                     infoBox.clear();
-                    e.target.setStyle({'fillOpacity': 0.4, 'color': "#08519c"});
+                    e.target.setStyle({'fillOpacity': 0.2, 'color': sectorColor});
                 });
 
                 layer.on('tableover', function(e){
                     infoBox.update(e.target.feature.properties);
-                    e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
+                    e.target.setStyle({'fillOpacity': 0.8, 'color': sectorColor});
                 });
 
                 layer.on('tableout', function(e){
                     infoBox.clear();
                     map.closePopup(e.target.layerPopup);
-                    e.target.setStyle({'fillOpacity': 0.4, 'color': "#08519c"});
+                    e.target.setStyle({'fillOpacity': 0.2, 'color': sectorColor});
                 });
             }
         }
     }
-
-
 
     function onEachFeatureCity(feature, layer) {
         if (feature.properties) {
@@ -271,33 +160,33 @@
 
                 layer.on('mouseover', function(e){
                     infoBox.update(e.target.feature.properties);
-                    e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
+                    e.target.setStyle({'fillOpacity': 0.8, 'color': cityColor});
                 });
 
                 layer.on('mouseout', function(e){
                     infoBox.clear();
-                    e.target.setStyle({'fillOpacity': 0.7, 'color': "#08519c"});
+                    e.target.setStyle({'fillOpacity': 0.2, 'color': cityColor});
                 });
 
                 layer.on('tableover', function(e){
                     infoBox.update(e.target.feature.properties);
-                    e.target.setStyle({'fillOpacity': 0.6, 'color': "{{MAP_CONFIG.highlight_color}}"});
+                    layer.bringToFront();
+                    e.target.setStyle({'fillOpacity': 0.8, 'color': cityColor});
                 });
 
                 layer.on('tableout', function(e){
                     infoBox.clear();
                     map.closePopup(e.target.layerPopup);
-                    e.target.setStyle({'fillOpacity': 0.7, 'color': "#08519c"});
+                    layer.bringToBack();
+                    e.target.setStyle({'fillOpacity': 0.2, 'color': cityColor});
                 });
             }
         }
     }
 
-
-
     districts = L.geoJson({{ map_geojson|safe }}, {
         style: {
-                "color": "#3182bd",
+                "color": districtColor,
                 "weight": 1,
                 "opacity": 1,
                 "fillOpacity": 0.3,
@@ -308,24 +197,23 @@
 
     sectors = L.geoJson({{ map_geojson_sectors|safe }}, {
         style: {
-                "color": "#08519c",
+                "color": sectorColor,
                 "weight": 1,
                 "opacity": 1,
-                "fillOpacity": 0.4,
+                "fillOpacity": 0.3,
             },
         onEachFeature: onEachFeatureSectors
     });
 
     los_angeles_city = L.geoJson({{ map_geojson_city|safe }}, {
         style: {
-                "color": "#08519c",
+                "color": cityColor,
                 "weight": 1,
                 "opacity": 1,
-                "fillOpacity": 0.7,
+                "fillOpacity": 0.3,
             },
         onEachFeature: onEachFeatureCity
     });
-
 
     function doSearch() {
         clearSearch();
@@ -473,10 +361,7 @@
         }
         else {
             districts.addTo(map);
-            // sectors.addTo(map);
-            // los_angeles_city.addTo(map);
             map.fitBounds(districts.getBounds());
-            // map.fitBounds(sectors.getBounds());
             $("#reset").hide()
             $('#toggleControls').show();
         }
@@ -505,24 +390,6 @@
               return false;
           }
         });
-
-        // $('#districtToggle').change(function() {
-        //     if ($(this).parent().hasClass("off")) {
-        //         map.removeLayer(districts);
-        //     }
-        //     else {
-        //         map.addLayer(districts);
-        //     }
-        // });
-
-        // $('#sectorToggle').change(function() {
-        //     if ($(this).parent().hasClass("off")) {
-        //         map.removeLayer(sectors);
-        //     }
-        //     else {
-        //         map.addLayer(sectors);
-        //     }
-        // });
 
         $('#districtToggle').on('click', function() {
             map.addLayer(districts);
