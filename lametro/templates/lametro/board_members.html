@@ -55,19 +55,17 @@
         {% if map_geojson %}
             <div class='col-sm-6 no-pad-mobile'>
 
-
-<div id="toggleControls" class="" data-toggle="buttons">
-  <label id="districtToggle" class="btn btn-xs btn-district active">
-    <input type="radio" name="options" autocomplete="off" checked> Districts
-  </label>
-  <label id="sectorToggle" class="btn btn-xs btn-sector">
-    <input type="radio" name="options" autocomplete="off"> Sectors
-  </label>
-  <label id="cityToggle" class="btn btn-xs btn-city">
-    <input type="radio" name="options" autocomplete="off"> City of LA
-  </label>
-</div>
-
+                <div id="toggleControls" class="" data-toggle="buttons">
+                  <label id="districtToggle" class="btn btn-xs btn-district active">
+                    <input type="radio" name="options" autocomplete="off" checked> Districts
+                  </label>
+                  <label id="sectorToggle" class="btn btn-xs btn-sector">
+                    <input type="radio" name="options" autocomplete="off"> Sectors
+                  </label>
+                  <label id="cityToggle" class="btn btn-xs btn-city">
+                    <input type="radio" name="options" autocomplete="off"> City of LA
+                  </label>
+                </div>
 
                 <div id="map"></div>
             </div>
@@ -135,7 +133,9 @@
         } )
 
         function hoverOffRow(select_id, active_id){
-            if (active_id.includes('district')) {
+            var controlView = $("#toggleControls").is(":hidden");
+
+            if (active_id.includes('district') || controlView) {
                 districts.eachLayer(function (layer) {
                     if (layer.feature.properties.select_id === select_id){
                         layer.fire('tableout');
@@ -143,7 +143,7 @@
                 });
             }
 
-            if (active_id.includes('sector')) {
+            if (active_id.includes('sector') || controlView) {
                 sectors.eachLayer(function (layer) {
                     if (layer.feature.properties.select_id === select_id){
                         layer.fire('tableout');
@@ -151,9 +151,9 @@
                 });
             }
 
-            if (active_id.includes('city')) {
+            if (active_id.includes('city') || controlView) {
                 los_angeles_city.eachLayer(function (layer) {
-                    if (layer.feature.properties.select_id === select_id){
+                    if (layer.feature.properties.select_id === select_id || select_id.includes("mayor-of-the-city-of-los-angeles")){
                         layer.fire('tableout');
                     }
                 });
@@ -162,7 +162,9 @@
         }
 
         function hoverOnRow(select_id, active_id) {
-            if (active_id.includes('district')) {
+            var controlView = $("#toggleControls").is(":hidden");
+
+            if (active_id.includes('district') || controlView) {
                 districts.eachLayer(function (layer) {
                     if (layer.feature.properties.select_id === select_id){
                         layer.fire('tableover');
@@ -170,7 +172,7 @@
                 });
             }
 
-            if (active_id.includes('sector')) {
+            if (active_id.includes('sector') || controlView) {
                 sectors.eachLayer(function (layer) {
                     if (layer.feature.properties.select_id === select_id){
                         layer.fire('tableover');
@@ -178,9 +180,9 @@
                 });
             }
 
-            if (active_id.includes('city')) {
+            if (active_id.includes('city') || controlView) {
                 los_angeles_city.eachLayer(function (layer) {
-                    if (layer.feature.properties.select_id === select_id){
+                    if (layer.feature.properties.select_id === select_id || select_id.includes("mayor-of-the-city-of-los-angeles")) {
                         layer.fire('tableover');
                     }
                 });

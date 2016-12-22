@@ -76,9 +76,11 @@
             var center = layer.getBounds().getCenter();
 
             if (map){
+
                 layer.layerPopup = L.popup(customOptions, layer)
-                                    .setLatLng(center)
-                                    .setContent(feature.properties.popupContent);
+                                        .setLatLng(center)
+                                        .setContent(feature.properties.popupContent);
+
 
                 layer.on('click', function(e){
                     window.location = feature.properties.detail_link
@@ -150,9 +152,10 @@
             var center = layer.getBounds().getCenter();
 
             if (map){
+
                 layer.layerPopup = L.popup(customOptions, layer)
-                                    .setLatLng(center)
-                                    .setContent(feature.properties.popupContent);
+                                        .setLatLng(center)
+                                        .setContent(feature.properties.popupContent);
 
                 layer.on('click', function(e){
                     window.location = feature.properties.detail_link
@@ -170,14 +173,12 @@
 
                 layer.on('tableover', function(e){
                     infoBox.update(e.target.feature.properties);
-                    layer.bringToFront();
                     e.target.setStyle({'fillOpacity': 0.8, 'color': cityColor});
                 });
 
                 layer.on('tableout', function(e){
                     infoBox.clear();
                     map.closePopup(e.target.layerPopup);
-                    layer.bringToBack();
                     e.target.setStyle({'fillOpacity': 0.2, 'color': cityColor});
                 });
             }
@@ -251,10 +252,7 @@
 
                 if (search_result.length > 0) {
                     search_result = search_result[0]
-
-                    // search_result.addTo(map);
                     search_result.addTo(searchResultsLayer);
-
                     map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
                     var districtNumber = convertToSearchTerm(search_result.feature.properties.district)
@@ -262,10 +260,7 @@
 
                 if (search_result_sector.length > 0) {
                     search_result = search_result_sector[0]
-
-                    // search_result.addTo(map);
                     search_result.addTo(searchResultsLayer);
-
                     map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
                     var sectorName = convertToSearchTerm(search_result.feature.properties.district)
@@ -273,18 +268,15 @@
 
                 if (search_result_city.length > 0) {
                     search_result = search_result_city[0]
-
-                    // search_result.addTo(map);
                     search_result.addTo(searchResultsLayer);
-
                     map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
-                    var cityName = convertToSearchTerm(search_result.feature.properties.district)
+                    var cityName = "Mayor of the City of Los Angeles"
                 }
 
                 if (council_member_table) {
                     // search the table with the OR operator
-                    council_member_table.search("^(?=.*?(" + districtNumber + "|" + sectorName + ")).*?", true, false).draw();
+                    council_member_table.search("^(?=.*?(" + districtNumber + "|" + sectorName + "|" + cityName + ")).*?", true, false).draw();
                 }
 
               }
