@@ -222,6 +222,7 @@
 
         if (address != "") {
             $('#toggleControls').hide();
+            $('#searchOn').show();
             $("#reset").show();
             if (address.toLowerCase().indexOf(locationScope) == -1)
             address = address + " " + locationScope;
@@ -356,7 +357,15 @@
             map.fitBounds(districts.getBounds());
             $("#reset").hide()
             $('#toggleControls').show();
+            $('#searchOn').hide();
         }
+    }
+
+    function removeCheck() {
+        $('div#toggleControls .active').html( function(){
+            var buttonLabel = $('div#toggleControls .active').html();
+            return buttonLabel.replace('<i class="fa fa-check" aria-hidden="true"></i>', '');
+        });
     }
 
     $(function() {
@@ -387,18 +396,24 @@
             map.addLayer(districts);
             map.removeLayer(sectors);
             map.removeLayer(los_angeles_city);
+            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
+            removeCheck();
         });
 
         $('#sectorToggle').on('click', function() {
             map.addLayer(sectors);
             map.removeLayer(districts);
             map.removeLayer(los_angeles_city);
+            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
+            removeCheck();
         });
 
         $('#cityToggle').on('click', function() {
             map.addLayer(los_angeles_city);
             map.removeLayer(districts);
             map.removeLayer(sectors);
+            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
+            removeCheck();
         });
 
     });
