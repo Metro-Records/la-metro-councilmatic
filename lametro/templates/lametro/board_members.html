@@ -55,6 +55,18 @@
         {% if map_geojson %}
             <div class='col-sm-6 no-pad-mobile'>
 
+                <div id="toggleControls" class="" data-toggle="buttons">
+                  <label id="districtToggle" class="btn btn-xs btn-district active">
+                    <input type="radio" name="options" autocomplete="off" checked> Districts
+                  </label>
+                  <label id="sectorToggle" class="btn btn-xs btn-sector">
+                    <input type="radio" name="options" autocomplete="off"> Sectors
+                  </label>
+                  <label id="cityToggle" class="btn btn-xs btn-city">
+                    <input type="radio" name="options" autocomplete="off"> City of LA
+                  </label>
+                </div>
+
                 <div id="map"></div>
             </div>
             <div class="col-sm-6 no-pad-mobile">
@@ -108,51 +120,74 @@
 
         {% if map_geojson %}
         $('tbody tr').on( 'mouseover', function () {
-            hoverOnRow(this.id);
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
+            activeToggle = $('#toggleControls').find('.active').attr('id');
+            hoverOnRow(this.id, activeToggle);
         } );
 
         $('tbody tr').on( "mouseout", function() {
             $('tr').css('background-color', 'inherit');
-            hoverOffRow(this.id);
+            activeToggle = $('#toggleControls').find('.active').attr('id');
+            hoverOffRow(this.id, activeToggle);
         } )
 
-        function hoverOffRow(select_id){
-            districts.eachLayer(function (layer) {
+        function hoverOffRow(select_id, active_id){
+            var controlView = $("#toggleControls").is(":hidden");
 
-                if (layer.feature.properties.select_id === select_id){
-                    layer.fire('tableout');
-                }
+            if (active_id.includes('district') || controlView) {
+                districts.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableout');
+                    }
+                });
+            }
 
-            });
+            if (active_id.includes('sector') || controlView) {
+                sectors.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableout');
+                    }
+                });
+            }
 
-            sectors.eachLayer(function (layer) {
-
-                if (layer.feature.properties.select_id === select_id){
-                    layer.fire('tableout');
-                }
-
-            });
+            if (active_id.includes('city') || controlView) {
+                los_angeles_city.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id || select_id.includes("mayor-of-the-city-of-los-angeles")){
+                        layer.fire('tableout');
+                    }
+                });
+            }
 
         }
 
-        function hoverOnRow(select_id) {
-            districts.eachLayer(function (layer) {
+        function hoverOnRow(select_id, active_id) {
+            var controlView = $("#toggleControls").is(":hidden");
 
-                if (layer.feature.properties.select_id === select_id){
-                    layer.fire('tableover');
-                }
+            if (active_id.includes('district') || controlView) {
+                districts.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableover');
+                    }
+                });
+            }
 
-            });
+            if (active_id.includes('sector') || controlView) {
+                sectors.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableover');
+                    }
+                });
+            }
 
-            sectors.eachLayer(function (layer) {
+            if (active_id.includes('city') || controlView) {
+                los_angeles_city.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id || select_id.includes("mayor-of-the-city-of-los-angeles")) {
+                        layer.fire('tableover');
+                    }
+                });
+            }
 
-                if (layer.feature.properties.select_id === select_id){
-                    layer.fire('tableover');
-                }
-
-            });
         }
 
         {% endif %}

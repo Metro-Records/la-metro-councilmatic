@@ -31,7 +31,14 @@
                         </td>
                         <td>
                             {{ post.role }}<br>
-                            <span class="small">{{ post.formatted_label | safe }}</span>
+                            <span class="small">{{ post.formatted_label | safe }}</span><br>
+                            {% if "District" in post.label %}
+                                <span class="badge district-badge">District appointee</span>
+                            {% elif "sector" in post.label %}
+                                <span class="badge sector-badge">Sector appointee</span>
+                            {% elif "Mayor" in post.label %}
+                                <span class="badge city-badge">Los Angeles</span>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
