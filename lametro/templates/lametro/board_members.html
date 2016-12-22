@@ -55,6 +55,20 @@
         {% if map_geojson %}
             <div class='col-sm-6 no-pad-mobile'>
 
+
+<div class="btn-group" data-toggle="buttons">
+  <label id="districtToggle" class="btn btn-primary active">
+    <input type="radio" name="options" autocomplete="off" checked> Districts
+  </label>
+  <label id="sectorToggle" class="btn btn-primary">
+    <input type="radio" name="options" autocomplete="off"> Sectors
+  </label>
+  <label id="cityToggle" class="btn btn-primary">
+    <input type="radio" name="options" autocomplete="off"> City of LA
+  </label>
+</div>
+
+
                 <div id="map"></div>
             </div>
             <div class="col-sm-6 no-pad-mobile">
