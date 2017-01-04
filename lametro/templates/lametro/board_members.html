@@ -18,8 +18,11 @@
         <div class="col-sm-6">
             <h1 class="map-heading">
                 {{ CITY_VOCAB.COUNCIL_MEMBERS }}
-
-                <h2 class="map-info" data-container="body" data-toggle="popover" data-placement="right" title="What does this map represent?" data-content="<div style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 12px;'>This map shows two layers: (1) one that shows cities, which nominate a representative from their “sector,” as defined by the California League of Cities, and (2) another that shows all of the incorporated cities in Los Angeles County. The nomination comes from the geographic sector with a majority weighted population vote (1 per 10k pop.), but the confirmation vote that puts them in office comes from all 87 cities (again by weighted majority pop vote, 1 per 10k pop). These results exclude the City of Los Angeles, since they already have the mayor and three appointees on the board.</div>"><small> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn more</small></h2>
+                <a tabindex="0" class="map-info" data-container="body" data-toggle="popover" data-placement="right" title="What does this map represent?" data-content="<p style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px;'>The three layers of this map show areas from which members of the Metro Board of Directors are nominated:<br><br>
+                <strong>(1) Los Angeles County Districts</strong> – The elected representative from each district from the Los Angeles County Board of Supervisors serves on the Metro Board.<br><br>
+                <strong>(2) Sectors</strong> – As defined by the California League of Cities, all the incorporated and unincorporated areas in Los Angeles County, excluding the City of Los Angeles, are divided into four sectors. Each sector nominates one representative, which is approved and appointed by all members of the California League of Cities, to serve on the Metro Board.<br><br>
+                <strong>(3) City of Los Angeles</strong> – Residents within the City of Los Angeles are represented by the mayor and three city appointees on the Metro Board.<br><br>
+                Learn more about <a href='{% url 'about' %}#about-la-metro'>Metro Board appointments</a>.</p>"><h2><small> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn more</small></h2><a>
             </h1>
 
         </div>
@@ -110,7 +113,11 @@
         });
 
         $( document ).ready(function() {
-            $('.map-info').popover({'trigger': 'hover', 'html': true})
+            $('.map-info').popover({
+                    'trigger': 'focus',
+                    'html': true,
+                    'container': 'body'
+            });
 
             $('.thumbnail-square img').each(function() {
               if ($(this).width() > $(this).height()) {
