@@ -212,40 +212,6 @@ class LACommitteeDetailView(CommitteeDetailView):
                 END
             ''')
 
-
-# SELECT
-#                 p.*,
-#                 m.role,
-#                 mm.label
-#               FROM councilmatic_core_membership AS m
-#               LEFT JOIN (
-#                 SELECT
-#                   person_id,
-#                   m.role,
-#                   pt.label
-#                 FROM councilmatic_core_membership AS m
-#                 JOIN councilmatic_core_post AS pt
-#                   ON m.post_id=pt.ocd_id
-#                 WHERE m.organization_id ='ocd-organization/89c32d8d-5bc1-4cd8-9316-3f0031984ba5'
-#               ) AS mm
-#                 USING(person_id)
-#               JOIN councilmatic_core_person AS p
-#                 ON m.person_id = p.ocd_id
-#               WHERE m.organization_id ='ocd-organization/89c32d8d-5bc1-4cd8-9316-3f0031984ba5'
-#               AND m.end_date::date > NOW()::date
-#               GROUP BY
-#                 p.ocd_id,
-#                 m.role,
-#                 mm.label
-#               ORDER BY
-#                 CASE
-#                   WHEN m.role='Chair' THEN 1
-#                   WHEN m.role='Vice Chair' THEN 2
-#                   WHEN m.role='Member' THEN 3
-#                   ELSE 4
-#                 END
-
-
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
             columns = [c[0] for c in cursor.description]
