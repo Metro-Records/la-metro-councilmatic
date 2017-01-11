@@ -12,22 +12,17 @@
             </tr>
         </thead>
         <tbody>
+
             {% for post in posts %}
-                {% for membership in post.memberships.all %}
+                {% for membership in post.current_members %}
                     <tr id="polygon-{{post.label | slugify}}">
                         <td>
-                            {% if membership in post.current_members %}
-                                <div class="thumbnail-square">
-                                    <img src='{{membership.person.headshot_url}}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
-                                </div>
-                            {% endif %}
+                            <div class="thumbnail-square">
+                                <img src='{{membership.person.headshot_url}}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
+                            </div>
                         </td>
                         <td>
-                            {% if membership in post.current_members %}
-                                {{ membership.person.link_html | safe }}
-                            {% else %}
-                                Vacant
-                            {% endif %}
+                            {{ membership.person.link_html | safe }}
                         </td>
                         <td>
                             {{ post.role }}<br>
@@ -43,6 +38,7 @@
                     </tr>
                 {% endfor %}
             {% endfor %}
+
         </tbody>
     </table>
 </div>

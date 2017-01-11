@@ -63,6 +63,10 @@ class LABoardMembersView(CouncilMembersView):
         context['seo'] = self.get_seo_blob()
 
         context['map_geojson'] = None
+        for post in context['posts']:
+          print([m.end_date for m in post.current_members])
+          print([m.role for m in post.current_members])
+          print([m.person for m in post.current_members])
 
         if settings.MAP_CONFIG:
 
@@ -82,7 +86,6 @@ class LABoardMembersView(CouncilMembersView):
                                }
 
             for post in self.object_list:
-
                 if post.shape:
                     council_member = "Vacant"
                     detail_link = ""
