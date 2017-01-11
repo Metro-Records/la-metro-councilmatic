@@ -63,10 +63,6 @@ class LABoardMembersView(CouncilMembersView):
         context['seo'] = self.get_seo_blob()
 
         context['map_geojson'] = None
-        for post in context['posts']:
-          print([m.end_date for m in post.current_members])
-          print([m.role for m in post.current_members])
-          print([m.person for m in post.current_members])
 
         if settings.MAP_CONFIG:
 
@@ -203,6 +199,10 @@ class LACommitteeDetailView(CommitteeDetailView):
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
+              GROUP BY
+                p.ocd_id,
+                m.role,
+                mm.label
               ORDER BY
                 CASE
                   WHEN m.role='Chair' THEN 1
@@ -211,6 +211,8 @@ class LACommitteeDetailView(CommitteeDetailView):
                   ELSE 4
                 END
             ''')
+
+
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
@@ -242,6 +244,11 @@ class LACommitteeDetailView(CommitteeDetailView):
               JOIN councilmatic_core_person AS p
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
+              AND m.end_date::date > NOW()::date
+              GROUP BY
+                p.ocd_id,
+                m.role,
+                mm.label
               ORDER BY
                 CASE
                   WHEN m.role='Chair' THEN 1
