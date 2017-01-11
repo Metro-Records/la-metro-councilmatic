@@ -212,8 +212,6 @@ class LACommitteeDetailView(CommitteeDetailView):
                 END
             ''')
 
-
-
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
             columns = [c[0] for c in cursor.description]
