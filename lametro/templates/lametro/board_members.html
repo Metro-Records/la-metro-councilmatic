@@ -132,7 +132,8 @@
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
             activeToggle = $('#toggleControls').find('.active').attr('id');
-            hoverOnRow(this.id, activeToggle);
+            memberNameSlug = $(this).attr('data')
+            hoverOnRow(this.id, activeToggle, memberNameSlug);
         } );
 
         $('tbody tr').on( "mouseout", function() {
@@ -170,7 +171,7 @@
 
         }
 
-        function hoverOnRow(select_id, active_id) {
+        function hoverOnRow(select_id, active_id, member_name) {
             var controlView = $("#toggleControls").is(":hidden");
 
             if (active_id.includes('district') || controlView) {
@@ -191,7 +192,8 @@
 
             if (active_id.includes('city') || controlView) {
                 los_angeles_city.eachLayer(function (layer) {
-                    if (layer.feature.properties.select_id === select_id || select_id.includes("mayor-of-the-city-of-los-angeles")) {
+                    var target_member = layer.feature.properties.council_member.toLowerCase().replace(' ', '-')
+                    if (member_name == target_member) {
                         layer.fire('tableover');
                     }
                 });
