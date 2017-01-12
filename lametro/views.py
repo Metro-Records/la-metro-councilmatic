@@ -14,7 +14,7 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.text import slugify
 from collections import namedtuple
-from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, CouncilmaticFacetedSearchView
+from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
 
@@ -49,6 +49,9 @@ class LABillDetail(BillDetailView):
 
 class LAMetroEventDetail(EventDetailView):
     template_name = 'lametro/event.html'
+
+class LAMetroEventsView(EventsView):
+    template_name = 'lametro/events.html'
 
 class LABoardMembersView(CouncilMembersView):
     template_name = 'lametro/board_members.html'
@@ -359,7 +362,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                         kwargs['searchqueryset'] = sqs
 
             except:
-                kwargs['searchqueryset'] = sqs
+                kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
 
         return self.form_class(data, **kwargs)
 
