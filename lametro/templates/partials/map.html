@@ -162,7 +162,8 @@
                 });
 
                 layer.on('mouseover', function(e){
-                    infoBox.update(e.target.feature.properties);
+                    // Hardcode this for Eric Garcetti, due to overlapping layers
+                    infoBox.update({ council_member: "Eric Garcetti", district: "Mayor of the City of Los Angeles" });
                     e.target.setStyle({'fillOpacity': 0.8, 'color': cityColor});
                 });
 

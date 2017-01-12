@@ -15,7 +15,7 @@
 
             {% for post in posts %}
                 {% for membership in post.current_members %}
-                    <tr id="polygon-{{post.label | slugify}}">
+                    <tr id="polygon-{{post.label | slugify}}" data="{{membership.person | slugify}}">
                         <td>
                             <div class="thumbnail-square">
                                 <img src='{{membership.person.headshot_url}}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
