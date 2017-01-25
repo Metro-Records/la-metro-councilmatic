@@ -22,7 +22,11 @@ def format_label(label):
 @register.filter
 def format_district(label):
     label_parts = label.split(', ')
-    return label_parts[-1]
+    if "Mayor of the City" in label:
+        formatted_label = "City of Los Angeles"
+    else:
+        formatted_label = label_parts[-1]
+    return formatted_label
 
 @register.filter
 def format_full_text(full_text):

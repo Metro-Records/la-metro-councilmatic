@@ -21,8 +21,17 @@
                 </p>
             {# endif %} -->
 
-            <hr />
+        </div>
+    </div>
 
+    <div class="row-fluid">
+        <div class="col-sm-12">
+        <hr />
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="col-sm-7">
             <h4><i class='fa fa-fw fa-list-ul'></i> Recent Legislative Activity
                 <a href="actions/rss/" title="RSS feed for Recent Legislative Activity by {{committee.name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
             </h4>
@@ -73,14 +82,15 @@
                 <p>No recent legislative activity</p>
             {% endif %}
 
+        </div>
+        <div class="col-sm-5">
             {% if committee.recent_events %}
-                <hr />
 
                 <h4>
                     <i class='fa fa-fw fa-calendar-o'></i> Committee {{ CITY_VOCAB.EVENTS }}
                     <a href="events/rss/" title="RSS feed for Committe Events by {{committee.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
                 </h4>
-
+                <br>
                 {% for event in committee.recent_events %}
                     <p class='event-listing'>
                         {{event.start_time | date:'n/d/Y' }} - {{event.link_html | safe}}
@@ -90,7 +100,18 @@
                 <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
             {% endif %}
 
-            <hr />
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="col-sm-12">
+        <hr />
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="col-sm-8">
+
             <h4><i class='fa fa-fw fa-group'></i> Committee Members {% if objects_list %}({{ objects_list|length }}){% else %}({{ ad_hoc_list|length }}){% endif %}</h4>
             <table class='table' id='council-members'>
                 <thead>
