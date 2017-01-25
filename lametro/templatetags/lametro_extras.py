@@ -45,13 +45,15 @@ def full_text_doc_url(url):
 
 @register.filter
 def appointment_label(label):
-    label_parts = label.split(', ')
+    full_label = label.replace("Appointee of", "Appointee of the")
+    label_parts = full_label.split(', ')
     if len(label_parts) > 1:
-        if 'sector' in label:
+        if 'sector' in full_label:
             appointment_label = ', nominated by the '.join(label_parts).replace('sector', 'Subcommittee')
         else:
             appointment_label = ', nominated by the '.join(label_parts) + ' Subcommittee'
     else:
-        appointment_label = label
+        print(label)
+        appointment_label = full_label
 
     return appointment_label

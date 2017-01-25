@@ -75,6 +75,10 @@
 
 .leaflet-control-attribution { display: none; }
 
+.info-blurb ol {
+    font-size: .85em;
+}
+
 /* Styles for order by options on search page */
 .nav a.sort-by, .nav a.btn { margin-left: 1.8em; }
 

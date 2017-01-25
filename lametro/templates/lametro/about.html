@@ -15,11 +15,9 @@
                 <li>
                     Stay up-to-date with your local representatives
                 </li>
-                </br>
                 <li>
                     See the schedule of public events
                 </li>
-                </br>
                 <li>
                     Track and comment on issues you care about
                 </li>
@@ -55,21 +53,29 @@
     <div class="col-sm-8 no-pad-mobile" id="about-la-metro">
         <br/><br/>
         <h3>What is {{ CITY_COUNCIL_NAME }}, and how does it work?</h3>
-        <p>The <a href="https://www.metro.net/" target="_blank">Los Angeles County Metropolitan Transportation Authority</a>, or Metro as it is commonly known, was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. It supports the transportation improvement programs of the 88 cities and 16 municipal transit operators in Los Angeles County, as well as LA's paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p>
+        <p>The <a href="https://www.metro.net/" target="_blank">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA's paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p>
 
         <h4>Board of Directors</h4>
-        <p>The <a href="{% url 'lametro:council_members' %}">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and an ex-oficio member representing the Governor. The full Board typically meets once a month to review presented budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.
+        <p>The <a href="{% url 'lametro:council_members' %}">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and an ex-oficio member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.
         </p>
 
         <h4>Board Member Appointments</h4>
-        <p>City representatives include the Mayor of Los Angeles and the Mayor’s appointees. County representatives include the Los Angeles County Board of Supervisors representative for each county district. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p>
-        <p>The City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector: North County/San Fernando Valley, San Gabriel Valley, Southeast Long Beach and Southwest Corridor. Each Sector Subcommittee nominates one mayor or council member for that Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one “yea” or “nay” vote for every 10,000 residents.</p>
+        <p>City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor’s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p>
+        <p>The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:
+        <ul>
+            <li>North County/San Fernando Valley</li>
+            <li>San Gabriel Valley</li>
+            <li>Long Beach, and</li>
+            <li>Southwest Corridor. </li>
+        </ul>
+        </p>
+        <p>Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one “yea” or “nay” vote for every 10,000 residents.</p>
         <p>Full documentation of this process can be found in the <a href="{% static 'pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf' %}" target="_blank">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a>.</p>
 
         <h4>Board Chair</h4>
-        <p>Each Metro Board Chair serves a one year term, from July 1st to June 30th, and rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members. </p>
+        <p>Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chairmanship rotates annually between the Mayor of Los Angeles, a member of the Los  Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p>
 
-        <h4>Types of board reports</h4>
+        <h4>Types of Board Reports</h4>
         <p>Below are the categories of Metro Board report activity:</p>
 
         {% include 'partials/component_bill_type_table.html' %}
