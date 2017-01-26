@@ -59,9 +59,17 @@
         </div>
     </nav>
 
-
     {% block full_content %}
     {% endblock %}
+    <div class="container-fluid">
+        <div class='col-sm-12'>
+            <div class="row-fluid">
+                <div class="col-sm-12">
+                    <div class="pull-right" id="google_translate_element"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- <div class="container-fluid footer">
         <div class='col-sm-12'>
@@ -84,6 +92,14 @@
 
     <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', gaTrack: true, gaId: 'UA-90842833-1'},
+                'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     {% block extra_js %}{% endblock %}
 

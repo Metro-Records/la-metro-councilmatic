@@ -1,5 +1,18 @@
+
+{% if meeting_type.documents.all or meeting_type.clean_agenda_items %}
+  <h4>Agenda
+
+    {% if meeting_type.documents.all %}
+      {% for document in meeting_type.documents.all %}
+          <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class='fa fa-fw fa-download'></i> Get PDF</a>
+      {% endfor %}
+
+  </h4>
+{% endif %}
+
+{% endif %}
+
 {% if meeting_type.clean_agenda_items %}
-      <h4>Agenda</h4>
       <ol>
           {% for agenda_item in meeting_type.clean_agenda_items %}
               {% if agenda_item.description|lower != 'page break' %}

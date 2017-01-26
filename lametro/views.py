@@ -39,7 +39,8 @@ class LABillDetail(BillDetailView):
     def get_context_data(self, **kwargs):
           context = super().get_context_data(**kwargs)
           context['actions'] = self.get_object().actions.all().order_by('-order')
-          context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
+          context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
+          context['board_report'] = self.get_object().attachments.get(note="Board Report")
           item = context['legislation']
           actions = Action.objects.filter(_bill_id=item.ocd_id)
           organization_lst = [action.organization for action in actions]
@@ -53,13 +54,27 @@ class LAMetroEventDetail(EventDetailView):
 class LAMetroEventsView(EventsView):
     template_name = 'lametro/events.html'
 
+    # def get_context_data(self, **kwargs):
+    #     context = super(LAMetroEventsView, self).get_context_data(**kwargs)
+
+    #     past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
+    #                   .order_by('start_time')\
+    #                   .all()
+
+    #     context['past_events'] = past_events
+
+    #     return context
+
 class LABoardMembersView(CouncilMembersView):
     template_name = 'lametro/board_members.html'
 
     model = LAMetroPost
 
     def get_queryset(self):
-        return LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
+        posts = LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
+        for p in posts:
+            print(p.label)
+        return posts
 
     def get_context_data(self, *args, **kwargs):
         context = super(LABoardMembersView, self).get_context_data(**kwargs)
