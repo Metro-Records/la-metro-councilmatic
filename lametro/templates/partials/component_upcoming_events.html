@@ -2,36 +2,28 @@
 
 {% if upcoming_board_meeting %}
 
-    <h2>
-        <span class="non-mobile-only"><i class="fa fa-university" aria-hidden="true"></i></span>
-        About Our Board Meetings
-    </h2>
-
-
-    <div class="panel panel-default">
-        <div class="panel-body">
-
+    <div>
+        <div>
             <br/>
 
             <div class="row">
 
                 <!-- Image of plaza -->
                 {% if current_board_meeting %}
-                    <div class="col-xs-3">
+                    <div class="col-xs-4">
                         <img src='/static/images/Los-Angeles-Gateway-Plaza-Office.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
                     </div>
                 {% else %}
-                    <div class="col-xs-3">
+                    <div class="col-xs-4">
                         <img src='/static/images/Gateway03RT.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
                     </div>
                 {% endif %}
 
                 <!-- Board meeting info -->
-                <div class="col-xs-9">
+                <div class="col-xs-8">
                     {% if current_board_meeting %}
                     <div class="row">
                       <div class="col-xs-12">
-                        <h4>Current Meeting</h4>
                         <h4>
                           {{ current_board_meeting.link_html | safe }}<br/>
                           <span class="small text-muted">{{current_board_meeting.description}}</span>
@@ -46,33 +38,28 @@
 
                     </div>
                     </br>
-                    {% endif %}
 
+                    {% elif upcoming_board_meeting %}
 
                     <div class="row">
                       <div class="col-xs-12">
-
-                        {% if current_board_meeting %}
-                        <h4>Upcoming Meeting</h4>
-                        {% endif %}
-
                         <h4>
                           {{ upcoming_board_meeting.link_html | safe }}<br/>
                           <span class="small text-muted">{{upcoming_board_meeting.description}}</span>
                         </h4>
-
                         <p class="small text-muted">
                             <i class="fa fa-fw fa-calendar-o"></i> {{upcoming_board_meeting.start_time | date:"D n/d/Y"}}<br/>
                             <i class="fa fa-fw fa-clock-o"></i> {{upcoming_board_meeting.start_time | date:"g:i a"}}<br/>
                             <i class="fa fa-fw fa-map-marker"></i> {{upcoming_board_meeting.location_name}}<br />
                         </p>
-
                       </div>
                     </div>
 
+                    {% endif %}
                 </div>
 
             </div>
+
 
             {% if current_board_meeting %}
                 {% with meeting_type=current_board_meeting %}
@@ -89,19 +76,4 @@
 
 {% endif %}
 
-
-{% if upcoming_committee_meetings %}
-    <h2>
-        <span class="non-mobile-only"><i class="fa fa-fw fa-group"></i> </span>
-        Upcoming Committee Meetings
-    </h2>
-    {% for event in upcoming_committee_meetings %}
-        {% include "partials/event_item.html" %}
-    {% endfor %}
-    <br/>
-    <a href="/events/" class="btn btn-sm btn-primary">
-        View All Upcoming {{ CITY_VOCAB.EVENTS }}
-        <i class="fa fa-fw fa-chevron-right"></i>
-    </a>
-{% endif %}
 

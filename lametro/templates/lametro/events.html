@@ -91,9 +91,16 @@
                 {% endif %}
 
             {% endif %}
+
         </div>
         <div class="col-sm-4 no-pad-mobile">
             {% include 'partials/events_info_blurb.html' %}
+
+            <div>
+                <p><a href="{% url 'about' %}#rules"><i class="fa fa-gavel" aria-hidden="true"></i> Board Room Rules</a></p>
+                <p><a href="{% url 'about' %}#procedures"><i class="fa fa-book" aria-hidden="true"></i> Rules &amp; Procedures</a></p>
+                <p><a href="{% url 'about' %}#visit"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit Metro Headquarters Building</a></p>
+            </div>
         </div>
     </div>
 

@@ -183,32 +183,32 @@ class LAMetroEvent(Event):
 
     @classmethod
     def upcoming_board_meeting(cls):
-        return cls.objects.filter(start_time__gt=datetime.now(app_timezone))\
-                  .filter(name__icontains="Board of Directors")\
-                  .order_by('start_time').first()
+        # return cls.objects.filter(start_time__gt=datetime.now(app_timezone))\
+        #           .filter(name__icontains="Board of Directors")\
+        #           .order_by('start_time').first()
 
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) + timedelta(days=37) - timedelta(hours=2)
-
-        # return cls.objects.filter(start_time__gt=faketime)\
-        #           .filter(name__icontains="Board of Directors")\
-        #           .order_by('start_time').first()
+        faketime = datetime.now(app_timezone) - timedelta(days=28) - timedelta(hours=12)
+        print(faketime)
+        return cls.objects.filter(start_time__gt=faketime)\
+                  .filter(name__icontains="Board of Directors")\
+                  .order_by('start_time').first()
 
     @classmethod
     def current_board_meeting(cls):
-        meeting_time = datetime.now(app_timezone) - timedelta(hours=3)
+        # meeting_time = datetime.now(app_timezone) - timedelta(hours=3)
 
-        return cls.objects.filter(start_time__lt=timezone.now())\
-                  .filter(start_time__gt=meeting_time)\
-                  .filter(name__icontains="Board of Directors")\
-                  .order_by('start_time').first()
-
-        # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) + timedelta(days=37) - timedelta(hours=2)
-        # meeting_time = faketime - timedelta(hours=3)
-
-        # return cls.objects.filter(start_time__lt=faketime)\
+        # return cls.objects.filter(start_time__lt=timezone.now())\
         #           .filter(start_time__gt=meeting_time)\
         #           .filter(name__icontains="Board of Directors")\
         #           .order_by('start_time').first()
+
+        # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
+        faketime = datetime.now(app_timezone) - timedelta(days=28) - timedelta(hours=12)
+        meeting_time = faketime - timedelta(hours=3)
+
+        return cls.objects.filter(start_time__lt=faketime)\
+                  .filter(start_time__gt=meeting_time)\
+                  .filter(name__icontains="Board of Directors")\
+                  .order_by('start_time').first()

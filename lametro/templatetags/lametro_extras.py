@@ -42,6 +42,7 @@ def format_full_text(full_text):
 @register.filter
 def full_text_doc_url(url):
     base_url = 'https://pic.datamade.us/lametro/document/'
+    # base_url = 'http://127.0.0.1:5000/lametro/document/'
     doc_url = '{0}?filename=agenda&document_url={1}'.format(base_url,
                                                              url)
 
@@ -61,3 +62,8 @@ def appointment_label(label):
         appointment_label = full_label
 
     return appointment_label
+
+@register.filter
+def parse_subject(text):
+    text_slice = text[:200]
+    return re.search(r'SUBJECT:(.*?)ACTION:', str(text)).group(1)
