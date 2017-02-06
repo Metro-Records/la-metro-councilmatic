@@ -90,8 +90,23 @@
                     <hr/>
                 {% endif %}
 
-            {% endif %}
+                {% if past_events %}
+                    <h2><span>Recent Past {{ CITY_VOCAB.EVENTS }}</span>
+                    <br class="non-desktop-only"/>
+                    <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
+                    </h2>
 
+                    <div class='row'>
+                        <div class='col-sm-8' id='events_message'></div>
+                    </div>
+                    <hr/>
+
+                    {% for date, event_list in past_events %}
+                        {% include "partials/event_day.html" %}
+                    {% endfor %}
+                {% endif %}
+
+            {% endif %}
         </div>
         <div class="col-sm-4 no-pad-mobile">
             {% include 'partials/events_info_blurb.html' %}

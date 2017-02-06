@@ -104,11 +104,18 @@
             "info": false,
             "bLengthChange": false,
             "paging": false,
-            "aaSorting": [ [1,'asc'] ],
+            "aaSorting": [ [3,'asc'] ],
             "aoColumns": [
                 { "bSortable": false },
                 null,
                 { "sType": "num-html" }
+            ],
+            "aoColumnDefs": [
+                {
+                    "targets": [ 3 ],
+                    "visible": false,
+                    "searchable": false
+                },
             ]
         });
 

@@ -12,14 +12,6 @@
             {% if committee_description %}
                 <p>{{committee_description}}</p>
             {% endif %}
-<!--             {# if committee.source_url %}
-                <p class="small">
-                    <a href='{{committee.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
-                        <i class='fa fa-fw fa-external-link'></i>
-                        View on the {{CITY_VOCAB.SOURCE}} website
-                    </a>
-                </p>
-            {# endif %} -->
 
         </div>
     </div>
@@ -112,7 +104,7 @@
     <div class="row-fluid">
         <div class="col-sm-8">
 
-            <h4><i class='fa fa-fw fa-group'></i> Committee Members {% if objects_list %}({{ objects_list|length }}){% else %}({{ ad_hoc_list|length }}){% endif %}</h4>
+            <h4><i class='fa fa-fw fa-group'></i> Committee Members {% if membership_objects %}({{ membership_objects|length }}){% else %}({{ ad_hoc_list|length }}){% endif %}</h4>
             <table class='table' id='council-members'>
                 <thead>
                     <tr>
@@ -124,60 +116,71 @@
                 </thead>
                 <tbody>
                     {% if 'Ad-Hoc' in committee.name %}
-                        {% for result in ad_hoc_list %}
+                        {% for member in ad_hoc_list %}
                             <tr>
-                                <td data-order='{{ forloop.counter }}'>
+                                <td data-order='{{ member.index }}'>
                                     <div class="thumbnail-square">
-                                        <img src='{{ result.ocd_id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
+                                        <img src='{{ member.ocd_id | call_headshot_url }}' alt='{{member.name}}' title='{{member.name}}' class='img-responsive img-thumbnail' />
                                     </div>
                                 </td>
                                 <td>
-                                    {% if result.slug %}
-                                        <a href="{% url 'lametro:person' result.slug %}">{{ result.name }}</a>
+                                    {% if member.label %}
+                                        <a href="{% url 'lametro:person' member.slug %}">{{ member.name }}</a>
                                     {% else %}
-                                        {{ result.name }}
+                                        {{ member.name }}
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if result.label %}
-                                        {{ result.label | format_label | safe }}
+                                    {% if member.label %}
+                                         {{ member.label.0 | clean_label | format_label | safe }}
                                     {% else %}
                                         None
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ result.role }}
+                                    {% if member.committee_role %}
+                                        {{ member.committee_role | clean_role }}
+                                    {% else %}
+                                        None
+                                    {% endif %}
                                 </td>
                             </tr>
 
                         {% endfor %}
+
                     {% else %}
-                        {% for result in objects_list %}
+
+                        {% for member in membership_objects %}
                             <tr>
-                                <td data-order='{{ forloop.counter }}'>
+                                <td data-order='{{ member.index }}'>
                                     <div class="thumbnail-square">
-                                        <img src='{{ result.ocd_id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
+                                        <img src='{{ member.ocd_id | call_headshot_url }}' alt='{{member.name}}' title='{{member.name}}' class='img-responsive img-thumbnail' />
                                     </div>
                                 </td>
                                 <td>
-                                    {% if result.slug %}
-                                        <a href="{% url 'lametro:person' result.slug %}">{{ result.name }}</a>
+                                    {% if member.label %}
+                                        <a href="{% url 'lametro:person' member.slug %}">{{ member.name }}</a>
                                     {% else %}
-                                        {{ result.name }}
+                                        {{ member.name }}
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if result.label %}
-                                        {{ result.label | format_label | safe }}
+                                    {% if member.label %}
+                                        {{ member.label.0 | clean_label | format_label | safe }}
                                     {% else %}
                                         None
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ result.role }}
+                                    {% if member.committee_role %}
+                                        {{ member.committee_role | clean_role }}
+                                    {% else %}
+                                        None
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
+
                     {% endif %}
                 </tbody>
             </table>
