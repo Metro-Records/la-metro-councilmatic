@@ -116,29 +116,33 @@
                 </thead>
                 <tbody>
                     {% if 'Ad-Hoc' in committee.name %}
-                        {% for result in ad_hoc_list %}
+                        {% for member in ad_hoc_list %}
                             <tr>
-                                <td data-order='{{ forloop.counter }}'>
+                                <td data-order='{{ member.index }}'>
                                     <div class="thumbnail-square">
-                                        <img src='{{ result.ocd_id | call_headshot_url }}' alt='{{result.name}}' title='{{result.name}}' class='img-responsive img-thumbnail' />
+                                        <img src='{{ member.ocd_id | call_headshot_url }}' alt='{{member.name}}' title='{{member.name}}' class='img-responsive img-thumbnail' />
                                     </div>
                                 </td>
                                 <td>
-                                    {% if result.slug %}
-                                        <a href="{% url 'lametro:person' result.slug %}">{{ result.name }}</a>
+                                    {% if member.label %}
+                                        <a href="{% url 'lametro:person' member.slug %}">{{ member.name }}</a>
                                     {% else %}
-                                        {{ result.name }}
+                                        {{ member.name }}
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if result.label %}
-                                        {{ result.label | format_label | safe }}
+                                    {% if member.label %}
+                                         {{ member.label.0 | clean_label | format_label | safe }}
                                     {% else %}
                                         None
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ result.role }}
+                                    {% if member.committee_role %}
+                                        {{ member.committee_role | clean_role }}
+                                    {% else %}
+                                        None
+                                    {% endif %}
                                 </td>
                             </tr>
 
@@ -148,13 +152,13 @@
 
                         {% for member in membership_objects %}
                             <tr>
-                                <td data-order='{{ forloop.counter }}'>
+                                <td data-order='{{ member.index }}'>
                                     <div class="thumbnail-square">
                                         <img src='{{ member.ocd_id | call_headshot_url }}' alt='{{member.name}}' title='{{member.name}}' class='img-responsive img-thumbnail' />
                                     </div>
                                 </td>
                                 <td>
-                                    {% if member.slug %}
+                                    {% if member.label %}
                                         <a href="{% url 'lametro:person' member.slug %}">{{ member.name }}</a>
                                     {% else %}
                                         {{ member.name }}
@@ -168,18 +172,14 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if member.roll %}
-                                        {{ member.roll | clean_role }}
+                                    {% if member.committee_role %}
+                                        {{ member.committee_role | clean_role }}
                                     {% else %}
                                         None
                                     {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
-
-
-
-
 
                     {% endif %}
                 </tbody>

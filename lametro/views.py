@@ -251,58 +251,10 @@ class LACommitteeDetailView(CommitteeDetailView):
             context['committee_description'] = description
 
         with connection.cursor() as cursor:
-            # today = timezone.now().date()
-
-            # sql = '''
-            # SELECT p.ocd_id, p.name, p.slug, array_agg(pt.label) as label, array_agg(m.role
-            #     ORDER BY CASE m.role
-            #       WHEN 'Chair' THEN 1
-            #       WHEN '1st Vice Chair' THEN 2
-            #       WHEN '2nd Vice Chair' THEN 2
-            #       ELSE 4
-            #     END) as role
-            # FROM councilmatic_core_membership as m
-            # INNER JOIN councilmatic_core_post as pt
-            # ON pt.ocd_id=m.post_id
-            # INNER JOIN councilmatic_core_person as p
-            # ON m.person_id=p.ocd_id
-            # WHERE m.organization_id='{0}'
-            # AND m.end_date >= '{1}'
-            # GROUP BY p.ocd_id, p.name, p.slug
-            # '''.format(committee.ocd_id, today)
-
-            # cursor.execute(sql)
-
-            # columns = [c[0] for c in cursor.description]
-            # columns.append('index')
-            # cursor_copy = []
-
-            # for obj in cursor:
-            #     print(obj)
-            #     if 'Chair' in obj[4]:
-            #         obj = obj + ("1",)
-            #     elif '1st Vice Chair' in obj[4]:
-            #         obj = obj + ("2",)
-            #     elif '2nd Vice Chair' in obj[4]:
-            #         obj = obj + ("3",)
-            #     else:
-            #         obj = obj + ("4",)
-            #     cursor_copy.append(obj)
-
-            # # Create tuple-like object...iterable and accessible by field names.
-            # membership_tuple = namedtuple('Membership', columns)
-            # membership_objects = [membership_tuple(*r) for r in cursor_copy]
-
-            # membership_objects = sorted(membership_objects, key=lambda x: x[5])
-
-            # context['membership_objects'] = membership_objects
-
-            # print(context['membership_objects'])
-
             sql = ('''
               SELECT
                 p.name, p.slug, p.ocd_id,
-                array_agg(m.role) as roll,
+                array_agg(m.role) as committee_role,
                 array_agg(mm.label)
                 FILTER (WHERE mm.label is not Null) as label
               FROM councilmatic_core_membership AS m
@@ -328,40 +280,42 @@ class LACommitteeDetailView(CommitteeDetailView):
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
             columns = [c[0] for c in cursor.description]
-            # columns.append('index')
+            columns.append('index')
             cursor_copy = []
 
-            results_tuple = namedtuple('Result', columns)
+            for obj in cursor:
+                if 'Chair' in obj[3]:
+                    obj = obj + ("1",)
+                elif '1st Vice Chair' in obj[3] or 'Vice Chair' in obj[3]:
+                    obj = obj + ("2",)
+                elif '2nd Vice Chair' in obj[3]:
+                    obj = obj + ("3",)
+                else:
+                    obj = obj + ("4",)
+                cursor_copy.append(obj)
 
-            objects_list = [results_tuple(*r) for r in cursor]
+            results_tuple      = namedtuple('Member', columns)
+            objects_list       = [results_tuple(*r) for r in cursor_copy]
+            membership_objects = sorted(objects_list, key=lambda x: x[5])
 
             context['membership_objects'] = objects_list
 
-            # for m in objects_list:
-            #     print(m)
-
-            # membership_tuple = namedtuple('Membership', columns)
-            # membership_objects = [membership_tuple(*r) for r in cursor_copy]
-            # membership_objects = sorted(membership_objects, key=lambda x: x[5])
-            # context['membership_objects'] = membership_objects
-
-            print(context['membership_objects'])
-
             sql = ('''
               SELECT
-                p.*,
-                m.role,
-                mm.label
+                p.name, p.slug, p.ocd_id,
+                array_agg(m.role) as committee_role,
+                array_agg(mm.label)
+                FILTER (WHERE mm.label is not Null) as label
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
                 SELECT
                   person_id,
-                  m.role,
-                  pt.label
+                  array_agg(DISTINCT pt.label) as label
                 FROM councilmatic_core_membership AS m
                 JOIN councilmatic_core_post AS pt
                   ON m.post_id=pt.ocd_id
                 WHERE m.organization_id = %s
+                GROUP BY person_id
               ) AS mm
                 USING(person_id)
               JOIN councilmatic_core_person AS p
@@ -369,25 +323,37 @@ class LACommitteeDetailView(CommitteeDetailView):
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
               GROUP BY
-                p.ocd_id,
-                m.role,
-                mm.label
-              ORDER BY
-                CASE
-                  WHEN m.role='Chair' THEN 1
-                  WHEN m.role='Vice Chair' THEN 2
-                  WHEN m.role='Member' THEN 3
-                  ELSE 4
-                END
+                p.name, p.slug, p.ocd_id
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
-            columns           = [c[0] for c in cursor.description]
-            committees_tuple  = namedtuple('Committee', columns, rename=True)
-            data              = [committees_tuple(*r) for r in cursor]
+            columns = [c[0] for c in cursor.description]
+            columns.append('index')
+            cursor_copy = []
 
-            context['ad_hoc_list'] = data
+            for obj in cursor:
+                if 'Chair' in obj[3]:
+                    obj = obj + ("1",)
+                elif '1st Vice Chair' in obj[3] or 'Vice Chair' in obj[3]:
+                    obj = obj + ("2",)
+                elif '2nd Vice Chair' in obj[3]:
+                    obj = obj + ("3",)
+                else:
+                    obj = obj + ("4",)
+                cursor_copy.append(obj)
+
+            results_tuple      = namedtuple('Member', columns)
+            objects_list       = [results_tuple(*r) for r in cursor_copy]
+            membership_objects = sorted(objects_list, key=lambda x: x[5])
+
+            context['ad_hoc_list'] = objects_list
+
+            # columns           = [c[0] for c in cursor.description]
+            # committees_tuple  = namedtuple('Committee', columns, rename=True)
+            # data              = [committees_tuple(*r) for r in cursor]
+
+            # context['ad_hoc_list'] = data
 
         return context
 
