@@ -84,13 +84,6 @@ class LAMetroPost(Post):
         today = timezone.now().date()
         return self.memberships.filter(end_date__gte=today)
 
-    @property
-    def formatted_label(self):
-        label = self.label
-        label_parts = label.split(', ')
-        formatted_label = '<br>'.join(label_parts)
-        return formatted_label
-
 class LAMetroPerson(Person):
 
     class Meta:
@@ -187,9 +180,9 @@ class LAMetroEvent(Event):
                   .filter(name__icontains="Board of Directors")\
                   .order_by('start_time').first()
 
-
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) + timedelta(days=28) - timedelta(hours=12)
+        # faketime = datetime.now(app_timezone) + timedelta(days=17) - timedelta(hours=1)
+        # print(faketime)
         # print(faketime)
         # return cls.objects.filter(start_time__gt=faketime)\
         #           .filter(name__icontains="Board of Directors")\
@@ -205,7 +198,7 @@ class LAMetroEvent(Event):
                   .order_by('start_time').first()
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) + timedelta(days=28) - timedelta(hours=12)
+        # faketime = datetime.now(app_timezone) + timedelta(days=17) - timedelta(hours=1)
         # meeting_time = faketime - timedelta(hours=3)
 
         # return cls.objects.filter(start_time__lt=faketime)\

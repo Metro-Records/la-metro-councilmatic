@@ -54,6 +54,9 @@
                     <li>
                         <a href="{% url 'lametro:search' %}">Board Reports</a>
                     </li>
+                    <li>
+                        <div id="google_translate_element"></div>
+                    </li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div>
@@ -61,34 +64,6 @@
 
     {% block full_content %}
     {% endblock %}
-    <div class="container-fluid">
-        <div class='col-sm-12'>
-            <div class="row-fluid">
-                <div class="col-sm-12">
-                    <div class="pull-right" id="google_translate_element"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- <div class="container-fluid footer">
-        <div class='col-sm-12'>
-            <div class='clearfix'></div>
-
-            {% if FOOTER_CREDITS %}
-                <p>Part of the <a href='https://www.councilmatic.org'>Councilmatic family</a>. Proudly brought to you by</p>
-
-                {% for credit in FOOTER_CREDITS %}
-
-                    <a href='{{credit.url}}' title='{{credit.name}}'><img src='/static/images/{{credit.image}}' /></a>
-
-                {% endfor %}
-            {% else %} -->
-                <!-- <p>Part of the <a href='https://www.councilmatic.org'>Councilmatic family</a>.</p> -->
-            <!-- {% endif %}
-
-        </div>
-    </div> -->
 
     <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>

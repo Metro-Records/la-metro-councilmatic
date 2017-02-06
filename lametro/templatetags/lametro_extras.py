@@ -14,6 +14,12 @@ def call_headshot_url(person_id):
     return url
 
 @register.filter
+def call_link_html(person_id):
+    person = Person.objects.get(ocd_id=person_id)
+    url = person.link_html
+    return url
+
+@register.filter
 def format_label(label):
     label_parts = label.split(', ')
     formatted_label = '<br />'.join(label_parts)
@@ -30,12 +36,16 @@ def format_district(label):
 
 @register.filter
 def format_full_text(full_text):
-    txt_as_array = full_text.split("..")
-    results = ""
+    results = ''
 
-    for arr in txt_as_array:
-        sliced_arr = arr.split( )[1:]
-        results += " ".join(sliced_arr) + "<br /><br />"
+    if full_text:
+        txt_as_array = full_text.split("..")
+
+        for arr in txt_as_array:
+            if arr:
+                sliced_arr = arr.split( )[1:]
+                results += " ".join(sliced_arr) + "<br /><br />"
+
 
     return results
 
@@ -65,5 +75,25 @@ def appointment_label(label):
 
 @register.filter
 def parse_subject(text):
-    text_slice = text[:200]
-    return re.search(r'SUBJECT:(.*?)ACTION:', str(text)).group(1)
+    text_snippet = None
+
+    if text:
+        text_slice = text[:200]
+        re_results = re.search(r'SUBJECT:(.*?)ACTION:', str(text))
+        if re_results:
+            text_snippet = re_results.group(1)
+
+    return text_snippet
+
+@register.filter
+def clean_role(role_list):
+    if len(role_list) > 1:
+        role_list.remove('Board Member')
+
+    return role_list[0]
+
+@register.filter
+def clean_label(label_list):
+    label_list = [ label for label in label_list if 'Chair' not in label ]
+
+    return label_list[0]
