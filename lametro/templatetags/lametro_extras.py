@@ -23,6 +23,7 @@ def call_link_html(person_id):
 def format_label(label):
     label_parts = label.split(', ')
     formatted_label = '<br />'.join(label_parts)
+
     return formatted_label
 
 @register.filter
@@ -95,5 +96,6 @@ def clean_role(role_list):
 @register.filter
 def clean_label(label_list):
     label_list = [ label for label in label_list if 'Chair' not in label ]
+    label = label_list[0]
 
-    return label_list[0]
+    return label
