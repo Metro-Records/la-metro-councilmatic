@@ -89,7 +89,10 @@ def parse_subject(text):
 @register.filter
 def clean_role(role_list):
     if len(role_list) > 1:
-        role_list.remove('Board Member')
+        try:
+            role_list.remove('Board Member')
+        except:
+            pass
 
     return role_list[0]
 
@@ -99,3 +102,9 @@ def clean_label(label_list):
     label = label_list[0]
 
     return label
+
+@register.filter
+def format_string(label_list):
+    label_list = label_list.replace('{', '').replace('}', '').replace('"', '')
+
+    return label_list.split(',')

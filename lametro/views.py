@@ -255,7 +255,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               SELECT
                 p.name, p.slug, p.ocd_id,
                 array_agg(m.role) as committee_role,
-                array_agg(mm.label)
+                array_agg(mm.label::VARCHAR)
                 FILTER (WHERE mm.label is not Null) as label
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
@@ -304,7 +304,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               SELECT
                 p.name, p.slug, p.ocd_id,
                 array_agg(m.role) as committee_role,
-                array_agg(mm.label)
+                array_agg(mm.label::VARCHAR)
                 FILTER (WHERE mm.label is not Null) as label
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
@@ -348,12 +348,6 @@ class LACommitteeDetailView(CommitteeDetailView):
             membership_objects = sorted(objects_list, key=lambda x: x[5])
 
             context['ad_hoc_list'] = objects_list
-
-            # columns           = [c[0] for c in cursor.description]
-            # committees_tuple  = namedtuple('Committee', columns, rename=True)
-            # data              = [committees_tuple(*r) for r in cursor]
-
-            # context['ad_hoc_list'] = data
 
         return context
 
