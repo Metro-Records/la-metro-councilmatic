@@ -166,7 +166,7 @@
                                 </td>
                                 <td>
                                     {% if member.label %}
-                                        {{ member.label.0 | clean_label | format_label | safe }}
+                                        {{ member.label | clean_label | format_label | safe }}
                                     {% else %}
                                         None
                                     {% endif %}

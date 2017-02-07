@@ -255,8 +255,8 @@ class LACommitteeDetailView(CommitteeDetailView):
               SELECT
                 p.name, p.slug, p.ocd_id,
                 array_agg(m.role) as committee_role,
-                array_agg(mm.label)
-                FILTER (WHERE mm.label is not Null) as label
+                array_agg(mmm)
+                FILTER (WHERE mmm is not Null) as label
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
                 SELECT
@@ -270,7 +270,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               ) AS mm
                 USING(person_id)
               JOIN councilmatic_core_person AS p
-                ON m.person_id = p.ocd_id
+                ON m.person_id = p.ocd_id, unnest(mm.label) as mmm
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
               GROUP BY

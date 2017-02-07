@@ -89,7 +89,10 @@ def parse_subject(text):
 @register.filter
 def clean_role(role_list):
     if len(role_list) > 1:
-        role_list.remove('Board Member')
+        try:
+            role_list.remove('Board Member')
+        except:
+            pass
 
     return role_list[0]
 
