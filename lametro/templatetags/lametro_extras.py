@@ -102,3 +102,9 @@ def clean_label(label_list):
     label = label_list[0]
 
     return label
+
+@register.filter
+def format_string(label_list):
+    label_list = label_list.replace('{', '').replace('}', '').replace('"', '')
+
+    return label_list.split(',')
