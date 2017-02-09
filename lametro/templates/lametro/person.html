@@ -32,9 +32,10 @@
             <p class="small">
                 {% if qualifying_post %}
                     <i class='fa fa-fw fa-briefcase'></i>
-                    {{ qualifying_post }}
+                    {{ qualifying_post | appointment_label }}
                 {% endif %}
             </p>
+            <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
             <p class="small">
                 {% if person.email %}
                     <i class='fa fa-fw fa-envelope-o'></i>
@@ -48,6 +49,17 @@
                 {% endif %}
             </p>
 
+            <hr />
+
+            {% if member_bio %}
+                <h4>About {{ person.name }}</h4>
+                <p class="small">{{ member_bio | safe }}</p>
+            {% endif %}
+
+            <!-- <p class='small'>
+                <a href='{{person.source_url}}' target="_blank"><i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website</a>
+            </p> -->
+
             {% if map_geojson %}
                 <hr />
                 <h4>
@@ -58,15 +70,12 @@
                 <div id='map-detail'></div>
             {% endif %}
 
-            <hr />
             {% if person.headshot_source %}
                 <p class='small'>
                     <i class='fa fa-fw fa-camera'></i> Credit: {{person.headshot_source}}
                 </p>
             {% endif %}
-            <p class='small'>
-                <a href='{{person.source_url}}' target="_blank"><i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website</a>
-            </p>
+
         </div>
 
         <div class="col-sm-4 mobile-only">
@@ -236,22 +245,23 @@
             map.addLayer(layer);
             var geojson = L.geoJson({{ map_geojson|safe }}, {
                 style: {
-                        "color": "#3182bd",
+                        "color": "#3D8A8E",
                         "weight": 1.2,
                         "opacity": 1,
-                        "fillOpacity": .4
+                        "fillOpacity": .3
                     }
             });
+
             $(function() {
                 geojson.addTo(map);
                 map.fitBounds(geojson.getBounds());
+            });
+
+            geojson.on('click', function(){
+                window.location.href="{% url 'lametro:council_members' %}";
             });
         </script>
 
     {% endif %}
 
-    <script>
-        // for reference purposes
-        // console.log( "OCD ID: {{person.ocd_id}}" )
-    </script>
 {% endblock %}

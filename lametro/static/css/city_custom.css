@@ -28,32 +28,125 @@
     padding-bottom: 20px;
 }
 
-#map-screenshot{
-    width: 90%;
+#map { margin-bottom: 2em; }
+
+#map-screenshot { width: 90%; }
+
+.map-heading {
+    display: inline-block;
+    padding-right: 12px;
+}
+
+.map-info {
+    display: inline-block;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+}
+
+.map-info:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.map-info:focus {
+    text-decoration: none;
+    border: none;
+    outline:none;
 }
 
 .panel-body {
+    padding: 28px;
     padding-top: 0px;
 }
-
-/*.btn-info {
-    background-color: #3182bd;
-    border-color: #3182bd;
-}
-
-.btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active {
-    outline: 0 none;
-    background-color: #3182bd;
-    border-color: #3182bd;
-}*/
-
-#map { margin-bottom: 2em; }
 
 .infobox {
     width: 22px;
     margin: 0;
 }
 
-.leaflet-control-attribution {
-    display: none;
+.popover {
+    max-width: 60%;
+    top: 1% !important;
+}
+
+.popover.right {
+    margin-right: 1%;
+}
+
+.leaflet-control-attribution { display: none; }
+
+.info-blurb ol {
+    font-size: .85em;
+}
+
+div#google_translate_element {
+    padding-top: 14px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.pdf-viewer { max-width: 840px; }
+
+/* Styles for order by options on search page */
+.nav a.sort-by, .nav a.btn { margin-left: 1.8em; }
+
+.nav-inline { margin-top: 21px; }
+
+div.order-nav { margin-top: 21px; }
+
+.btn-district {
+    background-color: #3D8A8E;
+    color: #fff;
+    padding: 4px 12px;
+}
+
+.btn-district:hover, .btn-district.active { background-color: #49A6AB; }
+
+.btn-sector {
+    background-color: #4D649E;
+    color: #fff;
+    padding: 4px 12px;
+}
+
+.btn-sector:hover, .btn-sector.active { background-color: #697EB5; }
+
+.btn-city {
+    background-color: #EB6864;
+    color: #fff;
+    padding: 4px 12px;
+}
+
+.btn-city:hover, .btn-city.active { background-color: #EF8481; }
+
+div#toggleControls { margin-bottom: 1em; }
+
+.badge.district-badge { background-color: #3D8A8E; }
+
+.badge.sector-badge { background-color: #4D649E; }
+
+.badge.city-badge { background-color: #EB6864; }
+
+#searchOn.well { padding: 12px; }
+
+/* Media queries */
+@media only screen and (max-width : 767px) {
+
+    .navbar-brand {
+        width: 50%;
+        padding-top: 19px;
+    }
+
+    .home-header {
+        font-size: 32px;
+    }
+
+    .nav a.sort-by, .nav a.btn {
+        margin-left: 0.4em;
+    }
+}
+
+@media only screen and (max-width : 400px) {
+    .remove-order-value {
+        display: none;
+    }
 }

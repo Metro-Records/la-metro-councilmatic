@@ -9,6 +9,8 @@
                     Filter by
                     {% if 'Legislation' in facet_label %}
                         Report Type
+                    {% elif 'Legislative Session' in facet_label %}
+                        Year
                     {% else %}
                         {{facet_label}}
                     {% endif %}

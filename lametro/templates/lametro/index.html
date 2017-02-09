@@ -6,12 +6,10 @@
         <div class="row-fluid">
             <div class='col-sm-10 col-sm-offset-1'>
                 <br/>
-                <h2>
-                    <h1>Los Angeles County Metropolitan Transportation Authority</h1>
-                </h2>
+                    <h1 class="home-header">Los Angeles County Metropolitan Transportation Authority</h1>
                 <br/>
                 <p class="h3">
-                    <span class="text-bg">Search {{CITY_NAME}} board reports</span>
+                    <span class="text-bg">Search {{CITY_NAME}} Board Reports</span>
                 </p>
                 <form class="search form-search=" action="/search/" method="GET">
                     <div class="input-group site-intro-search">
@@ -27,18 +25,39 @@
         </div>
     </div>
 
-
     <div class="container-fluid" id="section-intro">
+
         <div class="row-fluid">
             <div class='col-sm-10 col-sm-offset-1'>
                 <div class="divider"></div>
-
-                <div class='row'>
+                <div class="row">
                     <div class='col-sm-8'>
+                        <h2>
+                            <span class="non-mobile-only"><i class="fa fa-university" aria-hidden="true"></i></span>
+                            {% if current_board_meeting %}
+                                Current Board Meeting
+                            {% elif upcoming_board_meeting %}
+                                Next Board Meeting
+                            {% endif %}
+                        </h2>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-sm-7'>
+
+                        {% if upcoming_board_meeting %}
+
+                            {% include "partials/component_upcoming_events.html" %}
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class='col-sm-5'>
                         <p>The <a href="https://www.metro.net/" target="_blank">Los Angeles County Metropolitan Transportation Authority</a>, commonly known as Metro, consists of several <a href="{% url 'lametro:council_members' %}">Board Members</a>, who set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County.</p>
 
                         <p>
-                            <strong>Metro Board</strong> tracks all things related to the Metro Board of Directors:
+                            The <strong>Metro Board</strong> website tracks all things related to the Metro Board of Directors:
                             <ul>
                                 <li>
                                     the <a href="{% url 'lametro:search' %}">legislation</a> introduced and passed
@@ -61,18 +80,7 @@
 
                         </p>
                     </div>
-
-                    <div class= 'col-sm-4 desktop-only'>
-
-                        <p>
-                            <a href="{% url 'lametro:council_members' %}" target="_blank"><img id="map-screenshot" src='/static/images/screenshot-placeholder.png' class='img-responsive img-rounded' title='Metro Districts' alt="Districts to which board members belong" /></a>
-                            <em>Districts to which board members belong</em>
-                        </p>
-
-                    </div>
                 </div>
-
-
 
             </div>
         </div>
@@ -83,18 +91,20 @@
     <div class="container-fluid" id="section-events">
         <div class="row-fluid">
             <div class='col-sm-10 col-sm-offset-1'>
-                {% include "partials/component_upcoming_events.html" %}
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-
-    {% if recently_passed %}
-    <div class="container-fluid" id="section-recently-passed">
-        <div class="row-fluid">
-            <div class='col-sm-8 col-sm-offset-1'>
-                {% include "partials/component_recently_passed.html" %}
+                {% if upcoming_committee_meetings %}
+                    <h2>
+                        <span class="non-mobile-only"><i class="fa fa-fw fa-group"></i> </span>
+                        Upcoming Committee Meetings
+                    </h2>
+                    {% for event in upcoming_committee_meetings %}
+                        {% include "partials/event_item.html" %}
+                    {% endfor %}
+                    <br/>
+                    <a href="/events/" class="btn btn-sm btn-primary">
+                        View All Upcoming {{ CITY_VOCAB.EVENTS }}
+                        <i class="fa fa-fw fa-chevron-right"></i>
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>

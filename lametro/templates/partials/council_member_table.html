@@ -1,3 +1,5 @@
+{% load lametro_extras %}
+
 <div class="table-responsive">
     <table class='table' id='council-members'>
         <thead>
@@ -9,32 +11,38 @@
                 <th>
                     {{CITY_VOCAB.MUNICIPAL_DISTRICT}}
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            {% for post in posts %}
-                {% for membership in post.memberships.all %}
-                    <tr id="polygon-{{post.label | slugify}}">
+            {% for membership in membership_objects %}
+
+                    <tr id="polygon-{{ membership.label|clean_label | slugify }}" data="{{ membership.name | slugify}}">
+
                         <td>
-                            {% if membership in post.current_members %}
-                                <div class="thumbnail-square">
-                                    <img src='{{membership.person.headshot_url}}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
-                                </div>
-                            {% endif %}
+                            <div class="thumbnail-square">
+                                <img src='{{ membership.ocd_id | call_headshot_url }}' alt='{{ membership.name }}' title='{{ membership.name }}' class='img-responsive img-thumbnail' />
+                            </div>
                         </td>
                         <td>
-                            {% if membership in post.current_members %}
-                                {{ membership.person.link_html | safe }}
+                            {{ membership.ocd_id | call_link_html | safe }}
+                        </td>
+                        <td>
+                            {{ membership.role | clean_role }}<br>
+
+                            <span class="small">{{ membership.label|clean_label | format_label | safe }}</span><br>
+                            {% if "District" in membership.label|clean_label %}
+                                <span class="badge district-badge">District appointee</span>
+                            {% elif "sector" in membership.label|clean_label %}
+                                <span class="badge sector-badge">Sector appointee</span>
+                            {% elif "Mayor" in membership.label|clean_label %}
+                                <span class="badge city-badge">Los Angeles</span>
                             {% else %}
-                                Vacant
                             {% endif %}
                         </td>
-                        <td>
-                            {{ post.role }}<br>
-                            <span class="small">{{ post.formatted_label | safe }}</span>
-                        </td>
+                        <td data='{{ membership.index }}'></td>
                     </tr>
-                {% endfor %}
+
             {% endfor %}
         </tbody>
     </table>

@@ -9,80 +9,70 @@
             <div class="col-sm-12">
                 <h1 class="bill-page-title">
                     <br class="non-mobile-only" />
-                    {{ legislation.friendly_name }}
-                    <small>
+
+                    {{ legislation.identifier}} -{{ legislation.ocr_full_text| format_full_text | parse_subject}}<br>
+                </h1>
+                <h2>
+                    {{ legislation.bill_type }}
+                    <!-- <small> -->
                         {% if legislation.inferred_status %}
                             {{ legislation.inferred_status | inferred_status_label | safe }}
                         {% endif %}
                         <a href="rss/" title="RSS feed for Legislation {{legislation.friendly_name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
-                    </small>
-                </h1>
-                {% if legislation.topics %}
-                    <p>
-                        <i class="fa fa-tag"></i>
-                        {% for tag in legislation.topics %}
-                            <span class="badge badge-muted badge-big pseudo-topic-tag">
-                                <a href='/search/?q=&selected_facets=topics_exact:{{ tag }}'>{{ tag }}</a>
-                            </span>
-                        {% endfor %}
-                        <br/>
-                    </p>
-                {% endif %}
+                    <!-- </small> -->
+                </h2>
+
             </div>
         </div>
 
         <div class="col-sm-8 no-pad-mobile">
             <br/>
 
-        {% block description %}
-            {% if legislation.abstract %}
-                <p class="small text-muted">
-                    <i>{{ legislation.description }} </i>
-                </p>
-
-                <p>
-                    {{ legislation.abstract }}
-                </p>
-            {% else %}
-                <p>
-                    {{ legislation.description|truncatewords:200 }}
-                </p>
-            {% endif %}
-            {% endblock %}
-
             <p class="small">
                 <a href='{{legislation.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
                     <i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website
                 </a>
             </p>
-            <div class="divider"></div>
 
-            {% if sponsorships %}
-                <!-- <h3 class="no-pad-bottom"><i class='fa fa-fw fa-users'></i> Sponsors</h3> -->
 
-                <div class="table-responsive">
-                    <table class='table table-responsive' id='council-members'>
-                        <thead>
-                            <tr>
-                                <th>
-                                    Sponsored by
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for s in sponsorships %}
-                                <tr>
-                                    <td>
-                                        {{ s.name }}
-                                        {{ s.person.link_html | safe }}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            {% if board_report %}
+                <h3>
+                    <i class='fa fa-fw fa-file-text-o'></i>
+                    Report text
+                </h3>
+
+                <p>
+                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}'><i class='fa fa-fw fa-download'></i> Get PDF</a>
+                </p>
+
+                <iframe
+                    id="pdf-embed-agenda"
+                    class="pdf-viewer hidden-xs"
+                    frameborder="0"
+                    seamless="true"
+                    width="100%"
+                    height="600px"
+                    src="/pdfviewer/?file={{board_report.url|full_text_doc_url|urlencode}}">
+                </iframe>
+
+                <div class="divider"></div>
+            {% elif legislation.ocr_full_text != "" %}
+                <h3>
+                    <i class='fa fa-fw fa-file-text-o'></i>
+                    Report text
+                </h3>
+
+                <div class='panel panel-default'>
+                    <div class='panel-body'>
+                        {{ legislation.ocr_full_text| format_full_text |safe }}
+                    </div>
                 </div>
+
                 <div class="divider"></div>
             {% endif %}
+
+
+            <div class="divider"></div>
 
             {% if actions %}
                 <h3 class="no-pad-bottom"><i class='fa fa-fw fa-list-ul'></i> History</h3>
@@ -144,7 +134,10 @@
                 <img class='img-thumbnail img-rounded' src="https://maps.googleapis.com/maps/api/staticmap?size=400x200&zoom=14&maptype=roadmap{% for address in legislation.addresses %}&markers={{ address }}+{{ CITY_NAME }}{% endfor %}">
                 <div class="divider"></div>
             {% endif %}
+        </div>
 
+        <!-- New col added, here. -->
+        <div class="col-sm-4">
             {% if attachments %}
                 <h3>
                     <i class='fa fa-fw fa-paperclip'></i>
@@ -160,17 +153,32 @@
                 <div class="divider"></div>
             {% endif %}
 
-            {% if legislation.ocr_full_text != "" %}
-                <h3>
-                    <i class='fa fa-fw fa-file-text-o'></i>
-                    Report text
-                </h3>
-                <div class='panel panel-default'>
-                    <div class='panel-body'>
-                        {{ legislation.ocr_full_text| format_full_text |safe }}
-                    </div>
-                </div>
+            <br>
 
+            {% if sponsorships %}
+                <!-- <h3 class="no-pad-bottom"><i class='fa fa-fw fa-users'></i> Sponsors</h3> -->
+
+                <div class="table-responsive">
+                    <table class='table table-responsive' id='council-members'>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Sponsored by
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in sponsorships %}
+                                <tr>
+                                    <td>
+                                        {{ s.name }}
+                                        {{ s.person.link_html | safe }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 <div class="divider"></div>
             {% endif %}
         </div>

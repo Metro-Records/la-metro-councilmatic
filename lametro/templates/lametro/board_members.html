@@ -16,25 +16,18 @@
     {% if map_geojson %}
     <div class="row">
         <div class="col-sm-6">
-            <h1>
+            <h1 class="map-heading">
                 {{ CITY_VOCAB.COUNCIL_MEMBERS }}
-
-               <!--  <div class="pull-right" id='toggleControls'>
-
-                    <label class="checkbox-inline">
-                        <input id="sectorToggle" type="checkbox" checked data-toggle="toggle" data-on='<i class="fa fa-minus-square" aria-hidden="true"></i> Sectors' data-off='<i class="fa fa-plus-square" aria-hidden="true"></i> Sectors' data-size="mini">
-                    </label>
-
-                    <label class="checkbox-inline">
-                        <input id="districtToggle" type="checkbox" checked data-toggle="toggle" data-on='<i class="fa fa-minus-square" aria-hidden="true"></i> Districts' data-off='<i class="fa fa-plus-square" aria-hidden="true"></i> Districts' data-size="mini">
-                    </label>
-
-                </div> -->
-
+                <a tabindex="0" class="map-info" data-container="body" data-toggle="popover" data-placement="right" title="What does this map represent?" data-content="<p style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px;'>The three layers of this map show areas from which members of the Metro Board of Directors are nominated:<br><br>
+                <strong>(1) Los Angeles County Districts</strong> – The elected representative from each district from the Los Angeles County Board of Supervisors serves on the Metro Board.<br><br>
+                <strong>(2) Sectors</strong> – As defined by the California League of Cities, all the incorporated and unincorporated areas in Los Angeles County, excluding the City of Los Angeles, are divided into four sectors. Each sector nominates one representative, which is approved and appointed by all members of the California League of Cities, to serve on the Metro Board.<br><br>
+                <strong>(3) City of Los Angeles</strong> – Residents within the City of Los Angeles are represented by the mayor and three city appointees on the Metro Board.<br><br>
+                Learn more about <a href='{% url 'about' %}#about-la-metro'>Metro Board appointments</a>.</p>"><h2><small> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn more</small></h2><a>
             </h1>
+
         </div>
         <div class="col-sm-6">
-            <h4>Look up a Metro board member</h4>
+            <h4>Look up a Metro Board Member</h4>
             <div class="input-group address-search">
                 <input name="search_address" id='search_address' type="text" class="form-control" placeholder="Enter your address">
                 <div class='input-group-btn'>
@@ -65,7 +58,19 @@
         {% if map_geojson %}
             <div class='col-sm-6 no-pad-mobile'>
 
+                <div id="toggleControls" class="" data-toggle="buttons">
+                  <label id="districtToggle" class="btn btn-xs btn-district active">
+                    <input type="radio" name="options" autocomplete="off" checked><i class="fa fa-check" aria-hidden="true"></i> Districts
+                  </label>
+                  <label id="sectorToggle" class="btn btn-xs btn-sector">
+                    <input type="radio" name="options" autocomplete="off"> Sectors
+                  </label>
+                  <label id="cityToggle" class="btn btn-xs btn-city">
+                    <input type="radio" name="options" autocomplete="off"> City of LA
+                  </label>
+                </div>
 
+                <div id="searchOn" class="well small" style="display: none;">Displaying address search. Reset your results to see all areas.</div>
 
                 <div id="map"></div>
             </div>
@@ -99,15 +104,28 @@
             "info": false,
             "bLengthChange": false,
             "paging": false,
-            "aaSorting": [ [2,'asc'] ],
+            "aaSorting": [ [3,'asc'] ],
             "aoColumns": [
                 { "bSortable": false },
                 null,
                 { "sType": "num-html" }
+            ],
+            "aoColumnDefs": [
+                {
+                    "targets": [ 3 ],
+                    "visible": false,
+                    "searchable": false
+                },
             ]
         });
 
         $( document ).ready(function() {
+            $('.map-info').popover({
+                    'trigger': 'focus',
+                    'html': true,
+                    'container': 'body'
+            });
+
             $('.thumbnail-square img').each(function() {
               if ($(this).width() > $(this).height()) {
                 $(this).addClass('landscape');
@@ -118,51 +136,76 @@
 
         {% if map_geojson %}
         $('tbody tr').on( 'mouseover', function () {
-            hoverOnRow(this.id);
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
+            activeToggle = $('#toggleControls').find('.active').attr('id');
+            memberNameSlug = $(this).attr('data')
+            hoverOnRow(this.id, activeToggle, memberNameSlug);
         } );
 
         $('tbody tr').on( "mouseout", function() {
             $('tr').css('background-color', 'inherit');
-            hoverOffRow(this.id);
+            activeToggle = $('#toggleControls').find('.active').attr('id');
+            hoverOffRow(this.id, activeToggle);
         } )
 
-        function hoverOffRow(select_id){
-            districts.eachLayer(function (layer) {
+        function hoverOffRow(select_id, active_id){
+            var controlView = $("#toggleControls").is(":hidden");
 
-                if (layer.feature.properties.select_id === select_id){
-                    layer.fire('tableout');
-                }
+            if (active_id.includes('district') || controlView) {
+                districts.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableout');
+                    }
+                });
+            }
 
-            });
+            if (active_id.includes('sector') || controlView) {
+                sectors.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableout');
+                    }
+                });
+            }
 
-            sectors.eachLayer(function (layer) {
-
-                if (layer.feature.properties.select_id === select_id){
-                    layer.fire('tableout');
-                }
-
-            });
+            if (active_id.includes('city') || controlView) {
+                los_angeles_city.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id || select_id.includes("mayor-of-the-city-of-los-angeles")){
+                        layer.fire('tableout');
+                    }
+                });
+            }
 
         }
 
-        function hoverOnRow(select_id) {
-            districts.eachLayer(function (layer) {
+        function hoverOnRow(select_id, active_id, member_name) {
+            var controlView = $("#toggleControls").is(":hidden");
 
-                if (layer.feature.properties.select_id === select_id){
-                    layer.fire('tableover');
-                }
+            if (active_id.includes('district') || controlView) {
+                districts.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableover');
+                    }
+                });
+            }
 
-            });
+            if (active_id.includes('sector') || controlView) {
+                sectors.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableover');
+                    }
+                });
+            }
 
-            sectors.eachLayer(function (layer) {
+            if (active_id.includes('city') || controlView) {
+                los_angeles_city.eachLayer(function (layer) {
+                    var target_member = layer.feature.properties.council_member.toLowerCase().replace(' ', '-')
+                    if (member_name == target_member) {
+                        layer.fire('tableover');
+                    }
+                });
+            }
 
-                if (layer.feature.properties.select_id === select_id){
-                    layer.fire('tableover');
-                }
-
-            });
         }
 
         {% endif %}

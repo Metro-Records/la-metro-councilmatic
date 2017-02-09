@@ -4,6 +4,7 @@ import re
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from datetime import datetime, timedelta
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, Action
 
@@ -82,13 +83,6 @@ class LAMetroPost(Post):
     def current_members(self):
         today = timezone.now().date()
         return self.memberships.filter(end_date__gte=today)
-
-    @property
-    def formatted_label(self):
-        label = self.label
-        label_parts = label.split(', ')
-        formatted_label = '<br>'.join(label_parts)
-        return formatted_label
 
 class LAMetroPerson(Person):
 
@@ -182,6 +176,32 @@ class LAMetroEvent(Event):
 
     @classmethod
     def upcoming_board_meeting(cls):
-        return cls.objects.filter(start_time__gt=timezone.now())\
+        return cls.objects.filter(start_time__gt=datetime.now(app_timezone))\
                   .filter(name__icontains="Board of Directors")\
                   .order_by('start_time').first()
+
+        # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
+        # faketime = datetime.now(app_timezone) + timedelta(days=17) - timedelta(hours=1)
+        # print(faketime)
+        # print(faketime)
+        # return cls.objects.filter(start_time__gt=faketime)\
+        #           .filter(name__icontains="Board of Directors")\
+        #           .order_by('start_time').first()
+
+    @classmethod
+    def current_board_meeting(cls):
+        meeting_time = datetime.now(app_timezone) - timedelta(hours=3)
+
+        return cls.objects.filter(start_time__lt=timezone.now())\
+                  .filter(start_time__gt=meeting_time)\
+                  .filter(name__icontains="Board of Directors")\
+                  .order_by('start_time').first()
+
+        # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
+        # faketime = datetime.now(app_timezone) + timedelta(days=17) - timedelta(hours=1)
+        # meeting_time = faketime - timedelta(hours=3)
+
+        # return cls.objects.filter(start_time__lt=faketime)\
+        #           .filter(start_time__gt=meeting_time)\
+        #           .filter(name__icontains="Board of Directors")\
+        #           .order_by('start_time').first()

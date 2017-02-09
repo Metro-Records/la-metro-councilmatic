@@ -1,12 +1,14 @@
 import re
 from datetime import datetime
 from itertools import groupby
+from operator import attrgetter
+import itertools
 import urllib
 import json
 from datetime import date, timedelta, datetime
 
 from haystack.query import SearchQuerySet
-
+from django.db import transaction, connection, connections
 from django.conf import settings
 from django.shortcuts import render
 from django.db import connection
@@ -14,9 +16,11 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.text import slugify
 from collections import namedtuple
-from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, CouncilmaticFacetedSearchView
+from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
+
+from councilmatic.settings_jurisdiction import MEMBER_BIOS
 
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
@@ -26,6 +30,7 @@ class LAMetroIndexView(IndexView):
     def extra_context(self):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
+        extra['current_board_meeting'] = self.event_model.current_board_meeting()
 
         return extra
 
@@ -36,7 +41,8 @@ class LABillDetail(BillDetailView):
     def get_context_data(self, **kwargs):
           context = super().get_context_data(**kwargs)
           context['actions'] = self.get_object().actions.all().order_by('-order')
-          context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
+          context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
+          context['board_report'] = self.get_object().attachments.get(note="Board Report")
           item = context['legislation']
           actions = Action.objects.filter(_bill_id=item.ocd_id)
           organization_lst = [action.organization for action in actions]
@@ -47,13 +53,35 @@ class LABillDetail(BillDetailView):
 class LAMetroEventDetail(EventDetailView):
     template_name = 'lametro/event.html'
 
+class LAMetroEventsView(EventsView):
+    template_name = 'lametro/events.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(LAMetroEventsView, self).get_context_data(**kwargs)
+
+        past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
+                      .order_by('-start_time')[:10]
+
+        day_grouper     = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
+        org_past_events = []
+
+        for event_date, events in itertools.groupby(past_events, key=day_grouper):
+            events = sorted(events, key=attrgetter('start_time'))
+            org_past_events.append([date(*event_date), events])
+
+        context['past_events'] = org_past_events
+
+        return context
+
 class LABoardMembersView(CouncilMembersView):
     template_name = 'lametro/board_members.html'
 
     model = LAMetroPost
 
     def get_queryset(self):
-        return LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
+        posts = LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
+
+        return posts
 
     def get_context_data(self, *args, **kwargs):
         context = super(LABoardMembersView, self).get_context_data(**kwargs)
@@ -72,6 +100,11 @@ class LABoardMembersView(CouncilMembersView):
                                     'type': 'FeatureCollection',
                                     'features': []
                                   }
+
+            map_geojson_city = {
+                                 'type': 'FeatureCollection',
+                                 'features': []
+                               }
 
             for post in self.object_list:
                 if post.shape:
@@ -99,8 +132,61 @@ class LABoardMembersView(CouncilMembersView):
                     if 'la_metro_sector' in post.division_ocd_id:
                         map_geojson_sectors['features'].append(feature)
 
-            context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
+                    if post.division_ocd_id == 'ocd-division/country:us/state:ca/place:los_angeles':
+                        map_geojson_city['features'].append(feature)
+
             context['map_geojson'] = json.dumps(map_geojson)
+            context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
+            context['map_geojson_city'] = json.dumps(map_geojson_city)
+
+
+        with connection.cursor() as cursor:
+            today = timezone.now().date()
+
+            sql = '''
+            SELECT p.ocd_id, p.name, array_agg(pt.label) as label, array_agg(m.role
+                ORDER BY CASE m.role
+                  WHEN 'Chair' THEN 1
+                  WHEN '1st Vice Chair' THEN 2
+                  WHEN '2nd Vice Chair' THEN 2
+                  ELSE 4
+                END) as role
+            FROM councilmatic_core_membership as m
+            INNER JOIN councilmatic_core_post as pt
+            ON pt.ocd_id=m.post_id
+            INNER JOIN councilmatic_core_person as p
+            ON m.person_id=p.ocd_id
+            WHERE m.organization_id='ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
+            AND m.end_date >= '{0}'
+            GROUP BY p.ocd_id, p.name
+            '''.format(today)
+
+            cursor.execute(sql)
+
+            columns = [c[0] for c in cursor.description]
+            columns.append('index')
+            cursor_copy = []
+
+            for obj in cursor:
+                if 'Chair' in obj[3]:
+                    obj = obj + ("1",)
+                elif '1st Vice Chair' in obj[3]:
+                    obj = obj + ("2",)
+                elif '2nd Vice Chair' in obj[3]:
+                    obj = obj + ("3",)
+                elif 'Nonvoting Board Member' in obj[3]:
+                    obj = obj + ("5",)
+                else:
+                    obj = obj + ("4",)
+                cursor_copy.append(obj)
+
+            # Create tuple-like object...iterable and accessible by field names.
+            membership_tuple = namedtuple('Membership', columns)
+            membership_objects = [membership_tuple(*r) for r in cursor_copy]
+
+            membership_objects = sorted(membership_objects, key=lambda x: x[4])
+
+            context['membership_objects'] = membership_objects
 
         return context
 
@@ -165,83 +251,103 @@ class LACommitteeDetailView(CommitteeDetailView):
             context['committee_description'] = description
 
         with connection.cursor() as cursor:
-
             sql = ('''
               SELECT
-                p.*,
-                m.role,
-                mm.label
+                p.name, p.slug, p.ocd_id,
+                array_agg(m.role) as committee_role,
+                array_agg(mm.label::VARCHAR)
+                FILTER (WHERE mm.label is not Null) as label
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
                 SELECT
                   person_id,
-                  m.role,
-                  pt.label
+                  array_agg(DISTINCT pt.label) as label
                 FROM councilmatic_core_membership AS m
                 JOIN councilmatic_core_post AS pt
                   ON m.post_id=pt.ocd_id
                 WHERE m.organization_id = %s
+                GROUP BY person_id
               ) AS mm
                 USING(person_id)
               JOIN councilmatic_core_person AS p
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
-              ORDER BY
-                CASE
-                  WHEN m.role='Chair' THEN 1
-                  WHEN m.role='Vice Chair' THEN 2
-                  WHEN m.role='Member' THEN 3
-                  ELSE 4
-                END
+              GROUP BY
+                p.name, p.slug, p.ocd_id
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
             columns = [c[0] for c in cursor.description]
+            columns.append('index')
+            cursor_copy = []
 
-            results_tuple = namedtuple('Result', columns)
+            for obj in cursor:
+                if 'Chair' in obj[3]:
+                    obj = obj + ("1",)
+                elif '1st Vice Chair' in obj[3] or 'Vice Chair' in obj[3]:
+                    obj = obj + ("2",)
+                elif '2nd Vice Chair' in obj[3]:
+                    obj = obj + ("3",)
+                else:
+                    obj = obj + ("4",)
+                cursor_copy.append(obj)
 
-            objects_list = [results_tuple(*r) for r in cursor]
+            results_tuple      = namedtuple('Member', columns)
+            objects_list       = [results_tuple(*r) for r in cursor_copy]
+            membership_objects = sorted(objects_list, key=lambda x: x[5])
 
-            context['objects_list'] = objects_list
+            context['membership_objects'] = objects_list
 
             sql = ('''
               SELECT
-                p.*,
-                m.role,
-                mm.label
+                p.name, p.slug, p.ocd_id,
+                array_agg(m.role) as committee_role,
+                array_agg(mm.label::VARCHAR)
+                FILTER (WHERE mm.label is not Null) as label
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
                 SELECT
                   person_id,
-                  m.role,
-                  pt.label
+                  array_agg(DISTINCT pt.label) as label
                 FROM councilmatic_core_membership AS m
                 JOIN councilmatic_core_post AS pt
                   ON m.post_id=pt.ocd_id
                 WHERE m.organization_id = %s
+                GROUP BY person_id
               ) AS mm
                 USING(person_id)
               JOIN councilmatic_core_person AS p
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
-              ORDER BY
-                CASE
-                  WHEN m.role='Chair' THEN 1
-                  WHEN m.role='Vice Chair' THEN 2
-                  WHEN m.role='Member' THEN 3
-                  ELSE 4
-                END
+              AND m.end_date::date > NOW()::date
+              GROUP BY
+                p.name, p.slug, p.ocd_id
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
-            columns           = [c[0] for c in cursor.description]
-            committees_tuple  = namedtuple('Committee', columns, rename=True)
-            data              = [committees_tuple(*r) for r in cursor]
+            columns = [c[0] for c in cursor.description]
+            columns.append('index')
+            cursor_copy = []
 
-            context['ad_hoc_list'] = data
+            for obj in cursor:
+                if 'Chair' in obj[3]:
+                    obj = obj + ("1",)
+                elif '1st Vice Chair' in obj[3] or 'Vice Chair' in obj[3]:
+                    obj = obj + ("2",)
+                elif '2nd Vice Chair' in obj[3]:
+                    obj = obj + ("3",)
+                else:
+                    obj = obj + ("4",)
+                cursor_copy.append(obj)
+
+            results_tuple      = namedtuple('Member', columns)
+            objects_list       = [results_tuple(*r) for r in cursor_copy]
+            membership_objects = sorted(objects_list, key=lambda x: x[5])
+
+            context['ad_hoc_list'] = objects_list
 
         return context
 
@@ -251,6 +357,7 @@ class LAPersonDetailView(PersonDetailView):
     model = LAMetroPerson
 
     def get_context_data(self, **kwargs):
+        post_model = LAMetroPost
 
         context = super().get_context_data(**kwargs)
         person = context['person']
@@ -262,6 +369,7 @@ class LAPersonDetailView(PersonDetailView):
             title = m.role
             if m.post:
                 qualifying_post = m.post.label
+
         else:
             title = 'Former %s' % m.role
         context['title'] = title
@@ -276,6 +384,9 @@ class LAPersonDetailView(PersonDetailView):
 
         committees_lst = [action._organization.name for action in person.committee_sponsorships]
         context['committees_lst'] = list(set(committees_lst))
+
+        if person.slug in MEMBER_BIOS:
+            context['member_bio'] = MEMBER_BIOS[person.slug]
 
         return context
 
@@ -333,7 +444,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                         kwargs['searchqueryset'] = sqs
 
             except:
-                kwargs['searchqueryset'] = sqs
+                kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
 
         return self.form_class(data, **kwargs)
 
