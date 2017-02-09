@@ -1,7 +1,6 @@
 branches:
   only:
   - "/^v0.*$/"
-  - codedeploy
   - master
 language: python
 python:
@@ -25,7 +24,6 @@ deploy:
   deployment_group: production
   on:
     tags: true
-    branch: deploy
 deploy:
   provider: codedeploy
   access_key_id: AKIAJNYGDLOJKHOUWCAA
