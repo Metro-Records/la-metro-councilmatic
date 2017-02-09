@@ -16,8 +16,9 @@ downloads
 /keyrings/live/pubring.gpg~
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
-/configs/settings_deployment.py
 /scripts/after_install.sh
 /scripts/app_start.sh
 /scripts/app_stop.sh
 /scripts/validate_service.sh
+/configs/settings_deployment_staging.py
+/configs/settings_deployment_production.py
