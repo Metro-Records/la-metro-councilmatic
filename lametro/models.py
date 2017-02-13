@@ -205,3 +205,18 @@ class LAMetroEvent(Event):
         #           .filter(start_time__gt=meeting_time)\
         #           .filter(name__icontains="Board of Directors")\
         #           .order_by('start_time').first()
+
+    @classmethod
+    def upcoming_committee_meetings(cls):
+        meetings = cls.objects.filter(start_time__gt=timezone.now())\
+                  .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+1, 1))\
+                  .exclude(name__icontains=settings.CITY_COUNCIL_MEETING_NAME)\
+                  .order_by('start_time').all()
+
+        if not meetings:
+            meetings = cls.objects.filter(start_time__gt=timezone.now())\
+                  .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+2, 1))\
+                  .exclude(name__icontains=settings.CITY_COUNCIL_MEETING_NAME)\
+                  .order_by('start_time').all()
+
+        return meetings
