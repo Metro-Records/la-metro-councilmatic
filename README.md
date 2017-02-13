@@ -177,4 +177,4 @@ Report it here: https://github.com/datamade/nyc-councilmatic/issues
 
 ## Copyright
 
-Copyright (c) 2015 Participatory Politics Foundation and DataMade. Released under the [MIT License](https://github.com/datamade/nyc-councilmatic/blob/master/LICENSE).
+Copyright (c) 2017 DataMade. Released under the [MIT License](https://github.com/datamade/nyc-councilmatic/blob/master/LICENSE).
