@@ -1,4 +1,4 @@
-# Metro Board Reports (a member of the [Councilmatic family](https://www.councilmatic.org/))
+# Metro Board Reports
 
 Metro Board Reports helps the Los Angeles community understand and track the activities of the Los Angeles County Metropolitan Transportation Authority, commonly known as Metro - a government agency that consists of several Board Members, who set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout LA County.
 
@@ -9,6 +9,8 @@ The Metro Board Reports site helps users monitor all things related to the Metro
 * the board members themselves
 
 This site ultimately encourages greater public dialogue and increased awareness about transportation issues in LA County.
+
+A member of the [Councilmatic family](https://www.councilmatic.org/).
 
 ## Setup
 
