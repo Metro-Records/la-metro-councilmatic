@@ -150,3 +150,74 @@ div#toggleControls { margin-bottom: 1em; }
         display: none;
     }
 }
+
+/* Styles for calendar pop-up. */
+#ui-datepicker-div {
+  position: absolute !important;
+  top: 144px !important;
+}
+
+.ui-state-hover {
+    border: 0 !important;
+    background: #e9e9e9 !important;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+    border: #49A6AB !important;
+    background-color: #49A6AB !important;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    border: #eb6864 !important;
+    background-color: #eb6864 !important;
+    color: #fff !important;
+}
+
+.ui-datepicker-prev, .ui-datepicker-next {
+    float: left;
+}
+
+.ui-datepicker-next:after {
+    content: "";
+    border-color: rgba(0,0,0,0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #333;
+    border-image: none;
+    border-style: solid;
+    border-width: 9px;
+    display: block;
+    height: 0;
+    margin-top: 5px;
+    width: 0;
+}
+
+.ui-datepicker-prev:before {
+    content: "";
+    border-color: rgba(0,0,0,0) #333 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+    border-image: none;
+    border-style: solid;
+    border-width: 9px;
+    display: block;
+    height: 0;
+    margin-top: 5px;
+    width: 0;
+}
+
+#date-search .form-control { width: 50%; }
+
+.btn-teal {
+    background-color: #49A6AB;
+    border: #49A6AB;
+    color: #fff;
+}
+
+.btn-teal:hover, .btn-teal.active { background-color: #70BEC2; }
+
+.btn-salmon {
+    background-color: #EB6864;
+    border: #EB6864;
+    color: #fff;
+}
+
+.btn-salmon:hover, .btn-salmon.active { background-color: #EF8481; }
+
+#events-form > div.col-xs-8, #events-form > div.col-xs-2 { padding-right: 0; }
+
