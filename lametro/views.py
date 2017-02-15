@@ -65,7 +65,7 @@ class LAMetroEventsView(EventsView):
         end_date_str   = self.request.GET.get('to')
         day_grouper    = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
 
-        # If yes...
+        # If yes: dates...
         if start_date_str and end_date_str:
             context['start_date'] = start_date_str
             context['end_date']   = end_date_str
@@ -83,18 +83,29 @@ class LAMetroEventsView(EventsView):
                 org_select_events.append([date(*event_date), events])
 
             context['select_events'] = org_select_events
+        elif self.request.GET.get('show'):
+            # Upcoming events for the current month.
+            all_events = Event.objects.all().order_by('start_time')
+
+            org_all_events = []
+
+            for event_date, events in itertools.groupby(all_events, key=day_grouper):
+                events = sorted(events, key=attrgetter('start_time'))
+                org_all_events.append([date(*event_date), events])
+
+            context['all_events'] = org_all_events
         # If no...
         else:
             # Upcoming events for the current month.
             future_events = Event.objects.filter(start_time__gt=timezone.now())\
                   .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+1, 1))\
-                  .order_by('start_time').all()
+                  .order_by('start_time')
 
             if not future_events:
                 # Upcoming events for the next month.
                 future_events = Event.objects.filter(start_time__gt=timezone.now())\
                       .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+2, 1))\
-                      .order_by('start_time').all()
+                      .order_by('start_time')
 
             org_future_events = []
 

@@ -22,7 +22,7 @@
                     </form>
                 </div>
                 <div class="col-xs-2">
-                    <a href="{% url 'events' %}" class="btn btn-salmon d-inline-block"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs"> All meetings</span></a>
+                    <a href="{% url 'events' %}?show=all" class="btn btn-salmon d-inline-block"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs"> All meetings</span></a>
                 </div>
                 <div class="col-xs-2">
                     <a href="{% url 'events' %}" class="btn btn-teal d-inline-block"><i class="fa fa-repeat" aria-hidden="true"></i><span class="hidden-xs"> Reset</span></a>
@@ -43,9 +43,7 @@
                     {% include "partials/event_day.html" %}
                 {% endfor %}
                 <hr/>
-            {% endif %}
 
-            {% if past_events %}
                 <h2><span>Recent Past {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
@@ -59,9 +57,7 @@
                 {% for date, event_list in past_events %}
                     {% include "partials/event_day.html" %}
                 {% endfor %}
-            {% endif %}
-
-            {% if select_events %}
+            {% elif select_events %}
                 <h2><span>{{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
@@ -75,6 +71,28 @@
                 {% for date, event_list in select_events %}
                     {% include "partials/event_day.html" %}
                 {% endfor %}
+
+            {% elif all_events %}
+                <h2><span>All {{ CITY_VOCAB.EVENTS }}</span>
+                <br class="non-desktop-only"/>
+                <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
+                </h2>
+
+                <div class='row'>
+                    <div class='col-sm-8' id='events_message'></div>
+                </div>
+                <hr/>
+
+                {% for date, event_list in all_events %}
+                    {% include "partials/event_day.html" %}
+                {% endfor %}
+            {% else %}
+                <div class='row'>
+                    <div class="col-sm-12">
+                        <br>
+                        <p>Your search did not return any results.</p>
+                    </div>
+                </div>
             {% endif %}
 
         </div>
