@@ -3,8 +3,11 @@
 {% block title %}Events{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 {% endblock %}
 {% block content %}
+
     <div class="row-fluid">
         <div class="col-sm-8 no-pad-mobile">
             <br/><br class="non-mobile-only"/>
@@ -13,8 +16,7 @@
                     <form action='/events' method='GET'>
                       <div class="input-group" id='date-search'>
                             <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                            <input type="text" id="from" name="from" class="form-control date-filter" placeholder="Select start date..." value='{{ start_date }}'>
-                            <input type="text" id="to" name="to" class="form-control date-filter" placeholder="Select end date..." value='{{ end_date }}'>
+                            <input type="text" class="form-control date-filter" placeholder="Select a month and year..." value="{{ date }}" readonly id="form_datetime" name="form_datetime">
                             <span class="input-group-btn">
                               <button class="btn btn-default btn-date" id="btn-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i> <span class='hidden-sm hidden-xs'>Search</span></button>
                             </span>
@@ -58,7 +60,7 @@
                     {% include "partials/event_day.html" %}
                 {% endfor %}
             {% elif select_events %}
-                <h2><span>Select {{ CITY_VOCAB.EVENTS }}</span>
+                <h2><span>{{ CITY_VOCAB.EVENTS }} in {{select_date}}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
                 </h2>
@@ -112,11 +114,19 @@
 
 {% block extra_js %}
     <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
-    <script src="{% static 'js/jquery-ui.js' %}"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <script type="{% static 'js/moment.js' %}"></script>
+    <script type="{% static 'js/bootstrap-datetimepicker.js' %}"></script>
     <script>
     $(document).ready(function() {
-        $('#from').datepicker();
-        $('#to').datepicker();
+
+        $("#form_datetime").datepicker({
+            autoclose: true,
+            viewMode: "months",
+            minViewMode: "months",
+        });
+
     });
     </script>
 {% endblock %}
