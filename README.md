@@ -1,8 +1,8 @@
 # Metro Board Reports
 
-Metro Board Reports helps the Los Angeles community understand and track the activities of the Los Angeles County Metropolitan Transportation Authority, commonly known as Metro - a government agency that consists of several Board Members, who set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout LA County.
+[Metro Board Reports](https://boardagendas.metro.net/) helps the Los Angeles community understand the activities of the Los Angeles County Metropolitan Transportation Authority (Metro) – a government agency that consists of several Board Members, who set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout LA County.
 
-The Metro Board Reports site helps users monitor all things related to the Metro Board of Directors:
+The Metro Board Reports site monitors all things related to the Metro Board of Directors:
 
 * the board reports introduced and passed
 * its various committees and the meetings they hold
@@ -10,7 +10,7 @@ The Metro Board Reports site helps users monitor all things related to the Metro
 
 This site ultimately encourages greater public dialogue and increased awareness about transportation issues in LA County.
 
-A member of the [Councilmatic family](https://www.councilmatic.org/).
+Metro Board Reports is a member of the [Councilmatic family](https://www.councilmatic.org/). Learn how to [build your own](https://github.com/datamade/councilmatic-starter-template) Councilmatic site!
 
 ## Setup
 
@@ -67,9 +67,9 @@ python manage.py createsuperuser
 
 Every hour, DataMade scrapes the Legistar Web API and makes the results available on the Open Civic Data API, which hosts standardized data patterns about government organizations, people, legislation, and events. Metro Board Reports relies upon this data.
 
-The django-councilmatic app comes with a `import_data` management command, which populates your database with content loaded from the OCD API. You can explore the nitty-gritty of this code [here](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/import_data.py).
+The django-councilmatic app comes with an `import_data` management command, which populates your database with content loaded from the OCD API. You can explore the nitty-gritty of this code [here](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/import_data.py).
 
-Running the `import_data` command may take a few minutes, depending on volume:
+Run the `import_data` command, which may take a few minutes, depending on volume:
 
 ```bash
 python manage.py import_data
