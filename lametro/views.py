@@ -1,11 +1,11 @@
 import re
-from datetime import datetime
 from itertools import groupby
 from operator import attrgetter
 import itertools
 import urllib
 import json
 from datetime import date, timedelta, datetime
+from dateutil import parser
 
 from haystack.query import SearchQuerySet
 from django.db import transaction, connection, connections
@@ -13,6 +13,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.db import connection
 from django.db.models.functions import Lower
+from django.db.models import Max, Min
 from django.utils import timezone
 from django.utils.text import slugify
 from collections import namedtuple
@@ -59,17 +60,83 @@ class LAMetroEventsView(EventsView):
     def get_context_data(self, **kwargs):
         context = super(LAMetroEventsView, self).get_context_data(**kwargs)
 
-        past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
-                      .order_by('-start_time')[:10]
+        # Did the user set date boundaries?
+        start_date_str = self.request.GET.get('from')
+        end_date_str   = self.request.GET.get('to')
+        day_grouper    = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
 
-        day_grouper     = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
-        org_past_events = []
+        # If yes: dates...
+        if start_date_str and end_date_str:
+            context['start_date'] = start_date_str
+            context['end_date']   = end_date_str
+            start_date_time       = parser.parse(start_date_str)
+            end_date_time         = parser.parse(end_date_str)
 
-        for event_date, events in itertools.groupby(past_events, key=day_grouper):
-            events = sorted(events, key=attrgetter('start_time'))
-            org_past_events.append([date(*event_date), events])
+            select_events = Event.objects.filter(start_time__gt=start_date_time)\
+                          .filter(start_time__lt=end_date_time)\
+                          .order_by('start_time')
 
-        context['past_events'] = org_past_events
+            org_select_events = []
+
+            for event_date, events in itertools.groupby(select_events, key=day_grouper):
+                events = sorted(events, key=attrgetter('start_time'))
+                org_select_events.append([date(*event_date), events])
+
+            context['select_events'] = org_select_events
+        elif self.request.GET.get('show'):
+            # Upcoming events for the current month.
+            all_events = Event.objects.all().order_by('start_time')
+
+            org_all_events = []
+
+            for event_date, events in itertools.groupby(all_events, key=day_grouper):
+                events = sorted(events, key=attrgetter('start_time'))
+                org_all_events.append([date(*event_date), events])
+
+            context['all_events'] = org_all_events
+        # If no...
+        else:
+            # Upcoming events for the current month.
+            future_events = Event.objects.filter(start_time__gt=timezone.now())\
+                  .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+1, 1))\
+                  .order_by('start_time')
+
+            if not future_events:
+                # Upcoming events for the next month.
+                future_events = Event.objects.filter(start_time__gt=timezone.now())\
+                      .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+2, 1))\
+                      .order_by('start_time')
+
+            org_future_events = []
+
+            for event_date, events in itertools.groupby(future_events, key=day_grouper):
+                events = sorted(events, key=attrgetter('start_time'))
+                org_future_events.append([date(*event_date), events])
+
+            context['future_events'] = org_future_events
+
+            # Last ten past events
+            past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
+                          .order_by('-start_time')[:10]
+
+            org_past_events = []
+
+            for event_date, events in itertools.groupby(past_events, key=day_grouper):
+                events = sorted(events, key=attrgetter('start_time'))
+                org_past_events.append([date(*event_date), events])
+
+            org_past_events.reverse()
+
+            context['past_events'] = org_past_events
+
+        context['user_subscribed'] = False
+        if self.request.user.is_authenticated():
+            user = self.request.user
+            context['user'] = user
+
+            if settings.USING_NOTIFICATIONS:
+                if (len(user.eventssubscriptions.all()) > 0):
+                    context['user_subscribed'] = True
 
         return context
 
