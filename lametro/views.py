@@ -117,13 +117,15 @@ class LAMetroEventsView(EventsView):
 
             # Last ten past events
             past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
-                          .order_by('start_time')[:10]
+                          .order_by('-start_time')[:10]
 
             org_past_events = []
 
             for event_date, events in itertools.groupby(past_events, key=day_grouper):
                 events = sorted(events, key=attrgetter('start_time'))
                 org_past_events.append([date(*event_date), events])
+
+            org_past_events.reverse()
 
             context['past_events'] = org_past_events
 

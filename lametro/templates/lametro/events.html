@@ -39,7 +39,7 @@
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
                 <hr/>
-                {% for date, event_list in upcoming_events %}
+                {% for date, event_list in future_events %}
                     {% include "partials/event_day.html" %}
                 {% endfor %}
                 <hr/>
@@ -58,7 +58,7 @@
                     {% include "partials/event_day.html" %}
                 {% endfor %}
             {% elif select_events %}
-                <h2><span>{{ CITY_VOCAB.EVENTS }}</span>
+                <h2><span>Select {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
                 </h2>
