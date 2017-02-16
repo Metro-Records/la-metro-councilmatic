@@ -177,7 +177,7 @@ class LAMetroEvent(Event):
     @classmethod
     def upcoming_board_meeting(cls):
         return cls.objects.filter(start_time__gt=datetime.now(app_timezone))\
-                  .filter(name__icontains="Board of Directors")\
+                  .filter(name__icontains="Board Meeting")\
                   .order_by('start_time').first()
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
@@ -185,7 +185,7 @@ class LAMetroEvent(Event):
         # print(faketime)
         # print(faketime)
         # return cls.objects.filter(start_time__gt=faketime)\
-        #           .filter(name__icontains="Board of Directors")\
+        #           .filter(name__icontains="Board Meeting")\
         #           .order_by('start_time').first()
 
     @classmethod
@@ -194,7 +194,7 @@ class LAMetroEvent(Event):
 
         return cls.objects.filter(start_time__lt=timezone.now())\
                   .filter(start_time__gt=meeting_time)\
-                  .filter(name__icontains="Board of Directors")\
+                  .filter(name__icontains="Board Meeting")\
                   .order_by('start_time').first()
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
@@ -203,20 +203,20 @@ class LAMetroEvent(Event):
 
         # return cls.objects.filter(start_time__lt=faketime)\
         #           .filter(start_time__gt=meeting_time)\
-        #           .filter(name__icontains="Board of Directors")\
+        #           .filter(name__icontains="Board Meeting")\
         #           .order_by('start_time').first()
 
     @classmethod
     def upcoming_committee_meetings(cls):
         meetings = cls.objects.filter(start_time__gt=timezone.now())\
                   .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+1, 1))\
-                  .exclude(name__icontains=settings.CITY_COUNCIL_MEETING_NAME)\
+                  .exclude(name__icontains='Board Meeting')\
                   .order_by('start_time').all()
 
         if not meetings:
             meetings = cls.objects.filter(start_time__gt=timezone.now())\
                   .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+2, 1))\
-                  .exclude(name__icontains=settings.CITY_COUNCIL_MEETING_NAME)\
+                  .exclude(name__icontains='Board Meeting')\
                   .order_by('start_time').all()
 
         return meetings
