@@ -83,6 +83,7 @@ div#google_translate_element {
     padding-top: 14px;
     padding-left: 6px;
     padding-right: 6px;
+    min-width: 185px;
 }
 
 .pdf-viewer { max-width: 840px; }
