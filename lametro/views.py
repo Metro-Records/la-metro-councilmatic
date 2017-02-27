@@ -212,13 +212,9 @@ class LABoardMembersView(CouncilMembersView):
             today = timezone.now().date()
 
             sql = '''
-            SELECT p.ocd_id, p.name, array_agg(pt.label) as label, array_agg(m.role
-                ORDER BY CASE m.role
-                  WHEN 'Chair' THEN 1
-                  WHEN '1st Vice Chair' THEN 2
-                  WHEN '2nd Vice Chair' THEN 2
-                  ELSE 4
-                END) as role
+            SELECT p.ocd_id, p.name, array_agg(pt.label) as label,
+                array_agg(m.role) as role,
+                split_part(p.name, ' ', 2) AS last_name
             FROM councilmatic_core_membership as m
             INNER JOIN councilmatic_core_post as pt
             ON pt.ocd_id=m.post_id
@@ -227,6 +223,7 @@ class LABoardMembersView(CouncilMembersView):
             WHERE m.organization_id='ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
             AND m.end_date >= '{0}'
             GROUP BY p.ocd_id, p.name
+            ORDER BY last_name
             '''.format(today)
 
             cursor.execute(sql)
@@ -235,14 +232,15 @@ class LABoardMembersView(CouncilMembersView):
             columns.append('index')
             cursor_copy = []
 
+            # from operator import itemgetter
             for obj in cursor:
-                if 'Chair' in obj[3]:
+                if 'Chair' in obj[3][0]:
                     obj = obj + ("1",)
-                elif '1st Vice Chair' in obj[3]:
+                elif '1st Vice Chair' in obj[3][0]:
                     obj = obj + ("2",)
-                elif '2nd Vice Chair' in obj[3]:
+                elif '2nd Vice Chair' in obj[3][0]:
                     obj = obj + ("3",)
-                elif 'Nonvoting Board Member' in obj[3]:
+                elif 'Nonvoting Board Member' in obj[3][0]:
                     obj = obj + ("5",)
                 else:
                     obj = obj + ("4",)
@@ -252,7 +250,7 @@ class LABoardMembersView(CouncilMembersView):
             membership_tuple = namedtuple('Membership', columns)
             membership_objects = [membership_tuple(*r) for r in cursor_copy]
 
-            membership_objects = sorted(membership_objects, key=lambda x: x[4])
+            membership_objects = sorted(membership_objects, key=lambda x: x[5])
 
             context['membership_objects'] = membership_objects
 
