@@ -1,4 +1,4 @@
 psycopg2==2.6.2
-django-councilmatic<0.8
+https://github.com/datamade/django-councilmatic/zipball/master
 raven==5.30.0
 gunicorn==19.6.0
