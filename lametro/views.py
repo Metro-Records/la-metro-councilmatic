@@ -326,7 +326,8 @@ class LACommitteeDetailView(CommitteeDetailView):
                 p.name, p.slug, p.ocd_id,
                 array_agg(m.role) as committee_role,
                 array_agg(mm.label::VARCHAR)
-                FILTER (WHERE mm.label is not Null) as label
+                FILTER (WHERE mm.label is not Null) as label,
+                split_part(p.name, ' ', 2) AS last_name
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
                 SELECT
@@ -345,6 +346,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               AND m.end_date::date > NOW()::date
               GROUP BY
                 p.name, p.slug, p.ocd_id
+              ORDER BY last_name
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
@@ -375,7 +377,8 @@ class LACommitteeDetailView(CommitteeDetailView):
                 p.name, p.slug, p.ocd_id,
                 array_agg(m.role) as committee_role,
                 array_agg(mm.label::VARCHAR)
-                FILTER (WHERE mm.label is not Null) as label
+                FILTER (WHERE mm.label is not Null) as label,
+                split_part(p.name, ' ', 2) AS last_name
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
                 SELECT
@@ -394,6 +397,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               AND m.end_date::date > NOW()::date
               GROUP BY
                 p.name, p.slug, p.ocd_id
+              ORDER BY last_name
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
