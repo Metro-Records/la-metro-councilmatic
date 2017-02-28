@@ -57,7 +57,7 @@
                 <hr/>
 
                 {% for date, event_list in past_events %}
-                    {% include "partials/event_day.html" %}
+                    {% include "partials/past_event_day.html" %}
                 {% endfor %}
             {% elif select_events %}
                 <h2><span>{{ CITY_VOCAB.EVENTS }} in {{select_date}}</span>
