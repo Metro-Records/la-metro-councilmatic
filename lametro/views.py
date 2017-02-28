@@ -234,13 +234,13 @@ class LABoardMembersView(CouncilMembersView):
 
             # from operator import itemgetter
             for obj in cursor:
-                if 'Chair' in obj[3][0]:
-                    obj = obj + ("1",)
-                elif '1st Vice Chair' in obj[3][0]:
+                if '1st Vice Chair' in obj[3]:
                     obj = obj + ("2",)
-                elif '2nd Vice Chair' in obj[3][0]:
+                elif '2nd Vice Chair' in obj[3]:
                     obj = obj + ("3",)
-                elif 'Nonvoting Board Member' in obj[3][0]:
+                elif 'Chair' in obj[3]:
+                    obj = obj + ("1",)
+                elif 'Nonvoting Board Member' in obj[3]:
                     obj = obj + ("5",)
                 else:
                     obj = obj + ("4",)
