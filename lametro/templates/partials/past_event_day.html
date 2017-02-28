@@ -1,0 +1,29 @@
+<h5 class="text-default">
+    <i class="fa fa-fw fa-calendar-o"></i> {{date | date:"D m/d/Y"}}
+</h5>
+
+{% for event in event_list %}
+<div class="row">
+    <div class="col-xs-3 no-pad-right">
+        <p class="small">
+            <span class="non-mobile-only">
+                <i class="fa fa-fw fa-clock-o"></i> {{event.start_time| date:"g:i a"}}<br/>
+            </span>
+            <span class="mobile-only">
+                {{event.start_time| date:"g:i a"}}<br/>
+            </span>
+        </p>
+    </div>
+    <div class="col-xs-6">
+        <p>
+            <a href="{{event.event_page_url}}">{{event.name}}</a><br/>
+            <span class="small text-muted">{{event.description}}</span>
+        </p>
+    </div>
+    <div class="col-xs-3">
+        <p>
+            <a href="https://www.metro.net/about/board/recap-actions/" target="_blank">Recap</a>
+        </p>
+    </div>
+</div>
+{% endfor %}
