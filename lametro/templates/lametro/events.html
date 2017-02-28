@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 {% endblock %}
 {% block content %}
-
     <div class="row-fluid">
         <div class="col-sm-8 no-pad-mobile">
             <br/><br class="non-mobile-only"/>
@@ -71,7 +70,7 @@
                 <hr/>
 
                 {% for date, event_list in select_events %}
-                    {% include "partials/event_day.html" %}
+                    {% include "partials/past_event_day.html" %}
                 {% endfor %}
 
             {% elif all_events %}
@@ -86,7 +85,7 @@
                 <hr/>
 
                 {% for date, event_list in all_events %}
-                    {% include "partials/event_day.html" %}
+                    {% include "partials/past_event_day.html" %}
                 {% endfor %}
             {% else %}
                 <div class='row'>

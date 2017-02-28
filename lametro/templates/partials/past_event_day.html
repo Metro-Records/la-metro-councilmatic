@@ -1,3 +1,5 @@
+{% load lametro_extras %}
+
 <h5 class="text-default">
     <i class="fa fa-fw fa-calendar-o"></i> {{date | date:"D m/d/Y"}}
 </h5>
@@ -14,16 +16,27 @@
             </span>
         </p>
     </div>
-    <div class="col-xs-6">
+    <div class="col-xs-5">
         <p>
             <a href="{{event.event_page_url}}">{{event.name}}</a><br/>
             <span class="small text-muted">{{event.description}}</span>
         </p>
     </div>
-    <div class="col-xs-3">
+    {% if event.start_time|compare_time %}
+    <div class="col-xs-2">
         <p>
             <a href="https://www.metro.net/about/board/recap-actions/" target="_blank">Recap</a>
         </p>
     </div>
+    <div class="col-xs-2">
+        {% if 'Regular Board Meeting' in event.name %}
+            {% if event.start_time|get_minutes %}
+            <p>
+                <a href="/board-report/{{event.start_time|get_minutes }}">Minutes approval</a>
+            </p>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% endif %}
 </div>
 {% endfor %}

@@ -117,6 +117,7 @@ class LAMetroEventsView(EventsView):
             context['future_events'] = org_future_events
 
             # Last ten past events
+
             past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
                           .order_by('-start_time')[:10]
 
@@ -138,6 +139,9 @@ class LAMetroEventsView(EventsView):
             if settings.USING_NOTIFICATIONS:
                 if (len(user.eventssubscriptions.all()) > 0):
                     context['user_subscribed'] = True
+
+        context['minutes'] = Bill.objects.filter(bill_type='Minutes')
+        # context['minutes'] = Bill.objects.all()
 
         return context
 
