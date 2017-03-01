@@ -1,9 +1,14 @@
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.html import strip_entities, strip_tags
+from django.utils import timezone
+
+from haystack.query import SearchQuerySet
+from datetime import date, timedelta, datetime
+import re
+
 from councilmatic.settings_jurisdiction import *
 from councilmatic_core.models import Person
-import re
 
 register = template.Library()
 
@@ -108,3 +113,22 @@ def format_string(label_list):
     label_list = label_list.replace('{', '').replace('}', '').replace('"', '')
 
     return label_list.split(',')
+
+@register.filter
+def get_minutes(event_date):
+    date = event_date.date().strftime('%B %d, %Y')
+    content = 'minutes of the regular board meeting held ' + date
+    sqs = SearchQuerySet().filter(content=content).all()
+
+    if sqs:
+        for q in sqs:
+            if q.object.slug:
+                return q.object.slug
+    else:
+        return None
+
+@register.filter
+def compare_time(event_date):
+    if event_date < timezone.now():
+        return True
+

@@ -117,6 +117,7 @@ class LAMetroEventsView(EventsView):
             context['future_events'] = org_future_events
 
             # Last ten past events
+
             past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
                           .order_by('-start_time')[:10]
 
@@ -138,6 +139,9 @@ class LAMetroEventsView(EventsView):
             if settings.USING_NOTIFICATIONS:
                 if (len(user.eventssubscriptions.all()) > 0):
                     context['user_subscribed'] = True
+
+        context['minutes'] = Bill.objects.filter(bill_type='Minutes')
+        # context['minutes'] = Bill.objects.all()
 
         return context
 
@@ -322,7 +326,8 @@ class LACommitteeDetailView(CommitteeDetailView):
                 p.name, p.slug, p.ocd_id,
                 array_agg(m.role) as committee_role,
                 array_agg(mm.label::VARCHAR)
-                FILTER (WHERE mm.label is not Null) as label
+                FILTER (WHERE mm.label is not Null) as label,
+                split_part(p.name, ' ', 2) AS last_name
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
                 SELECT
@@ -341,6 +346,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               AND m.end_date::date > NOW()::date
               GROUP BY
                 p.name, p.slug, p.ocd_id
+              ORDER BY last_name
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
@@ -371,7 +377,8 @@ class LACommitteeDetailView(CommitteeDetailView):
                 p.name, p.slug, p.ocd_id,
                 array_agg(m.role) as committee_role,
                 array_agg(mm.label::VARCHAR)
-                FILTER (WHERE mm.label is not Null) as label
+                FILTER (WHERE mm.label is not Null) as label,
+                split_part(p.name, ' ', 2) AS last_name
               FROM councilmatic_core_membership AS m
               LEFT JOIN (
                 SELECT
@@ -390,6 +397,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               AND m.end_date::date > NOW()::date
               GROUP BY
                 p.name, p.slug, p.ocd_id
+              ORDER BY last_name
             ''')
 
             cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
