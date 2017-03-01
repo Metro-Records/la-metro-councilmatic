@@ -57,7 +57,7 @@ class LAMetroBill(Bill):
     @property
     def attachments(self):
 
-        return self.documents.filter(document_type='V').all()
+        return self.documents.all()
 
     @property
     def controlling_body(self):
