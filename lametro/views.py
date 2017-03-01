@@ -140,9 +140,6 @@ class LAMetroEventsView(EventsView):
                 if (len(user.eventssubscriptions.all()) > 0):
                     context['user_subscribed'] = True
 
-        context['minutes'] = Bill.objects.filter(bill_type='Minutes')
-        # context['minutes'] = Bill.objects.all()
-
         return context
 
 class LABoardMembersView(CouncilMembersView):

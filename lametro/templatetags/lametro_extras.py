@@ -122,8 +122,9 @@ def get_minutes(event_date):
 
     if sqs:
         for q in sqs:
-            if q.object.slug:
-                return q.object.slug
+            if q.object.bill_type == 'Minutes' and q.object.slug:
+                if re.search(content, q.object.ocr_full_text, re.IGNORECASE):
+                    return q.object.slug
     else:
         return None
 
