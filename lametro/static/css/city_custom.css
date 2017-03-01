@@ -5,6 +5,12 @@
     white-space: nowrap;
 }
 
+.navbar-brand {
+    min-width: 160px;
+}
+
+.site-intro-search { margin-bottom: 1em; }
+
 #section-photo {
     background-image:
         linear-gradient(
@@ -15,7 +21,7 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
-    height: 328px;
+    min-height: 336px;
 }
 
 #section-intro {
@@ -149,6 +155,21 @@ div#toggleControls { margin-bottom: 1em; }
 @media only screen and (max-width : 400px) {
     .remove-order-value {
         display: none;
+    }
+}
+
+@media (min-width: 767px) and (max-width: 991px) {
+    .navbar-collapse.collapse {
+        display: none !important;
+    }
+    .navbar-collapse.collapse.in {
+        display: block !important;
+    }
+    .navbar-header .collapse, .navbar-toggle {
+        display:block !important;
+    }
+    .navbar-header {
+        float:none;
     }
 }
 
