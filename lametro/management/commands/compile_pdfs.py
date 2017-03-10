@@ -19,11 +19,11 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.NOTICE("Finding all documents for board reports."))
         self.stdout.write(self.style.NOTICE(".........."))
-        self.compileBoardReportPacket()
+        self.findBoardReportPacket()
 
         self.stdout.write(self.style.NOTICE("Finding all documents for event agendas."))
         self.stdout.write(self.style.NOTICE(".........."))
-        self.compileEventAgendaPacket()
+        self.findEventAgendaPacket()
 
         self.stdout.write(self.style.SUCCESS(".........."))
         self.stdout.write(self.style.SUCCESS("Job complete. Excellent work, everyone."))
@@ -38,25 +38,25 @@ class Command(BaseCommand):
         '''
         board_reports = self.connection.execute(sa.text(query))
 
+        # Testing
+        for document in board_reports:
+            print(document)
+
 
     def findEventAgendaPacket(self):
-
-        # query = '''
-        # SELECT array_agg(distinct d.url), d.bill_id, a.date, a.organization_id
-        # FROM councilmatic_core_billdocument AS d
-        # INNER JOIN councilmatic_core_action AS a
-        # ON d.bill_id=a.bill_id where d.bill_id='ocd-bill/0e886916-deef-4f59-9e66-914bb1b5593a'
-        # GROUP BY d.bill_id, a.date, a.organization_id;
-        # '''
 
         query = '''
         SELECT i.event_id, array_agg(distinct d.url)
         FROM councilmatic_core_billdocument AS d
         INNER JOIN councilmatic_core_eventagendaitem as i
         ON i.bill_id=d.bill_id
-        WHERE i.event_id='ocd-event/e7896758-23bb-42fe-93db-8231cd8604d1'
         GROUP BY i.event_id;
         '''
 
         event_agendas = self.connection.execute(sa.text(query))
+
+        # Testing
+        for document in event_agendas:
+            print(document)
+
 
