@@ -24,12 +24,13 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE(".........."))
         report_packet_raw = self.findBoardReportPacket()
 
-        # for idx, el in enumerate(report_packet_raw):
-        #     try:
-        #       self.makePacket(el[1])
-        #     except:
-        #       self.stdout.write(self.style.ERROR("Did not compile PDFs at index {0} for bill {1}").format(idx, el[0]))
-        #       pass
+        for idx, el in enumerate(report_packet_raw):
+            self.makePacket(el[1])
+            # try:
+            #   self.makePacket(el[1])
+            # except:
+            #   self.stdout.write(self.style.ERROR("Did not compile PDFs at index {0} for bill {1}").format(idx, el[0]))
+            #   pass
 
         self.stdout.write(self.style.NOTICE("Finding all documents for event agendas."))
         self.stdout.write(self.style.NOTICE(".........."))
@@ -83,15 +84,15 @@ class Command(BaseCommand):
 
     def makePacket(self, filenames_collection):
 
-      merger = PdfFileMerger()
+        merger = PdfFileMerger()
 
-      for filename in filenames_collection:
-          opened_url = urlopen(filename).read()
-          merger.append(BytesIO(opened_url), 'rb')
+        for filename in filenames_collection:
+            opened_url = urlopen(filename).read()
+            merger.append(BytesIO(opened_url), 'rb')
 
-      # This is a PdfFileMerger object, which can be written to a new file like so:
-      # merger.write("document-output.pdf")
+        # This is a PdfFileMerger object, which can be written to a new file like so:
+        # merger.write("document-output.pdf")
 
-      return merger
+        return merger
 
 
