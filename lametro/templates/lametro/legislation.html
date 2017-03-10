@@ -4,6 +4,7 @@
 {% load staticfiles %}
 {% block title %}{{ legislation.friendly_name }}{% endblock %}
 {% block content %}
+    {{legislation.ocd_id}}
     {% if legislation %}
         <div class="row-fluid">
             <div class="col-sm-12">
