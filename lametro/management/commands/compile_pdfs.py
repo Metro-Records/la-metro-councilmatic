@@ -3,6 +3,8 @@ from PyPDF2 import PdfFileMerger, PdfFileReader
 from urllib.request import urlopen
 from io import StringIO, BytesIO
 from subprocess import call
+import signal
+import sys
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -34,12 +36,10 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE(".........."))
         event_packet_raw = self.findEventAgendaPacket()
 
-        # for idx, el in enumerate(event_packet_raw):
-        #     try:
-        #       self.makePacket(el[1])
-        #     except:
-        #       self.stdout.write(self.style.ERROR("Did not compile PDFs at index {0} for event {1}").format(idx, el[0]))
-        #       pass
+        for idx, el in enumerate(event_packet_raw):
+            event_id = el[0]
+            filenames = el[1]
+            self.makePacket(event_id, filenames)
 
         self.stdout.write(self.style.SUCCESS(".........."))
         self.stdout.write(self.style.SUCCESS("Job complete. Excellent work, everyone."))
@@ -81,43 +81,49 @@ class Command(BaseCommand):
 
 
     def makePacket(self, merged_id, filenames_collection):
+        # Set a custom timeout: 2 minutes.
+        signal.signal(signal.SIGALRM, self.timeout_handler)
+        signal.alarm(120)
 
         merger = PdfFileMerger()
 
         for filename in filenames_collection:
             print(filename)
-            if filename.lower().endswith(('.xlsx', '.doc', '.docx', '.ppt', '.pptx', '.rtf')):
-                call(['unoconv', '-f', 'pdf', filename])
-                path, keyword, exact_file = filename.partition('attachments/')
-                new_file = exact_file.split('.')[0] + '.pdf'
-                f = open(new_file, 'rb')
-                merger.append(PdfFileReader(f))
-                call(['rm', new_file])
-            else:
-                opened_url = urlopen(filename).read()
-                merger.append(BytesIO(opened_url), 'rb')
+            # Run this up to two times, in the event of a timeout, libreoffice RunTimeError ('Office probably died'), or other exception.
+            attempts = 0
+            while attempts < 2:
+                try:
+                    if filename.lower().endswith(('.xlsx', '.doc', '.docx', '.ppt', '.pptx', '.rtf')):
+                        call(['unoconv', '-f', 'pdf', filename])
+                        path, keyword, exact_file = filename.partition('attachments/')
+                        new_file = exact_file.split('.')[0] + '.pdf'
+                        f = open(new_file, 'rb')
+                        merger.append(PdfFileReader(f))
+                        call(['rm', new_file])
+                    else:
+                        opened_url = urlopen(filename).read()
+                        merger.append(BytesIO(opened_url), import_bookmarks=False)
+                    break
+                except Exception as err:
+                    attempts += 1
+                    self.stdout.write(self.style.NOTICE(err))
+                    if attempts < 3:
+                        self.stdout.write(self.style.NOTICE("Trying {}, again. Do not worry: they're good dogs Brent.").format(filename))
+                    else:
+                        self.stdout.write(self.style.NOTICE("Something went wrong. Please look at {}.").format(filename))
+                except:
+                    attempts += 1
+                    self.stdout.write(self.style.NOTICE("Unexpected error: {}").format(sys.exc_info()[0]))
+
 
         # 'merger' is a PdfFileMerger object, which can be written to a new file like so:
-        merger.write('merged_pdfs/' + merged_id + '.pdf')
+        try:
+            merger.write('merged_pdfs/' + merged_id + '.pdf')
+        except:
+            self.stdout.write(self.style.NOTICE("{0} caused the failure of writing {1} as a PDF".format(sys.exc_info()[0], merged_id)))
 
         return merger
 
+    def timeout_handler(self, signum, frame):
+        raise Exception("ERROR: Timeout")
 
-    def decompress_pdf(self, temp_buffer):
-        # temp_buffer.seek(0)  # Make sure we're at the start of the file.
-        import subprocess
-
-        read_file = urlopen(temp_buffer).read()
-        print(type(read_file ))
-        # temp_buffer = BytesIO(urlopen(temp_buffer).read())
-        process = subprocess.Popen(['pdftk.exe',
-                                    '-',  # Read from stdin.
-                                    'output',
-                                    '-',  # Write to stdout.
-                                    'uncompress'],
-                                    stdin=read_file,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
-
-        return StringIO(stdout)

@@ -22,3 +22,5 @@ downloads
 /scripts/validate_service.sh
 /configs/settings_deployment_staging.py
 /configs/settings_deployment_production.py
+
+merged_pdfs/*
