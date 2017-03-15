@@ -6,6 +6,8 @@ from subprocess import call
 import signal
 import sys
 import logging
+import requests
+import json
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -41,20 +43,40 @@ class Command(BaseCommand):
 
         self.connection = ENGINE.connect()
 
-        if not options['events_only']:
-            LOGGER.info(self.style.NOTICE("Finding all documents for board reports."))
-            LOGGER.info(self.style.NOTICE("............"))
-            if options['all_documents']:
-                report_packet_raw = self.findBoardReportPacket(all_documents=True)
-            else:
-                report_packet_raw = self.findBoardReportPacket()
+        # if not options['events_only']:
+        #     LOGGER.info(self.style.NOTICE("Finding all documents for board reports."))
+        #     LOGGER.info(self.style.NOTICE("............"))
+        #     if options['all_documents']:
+        #         report_packet_raw = self.findBoardReportPacket(all_documents=True)
+        #     else:
+        #         report_packet_raw = self.findBoardReportPacket()
 
-            LOGGER.info(self.style.NOTICE("Merging PDFs."))
-            for idx, el in enumerate(report_packet_raw):
-                board_report_id = el[0]
-                filenames = el[1]
-                if len(filenames) > 1:
-                    self.makePacket(board_report_id, filenames)
+        #     LOGGER.info(self.style.NOTICE("Merging PDFs."))
+        #     for idx, el in enumerate(report_packet_raw):
+        #         board_report_slug = 'board-report-' + el[0].split('/')[1]
+        #         filenames = el[1]
+        #         if len(filenames) > 1:
+        #             # Here, we put the filenames inside a data structure, and we send a post request with the slug.
+        #             data = json.dumps(filenames)
+        #             url = 'http://0.0.0.0:5000/merge_pdfs/' + board_report_slug
+        #             r = requests.post(url, data=data)
+
+
+
+        # data = json.dumps(["https://metro.legistar.com/ViewReport.ashx?M=R&N=TextL5&GID=557&ID=3044&GUID=LATEST&Title=Board+Report", "http://metro.legistar1.com/metro/attachments/806ee185-bdce-46f4-92a0-1b85e1d2ba48.pdf", "http://metro.legistar1.com/metro/attachments/5951913e-bc43-411a-9d6c-da89eead58fb.pdf"])
+        # url = 'http://0.0.0.0:5000/merge_pdfs/' + '12345678910'
+        # print(json.dumps(data))
+        # r = requests.post(url, data=data)
+        # print(r.text)
+
+        #     LOGGER.info(self.style.NOTICE("Merging PDFs."))
+        #     for idx, el in enumerate(report_packet_raw):
+        #         board_report_id = el[0]
+        #         filenames = el[1]
+        #         if len(filenames) > 1:
+        #             self.makePacket(board_report_id, filenames)
+
+
 
         if not options['board_reports_only']:
             LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
@@ -66,12 +88,39 @@ class Command(BaseCommand):
 
             LOGGER.info(self.style.NOTICE("Merging PDFs."))
             for idx, el in enumerate(event_packet_raw):
-                event_id = el[0]
+                event_slug = 'event-' + el[0].split('/')[1]
                 event_agenda = el[1]
                 filenames = el[2]
                 filenames.insert(0, str(event_agenda))
 
-                self.makePacket(event_id, filenames)
+                data = json.dumps(filenames)
+                url = 'http://0.0.0.0:5000/merge_pdfs/' + event_slug
+                r = requests.post(url, data=data)
+
+
+
+
+        # if not options['board_reports_only']:
+        #     LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
+        #     LOGGER.info(self.style.NOTICE("............"))
+        #     if options['all_documents']:
+        #         event_packet_raw = self.findEventAgendaPacket(all_documents=True)
+        #     else:
+        #         event_packet_raw = self.findEventAgendaPacket()
+
+
+        #     LOGGER.info(self.style.NOTICE("Merging PDFs."))
+        #     for idx, el in enumerate(event_packet_raw):
+        #         event_slug = 'event-' + el[0].split('/')[1]
+        #         print(event_slug)
+        #         filenames = el[1]
+        #         print(filenames)
+        #         if len(filenames) > 1:
+        #             # Here, we put the filenames inside a data structure, and we send a post request with the slug.
+        #             data = json.dumps(filenames)
+        #             print(data)
+        #             url = 'http://0.0.0.0:5000/merge_pdfs/' + event_slug
+        #             r = requests.post(url, data=data)
 
         LOGGER.info(self.style.SUCCESS(".........."))
         LOGGER.info(self.style.SUCCESS("Job complete. Excellent work, everyone."))
