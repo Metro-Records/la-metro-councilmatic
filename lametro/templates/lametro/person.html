@@ -20,7 +20,7 @@
                 <br class="non-desktop-only"/>
                 <small>
             {{ title }}
-            <a href="rss/" title="RSS feed for Sponsored Legislation by {{person.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
+            <a href="rss/" title="RSS feed for Sponsored Board Actions by {{person.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
                 </small>
             </h1>
         </div>
@@ -120,7 +120,7 @@
                         <span class="small-pill">
                             <i class='fa fa-fw fa-files-o'></i>
                             <span class="desktop-only">Sponsored </span>
-                            Legislation
+                            Board Actions
                         </span>
                     </a>
                 </li>
@@ -137,10 +137,9 @@
 
             {% if request.GET.view == 'bills' or request.GET.view == None %}
                 <h3>
-                    Sponsored legislation
-                    <!-- We cannot link to "View all sponsored legislation," since the haystack search will not account for something like this, e.g., everything from board of directors, everything from planning and programming...it just shows legislation, in which both committees are sponsors. -->
+                    Sponsored Board Actions
                 </h3>
-                <p>Most recent legislation sponsored by committees to which {{person.name}} belongs.</p><br/>
+                <p>Most recent actions sponsored by committees to which {{person.name}} belongs.</p><br/>
 
                 {% for legislation in sponsored_legislation %}
                     {% include "partials/legislation_item.html" %}
@@ -148,7 +147,7 @@
 
                 <hr />
                 <p class="non-mobile-only">
-                    <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more about committees to which {{person.name}} belongs and view all legislation they sponsor.<i class='fa fa-fw fa-chevron-right'></i></a>
+                    <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more about committees to which {{person.name}} belongs and view all actions they sponsor.<i class='fa fa-fw fa-chevron-right'></i></a>
                 </p>
                 <p class="mobile-only">
                     <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more<i class='fa fa-fw fa-chevron-right'></i></a>
