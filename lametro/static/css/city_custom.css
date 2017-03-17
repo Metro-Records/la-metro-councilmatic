@@ -1,5 +1,12 @@
 /* city-specific css lives here */
 /* anything in this file will override custom.css in django-councilmatic */
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar {
+    font-family: 'ff-din-web', Arial, sans-serif;
+}
+
+h1, .h1 {
+    font-size: 36px;
+}
 
 .no-wrap {
     white-space: nowrap;
@@ -7,6 +14,10 @@
 
 .navbar-brand {
     min-width: 160px;
+}
+
+.navbar {
+    font-size: 16px;
 }
 
 .site-intro-search { margin-bottom: 1em; }
@@ -21,7 +32,7 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
-    min-height: 336px;
+    min-height: 380px;
 }
 
 #section-intro {
@@ -93,6 +104,11 @@ div#google_translate_element {
 }
 
 .pdf-viewer { max-width: 840px; }
+
+.archive-link {
+    font-weight: 700;
+    font-size: 115%;
+}
 
 /* Styles for order by options on search page */
 .nav a.sort-by, .nav a.btn { margin-left: 1.8em; }

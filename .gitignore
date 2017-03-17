@@ -24,3 +24,4 @@ downloads
 /configs/settings_deployment_production.py
 
 merged_pdfs/*
+debug.log
