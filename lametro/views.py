@@ -255,6 +255,10 @@ class LABoardMembersView(CouncilMembersView):
 
             context['membership_objects'] = membership_objects
 
+            board = Organization.objects.get(ocd_id='ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c')
+            context['recent_activity'] = board.actions.order_by('-date', '-_bill__identifier', '-order')
+            context['recent_events'] = board.recent_events
+
         return context
 
 
