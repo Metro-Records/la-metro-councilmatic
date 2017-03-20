@@ -48,7 +48,7 @@ class Command(BaseCommand):
             else:
                 report_packet_raw = self.findBoardReportPacket()
 
-            LOGGER.info(self.style.NOTICE("Merging PDFs."))
+            LOGGER.info(self.style.NOTICE("Sending POST requests to metro-pdf-merger."))
             for idx, el in enumerate(report_packet_raw):
                 board_report_slug = 'ocd-bill-' + el[0].split('/')[1]
                 filenames = el[1]
@@ -56,7 +56,7 @@ class Command(BaseCommand):
                     # Put the filenames inside a data structure, and send a post request with the slug.
                     data = json.dumps(filenames)
                     url = 'http://0.0.0.0:5000/merge_pdfs/' + board_report_slug
-                    r = requests.post(url, data=data)
+                    requests.post(url, data=data)
 
         if not options['board_reports_only']:
             LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
@@ -66,7 +66,7 @@ class Command(BaseCommand):
             else:
                 event_packet_raw = self.findEventAgendaPacket()
 
-            LOGGER.info(self.style.NOTICE("Merging PDFs."))
+            LOGGER.info(self.style.NOTICE("Sending POST requests to metro-pdf-merger."))
             for idx, el in enumerate(event_packet_raw):
                 event_slug = 'ocd-event-' + el[0].split('/')[1]
                 event_agenda = el[1]
@@ -75,11 +75,10 @@ class Command(BaseCommand):
 
                 data = json.dumps(filenames)
                 url = 'http://0.0.0.0:5000/merge_pdfs/' + event_slug
-                r = requests.post(url, data=data)
-
+                requests.post(url, data=data)
 
         LOGGER.info(self.style.SUCCESS(".........."))
-        LOGGER.info(self.style.SUCCESS("Job complete. Excellent work, everyone."))
+        LOGGER.info(self.style.SUCCESS("Command complete. Excellent work, everyone. Go to metro-pdf-merger for results!"))
 
 
     def findBoardReportPacket(self, all_documents=False):
@@ -115,6 +114,8 @@ class Command(BaseCommand):
                 bill_ids_str += "'" + str(el.values()[0]) + "',"
 
             psql_ready_ids = bill_ids_str[:-1]
+
+            # psql_ready_ids = "'ocd-bill/06961e90-fca5-4dde-a2a4-25d385a789bb'"
 
             # (2) Create a query for bill documents, but only for the specified bill_ids.
             query = '''
@@ -184,6 +185,8 @@ class Command(BaseCommand):
                 bill_ids_str += "'" + str(el.values()[0]) + "',"
 
             psql_ready_ids = bill_ids_str[:-1]
+
+            # psql_ready_ids = "'ocd-bill/06961e90-fca5-4dde-a2a4-25d385a789bb'"
 
             query = '''
             SELECT

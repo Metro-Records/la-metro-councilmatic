@@ -4,7 +4,7 @@
 {% load staticfiles %}
 {% block title %}{{ legislation.friendly_name }}{% endblock %}
 {% block content %}
-    {{legislation.ocd_id}}
+
     {% if legislation %}
         <div class="row-fluid">
             <div class="col-sm-12">
@@ -13,38 +13,42 @@
 
                     {{ legislation.identifier}} -{{ legislation.ocr_full_text| format_full_text | parse_subject}}<br>
                 </h1>
-                <h2>
+                <h1>
                     {{ legislation.bill_type }}
-                    <!-- <small> -->
-                        {% if legislation.inferred_status %}
-                            {{ legislation.inferred_status | inferred_status_label | safe }}
-                        {% endif %}
-                        <a href="rss/" title="RSS feed for Legislation {{legislation.friendly_name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
-                    <!-- </small> -->
-                </h2>
 
+                    {% if legislation.inferred_status %}
+                        {{ legislation.inferred_status | inferred_status_label | safe }}
+                    {% endif %}
+                    <a href="rss/" title="RSS feed for Legislation {{legislation.friendly_name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
+
+                </h1>
+
+                <p>
+                    <a href='{{legislation.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
+                        <i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website
+                    </a>
+                </p>
             </div>
         </div>
 
         <div class="col-sm-8 no-pad-mobile">
-            <br/>
-
-            <p class="small">
-                <a href='{{legislation.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
-                    <i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website
-                </a>
-            </p>
-
 
             {% if board_report %}
                 <h3>
-                    <i class='fa fa-fw fa-file-text-o'></i>
+                    <i class="fa fa-align-justify" aria-hidden="true"></i>
                     Report text
                 </h3>
 
                 <p>
-                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}'><i class='fa fa-fw fa-download'></i> Get PDF</a>
+                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download report text</a>
                 </p>
+
+
+                {% if packet_url %}
+                    <p>
+                        <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download complete board report packet</a>
+                    </p>
+                    {% endif %}
 
                 <iframe
                     id="pdf-embed-agenda"
@@ -152,7 +156,6 @@
                     {% endfor %}
                 </ul>
                 <div class="divider"></div>
-                <ul><li style="list-style: none;"><a class='btn btn-primary btn-sm' href="http://0.0.0.0:5000/document/{{ legislation.ocd_id | prepare_pdf_url }}"><i class='fa fa-fw fa-download'></i> Download Board Reports Packet</a></li></ul>
             {% endif %}
 
             <br>

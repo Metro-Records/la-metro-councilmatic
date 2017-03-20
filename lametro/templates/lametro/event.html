@@ -5,12 +5,10 @@
 {% block title %}{{event.name}}{% endblock %}
 {% block content %}
 
-{{event.ocd_id}}
-
     <div class="row-fluid">
         <div class="col-sm-10">
             <br/>
-            <p><a href='/events/'><i class="fa fa-angle-double-left" aria-hidden="true"></i> back to {{ CITY_VOCAB.EVENTS }}</a></p>
+            <p><a href='/events/'><i class="fa fa-angle-double-left" aria-hidden="true"></i> Back to {{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></p>
             <h1>{{event.name}}</h1>
             <p>{{event.description}}</p>
 
@@ -46,8 +44,14 @@
                 {% for document in event.documents.all %}
 
                     <p>
-                        <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class='fa fa-fw fa-download'></i> Get PDF</a>
+                        <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download agenda</a>
                     </p>
+
+                    {% if packet_url %}
+                    <p>
+                        <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download complete event packet</a>
+                    </p>
+                    {% endif %}
 
                     <iframe
                         id="pdf-embed-agenda"

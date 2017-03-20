@@ -7,6 +7,7 @@ import json
 from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
+import requests
 
 from haystack.query import SearchQuerySet
 from django.db import transaction, connection, connections
@@ -41,19 +42,37 @@ class LABillDetail(BillDetailView):
     template_name = 'lametro/legislation.html'
 
     def get_context_data(self, **kwargs):
-          context = super().get_context_data(**kwargs)
-          context['actions'] = self.get_object().actions.all().order_by('-order')
-          context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
-          context['board_report'] = self.get_object().attachments.get(note="Board Report")
-          item = context['legislation']
-          actions = Action.objects.filter(_bill_id=item.ocd_id)
-          organization_lst = [action.organization for action in actions]
-          context['sponsorships'] = set(organization_lst)
+        context = super().get_context_data(**kwargs)
+        context['actions'] = self.get_object().actions.all().order_by('-order')
+        context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
+        context['board_report'] = self.get_object().attachments.get(note="Board Report")
+        item = context['legislation']
+        actions = Action.objects.filter(_bill_id=item.ocd_id)
+        organization_lst = [action.organization for action in actions]
+        context['sponsorships'] = set(organization_lst)
 
-          return context
+        # Create URL for packet download.
+        packet_slug = item.ocd_id.replace('/', '-')
+        r = requests.get('http://0.0.0.0:5000/document/' + packet_slug)
+        if r.status_code == 200:
+            context['packet_url'] = 'http://0.0.0.0:5000/document/' + packet_slug
+
+        return context
 
 class LAMetroEventDetail(EventDetailView):
     template_name = 'lametro/event.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Create URL for packet download.
+        event = context['event']
+        packet_slug = event.ocd_id.replace('/', '-')
+        r = requests.get('http://0.0.0.0:5000/document/' + packet_slug)
+        if r.status_code == 200:
+            context['packet_url'] = 'http://0.0.0.0:5000/document/' + packet_slug
+
+        return context
 
 class LAMetroEventsView(EventsView):
     template_name = 'lametro/events.html'
