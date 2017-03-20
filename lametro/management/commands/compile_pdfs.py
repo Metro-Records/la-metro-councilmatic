@@ -45,17 +45,21 @@ class Command(BaseCommand):
             if options['all_documents']:
                 report_packet_raw = self.findBoardReportPacket(all_documents=True)
             else:
+                print("doing this...")
                 report_packet_raw = self.findBoardReportPacket()
+                print(report_packet_raw)
 
-            LOGGER.info(self.style.NOTICE("Merging PDFs."))
+            # LOGGER.info(self.style.NOTICE("Merging PDFs."))
             for idx, el in enumerate(report_packet_raw):
-                board_report_slug = 'ocd-bill-' + el[0].split('/')[1]
-                filenames = el[1]
-                if len(filenames) > 1:
-                    # Here, we put the filenames inside a data structure, and we send a post request with the slug.
-                    data = json.dumps(filenames)
-                    url = 'http://0.0.0.0:5000/merge_pdfs/' + board_report_slug
-                    r = requests.post(url, data=data)
+                print(el)
+                print("okay...")
+                # board_report_slug = 'ocd-bill-' + el[0].split('/')[1]
+            #     filenames = el[1]
+            #     if len(filenames) > 1:
+            #         # Here, we put the filenames inside a data structure, and we send a post request with the slug.
+            #         data = json.dumps(filenames)
+            #         url = 'http://0.0.0.0:5000/merge_pdfs/' + board_report_slug
+            #         r = requests.post(url, data=data)
 
         if not options['board_reports_only']:
             LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
@@ -65,16 +69,16 @@ class Command(BaseCommand):
             else:
                 event_packet_raw = self.findEventAgendaPacket()
 
-            LOGGER.info(self.style.NOTICE("Merging PDFs."))
-            for idx, el in enumerate(event_packet_raw):
-                event_slug = 'ocd-event-' + el[0].split('/')[1]
-                event_agenda = el[1]
-                filenames = el[2]
-                filenames.insert(0, str(event_agenda))
+            # LOGGER.info(self.style.NOTICE("Merging PDFs."))
+            # for idx, el in enumerate(event_packet_raw):
+            #     event_slug = 'ocd-event-' + el[0].split('/')[1]
+            #     event_agenda = el[1]
+            #     filenames = el[2]
+            #     filenames.insert(0, str(event_agenda))
 
-                data = json.dumps(filenames)
-                url = 'http://0.0.0.0:5000/merge_pdfs/' + event_slug
-                r = requests.post(url, data=data)
+            #     data = json.dumps(filenames)
+            #     url = 'http://0.0.0.0:5000/merge_pdfs/' + event_slug
+            #     r = requests.post(url, data=data)
 
 
         LOGGER.info(self.style.SUCCESS(".........."))
@@ -102,8 +106,44 @@ class Command(BaseCommand):
             GROUP BY bill_id
             '''
         else:
-            # TODO: add a query for raw tables.
-            query = ''
+            # grab_ids_query = '''
+            # SELECT array_to_string( array(SELECT bill_id FROM new_billdocument GROUP BY bill_id), ',')
+            # '''
+
+            # (1) Get ids for board reports that need new PDF packets.
+            grab_ids_query = '''
+            SELECT bill_id FROM new_billdocument GROUP BY bill_id
+            '''
+
+            bill_ids_results = self.connection.execute(sa.text(grab_ids_query))
+            bill_ids_str = ''
+
+            for idx, el in enumerate(bill_ids_results):
+                bill_ids_str += "'" + str(el.values()[0]) + "',"
+
+            psql_ready_ids = bill_ids_str[:-1]
+
+            # (2) Create a query for bill documents, but only for the specified bill_ids.
+            query = '''
+            SELECT
+              bill_id,
+              array_agg(url ORDER BY note)
+            FROM (
+              SELECT
+                bill_id,
+                url,
+                CASE
+                WHEN trim(lower(note)) LIKE 'board report%' THEN '1'
+                WHEN trim(lower(note)) LIKE '0%' THEN 'z'
+                ELSE trim(lower(note))
+                END AS note
+              FROM councilmatic_core_billdocument
+            ) AS subq
+            WHERE bill_id in ( {} )
+            GROUP BY bill_id
+            '''.format(psql_ready_ids)
+
+            print(query)
 
         board_reports = self.connection.execute(sa.text(query))
 
