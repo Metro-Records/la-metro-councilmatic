@@ -132,7 +132,3 @@ def get_minutes(event_date):
 def compare_time(event_date):
     if event_date < timezone.now():
         return True
-
-# @register.filter
-# def prepare_pdf_url(ocd_id):
-#     return ocd_id.replace('/', '-')

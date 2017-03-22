@@ -40,23 +40,23 @@ class Command(BaseCommand):
 
         self.connection = ENGINE.connect()
 
-        if not options['events_only']:
-            LOGGER.info(self.style.NOTICE("Finding all documents for board reports."))
-            LOGGER.info(self.style.NOTICE("............"))
-            if options['all_documents']:
-                report_packet_raw = self.findBoardReportPacket(all_documents=True)
-            else:
-                report_packet_raw = self.findBoardReportPacket()
+        # if not options['events_only']:
+        #     LOGGER.info(self.style.NOTICE("Finding all documents for board reports."))
+        #     LOGGER.info(self.style.NOTICE("............"))
+        #     if options['all_documents']:
+        #         report_packet_raw = self.findBoardReportPacket(all_documents=True)
+        #     else:
+        #         report_packet_raw = self.findBoardReportPacket()
 
-            LOGGER.info(self.style.NOTICE("Sending POST requests to metro-pdf-merger."))
-            for idx, el in enumerate(report_packet_raw):
-                board_report_slug = 'ocd-bill-' + el[0].split('/')[1]
-                filenames = el[1]
-                if len(filenames) > 1:
-                    # Put the filenames inside a data structure, and send a post request with the slug.
-                    data = json.dumps(filenames)
-                    url = 'http://0.0.0.0:5000/merge_pdfs/' + board_report_slug
-                    requests.post(url, data=data)
+        #     LOGGER.info(self.style.NOTICE("Sending POST requests to metro-pdf-merger."))
+        #     for idx, el in enumerate(report_packet_raw):
+        #         board_report_slug = 'ocd-bill-' + el[0].split('/')[1]
+        #         filenames = el[1]
+        #         if len(filenames) > 1:
+        #             # Put the filenames inside a data structure, and send a post request with the slug.
+        #             data = json.dumps(filenames)
+        #             url = 'http://0.0.0.0:5000/merge_pdfs/' + board_report_slug
+        #             requests.post(url, data=data)
 
         if not options['board_reports_only']:
             LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
@@ -115,8 +115,6 @@ class Command(BaseCommand):
 
             psql_ready_ids = bill_ids_str[:-1]
 
-            # psql_ready_ids = "'ocd-bill/06961e90-fca5-4dde-a2a4-25d385a789bb'"
-
             # (2) Create a query for bill documents, but only for the specified bill_ids.
             query = '''
             SELECT
@@ -173,7 +171,6 @@ class Command(BaseCommand):
             GROUP BY event_id, event_agenda
             '''
         else:
-            # TODO: add a query for raw tables
             grab_ids_query = '''
             SELECT bill_id FROM new_billdocument GROUP BY bill_id
             '''
@@ -185,8 +182,6 @@ class Command(BaseCommand):
                 bill_ids_str += "'" + str(el.values()[0]) + "',"
 
             psql_ready_ids = bill_ids_str[:-1]
-
-            # psql_ready_ids = "'ocd-bill/06961e90-fca5-4dde-a2a4-25d385a789bb'"
 
             query = '''
             SELECT
