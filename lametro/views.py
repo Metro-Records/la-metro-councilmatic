@@ -127,7 +127,7 @@ class LAMetroEventsView(EventsView):
                 events = sorted(events, key=attrgetter('start_time'))
                 org_past_events.append([date(*event_date), events])
 
-            org_past_events.reverse()
+            org_past_events
 
             context['past_events'] = org_past_events
 
