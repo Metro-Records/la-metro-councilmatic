@@ -4,7 +4,7 @@
 
     {% if meeting_type.documents.all %}
       {% for document in meeting_type.documents.all %}
-          <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class='fa fa-fw fa-download'></i> Get PDF</a>
+          <span class='small'><a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class='fa fa-fw fa-download'></i> Get PDF</a></span>
       {% endfor %}
 
   </h4>
@@ -37,4 +37,5 @@
           <a href="" class="btn-sm btn-info" id="more-list-items"><i class="fa fa-fw fa-chevron-down"></i>Full agenda</a>
           <a href="" class="btn-sm btn-info" id="fewer-list-items"><i class="fa fa-fw fa-chevron-up"></i>Less</a>
       </p>
+      </br>
   {% endif %}
