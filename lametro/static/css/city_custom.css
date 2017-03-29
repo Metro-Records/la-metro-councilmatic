@@ -12,6 +12,10 @@ h1, .h1 {
     white-space: nowrap;
 }
 
+.padding-sm {
+    margin-bottom: 2em;
+}
+
 .navbar-brand {
     min-width: 160px;
 }
