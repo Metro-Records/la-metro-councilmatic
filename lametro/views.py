@@ -119,7 +119,7 @@ class LAMetroEventsView(EventsView):
             # Last ten past events
 
             past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
-                          .order_by('-start_time')[:10]
+                          .order_by('-start_time')
 
             org_past_events = []
 
