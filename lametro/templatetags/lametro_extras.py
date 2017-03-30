@@ -8,7 +8,7 @@ from datetime import date, timedelta, datetime
 import re
 
 from councilmatic.settings_jurisdiction import *
-from councilmatic_core.models import Person
+from councilmatic_core.models import Person, Event
 
 register = template.Library()
 
@@ -115,18 +115,25 @@ def format_string(label_list):
     return label_list.split(',')
 
 @register.filter
-def get_minutes(event_date):
-    date = event_date.date().strftime('%B %d, %Y')
-    content = 'minutes of the regular board meeting held ' + date
-    sqs = SearchQuerySet().filter(content=content).all()
+def get_minutes(event_id):
+    event = Event.objects.get(ocd_id=event_id)
 
-    if sqs:
-        for q in sqs:
-            if q.object.bill_type == 'Minutes' and q.object.slug:
-                if re.search(content, q.object.ocr_full_text, re.IGNORECASE):
-                    return q.object.slug
+    doc = event.documents.filter(note__icontains='RBM Minutes').first()
+
+    if doc:
+        return doc.url
     else:
-        return None
+        date = event.start_time.date().strftime('%B %d, %Y')
+        content = 'minutes of the regular board meeting held ' + date
+        sqs = SearchQuerySet().filter(content=content).all()
+        if sqs:
+            for q in sqs:
+                if q.object.bill_type == 'Minutes' and q.object.slug:
+
+                    if re.search(content, q.object.ocr_full_text, re.IGNORECASE):
+                        return '/board-report/' + q.object.slug
+        else:
+            return None
 
 @register.filter
 def compare_time(event_date):

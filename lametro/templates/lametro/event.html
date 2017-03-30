@@ -9,8 +9,9 @@
         <div class="col-sm-10">
             <br/>
             <p><a href='/events/'><i class="fa fa-angle-double-left" aria-hidden="true"></i> back to {{ CITY_VOCAB.EVENTS }}</a></p>
-            <h1>{{event.name}}</h1>
+            <h1>{{event.name}} {{event.ocd_id}}</h1>
             <p>{{event.description}}</p>
+
 
             <p class="small text-muted">
                 <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
@@ -44,7 +45,7 @@
                 <h4>Agenda</h4>
 
                 {% for document in event.documents.all %}
-
+                    {% if "Agenda" in document.note %}
                     <p>
                         <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class='fa fa-fw fa-download'></i> Get PDF</a>
                     </p>
@@ -58,7 +59,7 @@
                         height="600px"
                         src="/pdfviewer/?file={{document.url|full_text_doc_url|urlencode}}">
                     </iframe>
-
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 {% if event.clean_agenda_items %}
