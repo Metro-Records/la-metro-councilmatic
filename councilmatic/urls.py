@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic.base import RedirectView
 from django.conf import settings
+from django.views.decorators.cache import never_cache
 
 from haystack.query import SearchQuerySet, EmptySearchQuerySet
 
@@ -18,7 +19,8 @@ patterns = ([
         CouncilmaticFacetedSearchFeed(), name='councilmatic_search_feed'),
     url(r'^search/', LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet,
                                        form_class=CouncilmaticSearchForm), name='search'),
-    url(r'^$', LAMetroIndexView.as_view(), name='index'),
+    url(r'^$', never_cache(LAMetroIndexView.as_view()), name='index'),
+    # url(r'^$', LAMetroIndexView.as_view(), name='index'),
     url(r'^about/$', LAMetroAboutView.as_view(), name='about'),
     url(r'^board-report/(?P<slug>[^/]+)/$', LABillDetail.as_view(), name='bill_detail'),
     url(r'^committees/$', LACommitteesView.as_view(), name='committees'),
