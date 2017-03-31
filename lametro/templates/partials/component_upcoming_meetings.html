@@ -25,6 +25,9 @@
                                 <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
                                 <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name}}<br />
                             </p>
+                            {% if meeting.media_url %}
+                                <p><a class="btn btn-salmon" href="{{meeting.media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                            {% endif %}
                           </div>
 
                         </div>
