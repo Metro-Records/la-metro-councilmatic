@@ -116,8 +116,7 @@ class LAMetroEventsView(EventsView):
 
             context['future_events'] = org_future_events
 
-            # Last ten past events
-
+            # Past events
             past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
                           .order_by('-start_time')
 
@@ -512,9 +511,9 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                     if 'title' in el:
                         try:
                             dataDict['descending']
-                            kwargs['searchqueryset'] = sqs.order_by('-sort_name')
+                            kwargs['searchqueryset'] = sqs.order_by('-identifier')
                         except:
-                            kwargs['searchqueryset'] = sqs.order_by('sort_name')
+                            kwargs['searchqueryset'] = sqs.order_by('identifier')
                     if 'relevance' in el:
                         kwargs['searchqueryset'] = sqs
 

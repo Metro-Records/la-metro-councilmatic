@@ -2,7 +2,11 @@
 {% load lametro_extras %}
 
 <p>
-    <a class="small" href="{% url 'lametro:bill_detail' r.object.slug %}">{{ r.object.identifier}} -{{ r.object.ocr_full_text | format_full_text | parse_subject }}</a>
+    <a class="small" href="{% url 'lametro:bill_detail' r.object.slug %}">
+    {{ r.object.identifier}} {% if r.object.ocr_full_text|format_full_text|parse_subject %}
+        -{{ r.object.ocr_full_text | format_full_text | parse_subject }}
+    {% endif %}
+    </a>
     {{ r.object.inferred_status | inferred_status_label | safe }}
 </p>
 
