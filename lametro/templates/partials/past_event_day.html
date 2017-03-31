@@ -1,62 +1,60 @@
 {% load lametro_extras %}
 
-<div class='event-listing'>
-    <h5 class="text-default">
-        <i class="fa fa-fw fa-calendar-o"></i> {{date | date:"D m/d/Y"}}
-    </h5>
+<h5 class="text-default">
+    <i class="fa fa-fw fa-calendar-o"></i> {{date | date:"D m/d/Y"}}
+</h5>
 
-    {% for event in event_list %}
-    <div class="row">
-        <div class="col-xs-3 no-pad-right">
-            <p class="small">
-                {% if event.status == 'canceled' %}
-                <span class="non-mobile-only">
-                    <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time| date:"g:i a"}}</strike> Canceled<br/>
-                </span>
-                <span class="mobile-only">
-                    <strike>{{event.start_time| date:"g:i a"}}</strike> Canceled<br/>
-                </span>
-                {% else %}
-                <span class="non-mobile-only">
-                    <i class="fa fa-fw fa-clock-o"></i> {{event.start_time| date:"g:i a"}}<br/>
-                </span>
-                <span class="mobile-only">
-                    {{event.start_time| date:"g:i a"}}<br/>
-                </span>
-                {% endif %}
-            </p>
-        </div>
-        <div class="col-xs-4">
-            <p>
-                <a href="{{event.event_page_url}}">{{event.name}}</a><br/>
-                <span class="small text-muted">{{event.description}}</span>
-            </p>
-        </div>
-        {% if event.start_time|compare_time %}
-        <div class="col-xs-2">
-            <p>
-                <a href="https://www.metro.net/about/board/recap-actions/" target="_blank">Recap</a>
-                </br>
-            </p>
-        </div>
-        <div class="col-xs-2">
-            {% if 'Regular Board Meeting' in event.name %}
-                {% if event.ocd_id|get_minutes %}
-                <p>
-                    <a href="{{ event.ocd_id|get_minutes }}">Minutes</a>
-                </p>
-                {% endif %}
+{% for event in event_list %}
+<div class="row">
+    <div class="col-xs-3 no-pad-right">
+        <p class="small">
+            {% if event.status == 'cancelled' %}
+            <span class="non-mobile-only">
+                <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time| date:"g:i a"}}</strike> Cancelled<br/>
+            </span>
+            <span class="mobile-only">
+                <strike>{{event.start_time| date:"g:i a"}}</strike> Canceled<br/>
+            </span>
+            {% else %}
+            <span class="non-mobile-only">
+                <i class="fa fa-fw fa-clock-o"></i> {{event.start_time| date:"g:i a"}}<br/>
+            </span>
+            <span class="mobile-only">
+                {{event.start_time| date:"g:i a"}}<br/>
+            </span>
             {% endif %}
-        </div>
-        {% endif %}
-        {% if event.media_url %}
-        <div class="col-xs-1">
+        </p>
+    </div>
+    <div class="col-xs-4">
+        <p>
+            <a href="{{event.event_page_url}}">{{event.name}}</a><br/>
+            <span class="small text-muted">{{event.description}}</span>
+        </p>
+    </div>
+    {% if event.start_time|compare_time %}
+    <div class="col-xs-2">
+        <p>
+            <a href="https://www.metro.net/about/board/recap-actions/" target="_blank">Recap</a>
+            </br>
+        </p>
+    </div>
+    <div class="col-xs-2">
+        {% if 'Regular Board Meeting' in event.name %}
+            {% if event.ocd_id|get_minutes %}
             <p>
-                <a href="{{event.media_url}}" target="_blank">Listen</a>
-                </br>
+                <a href="{{ event.ocd_id|get_minutes }}">Minutes</a>
             </p>
-        </div>
+            {% endif %}
         {% endif %}
     </div>
-    {% endfor %}
+    {% endif %}
+    {% if event.media_url %}
+    <div class="col-xs-1">
+        <p>
+            <a href="{{event.media_url}}" target="_blank">Listen</a>
+            </br>
+        </p>
+    </div>
+    {% endif %}
 </div>
+{% endfor %}
