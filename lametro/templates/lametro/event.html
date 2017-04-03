@@ -12,6 +12,7 @@
             <h1>{{event.name}}</h1>
             <p>{{event.description}}</p>
 
+
             <p class="small text-muted">
                 <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
                 <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
@@ -19,10 +20,12 @@
             </p>
 
             <p class="small">
-                <a href='{{event.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
-                    <i class='fa fa-fw fa-external-link'></i>
-                    View on the {{CITY_VOCAB.SOURCE}} website
-                </a>
+                {% if 'https://metro.legistar.com' in event.source_url %}
+                    <a href='{{event.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
+                        <i class='fa fa-fw fa-external-link'></i>
+                        View on the {{CITY_VOCAB.SOURCE}} website
+                    </a>
+                {% endif %}
             </p>
 
             <hr />
@@ -42,7 +45,7 @@
                 <h4>Agenda</h4>
 
                 {% for document in event.documents.all %}
-
+                    {% if "Agenda" in document.note %}
                     <p>
                         <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download agenda</a>
                     </p>
@@ -62,7 +65,7 @@
                         height="600px"
                         src="/pdfviewer/?file={{document.url|full_text_doc_url|urlencode}}">
                     </iframe>
-
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 {% if event.clean_agenda_items %}

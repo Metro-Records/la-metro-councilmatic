@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
     <div class="row-fluid">
-        <div class="col-sm-8 no-pad-mobile">
+        <div class="col-sm-9 no-pad-mobile">
             <br/><br class="non-mobile-only"/>
             <div id="events-form" class="row">
                 <div class="col-xs-8">
@@ -45,7 +45,7 @@
                 {% endfor %}
                 <hr/>
 
-                <h2><span>Past {{ CITY_VOCAB.EVENTS }} (10)</span>
+                <h2><span>Past {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
                 </h2>
@@ -56,8 +56,14 @@
                 <hr/>
 
                 {% for date, event_list in past_events %}
+                    <div class='event-listing'>
                     {% include "partials/past_event_day.html" %}
+                    </div>
+
                 {% endfor %}
+
+                <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
+                <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
             {% elif select_events %}
                 <h2><span>{{ CITY_VOCAB.EVENTS }} in {{select_date}}</span>
                 <br class="non-desktop-only"/>
@@ -97,7 +103,7 @@
             {% endif %}
 
         </div>
-        <div class="col-sm-4 no-pad-mobile">
+        <div class="col-sm-3 no-pad-mobile">
             <br/><br class="non-mobile-only"/>
             {% include 'partials/events_info_blurb.html' %}
 
@@ -124,6 +130,28 @@
             autoclose: true,
             viewMode: "months",
             minViewMode: "months",
+        });
+
+        function collapseEvents(){
+            $(".event-listing:gt(4)").hide();
+            $("#more-events").show();
+            $("#fewer-events").hide();
+        }
+        function expandEvents(){
+            $(".event-listing:gt(4)").show();
+            $("#more-events").hide();
+            $("#fewer-events").show();
+        }
+
+        collapseEvents();
+
+        $("#more-events").click(function() {
+            expandEvents();
+            return false;
+        });
+        $("#fewer-events").click(function() {
+            collapseEvents();
+            return false;
         });
 
     });

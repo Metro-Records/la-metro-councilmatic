@@ -33,7 +33,7 @@ class LAMetroIndexView(IndexView):
     def extra_context(self):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
-        extra['current_board_meeting'] = self.event_model.current_board_meeting()
+        extra['current_meeting'] = self.event_model.current_meeting()
 
         return extra
 
@@ -139,10 +139,9 @@ class LAMetroEventsView(EventsView):
 
             context['future_events'] = org_future_events
 
-            # Last ten past events
-
+            # Past events
             past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
-                          .order_by('-start_time')[:10]
+                          .order_by('-start_time')
 
             org_past_events = []
 
@@ -150,7 +149,7 @@ class LAMetroEventsView(EventsView):
                 events = sorted(events, key=attrgetter('start_time'))
                 org_past_events.append([date(*event_date), events])
 
-            org_past_events.reverse()
+            org_past_events
 
             context['past_events'] = org_past_events
 
@@ -535,9 +534,9 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                     if 'title' in el:
                         try:
                             dataDict['descending']
-                            kwargs['searchqueryset'] = sqs.order_by('-sort_name')
+                            kwargs['searchqueryset'] = sqs.order_by('-identifier')
                         except:
-                            kwargs['searchqueryset'] = sqs.order_by('sort_name')
+                            kwargs['searchqueryset'] = sqs.order_by('identifier')
                     if 'relevance' in el:
                         kwargs['searchqueryset'] = sqs
 

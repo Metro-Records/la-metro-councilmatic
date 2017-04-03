@@ -1,0 +1,74 @@
+{% load staticfiles %}
+
+<div class='row'>
+    <div class='col-sm-7'>
+        <div>
+            <div>
+                <br/>
+
+                <div class="row">
+                    <div class="col-xs-5">
+                        <img src='/static/images/Los-Angeles-Gateway-Plaza-Office.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
+                    </div>
+
+                    <!-- Board meeting info -->
+                    <div class="col-xs-7">
+                        <div class="row">
+                          <div class="col-xs-12">
+                            <h4>
+                              {{  meeting.link_html | safe }}<br/>
+                              <span class="small text-muted">{{ meeting.description }}</span>
+                            </h4>
+
+                            <p class="small text-muted">
+                                <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y"}}<br/>
+                                <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
+                                <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name}}<br />
+                            </p>
+                            {% if meeting.media_url %}
+                                <p><a class="btn btn-salmon" href="{{meeting.media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                            {% endif %}
+                          </div>
+
+                        </div>
+                        </br>
+                    </div>
+                </div>
+            </div>
+
+            {% with meeting_type=meeting %}
+                {% include "partials/agenda_items.html"  %}
+            {% endwith %}
+
+        </div>
+    </div>
+
+    <div class='col-sm-5'>
+        </br>
+        <p>The <a href="https://www.metro.net/" target="_blank">Los Angeles County Metropolitan Transportation Authority</a>, commonly known as Metro, consists of several <a href="{% url 'lametro:council_members' %}">Board Members</a>, who set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County.</p>
+
+        <p>
+            The <strong>Metro Board</strong> website tracks all things related to the Metro Board of Directors:
+            <ul>
+                <li>
+                    the <a href="{% url 'lametro:search' %}">board reports</a> introduced and passed
+                </li>
+                <li>
+                    its various <a href="{% url 'lametro:committees' %}">committees</a> and the <a href="{% url 'events' %}">meetings</a> they hold
+                </li>
+                <li>
+                    the <a href="{% url 'lametro:council_members' %}">board members</a> themselves
+                </li>
+            </ul>
+        </p>
+        <p>
+            <span class="non-mobile-only">
+                Read more about how <a href="{% url 'lametro:about' %}">Metro works &raquo;</a>
+            </span>
+            <span class="mobile-only">
+                <a href="{% url 'lametro:about' %}">More on how Metro works &raquo;</a>
+            </span>
+
+        </p>
+    </div>
+</div>

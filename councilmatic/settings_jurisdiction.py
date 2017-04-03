@@ -7,7 +7,7 @@
 OCD_CITY_COUNCIL_ID = 'ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
 CITY_COUNCIL_NAME = 'Metro'
 OCD_JURISDICTION_ID = 'ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority'
-LEGISLATIVE_SESSIONS = ['2014', '2015', '2016'] # the last one in this list should be the current legislative session
+LEGISLATIVE_SESSIONS = ['2014', '2015', '2016', '2017'] # the last one in this list should be the current legislative session
 CITY_NAME = 'Metro'
 CITY_NAME_SHORT = 'Metro'
 
@@ -232,6 +232,12 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
         'fa_icon': 'commenting-o',
         'html_desc': True,
         'desc': 'Certain board actions require the adoption of a board resolution, usually financial and real estate transactions.',
+    },
+    {   'name': 'Board Box',
+        'search_term': 'board box',
+        'fa_icon': 'commenting-o',
+        'html_desc': True,
+        'desc': "Formal information communication to the Board not requiring actions. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box items through the <a href='http://search3.metro.net/search?access=p&output=xml_no_dtd&site=Board_Archives&ie=UTF-8&client=BoardArchive&proxystylesheet=BoardArchive&proxycustom=%3CHOME/%3E' target='_blank'>Board Archive</a>."
     },
 ]
 
