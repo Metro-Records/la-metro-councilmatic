@@ -24,6 +24,7 @@ from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
+from councilmatic.settings import MERGER_BASE_URL
 
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
@@ -57,9 +58,12 @@ class LABillDetail(BillDetailView):
 
         # Create URL for packet download.
         packet_slug = item.ocd_id.replace('/', '-')
-        r = requests.get('http://0.0.0.0:5000/document/' + packet_slug)
-        if r.status_code == 200:
-            context['packet_url'] = 'http://0.0.0.0:5000/document/' + packet_slug
+        try:
+            r = requests.get(MERGER_BASE_URL + '/document/' + packet_slug)
+            if r.status_code == 200:
+                context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
+        except:
+            context['packet_url'] = None
 
         return context
 
@@ -72,9 +76,12 @@ class LAMetroEventDetail(EventDetailView):
         # Create URL for packet download.
         event = context['event']
         packet_slug = event.ocd_id.replace('/', '-')
-        r = requests.get('http://0.0.0.0:5000/document/' + packet_slug)
-        if r.status_code == 200:
-            context['packet_url'] = 'http://0.0.0.0:5000/document/' + packet_slug
+        try:
+            r = requests.get(MERGER_BASE_URL + '/document/' + packet_slug)
+            if r.status_code == 200:
+                context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
+        except:
+            context['packet_url'] = None
 
         return context
 

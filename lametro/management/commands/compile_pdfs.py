@@ -8,6 +8,8 @@ import json
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
+from councilmatic.settings import MERGER_BASE_URL
+
 LOGGER = logging.getLogger(__name__)
 
 DB_CONN = 'postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}'
@@ -55,27 +57,28 @@ class Command(BaseCommand):
                 if len(filenames) > 1:
                     # Put the filenames inside a data structure, and send a post request with the slug.
                     data = json.dumps(filenames)
-                    url = 'http://0.0.0.0:5000/merge_pdfs/' + board_report_slug
+                    url = MERGER_BASE_URL + '/merge_pdfs/' + board_report_slug
                     requests.post(url, data=data)
 
-        if not options['board_reports_only']:
-            LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
-            LOGGER.info(self.style.NOTICE("............"))
-            if options['all_documents']:
-                event_packet_raw = self.findEventAgendaPacket(all_documents=True)
-            else:
-                event_packet_raw = self.findEventAgendaPacket()
 
-            LOGGER.info(self.style.NOTICE("Sending POST requests to metro-pdf-merger."))
-            for idx, el in enumerate(event_packet_raw):
-                event_slug = 'ocd-event-' + el[0].split('/')[1]
-                event_agenda = el[1]
-                filenames = el[2]
-                filenames.insert(0, str(event_agenda))
+        # if not options['board_reports_only']:
+        #     LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
+        #     LOGGER.info(self.style.NOTICE("............"))
+        #     if options['all_documents']:
+        #         event_packet_raw = self.findEventAgendaPacket(all_documents=True)
+        #     else:
+        #         event_packet_raw = self.findEventAgendaPacket()
 
-                data = json.dumps(filenames)
-                url = 'http://0.0.0.0:5000/merge_pdfs/' + event_slug
-                requests.post(url, data=data)
+        #     LOGGER.info(self.style.NOTICE("Sending POST requests to metro-pdf-merger."))
+        #     for idx, el in enumerate(event_packet_raw):
+        #         event_slug = 'ocd-event-' + el[0].split('/')[1]
+        #         event_agenda = el[1]
+        #         filenames = el[2]
+        #         filenames.insert(0, str(event_agenda))
+
+        #         data = json.dumps(filenames)
+        #         url = MERGER_BASE_URL + '/merge_pdfs/' + event_slug
+        #         requests.post(url, data=data)
 
         LOGGER.info(self.style.SUCCESS(".........."))
         LOGGER.info(self.style.SUCCESS("Command complete. Excellent work, everyone. Go to metro-pdf-merger for results!"))
@@ -83,6 +86,7 @@ class Command(BaseCommand):
 
     def findBoardReportPacket(self, all_documents=False):
         board_reports = []
+        query = ''
 
         if all_documents:
             query = '''
@@ -101,7 +105,10 @@ class Command(BaseCommand):
               FROM councilmatic_core_billdocument
             ) AS subq
             GROUP BY bill_id
+            LIMIT 50
             '''
+
+            board_reports = self.connection.execute(sa.text(query))
         else:
             # (1) Get ids for board reports that need new PDF packets.
             grab_ids_query = '''
@@ -138,7 +145,7 @@ class Command(BaseCommand):
                 GROUP BY bill_id
                 '''.format(psql_ready_ids)
 
-        board_reports = self.connection.execute(sa.text(query))
+                board_reports = self.connection.execute(sa.text(query))
 
         return board_reports
 
@@ -174,6 +181,8 @@ class Command(BaseCommand):
                 ) AS subq
             GROUP BY event_id, event_agenda
             '''
+
+            event_agendas = self.connection.execute(sa.text(query))
         else:
             grab_ids_query = '''
             SELECT bill_id FROM new_billdocument GROUP BY bill_id
@@ -218,7 +227,7 @@ class Command(BaseCommand):
                 GROUP BY event_id, event_agenda
                 '''.format(psql_ready_ids)
 
-        event_agendas = self.connection.execute(sa.text(query))
+                event_agendas = self.connection.execute(sa.text(query))
 
         return event_agendas
 
