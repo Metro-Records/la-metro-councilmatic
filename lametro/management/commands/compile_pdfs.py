@@ -105,7 +105,6 @@ class Command(BaseCommand):
               FROM councilmatic_core_billdocument
             ) AS subq
             GROUP BY bill_id
-            LIMIT 50
             '''
 
             board_reports = self.connection.execute(sa.text(query))
