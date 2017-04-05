@@ -114,9 +114,9 @@ class LAMetroEventsView(EventsView):
             context['select_events'] = org_select_events
             context['select_date']   = date_time.strftime("%B") + " " + date_time.strftime("%Y")
 
+        # If all meetings
         elif self.request.GET.get('show'):
-            # Upcoming events for the current month.
-            all_events = Event.objects.all().order_by('start_time')
+            all_events = Event.objects.all().order_by('-start_time')
 
             org_all_events = []
 
