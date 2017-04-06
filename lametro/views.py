@@ -7,6 +7,7 @@ import json
 from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
+import requests
 
 from haystack.query import SearchQuerySet
 from django.db import transaction, connection, connections
@@ -23,6 +24,7 @@ from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
+from councilmatic.settings import MERGER_BASE_URL
 
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
@@ -41,19 +43,47 @@ class LABillDetail(BillDetailView):
     template_name = 'lametro/legislation.html'
 
     def get_context_data(self, **kwargs):
-          context = super().get_context_data(**kwargs)
-          context['actions'] = self.get_object().actions.all().order_by('-order')
-          context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
-          context['board_report'] = self.get_object().attachments.get(note="Board Report")
-          item = context['legislation']
-          actions = Action.objects.filter(_bill_id=item.ocd_id)
-          organization_lst = [action.organization for action in actions]
-          context['sponsorships'] = set(organization_lst)
+        context = super().get_context_data(**kwargs)
+        context['actions'] = self.get_object().actions.all().order_by('-order')
+        context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
 
-          return context
+        for a in context['attachments']:
+            print(a.note)
+
+        context['board_report'] = self.get_object().attachments.get(note="Board Report")
+        item = context['legislation']
+        actions = Action.objects.filter(_bill_id=item.ocd_id)
+        organization_lst = [action.organization for action in actions]
+        context['sponsorships'] = set(organization_lst)
+
+        # Create URL for packet download.
+        packet_slug = item.ocd_id.replace('/', '-')
+        try:
+            r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
+            if r.status_code == 200:
+                context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
+        except:
+            context['packet_url'] = None
+
+        return context
 
 class LAMetroEventDetail(EventDetailView):
     template_name = 'lametro/event.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Create URL for packet download.
+        event = context['event']
+        packet_slug = event.ocd_id.replace('/', '-')
+        try:
+            r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
+            if r.status_code == 200:
+                context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
+        except:
+            context['packet_url'] = None
+
+        return context
 
 class LAMetroEventsView(EventsView):
     template_name = 'lametro/events.html'
@@ -84,9 +114,9 @@ class LAMetroEventsView(EventsView):
             context['select_events'] = org_select_events
             context['select_date']   = date_time.strftime("%B") + " " + date_time.strftime("%Y")
 
+        # If all meetings
         elif self.request.GET.get('show'):
-            # Upcoming events for the current month.
-            all_events = Event.objects.all().order_by('start_time')
+            all_events = Event.objects.all().order_by('-start_time')
 
             org_all_events = []
 

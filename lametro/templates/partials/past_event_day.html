@@ -31,15 +31,27 @@
             <span class="small text-muted">{{event.description}}</span>
         </p>
     </div>
+
+    <div class="col-xs-2">
+        {% if event.media_url %}
+        <p>
+            <a href="{{event.media_url}}" target="_blank">Listen</a>
+            </br>
+        </p>
+        {% endif %}
+    </div>
+
     {% if event.start_time|compare_time %}
     <div class="col-xs-2">
+        {% if 'board meeting' in event.name|lower or 'la safe' in event.name|lower %}
         <p>
             <a href="https://www.metro.net/about/board/recap-actions/" target="_blank">Recap</a>
             </br>
         </p>
+        {% endif %}
     </div>
-    <div class="col-xs-2">
-        {% if 'Regular Board Meeting' in event.name %}
+    <div class="col-xs-1">
+        {% if 'regular board meeting' in event.name|lower %}
             {% if event.ocd_id|get_minutes %}
             <p>
                 <a href="{{ event.ocd_id|get_minutes }}">Minutes</a>
@@ -48,13 +60,6 @@
         {% endif %}
     </div>
     {% endif %}
-    {% if event.media_url %}
-    <div class="col-xs-1">
-        <p>
-            <a href="{{event.media_url}}" target="_blank">Listen</a>
-            </br>
-        </p>
-    </div>
-    {% endif %}
+
 </div>
 {% endfor %}

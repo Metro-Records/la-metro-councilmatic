@@ -139,4 +139,3 @@ def get_minutes(event_id):
 def compare_time(event_date):
     if event_date < timezone.now():
         return True
-
