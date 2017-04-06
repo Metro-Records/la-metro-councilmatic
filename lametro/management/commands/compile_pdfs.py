@@ -61,24 +61,24 @@ class Command(BaseCommand):
                     requests.post(url, data=data)
 
 
-        # if not options['board_reports_only']:
-        #     LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
-        #     LOGGER.info(self.style.NOTICE("............"))
-        #     if options['all_documents']:
-        #         event_packet_raw = self.findEventAgendaPacket(all_documents=True)
-        #     else:
-        #         event_packet_raw = self.findEventAgendaPacket()
+        if not options['board_reports_only']:
+            LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
+            LOGGER.info(self.style.NOTICE("............"))
+            if options['all_documents']:
+                event_packet_raw = self.findEventAgendaPacket(all_documents=True)
+            else:
+                event_packet_raw = self.findEventAgendaPacket()
 
-        #     LOGGER.info(self.style.NOTICE("Sending POST requests to metro-pdf-merger."))
-        #     for idx, el in enumerate(event_packet_raw):
-        #         event_slug = 'ocd-event-' + el[0].split('/')[1]
-        #         event_agenda = el[1]
-        #         filenames = el[2]
-        #         filenames.insert(0, str(event_agenda))
+            LOGGER.info(self.style.NOTICE("Sending POST requests to metro-pdf-merger."))
+            for idx, el in enumerate(event_packet_raw):
+                event_slug = 'ocd-event-' + el[0].split('/')[1]
+                event_agenda = el[1]
+                filenames = el[2]
+                filenames.insert(0, str(event_agenda))
 
-        #         data = json.dumps(filenames)
-        #         url = MERGER_BASE_URL + '/merge_pdfs/' + event_slug
-        #         requests.post(url, data=data)
+                data = json.dumps(filenames)
+                url = MERGER_BASE_URL + '/merge_pdfs/' + event_slug
+                requests.post(url, data=data)
 
         LOGGER.info(self.style.SUCCESS(".........."))
         LOGGER.info(self.style.SUCCESS("Command complete. Excellent work, everyone. Go to metro-pdf-merger for results!"))
@@ -105,7 +105,6 @@ class Command(BaseCommand):
               FROM councilmatic_core_billdocument
             ) AS subq
             GROUP BY bill_id
-            LIMIT 200
             '''
 
             board_reports = self.connection.execute(sa.text(query))

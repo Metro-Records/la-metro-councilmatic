@@ -59,7 +59,7 @@ class LABillDetail(BillDetailView):
         # Create URL for packet download.
         packet_slug = item.ocd_id.replace('/', '-')
         try:
-            r = requests.get(MERGER_BASE_URL + '/document/' + packet_slug)
+            r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
             if r.status_code == 200:
                 context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
         except:
@@ -77,7 +77,7 @@ class LAMetroEventDetail(EventDetailView):
         event = context['event']
         packet_slug = event.ocd_id.replace('/', '-')
         try:
-            r = requests.get(MERGER_BASE_URL + '/document/' + packet_slug)
+            r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
             if r.status_code == 200:
                 context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
         except:
