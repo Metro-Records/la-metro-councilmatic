@@ -107,5 +107,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+MERGER_BASE_URL = 'https://metro-pdf-merger.datamade.us'
+# MERGER_BASE_URL = 'http://0.0.0.0:5000'
 
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
