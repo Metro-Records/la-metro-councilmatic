@@ -47,12 +47,12 @@
                 {% for document in event.documents.all %}
                     {% if "Agenda" in document.note %}
                     <p>
-                        <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download agenda</a>
+                        <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
                     </p>
 
                     {% if packet_url %}
                     <p>
-                        <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download complete event packet</a>
+                        <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Agenda Packet</a>
                     </p>
                     {% endif %}
 
