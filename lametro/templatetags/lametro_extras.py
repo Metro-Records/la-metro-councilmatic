@@ -139,3 +139,20 @@ def get_minutes(event_id):
 def compare_time(event_date):
     if event_date < timezone.now():
         return True
+
+@register.filter
+@stringfilter
+def short_title(text_blob):
+    session_dict = {
+        '2014': '7/1/2014 to 6/30/2015',
+        '2015': '7/1/2015 to 6/30/2016',
+        '2016': '7/1/2016 to 6/30/2017',
+    }
+    if text_blob in ['2014', '2015', '2016', '2017']:
+        return session_dict[text_blob]
+    elif len(text_blob) > 28:
+        blurb = text_blob[:24]
+        blurb = blurb[:blurb.rfind(' ')] + ' ...'
+        return blurb
+    else:
+        return text_blob
