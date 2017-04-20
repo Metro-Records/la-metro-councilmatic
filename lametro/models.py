@@ -189,7 +189,7 @@ class LAMetroEvent(Event):
         # Board or Committee
         meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
 
-        found_event = cls.objects.filter(start_time__lt=timezone.now())\
+        found_event = cls.objects.filter(start_time__lt=datetime.now(app_timezone))\
                   .filter(start_time__gt=meeting_end_time)\
                   .exclude(status='cancelled')\
                   .order_by('start_time').first()
@@ -198,7 +198,7 @@ class LAMetroEvent(Event):
             if "Committee" in found_event.name:
                 meeting_end_time = datetime.now(app_timezone) - timedelta(hours=1)
 
-        return cls.objects.filter(start_time__lt=timezone.now())\
+        return cls.objects.filter(start_time__lt=datetime.now(app_timezone))\
                   .filter(start_time__gt=meeting_end_time)\
                   .exclude(status='cancelled')\
                   .order_by('start_time').first()
