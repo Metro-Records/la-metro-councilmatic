@@ -185,7 +185,7 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        meeting_time = datetime.now(app_timezone) - timedelta(hours=3)
+        meeting_time = datetime.now(app_timezone) - timedelta(hours=1)
 
         return cls.objects.filter(start_time__lt=timezone.now())\
                   .filter(start_time__gt=meeting_time)\
