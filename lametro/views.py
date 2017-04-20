@@ -75,6 +75,7 @@ class LAMetroEventDetail(EventDetailView):
 
         # Create URL for packet download.
         event = context['event']
+
         packet_slug = event.ocd_id.replace('/', '-')
         try:
             r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
