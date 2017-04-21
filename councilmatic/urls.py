@@ -27,7 +27,7 @@ patterns = ([
     url(r'^committee/(?P<slug>[^/]+)/$', LACommitteeDetailView.as_view(), name='committee'),
     url(r'^board-members/$', LABoardMembersView.as_view(), name='council_members'),
     url(r'^person/(?P<slug>[^/]+)/$', LAPersonDetailView.as_view(), name='person'),
-    url(r'^event/(?P<slug>[^/]+)/$', LAMetroEventDetail.as_view(), name='events'),
+    url(r'^event/(?P<slug>[^/]+)/$', never_cache(LAMetroEventDetail.as_view()), name='events'),
     url(r'^events/$', LAMetroEventsView.as_view(), name='event'),
     url(r'^person/(?P<slug>[^/]+)/rss/$', LAMetroPersonDetailFeed(), name='person_feed'),
 ], settings.APP_NAME)
