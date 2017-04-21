@@ -40,12 +40,17 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
                     sliced_arr = arr.split( )[1:]
                     text += " ".join(sliced_arr) + "<br /><br />"
 
-        text_snippet = None
+        text_snippet = ''
 
         if text:
-            text_slice = text[:200]
-            re_results = re.search(r'SUBJECT:(.*?)ACTION:', str(text))
+            text_slice = text[:300]
+
+            re_results = re.search(r'SUBJECT:(.*?)ACTION:', str(text_slice))
+
             if re_results:
-                text_snippet = re_results.group(1).lstrip()
+                text_snippet_initial = re_results.group(1).lstrip()
+
+                if '[PROJECT OR SERVICE NAME]' not in text_snippet_initial and '[DESCRIPTION]' not in text_snippet_initial and '[CONTRACT NUMBER]' not in text_snippet_initial:
+                    text_snippet = text_snippet_initial
 
         return text_snippet

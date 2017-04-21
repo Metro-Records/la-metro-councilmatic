@@ -54,12 +54,12 @@ class Command(BaseCommand):
             for idx, el in enumerate(report_packet_raw):
                 board_report_slug = 'ocd-bill-' + el[0].split('/')[1]
                 filenames = el[1]
+
                 if len(filenames) > 1:
                     # Put the filenames inside a data structure, and send a post request with the slug.
                     data = json.dumps(filenames)
                     url = MERGER_BASE_URL + '/merge_pdfs/' + board_report_slug
                     requests.post(url, data=data)
-
 
         if not options['board_reports_only']:
             LOGGER.info(self.style.NOTICE("Finding all documents for event agendas."))
