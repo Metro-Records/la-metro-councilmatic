@@ -10,8 +10,12 @@
             <div class="col-sm-12">
                 <h1 class="bill-page-title">
                     <br class="non-mobile-only" />
-
-                    {{ legislation.identifier}} -{{ legislation.ocr_full_text| format_full_text | parse_subject}}<br>
+                    {% if legislation.ocr_full_text %}
+                        {{ legislation.identifier}} -{{ legislation.ocr_full_text| format_full_text | parse_subject}}
+                    {% else %}
+                        {{ legislation.identifier}}
+                    {% endif %}
+                    <br>
                 </h1>
                 <h1>
                     {{ legislation.bill_type }}

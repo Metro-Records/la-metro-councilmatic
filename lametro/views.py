@@ -47,9 +47,6 @@ class LABillDetail(BillDetailView):
         context['actions'] = self.get_object().actions.all().order_by('-order')
         context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
 
-        for a in context['attachments']:
-            print(a.note)
-
         context['board_report'] = self.get_object().attachments.get(note="Board Report")
         item = context['legislation']
         actions = Action.objects.filter(_bill_id=item.ocd_id)
@@ -64,6 +61,8 @@ class LABillDetail(BillDetailView):
                 context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
         except:
             context['packet_url'] = None
+
+        print(item.ocd_id)
 
         return context
 

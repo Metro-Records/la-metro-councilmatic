@@ -81,10 +81,10 @@ def appointment_label(label):
 
 @register.filter
 def parse_subject(text):
-    text_snippet = None
+    text_snippet = ''
 
     if text:
-        text_slice = text[:200]
+        text_slice = text[:300]
         re_results = re.search(r'SUBJECT:(.*?)ACTION:', str(text))
         if re_results:
             text_snippet = re_results.group(1)
