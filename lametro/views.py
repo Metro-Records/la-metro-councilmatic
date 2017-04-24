@@ -555,3 +555,5 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         return self.form_class(data, **kwargs)
 
 
+class GoogleView(IndexView):
+    template_name = 'lametro/google66b34bb6957ad66c.html'
