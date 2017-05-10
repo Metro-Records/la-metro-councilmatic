@@ -4,6 +4,7 @@ from io import StringIO, BytesIO
 import logging
 import requests
 import json
+from datetime import datetime
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -82,6 +83,7 @@ class Command(BaseCommand):
 
         LOGGER.info(self.style.SUCCESS(".........."))
         LOGGER.info(self.style.SUCCESS("Command complete. Excellent work, everyone. Go to metro-pdf-merger for results!"))
+        print(self.style.SUCCESS("Command done at: ", datetime.now()))
 
 
     def findBoardReportPacket(self, all_documents=False):
