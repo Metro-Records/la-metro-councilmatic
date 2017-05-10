@@ -83,7 +83,7 @@ class Command(BaseCommand):
 
         LOGGER.info(self.style.SUCCESS(".........."))
         LOGGER.info(self.style.SUCCESS("Command complete. Excellent work, everyone. Go to metro-pdf-merger for results!"))
-        print(self.style.SUCCESS("Command done at: ", datetime.now()))
+        print("Command done at: ", datetime.now())
 
 
     def findBoardReportPacket(self, all_documents=False):
