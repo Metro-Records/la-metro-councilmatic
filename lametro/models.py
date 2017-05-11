@@ -187,38 +187,38 @@ class LAMetroEvent(Event):
     @classmethod
     def current_meeting(cls):
         # Board or Committee
+        meeting_time = datetime.now(app_timezone) + timedelta(minutes=6)
         meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
 
-        found_event = cls.objects.filter(start_time__lt=datetime.now(app_timezone))\
+        found_event = cls.objects.filter(start_time__lt=meeting_time)\
                   .filter(start_time__gt=meeting_end_time)\
                   .exclude(status='cancelled')\
                   .order_by('start_time').first()
 
         if found_event:
             if "Committee" in found_event.name:
-                meeting_end_time = datetime.now(app_timezone) - timedelta(hours=1)
+                meeting_end_time = meeting_time - timedelta(hours=1)
 
-        return cls.objects.filter(start_time__lt=datetime.now(app_timezone))\
+        return cls.objects.filter(start_time__lt=meeting_time)\
                   .filter(start_time__gt=meeting_end_time)\
                   .exclude(status='cancelled')\
                   .order_by('start_time').first()
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) - timedelta(days=7) + timedelta(hours=2)
-        # meeting_end_time = faketime + timedelta(days=7) - timedelta(hours=8)
+        # faketime = datetime.now(app_timezone) + timedelta(days=14) - timedelta(hours=4) + timedelta(minutes=6)
+        # print(faketime)
+        # meeting_end_time = faketime - timedelta(hours=8)
 
         # found_event = cls.objects.filter(start_time__lt=faketime)\
         #           .filter(start_time__gt=meeting_end_time)\
         #           .exclude(status='cancelled')\
         #           .order_by('start_time').first()
 
-        # print(found_event)
-
         # if found_event:
         #     if "Committee" in found_event.name:
-        #         meeting_end_time = faketime + timedelta(days=7) - timedelta(hours=1)
+        #         meeting_end_time = faketime - timedelta(hours=1)
 
-        # return cls.objects.filter(start_time__lt=timezone.now())\
+        # return cls.objects.filter(start_time__lt=faketime)\
         #           .filter(start_time__gt=meeting_end_time)\
         #           .exclude(status='cancelled')\
         #           .order_by('start_time').first()

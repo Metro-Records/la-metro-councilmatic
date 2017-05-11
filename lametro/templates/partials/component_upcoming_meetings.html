@@ -25,9 +25,25 @@
                                 <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
                                 <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name}}<br />
                             </p>
-                            {% if meeting.media_url %}
-                                <p><a class="btn btn-salmon" href="{{meeting.media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
-                            {% endif %}
+
+                            <div class="row">
+                                {% with meeting_type=meeting %}
+                                    {% include "partials/agenda_items.html"  %}
+                                {% endwith %}
+
+                                {% if current_meeting %}
+                                    {% if meeting.media_url %}
+                                        <div class="col-xs-6">
+                                            <p><a class="btn btn-salmon" href="{{meeting.media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-xs-6">
+                                            <p><a class="btn btn-salmon" href="http://metro.granicus.com/MediaPlayer.php?camera_id=2" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+
+                            </div>
                           </div>
 
                         </div>
@@ -35,11 +51,6 @@
                     </div>
                 </div>
             </div>
-
-            {% with meeting_type=meeting %}
-                {% include "partials/agenda_items.html"  %}
-            {% endwith %}
-
         </div>
     </div>
 
