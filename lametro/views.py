@@ -92,18 +92,21 @@ class LAMetroEventsView(EventsView):
     def get_context_data(self, **kwargs):
         context = super(LAMetroEventsView, self).get_context_data(**kwargs)
 
+
         # Did the user set date boundaries?
-        date_str               = self.request.GET.get('form_datetime')
-        day_grouper            = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
-        context['select_date'] = ''
+        start_date_str = self.request.GET.get('from')
+        end_date_str   = self.request.GET.get('to')
+        day_grouper    = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
 
-        # If yes: dates...
-        if date_str:
-            context['date'] = date_str
-            date_time       = parser.parse(date_str)
+        # If yes...
+        if start_date_str and end_date_str:
+            context['start_date'] = start_date_str
+            context['end_date']   = end_date_str
+            start_date_time       = parser.parse(start_date_str)
+            end_date_time         = parser.parse(end_date_str)
 
-            select_events = Event.objects.filter(start_time__gt=date_time)\
-                          .filter(start_time__lt=(date_time + relativedelta(months=1)))\
+            select_events = Event.objects.filter(start_time__gt=start_date_time)\
+                          .filter(start_time__lt=end_date_time)\
                           .order_by('start_time')
 
             org_select_events = []
@@ -113,7 +116,29 @@ class LAMetroEventsView(EventsView):
                 org_select_events.append([date(*event_date), events])
 
             context['select_events'] = org_select_events
-            context['select_date']   = date_time.strftime("%B") + " " + date_time.strftime("%Y")
+
+        # Did the user set date boundaries?
+        # date_str               = self.request.GET.get('form_datetime')
+        # day_grouper            = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
+        # context['select_date'] = ''
+
+        # # If yes: dates...
+        # if date_str:
+        #     context['date'] = date_str
+        #     date_time       = parser.parse(date_str)
+
+        #     select_events = Event.objects.filter(start_time__gt=date_time)\
+        #                   .filter(start_time__lt=(date_time + relativedelta(months=1)))\
+        #                   .order_by('start_time')
+
+        #     org_select_events = []
+
+        #     for event_date, events in itertools.groupby(select_events, key=day_grouper):
+        #         events = sorted(events, key=attrgetter('start_time'))
+        #         org_select_events.append([date(*event_date), events])
+
+        #     context['select_events'] = org_select_events
+        #     context['select_date']   = date_time.strftime("%B") + " " + date_time.strftime("%Y")
 
         # If all meetings
         elif self.request.GET.get('show'):
