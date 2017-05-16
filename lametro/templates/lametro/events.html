@@ -13,13 +13,23 @@
             <div id="events-form" class="row">
                 <div class="col-xs-8">
                     <form action='/events' method='GET'>
-                      <div class="input-group" id='date-search'>
+                      <!-- <div class="input-group" id='date-search'>
                             <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                             <input type="text" class="form-control date-filter" placeholder="Select a month and year..." value="{{ date }}" readonly id="form_datetime" name="form_datetime">
                             <span class="input-group-btn">
                               <button class="btn btn-default btn-date" id="btn-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i> <span class='hidden-sm hidden-xs'>Search</span></button>
                             </span>
+                      </div> -->
+
+                      <div class="input-group" id='date-search'>
+                            <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                            <input type="text" id="from" name="from" class="form-control date-filter" placeholder="Select start date..." value='{{ start_date }}'>
+                            <input type="text" id="to" name="to" class="form-control date-filter" placeholder="Select end date..." value='{{ end_date }}'>
+                            <span class="input-group-btn">
+                              <button class="btn btn-default btn-date" id="btn-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i> <span class='hidden-sm hidden-xs'>Search</span></button>
+                            </span>
                       </div>
+
                     </form>
                 </div>
                 <div class="col-xs-2">
@@ -65,7 +75,7 @@
                 <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
                 <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
             {% elif select_events %}
-                <h2><span>{{ CITY_VOCAB.EVENTS }} in {{select_date}}</span>
+                <h2><span>{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
                 </h2>
@@ -126,11 +136,15 @@
     <script>
     $(document).ready(function() {
 
-        $("#form_datetime").datepicker({
-            autoclose: true,
-            viewMode: "months",
-            minViewMode: "months",
-        });
+        // $("#form_datetime").datepicker({
+        //     autoclose: true,
+        //     viewMode: "months",
+        //     minViewMode: "months",
+        // });
+
+        $('#from').datepicker();
+        $('#to').datepicker();
+
 
         function collapseEvents(){
             $(".event-listing:gt(4)").hide();

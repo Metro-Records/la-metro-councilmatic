@@ -194,7 +194,7 @@ div#toggleControls { margin-bottom: 1em; }
 }
 
 /* Styles for calendar pop-up. */
-#date-search .form-control { width: 100%; }
+#date-search .form-control { width: 50%; }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
     background-color: #fff;
