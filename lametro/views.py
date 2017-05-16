@@ -393,6 +393,8 @@ class LACommitteeDetailView(CommitteeDetailView):
                     obj = obj + ("2",)
                 elif '2nd Vice Chair' in obj[3]:
                     obj = obj + ("3",)
+                elif 'Nonvoting Member' in obj[3]:
+                    obj = obj + ("5",)
                 else:
                     obj = obj + ("4",)
                 cursor_copy.append(obj)
