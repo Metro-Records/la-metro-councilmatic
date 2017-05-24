@@ -8,6 +8,7 @@ from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
 import requests
+import sqlalchemy as sa
 
 from haystack.query import SearchQuerySet
 from django.db import transaction, connection, connections
@@ -19,6 +20,7 @@ from django.db.models import Max, Min
 from django.utils import timezone
 from django.utils.text import slugify
 from collections import namedtuple
+
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
@@ -63,8 +65,6 @@ class LABillDetail(BillDetailView):
         except:
             context['packet_url'] = None
 
-        print(item.ocd_id)
-
         return context
 
 class LAMetroEventDetail(EventDetailView):
@@ -84,6 +84,58 @@ class LAMetroEventDetail(EventDetailView):
         except:
             context['packet_url'] = None
 
+        # Logic for getting relevant board report information.
+        with connection.cursor() as cursor:
+            query = '''
+                SELECT
+                    b.identifier,
+                    b.ocd_id,
+                    b.slug,
+                    b.ocr_full_text,
+                    b.description,
+                    d_bill.url,
+                    i.order
+                FROM councilmatic_core_billdocument AS d_bill
+                INNER JOIN councilmatic_core_eventagendaitem as i
+                ON i.bill_id=d_bill.bill_id
+                INNER JOIN councilmatic_core_eventdocument as d_event
+                ON i.event_id=d_event.event_id
+                INNER JOIN councilmatic_core_bill AS b
+                ON d_bill.bill_id=b.ocd_id
+                WHERE d_event.event_id='{}'
+                AND trim(lower(d_bill.note)) LIKE 'board report%'
+                ORDER BY i.order
+                '''.format(event.ocd_id)
+
+            cursor.execute(query)
+
+            # Get field names
+            columns = [c[0] for c in cursor.description]
+            columns.append('packet_url')
+
+            # Add field for packet_url
+            cursor_copy = []
+            packet_url = None
+
+            for obj in cursor:
+                packet_slug = obj[1].replace('/', '-')
+                try:
+                    r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
+                    if r.status_code == 200:
+                        packet_url = MERGER_BASE_URL + '/document/' + packet_slug
+                except:
+                    packet_url = None
+
+                obj = obj + (packet_url,)
+                cursor_copy.append(obj)
+
+            # Create a named tuple
+            board_report_tuple = namedtuple('BoardReportProperties', columns, rename=True)
+            # Put results inside a list with assigned fields (from namedtuple)
+            related_board_reports = [board_report_tuple(*r) for r in cursor_copy]
+
+            context['related_board_reports'] = related_board_reports
+
         return context
 
 class LAMetroEventsView(EventsView):
@@ -91,7 +143,6 @@ class LAMetroEventsView(EventsView):
 
     def get_context_data(self, **kwargs):
         context = super(LAMetroEventsView, self).get_context_data(**kwargs)
-
 
         # Did the user set date boundaries?
         start_date_str = self.request.GET.get('from')
@@ -116,29 +167,6 @@ class LAMetroEventsView(EventsView):
                 org_select_events.append([date(*event_date), events])
 
             context['select_events'] = org_select_events
-
-        # Did the user set date boundaries?
-        # date_str               = self.request.GET.get('form_datetime')
-        # day_grouper            = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
-        # context['select_date'] = ''
-
-        # # If yes: dates...
-        # if date_str:
-        #     context['date'] = date_str
-        #     date_time       = parser.parse(date_str)
-
-        #     select_events = Event.objects.filter(start_time__gt=date_time)\
-        #                   .filter(start_time__lt=(date_time + relativedelta(months=1)))\
-        #                   .order_by('start_time')
-
-        #     org_select_events = []
-
-        #     for event_date, events in itertools.groupby(select_events, key=day_grouper):
-        #         events = sorted(events, key=attrgetter('start_time'))
-        #         org_select_events.append([date(*event_date), events])
-
-        #     context['select_events'] = org_select_events
-        #     context['select_date']   = date_time.strftime("%B") + " " + date_time.strftime("%Y")
 
         # If all meetings
         elif self.request.GET.get('show'):
