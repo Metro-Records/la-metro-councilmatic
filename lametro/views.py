@@ -112,13 +112,16 @@ class LAMetroEventDetail(EventDetailView):
             # Get field names
             columns = [c[0] for c in cursor.description]
             columns.append('packet_url')
+            columns.append('inferred_status')
 
             # Add field for packet_url
             cursor_copy = []
             packet_url = None
 
             for obj in cursor:
-                packet_slug = obj[1].replace('/', '-')
+                # Add packet slug
+                ocd_id = obj[1]
+                packet_slug = ocd_id.replace('/', '-')
                 try:
                     r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
                     if r.status_code == 200:
@@ -127,6 +130,10 @@ class LAMetroEventDetail(EventDetailView):
                     packet_url = None
 
                 obj = obj + (packet_url,)
+
+                # Add status
+                board_report = LAMetroBill.objects.get(ocd_id=ocd_id)
+                obj = obj + (board_report.inferred_status,)
                 cursor_copy.append(obj)
 
             # Create a named tuple
