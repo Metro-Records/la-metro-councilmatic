@@ -1,0 +1,21 @@
+{% load extras %}
+{% load lametro_extras %}
+
+<h4>Board Reports</h4>
+
+<p class="small text-muted">
+  Click "View" to go to the board report detail page.</br>
+  Click "Download" to download a copy of board report and its attachments.
+</p>
+
+{% for report in related_board_reports %}
+  <table class="table">
+    <tr>
+      <td>{{report.identifier}} {{report.description | short_blurb}} {{ report.inferred_status | inferred_status_label | safe }}</td>
+      <td>
+        <a href='/board-report/{{ report.slug }}/' target="_blank">View</a>
+      </td>
+      <td><a href="{{report.packet_url}}">Download</a></td>
+    </tr>
+  </table>
+{% endfor %}
