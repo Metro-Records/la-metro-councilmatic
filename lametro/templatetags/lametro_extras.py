@@ -162,3 +162,5 @@ def parse_agenda_item(text):
     if text:
         label, number = text.split(',')
         return number
+    else: 
+        return ''

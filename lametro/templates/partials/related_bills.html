@@ -9,17 +9,16 @@
 </p>
 
 <div class="scrollable">
-<table class="table">
-
-{% for report in related_board_reports %}
-    <tr>
-      <td><strong>{{ report.notes | parse_agenda_item }}</strong></td>
-      <td>{{report.identifier}} {{report.description | short_blurb}} {{ report.inferred_status | inferred_status_label | safe }}</td>
-      <td>
-        <a href='/board-report/{{ report.slug }}/' target="_blank">View</a>
-      </td>
-      <td><a href="{{report.packet_url}}">Download</a></td>
-    </tr>
-{% endfor %}
-</table>
+  <table class="table">
+  {% for report in related_board_reports %}
+      <tr>
+        <td><strong>{{ report.notes | parse_agenda_item }}</strong></td>
+        <td>{{report.identifier}} {{report.description | short_blurb}} {{ report.inferred_status | inferred_status_label | safe }}</td>
+        <td>
+          <a href='/board-report/{{ report.slug }}/' target="_blank">View</a>
+        </td>
+        <td><a href="{{report.packet_url}}">Download</a></td>
+      </tr>
+  {% endfor %}
+  </table>
 </div>
