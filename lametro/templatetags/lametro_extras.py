@@ -156,3 +156,9 @@ def short_title(text_blob):
         return blurb
     else:
         return text_blob
+
+@register.filter
+def parse_agenda_item(text):
+    if text:
+        label, number = text.split(',')
+        return number
