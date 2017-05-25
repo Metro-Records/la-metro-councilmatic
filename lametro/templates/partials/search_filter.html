@@ -9,8 +9,10 @@
                     Filter by
                     {% if 'Legislation' in facet_label %}
                         Report Type
+                    {% elif 'Sponsor' in facet_label %}
+                        Meeting
                     {% elif 'Legislative Session' in facet_label %}
-                        Legislative Session
+                        Fiscal Year
                     {% else %}
                         {{facet_label}}
                     {% endif %}

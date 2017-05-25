@@ -94,7 +94,8 @@ class LAMetroEventDetail(EventDetailView):
                     b.ocr_full_text,
                     b.description,
                     d_bill.url,
-                    i.order
+                    i.order,
+                    i.notes
                 FROM councilmatic_core_billdocument AS d_bill
                 INNER JOIN councilmatic_core_eventagendaitem as i
                 ON i.bill_id=d_bill.bill_id

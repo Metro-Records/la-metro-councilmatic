@@ -221,3 +221,7 @@ div#toggleControls { margin-bottom: 1em; }
 
 #events-form > div.col-xs-8, #events-form > div.col-xs-2 { padding-right: 0; }
 
+.scrollable {    
+    overflow: scroll;
+    height: 700px;
+}
