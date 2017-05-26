@@ -23,39 +23,22 @@
         <div class="panel-body {% if facet_name in selected_facets %}panel-show{% endif %} collapse" id="filter-{{facet_name}}">
             <ul class="search-facet-list">
 
-
             {% if facet_name == 'topics' %}
-                <!-- for topics, show routine & nonroutine first -->
                 {% for name, count in facets.fields.topics %}
-                    {% if count and name == 'Routine' or name == 'Non-Routine'%}
-
-                        {% include 'partials/search_filter_item.html' %}
-
-                    {% endif %}
+                    {% include 'partials/search_filter_item.html' %}
                 {% endfor %}
-                <hr/>
-                {% for name, count in facets.fields.topics %}
-                    {% if count and name != 'Routine' and name != 'Non-Routine'%}
-
-                        {% include 'partials/search_filter_item.html' %}
-
-                    {% endif %}
-                {% endfor %}
-
             {% elif facet_name == 'sponsorships' %}
-
                 {% if facets.fields.legislative_session|length > 1 %}
-
                     {% for name, count in facets.fields.sponsorships %}
                         <li class="small">
                             <a href="#" class="filter-value" data="sponsorships_exact:{{name}}" title="{{ name|title }}">
                                 {% if name in selected_facets.sponsorships %}
-                                    <strong>{{ name | title | short_title }}</strong>
+                                    <strong>{{ name | title }}</strong>
                                     <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
                                         <i class="fa fa-times"></i>
                                     </a>
                                 {% else %}
-                                    {{ name | title | short_title }}
+                                    {{ name | title }}
                                 {% endif %}
                             </a>
                             <span class="badge badge-facet pull-right">{{ count }}</span>
@@ -68,12 +51,12 @@
                             <li class="small">
                                 <a href="#" class="filter-value" data="sponsorships_exact:{{name}}" title="{{ name|title }}">
                                     {% if name in selected_facets.sponsorships %}
-                                        <strong>{{ name | title | short_title }}</strong>
+                                        <strong>{{ name | title }}</strong>
                                         <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
                                             <i class="fa fa-times"></i>
                                         </a>
                                     {% else %}
-                                        {{ name | title | short_title }}
+                                        {{ name | title }}
                                     {% endif %}
                                 </a>
                             </li>
