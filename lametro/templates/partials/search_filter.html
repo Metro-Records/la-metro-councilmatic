@@ -31,7 +31,8 @@
                 {% if facets.fields.legislative_session|length > 1 %}
                     {% for name, count in facets.fields.sponsorships %}
                         <li class="small">
-                            <a href="#" class="filter-value" data="sponsorships_exact:{{name}}" title="{{ name|title }}">
+                            <div class="skinny-list">
+                                <a href="#" class="filter-value" data="sponsorships_exact:{{name}}" title="{{ name|title }}">
                                 {% if name in selected_facets.sponsorships %}
                                     <strong>{{ name | title }}</strong>
                                     <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
@@ -40,9 +41,11 @@
                                 {% else %}
                                     {{ name | title }}
                                 {% endif %}
-                            </a>
+                                </a>
+                            </div>
                             <span class="badge badge-facet pull-right">{{ count }}</span>
                         </li>
+                    
                     {% endfor %}
 
                 {% else %}
