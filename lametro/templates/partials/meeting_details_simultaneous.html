@@ -1,0 +1,37 @@
+{% load staticfiles %}
+
+<!-- Meeting info -->
+<div class="col-xs-7">
+    <div class="row">
+      <div class="col-xs-12">
+        {% for meeting in current_meeting_queryset %}
+                
+            <p>
+                <!-- <strong> -->
+                  {{  meeting.link_html | safe }}<br/>
+                  <span class="small text-muted">{{ meeting.description }}</span>
+                <!-- </strong> -->
+
+            {% if meeting.documents.all %}
+                {% for document in meeting.documents.all %}
+                    <a class="btn btn-sm btn-teal" id="pdf-download-link" target='_blank' href='{{document.url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
+                {% endfor %}
+            {% endif %}
+            </p>
+ 
+        {% endfor %}
+
+                <p class="small text-muted">
+                    <i class="fa fa-fw fa-calendar-o"></i> {{ current_meeting_queryset.first.start_time | date:"D n/d/Y"}}<br/>
+                    <i class="fa fa-fw fa-clock-o"></i> {{ current_meeting_queryset.first.start_time | date:"g:i a"}}<br/>
+                    <i class="fa fa-fw fa-map-marker"></i> {{ current_meeting_queryset.first.location_name}}<br />
+                </p>
+
+                <!-- <div class="col-xs-6"> -->
+                    <p><a class="btn btn-salmon" href="http://metro.granicus.com/MediaPlayer.php?camera_id=2" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                <!-- </div> -->
+
+      </div>
+    </div>
+    </br>
+</div>

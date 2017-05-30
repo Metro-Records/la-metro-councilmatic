@@ -187,46 +187,11 @@ class LAMetroEvent(Event):
     @classmethod
     def current_meeting(cls):
         # Board or Committee
-        meeting_time = datetime.now(app_timezone) + timedelta(minutes=6)
-        meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
-
-        # Is there an event going on?
-        found_event = cls.objects.filter(start_time__lt=meeting_time)\
-                  .filter(start_time__gt=meeting_end_time)\
-                  .exclude(status='cancelled')\
-                  .order_by('start_time').first()
-
-        if found_event:
-            # Is it a committee event?
-            if "Committee" in found_event.name:
-                # Set meeting time to one hour.
-                meeting_end_time = meeting_time - timedelta(hours=1)
-
-                committee_meetings = cls.objects.filter(start_time__lt=meeting_time)\
-                    .filter(start_time__gt=meeting_end_time)\
-                    .exclude(status='cancelled')\
-                    .order_by('start_time')
-
-                # Is there more than one meeting going on?
-                if len(committee_meetings) > 1:
-                    # Return the Budget Public Hearing.
-                    return cls.objects.filter(start_time__lt=meeting_time)\
-                        .filter(start_time__gt=meeting_end_time)\
-                        .exclude(status='cancelled')\
-                        .filter(name='Budget Public Hearing').first()
-                else:
-                    return committee_meetings.first()
-
-            else:
-                return found_event
-
-        # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) + timedelta(days=2) - timedelta(hours=3) + timedelta(minutes=6)
-        # print(faketime)
-        # meeting_end_time = faketime - timedelta(hours=8)
+        # meeting_time = datetime.now(app_timezone) + timedelta(minutes=6)
+        # meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
 
         # # Is there an event going on?
-        # found_event = cls.objects.filter(start_time__lt=faketime)\
+        # found_event = cls.objects.filter(start_time__lt=meeting_time)\
         #           .filter(start_time__gt=meeting_end_time)\
         #           .exclude(status='cancelled')\
         #           .order_by('start_time').first()
@@ -235,9 +200,9 @@ class LAMetroEvent(Event):
         #     # Is it a committee event?
         #     if "Committee" in found_event.name:
         #         # Set meeting time to one hour.
-        #         meeting_end_time = faketime - timedelta(hours=1)
+        #         meeting_end_time = meeting_time - timedelta(hours=1)
 
-        #         committee_meetings = cls.objects.filter(start_time__lt=faketime)\
+        #         committee_meetings = cls.objects.filter(start_time__lt=meeting_time)\
         #             .filter(start_time__gt=meeting_end_time)\
         #             .exclude(status='cancelled')\
         #             .order_by('start_time')
@@ -245,7 +210,7 @@ class LAMetroEvent(Event):
         #         # Is there more than one meeting going on?
         #         if len(committee_meetings) > 1:
         #             # Return the Budget Public Hearing.
-        #             return cls.objects.filter(start_time__lt=faketime)\
+        #             return cls.objects.filter(start_time__lt=meeting_time)\
         #                 .filter(start_time__gt=meeting_end_time)\
         #                 .exclude(status='cancelled')\
         #                 .filter(name='Budget Public Hearing').first()
@@ -254,6 +219,42 @@ class LAMetroEvent(Event):
 
         #     else:
         #         return found_event
+
+
+
+        # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
+        faketime = datetime.now(app_timezone) - timedelta(days=13) + timedelta(hours=3) + timedelta(minutes=6)
+        print(faketime)
+        meeting_end_time = faketime - timedelta(hours=8)
+
+        # Is there an event going on?
+        found_event = cls.objects.filter(start_time__lt=faketime)\
+                  .filter(start_time__gt=meeting_end_time)\
+                  .exclude(status='cancelled')\
+                  .order_by('start_time').first()
+
+        if found_event:
+            # Is it a committee event?
+            if "Committee" in found_event.name:
+                # Set meeting time to one hour.
+                meeting_end_time = faketime - timedelta(hours=1)
+
+                committee_meetings = cls.objects.filter(start_time__lt=faketime)\
+                    .filter(start_time__gt=meeting_end_time)\
+                    .exclude(status='cancelled')\
+                    .order_by('start_time')
+
+                # Is there more than one meeting going on?
+                if len(committee_meetings) > 1:
+                    # THIS RETURNS A QUERYSET.
+                    return cls.objects.filter(start_time__lt=faketime)\
+                        .filter(start_time__gt=meeting_end_time)\
+                        .exclude(status='cancelled')
+                else:
+                    return committee_meetings.first()
+
+            else:
+                return found_event
 
     @classmethod
     def upcoming_committee_meetings(cls):
