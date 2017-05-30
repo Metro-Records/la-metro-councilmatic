@@ -210,7 +210,7 @@ class LAMetroEvent(Event):
                 # Is there more than one meeting going on?
                 if len(committee_meetings) > 1:
                     # THIS RETURNS A QUERYSET.
-                    return cls.objects.filter(start_time__lt=faketime)\
+                    return cls.objects.filter(start_time__lt=meeting_time)\
                         .filter(start_time__gt=meeting_end_time)\
                         .exclude(status='cancelled')
                 else:
