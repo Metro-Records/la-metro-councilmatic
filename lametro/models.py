@@ -223,7 +223,7 @@ class LAMetroEvent(Event):
 
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        faketime = datetime.now(app_timezone) - timedelta(days=13) + timedelta(hours=3) + timedelta(minutes=6)
+        faketime = datetime.now(app_timezone) - timedelta(days=13) + timedelta(hours=1) + timedelta(minutes=6)
         print(faketime)
         meeting_end_time = faketime - timedelta(hours=8)
 
