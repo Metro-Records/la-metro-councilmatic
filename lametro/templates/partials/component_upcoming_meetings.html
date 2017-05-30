@@ -11,44 +11,12 @@
                         <img src='/static/images/Los-Angeles-Gateway-Plaza-Office.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
                     </div>
 
-                    <!-- Board meeting info -->
-                    <div class="col-xs-7">
-                        <div class="row">
-                          <div class="col-xs-12">
-                            <h4>
-                              {{  meeting.link_html | safe }}<br/>
-                              <span class="small text-muted">{{ meeting.description }}</span>
-                            </h4>
+                    {% if current_meeting_queryset %}
+                        {% include "partials/meeting_details_simultaneous.html"  %}  
+                    {% else %}
+                        {% include "partials/meeting_details.html"  %}   
+                    {% endif %}
 
-                            <p class="small text-muted">
-                                <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y"}}<br/>
-                                <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
-                                <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name}}<br />
-                            </p>
-
-                            <div class="row">
-                                {% with meeting_type=meeting %}
-                                    {% include "partials/agenda_items.html"  %}
-                                {% endwith %}
-
-                                {% if current_meeting %}
-                                    {% if meeting.media_url %}
-                                        <div class="col-xs-6">
-                                            <p><a class="btn btn-salmon" href="{{meeting.media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
-                                        </div>
-                                    {% else %}
-                                        <div class="col-xs-6">
-                                            <p><a class="btn btn-salmon" href="http://metro.granicus.com/MediaPlayer.php?camera_id=2" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
-                                        </div>
-                                    {% endif %}
-                                {% endif %}
-
-                            </div>
-                          </div>
-
-                        </div>
-                        </br>
-                    </div>
                 </div>
             </div>
         </div>

@@ -36,8 +36,12 @@ class LAMetroIndexView(IndexView):
     def extra_context(self):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
-        extra['current_meeting'] = self.event_model.current_meeting()
-        print(extra['current_meeting'])
+        # Determine if current_meeting returns a queryset or object
+        try: 
+            len(self.event_model.current_meeting())
+            extra['current_meeting_queryset'] = self.event_model.current_meeting()
+        except TypeError:
+            extra['current_meeting'] = self.event_model.current_meeting()
 
         return extra
 

@@ -209,11 +209,10 @@ class LAMetroEvent(Event):
 
                 # Is there more than one meeting going on?
                 if len(committee_meetings) > 1:
-                    # Return the Budget Public Hearing.
+                    # THIS RETURNS A QUERYSET.
                     return cls.objects.filter(start_time__lt=meeting_time)\
                         .filter(start_time__gt=meeting_end_time)\
-                        .exclude(status='cancelled')\
-                        .filter(name='Budget Public Hearing').first()
+                        .exclude(status='cancelled')
                 else:
                     return committee_meetings.first()
 
@@ -221,7 +220,7 @@ class LAMetroEvent(Event):
                 return found_event
 
         # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) + timedelta(days=2) - timedelta(hours=3) + timedelta(minutes=6)
+        # faketime = datetime.now(app_timezone) - timedelta(days=13) + timedelta(hours=1) + timedelta(minutes=6)
         # print(faketime)
         # meeting_end_time = faketime - timedelta(hours=8)
 
@@ -244,11 +243,10 @@ class LAMetroEvent(Event):
 
         #         # Is there more than one meeting going on?
         #         if len(committee_meetings) > 1:
-        #             # Return the Budget Public Hearing.
+        #             # THIS RETURNS A QUERYSET.
         #             return cls.objects.filter(start_time__lt=faketime)\
         #                 .filter(start_time__gt=meeting_end_time)\
-        #                 .exclude(status='cancelled')\
-        #                 .filter(name='Budget Public Hearing').first()
+        #                 .exclude(status='cancelled')
         #         else:
         #             return committee_meetings.first()
 

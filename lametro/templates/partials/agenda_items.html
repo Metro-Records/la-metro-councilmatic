@@ -1,8 +1,8 @@
 
-{% if meeting_type.documents.all %}
+{% if meeting.documents.all %}
   <div class="col-xs-6">
-      {% if meeting_type.documents.all %}
-        {% for document in meeting_type.documents.all %}
+      {% if meeting.documents.all %}
+        {% for document in meeting.documents.all %}
             <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{document.url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
         {% endfor %}
       {% endif %}
@@ -11,31 +11,3 @@
   <br>
   <p class="small"><em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em></p>
 {% endif %}
-
-<!-- {# if meeting_type.clean_agenda_items %}
-      <ol>
-          {# for agenda_item in meeting_type.clean_agenda_items %}
-              {# if agenda_item.description|lower != 'page break' %}
-              <li class="list-item small">
-                  {# if agenda_item.related_bills.all %}
-                      <a href="/board-report/{{agenda_item.related_bills.first.bill.slug}}/">
-                          {{agenda_item.related_bills.first.bill.friendly_name}}
-                      </a>
-                      <br/>
-                  {# endif %}
-
-                  {{agenda_item.description}}
-              </li>
-              {# endif %}
-          {# endfor %}
-      </ol>
-  {# endif %}
-
-
-  {# if meeting_type.clean_agenda_items|length > 4  %}
-      <p colspan="3" align="center">
-          <a href="" class="btn-sm btn-info" id="more-list-items"><i class="fa fa-fw fa-chevron-down"></i>Full agenda</a>
-          <a href="" class="btn-sm btn-info" id="fewer-list-items"><i class="fa fa-fw fa-chevron-up"></i>Less</a>
-      </p>
-      </br>
-  {# endif %} -->

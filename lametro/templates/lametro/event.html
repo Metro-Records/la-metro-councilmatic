@@ -11,11 +11,17 @@
             <p><a href='/events/'><i class="fa fa-angle-double-left" aria-hidden="true"></i> Back to {{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></p>
             <h1>{{event.name}}</h1>
             <p>{{event.description}}</p>
-
             <p class="small text-muted">
-                <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
-                <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
-                <i class="fa fa-fw fa-map-marker"></i> {{event.location_name}}
+                {% if event.status == 'cancelled' %}
+                    <i class="fa fa-fw fa-calendar-o"></i> <strike>{{event.start_time | date:"D n/d/Y"}}</strike><br/>
+                    <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time | date:"g:i a"}}</strike> <br/>
+                    <span class="label label-stale">Cancelled</span>
+
+                {% else %}
+                    <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
+                    <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
+                    <i class="fa fa-fw fa-map-marker"></i> {{event.location_name}}
+                {% endif %}
             </p>
 
             <p class="small">

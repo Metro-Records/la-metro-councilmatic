@@ -225,3 +225,8 @@ div#toggleControls { margin-bottom: 1em; }
     overflow: scroll;
     height: 700px;
 }
+
+.skinny-list {
+    width: 90%; 
+    display: inline-block;
+}
