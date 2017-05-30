@@ -14,7 +14,9 @@
             <p class="small text-muted">
                 {% if event.status == 'cancelled' %}
                     <i class="fa fa-fw fa-calendar-o"></i> <strike>{{event.start_time | date:"D n/d/Y"}}</strike><br/>
-                    <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time | date:"g:i a"}}</strike> Cancelled<br/>
+                    <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time | date:"g:i a"}}</strike> <br/>
+                    <span class="label label-stale">Cancelled</span>
+
                 {% else %}
                     <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
                     <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
