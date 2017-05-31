@@ -184,7 +184,6 @@ class LAMetroEvent(Event):
         #           .filter(name__icontains="Board Meeting")\
         #           .order_by('start_time').first()
 
-
     @classmethod
     def current_meeting(cls):
         # Board or Committee
