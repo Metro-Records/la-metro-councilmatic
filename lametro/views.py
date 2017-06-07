@@ -85,6 +85,8 @@ class LAMetroEventDetail(EventDetailView):
             r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
             if r.status_code == 200:
                 context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
+            elif r.status_code == 404:
+                context['packet_url'] = None
         except:
             context['packet_url'] = None
 
