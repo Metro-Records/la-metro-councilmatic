@@ -26,6 +26,9 @@
 
             <p class="small">
                 {% if 'https://metro.legistar.com' in event.source_url %}
+                    {% if not agenda_url %}
+                        Not seeing an agenda? Please use this link:<br>
+                    {% endif %}
                     <a href='{{event.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
                         <i class='fa fa-fw fa-external-link'></i>
                         View on the {{CITY_VOCAB.SOURCE}} website
@@ -47,53 +50,27 @@
                     </p>
                     {% endif %}
 
-                    {% if event.documents.all %}
-                        <h4>Agenda</h4>
-
-                        {% for document in event.documents.all %}
-                            {% if "Agenda" in document.note %}
-                            <p>
-                                <a id="pdf-download-link" target='_blank' href='{{document.url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
-                            </p>
-
-                            {% if packet_url %}
-                            <p>
-                                <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Agenda and Attachments</a>
-                            </p>
-                            {% endif %}
-
-                            <iframe
-                                id="pdf-embed-agenda"
-                                class="pdf-viewer hidden-xs"
-                                frameborder="0"
-                                seamless="true"
-                                width="100%"
-                                height="600px"
-                                src="/pdfviewer/?file={{document.url|full_text_doc_url|urlencode}}">
-                            </iframe>
-                            {% endif %}
-                        {% endfor %}
-                    <!-- {# else %}
-                        {# if event.clean_agenda_items %}
+                    {% if agenda_url %}
                         <h4>Agenda</h4>
                         <p>
-                            <ol>
-                                {# for agenda_item in event.clean_agenda_items %}
-                                    {# if agenda_item.description|lower != 'page break' and  agenda_item.description|lower != ' ' %}
-                                    <li>
-                                        {# if agenda_item.related_bills.all %}
-                                            <a href="/legislation/{{agenda_item.related_bills.first.bill.slug}}/">
-                                                {{agenda_item.related_bills.first.bill.friendly_name}}
-                                            </a>
-                                            <br/>
-                                        {# endif %}
-                                        {{agenda_item.description}}
-                                    </li>
-                                    {# endif %}
-                                {# endfor %}
-                            </ol>
+                            <a id="pdf-download-link" target='_blank' href='{{agenda_url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
                         </p>
-                        {# endif %} -->
+
+                        {% if packet_url %}
+                        <p>
+                            <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Agenda and Attachments</a>
+                        </p>
+                        {% endif %}
+
+                        <iframe
+                            id="pdf-embed-agenda"
+                            class="pdf-viewer hidden-xs"
+                            frameborder="0"
+                            seamless="true"
+                            width="100%"
+                            height="600px"
+                            src="/pdfviewer/?file={{agenda_url|full_text_doc_url|urlencode}}">
+                        </iframe>
                     {% endif %}
                 </div>
                 <div class="col-md-5">
