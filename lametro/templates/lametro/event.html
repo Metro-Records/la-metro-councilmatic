@@ -48,6 +48,7 @@
                     {% endif %}
 
                     {% if event.documents.all %}
+                    <!-- {# if agenda_url %} -->
                         <h4>Agenda</h4>
 
                         {% for document in event.documents.all %}
@@ -73,27 +74,6 @@
                             </iframe>
                             {% endif %}
                         {% endfor %}
-                    <!-- {# else %}
-                        {# if event.clean_agenda_items %}
-                        <h4>Agenda</h4>
-                        <p>
-                            <ol>
-                                {# for agenda_item in event.clean_agenda_items %}
-                                    {# if agenda_item.description|lower != 'page break' and  agenda_item.description|lower != ' ' %}
-                                    <li>
-                                        {# if agenda_item.related_bills.all %}
-                                            <a href="/legislation/{{agenda_item.related_bills.first.bill.slug}}/">
-                                                {{agenda_item.related_bills.first.bill.friendly_name}}
-                                            </a>
-                                            <br/>
-                                        {# endif %}
-                                        {{agenda_item.description}}
-                                    </li>
-                                    {# endif %}
-                                {# endfor %}
-                            </ol>
-                        </p>
-                        {# endif %} -->
                     {% endif %}
                 </div>
                 <div class="col-md-5">
