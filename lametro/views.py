@@ -149,12 +149,10 @@ class LAMetroEventDetail(EventDetailView):
             related_board_reports = [board_report_tuple(*r) for r in cursor_copy]
 
             # Find agenda link.
-            # if event.documents.all():
-            #     for document in event.documents.all():
-            #         print(document.note, "note!!!")
-            #         if "Agenda" in document.note:
-            #             context['agenda_url'] = document.url
-            #             print(context['agenda_url'])
+            if event.documents.all():
+                for document in event.documents.all():
+                    if "Agenda" in document.note:
+                        context['agenda_url'] = document.url
 
             context['related_board_reports'] = related_board_reports
 
