@@ -186,72 +186,69 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        # Board or Committee
+        # For testing...
+        # meeting_time = datetime.now(app_timezone) - timedelta(days=6) + timedelta(hours=5) + timedelta(minutes=6)
+        # meeting_end_time = meeting_time - timedelta(hours=3)
+        # print(meeting_time, "TIMEEEE")
+        
         meeting_time = datetime.now(app_timezone) + timedelta(minutes=6)
         meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
 
-        # Is there an event going on?
-        found_event = cls.objects.filter(start_time__lt=meeting_time)\
+        # Is there an event going on in the next three hours?
+        found_events = cls.objects.filter(start_time__lt=meeting_time)\
                   .filter(start_time__gt=meeting_end_time)\
                   .exclude(status='cancelled')\
-                  .order_by('start_time').first()
+                  .order_by('start_time')
 
-        if found_event:
-            # Is it a committee event?
-            if "Committee" in found_event.name:
-                # Set meeting time to one hour.
-                meeting_end_time = meeting_time - timedelta(hours=1)
+        if found_events:
+            # Is there more than one event going on?
+            if len(found_events) > 1:    
+                start_check = found_events.first().start_time
+                end_check = found_events.last().start_time
 
-                committee_meetings = cls.objects.filter(start_time__lt=meeting_time)\
-                    .filter(start_time__gt=meeting_end_time)\
-                    .exclude(status='cancelled')\
-                    .order_by('start_time')
-
-                # Is there more than one meeting going on?
-                if len(committee_meetings) > 1:
-                    # THIS RETURNS A QUERYSET.
-                    return cls.objects.filter(start_time__lt=meeting_time)\
-                        .filter(start_time__gt=meeting_end_time)\
-                        .exclude(status='cancelled')
+                # Are all returned events at the same time?
+                if start_check == end_check:
+                    if ("Board Meeting" in found_events.first().name) or ("Board Meeting" in found_events.last().name):
+                        return found_events
+                    else:
+                        # Concurrent committee meetings should only last one hour.
+                        meeting_end_time = meeting_time - timedelta(hours=1)
+                        
+                        return cls.objects.filter(start_time__lt=meeting_time)\
+                                  .filter(start_time__gt=meeting_end_time)\
+                                  .exclude(status='cancelled')\
+                                  .order_by('start_time')
                 else:
-                    return committee_meetings.first()
+                    # To find committee events...
+                    event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name)]
 
+                    if len(event_names) > 0:
+                        # Set meeting time to one hour
+                        meeting_end_time = meeting_time - timedelta(hours=1)
+                        
+                        found_events = cls.objects.filter(start_time__lt=meeting_time)\
+                                  .filter(start_time__gt=meeting_end_time)\
+                                  .exclude(status='cancelled')\
+                                  .order_by('start_time')
+
+                        if len(found_events) > 1:
+                            return found_events
+                        else:
+                            return found_events.first()
+                    else:
+                        return found_events.first()                
             else:
-                return found_event
+                if "Committee" in found_events.first().name:
+                    meeting_end_time = meeting_time - timedelta(hours=1)
+                        
+                    return cls.objects.filter(start_time__lt=meeting_time)\
+                              .filter(start_time__gt=meeting_end_time)\
+                              .exclude(status='cancelled')\
+                              .order_by('start_time').first()
+                
+                else:
+                    return found_events.first()
 
-        # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) - timedelta(days=13) + timedelta(hours=1) + timedelta(minutes=6)
-        # print(faketime)
-        # meeting_end_time = faketime - timedelta(hours=8)
-
-        # # Is there an event going on?
-        # found_event = cls.objects.filter(start_time__lt=faketime)\
-        #           .filter(start_time__gt=meeting_end_time)\
-        #           .exclude(status='cancelled')\
-        #           .order_by('start_time').first()
-
-        # if found_event:
-        #     # Is it a committee event?
-        #     if "Committee" in found_event.name:
-        #         # Set meeting time to one hour.
-        #         meeting_end_time = faketime - timedelta(hours=1)
-
-        #         committee_meetings = cls.objects.filter(start_time__lt=faketime)\
-        #             .filter(start_time__gt=meeting_end_time)\
-        #             .exclude(status='cancelled')\
-        #             .order_by('start_time')
-
-        #         # Is there more than one meeting going on?
-        #         if len(committee_meetings) > 1:
-        #             # THIS RETURNS A QUERYSET.
-        #             return cls.objects.filter(start_time__lt=faketime)\
-        #                 .filter(start_time__gt=meeting_end_time)\
-        #                 .exclude(status='cancelled')
-        #         else:
-        #             return committee_meetings.first()
-
-        #     else:
-        #         return found_event
 
     @classmethod
     def upcoming_committee_meetings(cls):
