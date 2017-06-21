@@ -186,13 +186,13 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        # meeting_time = datetime.now(app_timezone) + timedelta(minutes=6)
-        # meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
-
         # For testing...
-        meeting_time = datetime.now(app_timezone) + timedelta(days=2) - timedelta(hours=6) + timedelta(minutes=6)
-        meeting_end_time = meeting_time - timedelta(hours=3)
-        print(meeting_time, "TIMEEEE")
+        # meeting_time = datetime.now(app_timezone) - timedelta(days=6) + timedelta(hours=5) + timedelta(minutes=6)
+        # meeting_end_time = meeting_time - timedelta(hours=3)
+        # print(meeting_time, "TIMEEEE")
+        
+        meeting_time = datetime.now(app_timezone) + timedelta(minutes=6)
+        meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
 
         # Is there an event going on in the next three hours?
         found_events = cls.objects.filter(start_time__lt=meeting_time)\
@@ -202,15 +202,24 @@ class LAMetroEvent(Event):
 
         if found_events:
             # Is there more than one event going on?
-            if len(found_events) > 1:     
+            if len(found_events) > 1:    
                 start_check = found_events.first().start_time
                 end_check = found_events.last().start_time
-                
+
                 # Are all returned events at the same time?
                 if start_check == end_check:
-                    return found_events
+                    if ("Board Meeting" in found_events.first().name) or ("Board Meeting" in found_events.last().name):
+                        return found_events
+                    else:
+                        # Concurrent committee meetings should only last one hour.
+                        meeting_end_time = meeting_time - timedelta(hours=1)
+                        
+                        return cls.objects.filter(start_time__lt=meeting_time)\
+                                  .filter(start_time__gt=meeting_end_time)\
+                                  .exclude(status='cancelled')\
+                                  .order_by('start_time')
                 else:
-                    # Are there committee meetings?
+                    # To find committee events...
                     event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name)]
 
                     if len(event_names) > 0:
@@ -239,6 +248,7 @@ class LAMetroEvent(Event):
                 
                 else:
                     return found_events.first()
+
 
     @classmethod
     def upcoming_committee_meetings(cls):
