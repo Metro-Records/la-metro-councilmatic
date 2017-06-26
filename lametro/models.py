@@ -1,10 +1,11 @@
 import pytz
 import re
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from datetime import datetime, timedelta
+from django.contrib.auth.models import User
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, Action
 

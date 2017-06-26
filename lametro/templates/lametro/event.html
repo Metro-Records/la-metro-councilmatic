@@ -98,6 +98,20 @@
                         height="600px"
                         src="/pdfviewer/?file={{agenda_url|full_text_doc_url|urlencode}}">
                     </iframe>
+                    {% else %}
+                        {% if user.is_authenticated %}
+                            <div class="well">
+                                <h4>Agenda upload</h4>
+                                <p>This event does not have an agenda. To add one, please find the corresponding agenda URL on Legistar, and paste it here.</p>
+
+                                <form role="form" method="POST">
+                                    {% csrf_token %}
+                                    <input type="text" class="form-control" id="agenda_url" name="agenda_url" placeholder="Enter URL...">
+                                    <br>
+                                    <button type="submit" class="btn btn-teal"><i class="fa fa-arrow-right" aria-hidden="true"></i> Submit</button>
+                                </form>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="col-md-5">
@@ -108,7 +122,6 @@
             </div>
         </div>
     </div>
-
 
     <script type="application/ld+json">
     {

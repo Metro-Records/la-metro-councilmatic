@@ -9,21 +9,25 @@ from dateutil.relativedelta import relativedelta
 from dateutil import parser
 import requests
 import sqlalchemy as sa
+from collections import namedtuple
 
 from haystack.query import SearchQuerySet
 from django.db import transaction, connection, connections
 from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
 from django.db import connection
 from django.db.models.functions import Lower
 from django.db.models import Max, Min
 from django.utils import timezone
 from django.utils.text import slugify
-from collections import namedtuple
+from django.http import HttpResponseRedirect
 
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
+from lametro.forms import AgendaUrlForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL
@@ -72,7 +76,19 @@ class LABillDetail(BillDetailView):
         return context
 
 class LAMetroEventDetail(EventDetailView):
+    model = LAMetroEvent
     template_name = 'lametro/event.html'
+
+    def post(self, request, *args, **kwargs):
+        form = AgendaUrlForm(request.POST)
+        event = self.get_object()
+        event_slug = event.slug
+
+        if form.is_valid():
+            agenda_url = form['agenda_url'].value()
+            # Update the event with new url.
+
+        return HttpResponseRedirect('/event/%s' % event_slug)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -626,3 +642,22 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
 class GoogleView(IndexView):
     template_name = 'lametro/google66b34bb6957ad66c.html'
+
+
+def metro_login(request):
+    logout(request)
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect('/events/')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'lametro/metro_login.html', {'form': form})
+
+
+def metro_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/')
