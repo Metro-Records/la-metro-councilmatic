@@ -28,7 +28,6 @@
             </button>
           </div>
           <div class="modal-body">
-            {{form.agenda_url}}
               <iframe
                   id="pdf-embed-agenda-check"
                   class="pdf-viewer hidden-xs"
@@ -36,7 +35,7 @@
                   seamless="true"
                   width="100%"
                   height="600px"
-                  src="/pdfviewer/?file={{form.agenda_url|full_text_doc_url|urlencode}}">
+                  src="">
               </iframe>
           </div>
           <div class="modal-footer">
