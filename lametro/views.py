@@ -201,16 +201,9 @@ class LAMetroEventsView(EventsView):
             context['all_events'] = org_all_events
         # If no...
         else:
-            # Upcoming events for the current month.
+            # Upcoming events
             future_events = Event.objects.filter(start_time__gt=timezone.now())\
-                  .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+1, 1))\
                   .order_by('start_time')
-
-            if not future_events:
-                # Upcoming events for the next month.
-                future_events = Event.objects.filter(start_time__gt=timezone.now())\
-                      .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+2, 1))\
-                      .order_by('start_time')
 
             org_future_events = []
 

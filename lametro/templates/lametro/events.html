@@ -42,10 +42,18 @@
                 <div class='row'>
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
+
                 <hr/>
+
                 {% for date, event_list in future_events %}
-                    {% include "partials/event_day.html" %}
+                    <div class="event-upcoming-listing">
+                        {% include "partials/event_day.html" %}
+                    </div>
                 {% endfor %}
+
+                <a href="" class="btn btn-salmon" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down"></i>Show all upcoming meetings</a>
+                <a href="" class="btn btn-salmon" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer upcoming meetings</a>
+
                 <hr/>
 
                 <h2><span>Past {{ CITY_VOCAB.EVENTS }}</span>
@@ -56,17 +64,18 @@
                 <div class='row'>
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
+
                 <hr/>
 
                 {% for date, event_list in past_events %}
                     <div class='event-listing'>
                     {% include "partials/past_event_day.html" %}
                     </div>
-
                 {% endfor %}
 
                 <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
                 <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
+
             {% elif select_events %}
                 <h2><span>{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</span>
                 <br class="non-desktop-only"/>
@@ -76,6 +85,7 @@
                 <div class='row'>
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
+
                 <hr/>
 
                 {% for date, event_list in select_events %}
@@ -91,6 +101,7 @@
                 <div class='row'>
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
+
                 <hr/>
 
                 {% for date, event_list in all_events %}
@@ -129,16 +140,19 @@
     <script>
     $(document).ready(function() {
 
-        // $("#form_datetime").datepicker({
-        //     autoclose: true,
-        //     viewMode: "months",
-        //     minViewMode: "months",
-        // });
-
         $('#from').datepicker();
         $('#to').datepicker();
 
-
+        function collapseUpcomingEvents(){
+            $(".event-upcoming-listing:gt(2)").hide();
+            $("#more-upcoming-events").show();
+            $("#fewer-upcoming-events").hide();
+        }
+        function expandUpcomingEvents(){
+            $(".event-upcoming-listing:gt(2)").show();
+            $("#more-upcoming-events").hide();
+            $("#fewer-upcoming-events").show();
+        }
         function collapseEvents(){
             $(".event-listing:gt(4)").hide();
             $("#more-events").show();
@@ -151,16 +165,27 @@
         }
 
         collapseEvents();
+        collapseUpcomingEvents();
+        
+        $("#more-upcoming-events").click(function() {
+            expandUpcomingEvents();
+            return false;
+        });
+
+        $("#fewer-upcoming-events").click(function() {
+            collapseUpcomingEvents();
+            return false;
+        });
 
         $("#more-events").click(function() {
             expandEvents();
             return false;
         });
+
         $("#fewer-events").click(function() {
             collapseEvents();
             return false;
         });
-
     });
     </script>
 {% endblock %}
