@@ -1,0 +1,13 @@
+<form role="form" method="POST">
+    {% csrf_token %}
+    <input type="text" class="form-control" id="agenda_url" name="agenda_url" placeholder="Enter URL...">
+
+    {% if form.agenda_url.errors %}
+        <br> 
+        <span class="error-block" style="color: #eb6864;">{{form.agenda_url.errors}}</span>
+    {% endif %}
+
+    <br>
+
+    <button type="submit" class="btn btn-teal"><i class="fa fa-arrow-right" aria-hidden="true"></i> Submit</button>
+</form>

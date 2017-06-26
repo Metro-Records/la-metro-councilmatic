@@ -10,6 +10,7 @@ from dateutil import parser
 import requests
 import sqlalchemy as sa
 from collections import namedtuple
+import json as simplejson
 
 from haystack.query import SearchQuerySet
 from django.db import transaction, connection, connections
@@ -22,7 +23,8 @@ from django.db.models.functions import Lower
 from django.db.models import Max, Min
 from django.utils import timezone
 from django.utils.text import slugify
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, redirect
 
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
@@ -80,19 +82,24 @@ class LAMetroEventDetail(EventDetailView):
     template_name = 'lametro/event.html'
 
     def post(self, request, *args, **kwargs):
+        self.object = self.get_object() # Assign object to detail view, so that get_context_data can find this variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
         form = AgendaUrlForm(request.POST)
         event = self.get_object()
         event_slug = event.slug
 
         if form.is_valid():
             agenda_url = form['agenda_url'].value()
-            # Update the event with new url.
+            document_obj = EventDocument.objects.get_or_create(event=event,
+                url=agenda_url,
+                note='Event Document - Manual upload at ' + str(timezone.now()))
+        
+            return HttpResponseRedirect('/event/%s' % event_slug)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
-        return HttpResponseRedirect('/event/%s' % event_slug)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
+        context = super(EventDetailView, self).get_context_data(**kwargs)
         # Create URL for packet download.
         event = context['event']
 
@@ -169,10 +176,13 @@ class LAMetroEventDetail(EventDetailView):
                 for document in event.documents.all():
                     if "Agenda" in document.note:
                         context['agenda_url'] = document.url
+                    elif "Manual upload" in document.note:
+                        context['uploaded_agenda_url'] = document.url
 
             context['related_board_reports'] = related_board_reports
 
         return context
+
 
 class LAMetroEventsView(EventsView):
     template_name = 'lametro/events.html'

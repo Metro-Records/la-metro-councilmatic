@@ -54,12 +54,21 @@
                     </p>
                     {% endif %}
               
-                    {% if agenda_url %}
+                    {% if agenda_url or uploaded_agenda_url %}
+
+                    {% if uploaded_agenda_url and not agenda_url%}
+                        <div class="well">
+                            <p>An admin submitted a URL to render this agenda. Not seeing what you expect? Need to make changes? Resubmit the link below.</p>
+
+                            {% include 'partials/agenda_url_form.html' %}
+                        </div>
+                    {% endif  %}
+
                     <div class="row">
                         <div class="col-xs-8">
                             <h4>Agenda</h4>
                             <p>
-                                <a id="pdf-download-link" target='_blank' href='{{agenda_url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
+                                <a id="pdf-download-link" target='_blank' href={% if agenda_url %}'{{agenda_url}}'{% elif uploaded_agenda_url %}'{{uploaded_agenda_url}}'{% endif %}><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
                             </p>
                             {% if packet_url %}
                             <p>
@@ -96,20 +105,18 @@
                         seamless="true"
                         width="100%"
                         height="600px"
-                        src="/pdfviewer/?file={{agenda_url|full_text_doc_url|urlencode}}">
+                        src={% if agenda_url %}"/pdfviewer/?file={{agenda_url|full_text_doc_url|urlencode}}"{% elif uploaded_agenda_url %}"/pdfviewer/?file={{uploaded_agenda_url|full_text_doc_url|urlencode}}"{% endif %}>
                     </iframe>
+
                     {% else %}
                         {% if user.is_authenticated %}
                             <div class="well">
                                 <h4>Agenda upload</h4>
+                                
                                 <p>This event does not have an agenda. To add one, please find the corresponding agenda URL on Legistar, and paste it here.</p>
-
-                                <form role="form" method="POST">
-                                    {% csrf_token %}
-                                    <input type="text" class="form-control" id="agenda_url" name="agenda_url" placeholder="Enter URL...">
-                                    <br>
-                                    <button type="submit" class="btn btn-teal"><i class="fa fa-arrow-right" aria-hidden="true"></i> Submit</button>
-                                </form>
+                                
+                                {% include 'partials/agenda_url_form.html' %}
+                                
                             </div>
                         {% endif %}
                     {% endif %}

@@ -167,6 +167,7 @@ class LAMetroPerson(Person):
         else:
             return []
 
+
 class LAMetroEvent(Event):
 
     class Meta:
@@ -265,3 +266,9 @@ class LAMetroEvent(Event):
                   .order_by('start_time').all()
 
         return meetings
+
+
+# class LAMetroEventWithCustomLink(LAMetroEvent):
+#     event = models.OneToOneField(LAMetroEvent, on_delete=models.CASCADE)
+#     custom_agenda_url = models.CharField(max_length=255, blank=True)
+#     custom_agenda_url_updated_at = models.DateTimeField(auto_now=True)
