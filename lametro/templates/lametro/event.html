@@ -9,14 +9,19 @@
         <div class="col-sm-12">
             <br/>
             <p><a href='/events/'><i class="fa fa-angle-double-left" aria-hidden="true"></i> Back to {{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></p>
-            <h1>{{event.name}}</h1>
+            <h1>
+                {{event.name}}
+
+                {% if event.media_url %}
+                    <a class="btn btn-salmon" href="{{event.media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a>
+                {% endif %}
+            </h1>
             <p>{{event.description}}</p>
             <p class="small text-muted">
                 {% if event.status == 'cancelled' %}
                     <i class="fa fa-fw fa-calendar-o"></i> <strike>{{event.start_time | date:"D n/d/Y"}}</strike><br/>
                     <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time | date:"g:i a"}}</strike> <br/>
                     <span class="label label-stale">Cancelled</span>
-
                 {% else %}
                     <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
                     <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
@@ -40,7 +45,6 @@
 
             <div class="row">
                 <div class="col-md-7">
-
                     {% if participants %}
                     <h4>Participants</h4>
                     <p>
@@ -49,28 +53,51 @@
                         {% endfor %}
                     </p>
                     {% endif %}
-
+              
                     {% if agenda_url %}
-                        <h4>Agenda</h4>
-                        <p>
-                            <a id="pdf-download-link" target='_blank' href='{{agenda_url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
-                        </p>
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <h4>Agenda</h4>
+                            <p>
+                                <a id="pdf-download-link" target='_blank' href='{{agenda_url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
+                            </p>
+                            {% if packet_url %}
+                            <p>
+                                <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Agenda and Attachments</a>
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-xs-4">
 
-                        {% if packet_url %}
-                        <p>
-                            <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Agenda and Attachments</a>
-                        </p>
+                        {% if event.start_time|compare_time %}
+                            {% if 'board meeting' in event.name|lower or 'la safe' in event.name|lower %}
+                            <h4>Minutes</h4>
+                            <p>
+                                <a href="https://www.metro.net/about/board/recap-actions/" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i> View Recap</a>
+                                </br>
+                            </p>
+                            {% endif %}
+                            {% if 'regular board meeting' in event.name|lower %}
+                                {% if event.ocd_id|get_minutes %}
+                                <p>
+                                    <a href="{{ event.ocd_id|get_minutes }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
+                                </p>
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
 
-                        <iframe
-                            id="pdf-embed-agenda"
-                            class="pdf-viewer hidden-xs"
-                            frameborder="0"
-                            seamless="true"
-                            width="100%"
-                            height="600px"
-                            src="/pdfviewer/?file={{agenda_url|full_text_doc_url|urlencode}}">
-                        </iframe>
+                        </div>
+                    </div>
+
+                    <iframe
+                        id="pdf-embed-agenda"
+                        class="pdf-viewer hidden-xs"
+                        frameborder="0"
+                        seamless="true"
+                        width="100%"
+                        height="600px"
+                        src="/pdfviewer/?file={{agenda_url|full_text_doc_url|urlencode}}">
+                    </iframe>
                     {% endif %}
                 </div>
                 <div class="col-md-5">
