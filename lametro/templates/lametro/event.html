@@ -31,7 +31,7 @@
 
             <p class="small">
                 {% if 'https://metro.legistar.com' in event.source_url %}
-                    {% if not agenda_url %}
+                    {% if not agenda_url and not uploaded_agenda_url %}
                         Not seeing an agenda? Please use this link:<br>
                     {% endif %}
                     <a href='{{event.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
@@ -147,10 +147,30 @@
       "url" : "{{ event.source_url }}"
     }
     </script>
+{% endblock %}
 
-    <script type="text/javascript">
+{% block extra_js %}
+    <script>
+    $(document).ready(function() {
+        $('#check-agenda-url').on('click', function (){
+            agenda_url_submitted = $('#agenda_url').val()
+            agenda_url_clean = encodeURI(full_text_doc_url(agenda_url_submitted))
+
+            console.log("/pdfviewer/?file=" + agenda_url_clean)
+
+            // Fix this...
+            $('#pdf-embed-agenda-check').src = "/pdfviewer/?file=" + agenda_url_clean
+        });
+
+        function full_text_doc_url(url) {
+            base_url = 'https://pic.datamade.us/lametro/document/'
+            doc_url = base_url + '?filename=agenda&document_url=' + url 
+            return doc_url 
+        }
+
         // for reference purposes
         console.log( "OCD ID: {{event.ocd_id}}" )
+    });
     </script>
 
 {% endblock %}

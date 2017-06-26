@@ -1,3 +1,6 @@
+{% load extras %}
+{% load lametro_extras %}
+
 <form role="form" method="POST">
     {% csrf_token %}
     <input type="text" class="form-control" id="agenda_url" name="agenda_url" placeholder="Enter URL...">
@@ -9,5 +12,46 @@
 
     <br>
 
-    <button type="submit" class="btn btn-teal"><i class="fa fa-arrow-right" aria-hidden="true"></i> Submit</button>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" id="check-agenda-url" data-toggle="modal" data-target="#exampleModalLong">
+      Submit
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {{form.agenda_url}}
+              <iframe
+                  id="pdf-embed-agenda-check"
+                  class="pdf-viewer hidden-xs"
+                  frameborder="0"
+                  seamless="true"
+                  width="100%"
+                  height="600px"
+                  src="/pdfviewer/?file={{form.agenda_url|full_text_doc_url|urlencode}}">
+              </iframe>
+          </div>
+          <div class="modal-footer">
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No, that's not right</button>
+
+            <button type="submit" class="btn btn-teal"><i class="fa fa-arrow-right" aria-hidden="true"></i> Looks good! Submit</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
 </form>
+
+
+
