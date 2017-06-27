@@ -77,6 +77,16 @@ class LABillDetail(BillDetailView):
 
         return context
 
+
+def delete_submission(request, event_slug):
+    event = Event.objects.get(slug=event_slug)
+    event_doc = EventDocument.objects.filter(event_id=event.ocd_id).get(note__icontains='Manual upload')
+    if event_doc: 
+        event_doc.delete()
+
+    return HttpResponseRedirect('/event/%s' % event_slug)
+
+
 class LAMetroEventDetail(EventDetailView):
     model = LAMetroEvent
     template_name = 'lametro/event.html'
@@ -89,9 +99,10 @@ class LAMetroEventDetail(EventDetailView):
 
         if form.is_valid():
             agenda_url = form['agenda_url'].value()
-            document_obj = EventDocument.objects.get_or_create(event=event,
-                url=agenda_url,
-                note='Event Document - Manual upload at ' + str(timezone.now()))
+            document_obj, created = EventDocument.objects.get_or_create(event=event,
+                url=agenda_url)
+            document_obj.note = ('Event Document - Manual upload at ' + str(timezone.now()))
+            document_obj.save()
         
             return HttpResponseRedirect('/event/%s' % event_slug)
         else:

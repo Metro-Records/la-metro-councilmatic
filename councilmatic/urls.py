@@ -11,7 +11,7 @@ from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
     LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
-    metro_login, metro_logout
+    metro_login, metro_logout, delete_submission
 from lametro.feeds import *
 
 patterns = ([
@@ -37,5 +37,6 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^metro-login/$', metro_login, name='metro_login'),
     url(r'^metro-logout/$', metro_logout, name='metro_logout'),
+    url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
     url(r'', include('councilmatic_core.urls')),
 ]

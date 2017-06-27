@@ -58,9 +58,8 @@
 
                     {% if uploaded_agenda_url and not agenda_url%}
                         <div class="well">
-                            <p>An admin submitted a URL to render this agenda. Not seeing what you expect? Need to make changes? Resubmit the link below.</p>
-
-                            {% include 'partials/agenda_url_form.html' %}
+                            <p>An admin submitted a URL to render this agenda. Not seeing what you expect? Delete this agenda, and afterwards, you can resubmit.</p>
+                            <a href="{% url 'delete_submission' event.slug %}" class='btn btn-teal'><i class="fa fa-times" aria-hidden="true"></i> Delete!</a>
                         </div>
                     {% endif  %}
 
@@ -152,14 +151,13 @@
 {% block extra_js %}
     <script>
     $(document).ready(function() {
-        // Todo: why not adding new url?
-        $('#exampleModalLong').on('shown.bs.modal', function (e) {  
+        $('#agendaModal').on('shown.bs.modal', function (e) {  
+            e.preventDefault()
             agenda_url_submitted = $('#agenda_url').val()
             agenda_url_clean = encodeURI(full_text_doc_url(agenda_url_submitted))
-
-            document.getElementById('pdf-embed-agenda-check').src = ("/pdfviewer/?file=" + agenda_url_clean);
+            document.getElementById('pdf-embed-agenda-check').src = agenda_url_clean;
         });
-            
+
         function full_text_doc_url(url) {
             base_url = 'https://pic.datamade.us/lametro/document/'
             doc_url = base_url + '?filename=agenda&document_url=' + url 
