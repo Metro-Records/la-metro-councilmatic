@@ -33,6 +33,18 @@
                 </div>
             </div>
 
+            {% if request.user.is_authenticated %}
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="well login">
+                        <h4>Hello, {{ user.username }}!</h4> 
+                        <p>You have the authority to add agenda links to relevant events. Please click on an event that needs an agenda, and look for the URL input box.</p>
+                        <p><em>You only have this option for events without agendas.</em></p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
             {% if future_events %}
                 <h2><span>Upcoming {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>

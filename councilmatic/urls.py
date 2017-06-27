@@ -10,17 +10,16 @@ from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedS
 from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
-    LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView
+    LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
+    metro_login, metro_logout, delete_submission
 from lametro.feeds import *
 
 patterns = ([
-    url(r'^admin/', include(admin.site.urls)),
     url(r'^search/rss/',
         CouncilmaticFacetedSearchFeed(), name='councilmatic_search_feed'),
     url(r'^search/', LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet,
                                        form_class=CouncilmaticSearchForm), name='search'),
     url(r'^$', never_cache(LAMetroIndexView.as_view()), name='index'),
-    # url(r'^$', LAMetroIndexView.as_view(), name='index'),
     url(r'^about/$', LAMetroAboutView.as_view(), name='about'),
     url(r'^board-report/(?P<slug>[^/]+)/$', LABillDetail.as_view(), name='bill_detail'),
     url(r'^committees/$', LACommitteesView.as_view(), name='committees'),
@@ -35,5 +34,9 @@ patterns = ([
 
 urlpatterns = [
     url(r'', include(patterns)),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^metro-login/$', metro_login, name='metro_login'),
+    url(r'^metro-logout/$', metro_logout, name='metro_logout'),
+    url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
     url(r'', include('councilmatic_core.urls')),
 ]

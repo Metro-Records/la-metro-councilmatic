@@ -1,10 +1,11 @@
 import pytz
 import re
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from datetime import datetime, timedelta
+from django.contrib.auth.models import User
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, Action
 
@@ -165,6 +166,7 @@ class LAMetroPerson(Person):
             return self.memberships.all().filter(end_date__gt=datetime.now(app_timezone)).filter(role__contains=settings.COMMITTEE_MEMBER_TITLE).filter(_organization__classification='committee').distinct('_organization')
         else:
             return []
+
 
 class LAMetroEvent(Event):
 

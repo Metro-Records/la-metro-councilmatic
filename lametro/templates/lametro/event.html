@@ -31,7 +31,7 @@
 
             <p class="small">
                 {% if 'https://metro.legistar.com' in event.source_url %}
-                    {% if not agenda_url %}
+                    {% if not agenda_url and not uploaded_agenda_url %}
                         Not seeing an agenda? Please use this link:<br>
                     {% endif %}
                     <a href='{{event.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
@@ -54,12 +54,20 @@
                     </p>
                     {% endif %}
               
-                    {% if agenda_url %}
+                    {% if agenda_url or uploaded_agenda_url %}
+
+                    {% if uploaded_agenda_url and not agenda_url%}
+                        <div class="well">
+                            <p>An admin submitted a URL to render this agenda. Not seeing what you expect? Delete this agenda, and afterwards, you can resubmit.</p>
+                            <a href="{% url 'delete_submission' event.slug %}" class='btn btn-teal'><i class="fa fa-times" aria-hidden="true"></i> Delete!</a>
+                        </div>
+                    {% endif  %}
+
                     <div class="row">
                         <div class="col-xs-8">
                             <h4>Agenda</h4>
                             <p>
-                                <a id="pdf-download-link" target='_blank' href='{{agenda_url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
+                                <a id="pdf-download-link" target='_blank' href={% if agenda_url %}'{{agenda_url}}'{% elif uploaded_agenda_url %}'{{uploaded_agenda_url}}'{% endif %}><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
                             </p>
                             {% if packet_url %}
                             <p>
@@ -96,8 +104,20 @@
                         seamless="true"
                         width="100%"
                         height="600px"
-                        src="/pdfviewer/?file={{agenda_url|full_text_doc_url|urlencode}}">
+                        src={% if agenda_url %}"/pdfviewer/?file={{agenda_url|full_text_doc_url|urlencode}}"{% elif uploaded_agenda_url %}"/pdfviewer/?file={{uploaded_agenda_url|full_text_doc_url|urlencode}}"{% endif %}>
                     </iframe>
+
+                    {% else %}
+                        {% if user.is_authenticated %}
+                            <div class="well">
+                                <h4>Agenda upload</h4>
+                                
+                                <p>This event does not have an agenda. To add one, please find the corresponding agenda URL on Legistar, and paste it here.</p>
+                                
+                                {% include 'partials/agenda_url_form.html' %}
+                                
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="col-md-5">
@@ -108,7 +128,6 @@
             </div>
         </div>
     </div>
-
 
     <script type="application/ld+json">
     {
@@ -127,10 +146,27 @@
       "url" : "{{ event.source_url }}"
     }
     </script>
+{% endblock %}
 
-    <script type="text/javascript">
+{% block extra_js %}
+    <script>
+    $(document).ready(function() {
+        $('#agendaModal').on('shown.bs.modal', function (e) {  
+            e.preventDefault()
+            agenda_url_submitted = $('#agenda_url').val()
+            agenda_url_clean = encodeURI(full_text_doc_url(agenda_url_submitted))
+            document.getElementById('pdf-embed-agenda-check').src = agenda_url_clean;
+        });
+
+        function full_text_doc_url(url) {
+            base_url = 'https://pic.datamade.us/lametro/document/'
+            doc_url = base_url + '?filename=agenda&document_url=' + url 
+            return doc_url 
+        };
+
         // for reference purposes
         console.log( "OCD ID: {{event.ocd_id}}" )
+    });
     </script>
 
 {% endblock %}

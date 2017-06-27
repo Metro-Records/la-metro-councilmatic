@@ -114,6 +114,8 @@ div#google_translate_element {
     font-size: 115%;
 }
 
+.login { margin-top: 2em; }
+
 /* Styles for order by options on search page */
 .nav a.sort-by, .nav a.btn { margin-left: 1.8em; }
 
@@ -154,6 +156,12 @@ div#toggleControls { margin-bottom: 1em; }
 .badge.city-badge { background-color: #EB6864; }
 
 #searchOn.well { padding: 12px; }
+
+#agendaModal div.modal-header { 
+    background-color: #f5f5f5;
+    border-top-right-radius: 6px; 
+    border-top-left-radius: 6px; 
+}
 
 /* Media queries */
 @media only screen and (max-width : 767px) {
