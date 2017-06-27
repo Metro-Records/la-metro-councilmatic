@@ -29,10 +29,10 @@ h1, .h1 {
 #section-photo {
     background-image:
         linear-gradient(
-          rgba(0, 0, 0, 0.5),
-          rgba(211, 211, 211, 0.3)
+          rgba(0, 0, 0, 0.6),
+          rgba(270, 270, 270, 0.3)
         ),
-        url('../images/la-metro-regional-rail-map.gif');
+        url('../images/la-metro-regional-rail-map-copy.gif');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
@@ -177,6 +177,10 @@ div#toggleControls { margin-bottom: 1em; }
 
     .nav a.sort-by, .nav a.btn {
         margin-left: 0.4em;
+    }
+
+    .archive-link {
+        font-size: 14px;
     }
 }
 
