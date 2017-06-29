@@ -157,6 +157,20 @@ If you intend to run more than one instance of Councilmatic on the same server,
 you'll need to take a look at [this README](solr_scripts/README.md) to make sure you're
 configuring things properly.
 
+## A note on tests
+
+LA Metro Councilmatic has a basic test suite. If you need to run it, then first export your username as the `db_user`. This export properly configures `test_settings.py` - a settings file that resides in django-councilmatic:
+
+```bash
+export db_user='yourusername'
+```
+
+Then, run the tests:
+
+```bash
+python manage.py test
+```
+
 ## Team
 
 * Forest Gregg, DataMade - Open Civic Data (OCD) and Legistar scraping
