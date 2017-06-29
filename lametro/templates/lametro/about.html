@@ -1,7 +1,10 @@
 {% extends "base_with_margins.html" %}
 {% load staticfiles %}
+{% load adv_cache %}
 {% block title %}About{% endblock %}
 {% block content %}
+
+{% cache 600 about_wrapper 'about' %}
 
 <div class="row-fluid clearfix">
     <div class="col-sm-8 no-pad-mobile">
@@ -184,5 +187,7 @@
 
     </div>
 </div>
+
+{% endcache %}
 
 {% endblock %}
