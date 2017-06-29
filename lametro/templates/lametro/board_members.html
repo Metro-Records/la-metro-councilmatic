@@ -1,18 +1,24 @@
 {% extends "base.html" %}
 {% load extras %}
+{% load adv_cache %}
 {% load staticfiles %}
 {% block title %}Metro Board of Directors{% endblock %}
 
 
 {% block extra_css %}
+    {% cache 86400 leaflet_wrapper 'leaflet' %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-toggle.min.css' %}" />
     {% if map_geojson %}
         <link rel="stylesheet" href="{% static 'css/leaflet.css' %}" />
     {% endif %}
+    {% endcache %}
 {% endblock %}
 
 
 {% block full_content %}
+
+{% cache 86400 members_wrapper 'members' %}
+
 <div class="container-fluid">
     {% if map_geojson %}
     <div class="row">
@@ -143,6 +149,8 @@
         </div>
     </div>
 </div>
+
+{% endcache %}
 
 {% endblock %}
 

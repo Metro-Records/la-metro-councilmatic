@@ -1,6 +1,7 @@
 {% extends "base_with_margins.html" %}
 {% load extras %}
 {% load lametro_extras %}
+{% load adv_cache %}
 {% load staticfiles %}
 {% block title %}{{ person.name }}{% endblock %}
 
@@ -11,6 +12,8 @@
 {% endblock %}
 
 {% block content %}
+
+{% cache 600 person_wrapper person.ocd_id %}
 
     <div class="row-fluid">
         <div class="col=sm=12">
@@ -209,6 +212,8 @@
           "url": "{{person.website_url}}"
         }
     </script>
+
+{% endcache %}
 
 {% endblock %}
 

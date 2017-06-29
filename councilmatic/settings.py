@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'haystack',
     'lametro',
     'councilmatic_core',
+    'adv_cache_tag',
 )
 
 try:
@@ -54,7 +55,7 @@ except NameError:
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -62,7 +63,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'councilmatic.urls'
@@ -111,3 +112,5 @@ MERGER_BASE_URL = 'https://metro-pdf-merger.datamade.us'
 # MERGER_BASE_URL = 'http://0.0.0.0:5000'
 
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+ADV_CACHE_INCLUDE_PK = True
