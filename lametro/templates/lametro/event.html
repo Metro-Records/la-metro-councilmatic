@@ -57,10 +57,12 @@
                     {% if agenda_url or uploaded_agenda_url %}
 
                     {% if uploaded_agenda_url and not agenda_url%}
-                        <div class="well">
-                            <p>An admin submitted a URL to render this agenda. Not seeing what you expect? Delete this agenda, and afterwards, you can resubmit.</p>
-                            <a href="{% url 'delete_submission' event.slug %}" class='btn btn-teal'><i class="fa fa-times" aria-hidden="true"></i> Delete!</a>
-                        </div>
+                        {% if user.is_authenticated %}
+                            <div class="well">
+                                <p>An admin submitted a URL to render this agenda. Not seeing what you expect? Delete this agenda, and afterwards, you can resubmit.</p>
+                                <a href="{% url 'delete_submission' event.slug %}" class='btn btn-teal'><i class="fa fa-times" aria-hidden="true"></i> Delete!</a>
+                            </div>
+                        {% endif %}
                     {% endif  %}
 
                     <div class="row">
