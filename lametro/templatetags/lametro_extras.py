@@ -46,14 +46,23 @@ def format_full_text(full_text):
 
     if full_text:
         txt_as_array = full_text.split("..")
-
-        for arr in txt_as_array:
-            if arr:
-                sliced_arr = arr.split( )[1:]
-                results += " ".join(sliced_arr) + "<br /><br />"
-
-
+        for item in txt_as_array:
+            if 'SUBJECT:' in item:
+                sliced_arr = item.split('\n\n')
+                results += " ".join(sliced_arr)
+        for item in sliced_arr:
+            if 'SUBJECT:' in item:
+                results = item.replace('\n', '')
     return results
+
+@register.filter
+def parse_subject(text):
+    if text:
+        before_keyowrd, keyword, after_keyword = text.partition('SUBJECT:')
+        if after_keyword:
+            return after_keyword
+
+    return ''
 
 @register.filter
 def full_text_doc_url(url):
@@ -78,18 +87,6 @@ def appointment_label(label):
         appointment_label = full_label
 
     return appointment_label
-
-@register.filter
-def parse_subject(text):
-    text_snippet = ''
-
-    if text:
-        text_slice = text[:300]
-        re_results = re.search(r'SUBJECT:(.*?)ACTION:', str(text))
-        if re_results:
-            text_snippet = re_results.group(1)
-
-    return text_snippet
 
 @register.filter
 def clean_role(role_list):
