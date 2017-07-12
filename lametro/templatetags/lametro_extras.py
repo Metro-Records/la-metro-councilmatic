@@ -49,10 +49,10 @@ def format_full_text(full_text):
         for item in txt_as_array:
             if 'SUBJECT:' in item:
                 sliced_arr = item.split('\n\n')
-                results += " ".join(sliced_arr)
-        for item in sliced_arr:
-            if 'SUBJECT:' in item:
-                results = item.replace('\n', '')
+
+                for item in sliced_arr:
+                    if 'SUBJECT:' in item:
+                        results = item.replace('\n', '')
     return results
 
 @register.filter
