@@ -126,8 +126,9 @@ def get_minutes(event_id):
         sqs = SearchQuerySet().filter(content=content).all()
         if sqs:
             for q in sqs:
-                if q.object.bill_type == 'Minutes' and q.object.slug:
-
+                if (q.object.bill_type == 'Minutes' and 
+                    q.object.slug and 
+                    q.object.ocr_full_text):
                     if re.search(content, q.object.ocr_full_text, re.IGNORECASE):
                         return '/board-report/' + q.object.slug
         else:
