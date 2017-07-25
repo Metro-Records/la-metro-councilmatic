@@ -6,8 +6,10 @@ from django.utils import timezone
 from haystack.query import SearchQuerySet
 from datetime import date, timedelta, datetime
 import re
+import urllib
 
 from councilmatic.settings_jurisdiction import *
+from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Event
 
 register = template.Library()
@@ -66,12 +68,11 @@ def parse_subject(text):
 
 @register.filter
 def full_text_doc_url(url):
-    base_url = 'https://pic.datamade.us/lametro/document/'
-    # base_url = 'http://127.0.0.1:5000/lametro/document/'
-    doc_url = '{0}?filename=agenda&document_url={1}'.format(base_url,
-                                                             url)
+    query = {'document_url': url, 'filename': 'agenda'}
+    pic_query = {'file': PIC_BASE_URL + '?' + urllib.parse.urlencode(query)}
 
-    return doc_url
+    return urllib.parse.urlencode(pic_query)
+
 
 @register.filter
 def appointment_label(label):
