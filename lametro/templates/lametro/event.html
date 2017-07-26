@@ -161,9 +161,7 @@
         });
 
         function full_text_doc_url(url) {
-            // base_url = 'https://pic.datamade.us/lametro/document/'
-            // base_url = 'https://pic-staging.datamade.us/lametro/document/'
-            base_url = 'http://127.0.0.1:5000/lametro/document/'
+            base_url = '{{base_url}}'
             encoded_url = encodeURIComponent(url)
             doc_url = base_url + '?filename=agenda&document_url=' + encoded_url
 

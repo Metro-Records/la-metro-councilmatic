@@ -32,7 +32,7 @@ from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
 from lametro.forms import AgendaUrlForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
-from councilmatic.settings import MERGER_BASE_URL
+from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
 
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
@@ -191,6 +191,7 @@ class LAMetroEventDetail(EventDetailView):
                         context['uploaded_agenda_url'] = document.url
 
             context['related_board_reports'] = related_board_reports
+            context['base_url'] = PIC_BASE_URL # Give JS access to this variable
 
         return context
 
