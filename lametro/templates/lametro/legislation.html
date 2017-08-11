@@ -52,7 +52,7 @@
                     <p>
                         <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
                     </p>
-                    {% endif %}
+                {% endif %}
 
                 <iframe
                     id="pdf-embed-agenda"
@@ -61,7 +61,7 @@
                     seamless="true"
                     width="100%"
                     height="600px"
-                    src="/pdfviewer/?file={{board_report.url|full_text_doc_url|urlencode}}">
+                    src="/pdfviewer/?{{board_report.url|full_text_doc_url}}">
                 </iframe>
 
                 <div class="divider"></div>
@@ -165,8 +165,6 @@
             <br>
 
             {% if sponsorships %}
-                <!-- <h3 class="no-pad-bottom"><i class='fa fa-fw fa-users'></i> Sponsors</h3> -->
-
                 <div class="table-responsive">
                     <table class='table table-responsive' id='council-members'>
                         <thead>
@@ -266,11 +264,6 @@
             "bLengthChange": false,
             "paging": false,
             "order": [[ 1, "desc" ]]
-            // "aoColumns": [
-            //     { "bSortable": false },
-            //     null,
-            //     { "sType": "num-html" },
-            // ]
         });
 
         $('.thumbnail-square img').each(function() {
@@ -280,7 +273,7 @@
         });
 
         if (window.screen.width > 768){
-            $("#pdf-embed").attr("src", "/pdfviewer/?file={{legislation.full_text_doc_url|urlencode}}");
+            $("#pdf-embed").attr("src", "/pdfviewer/?{{legislation.url|full_text_doc_url}}");
         }
         else{
             $('#pdf-embed').hide()

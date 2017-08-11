@@ -70,7 +70,9 @@ def parse_subject(text):
 
 @register.filter
 def full_text_doc_url(url):
+    print(url)
     query = {'document_url': url, 'filename': 'agenda'}
+    print(query)
     pic_query = {'file': PIC_BASE_URL + '?' + urllib.parse.urlencode(query)}
 
     return urllib.parse.urlencode(pic_query)
