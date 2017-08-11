@@ -27,7 +27,6 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return action
 
     def prepare_sort_name(self, obj):
-        # return obj.friendly_name.replace(" ", "")
         text = ''
 
         full_text = obj.ocr_full_text

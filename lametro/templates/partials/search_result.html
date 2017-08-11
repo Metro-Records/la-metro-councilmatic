@@ -6,6 +6,8 @@
     {{ r.object.identifier}} 
     {% if r.object.ocr_full_text|format_full_text|parse_subject %}
         -{{ r.object.ocr_full_text | format_full_text | parse_subject }}
+    {% else %}
+        - {{ r.object.bill_type|upper}}
     {% endif %}
     </a>
     {{ r.object.inferred_status | inferred_status_label | safe }}

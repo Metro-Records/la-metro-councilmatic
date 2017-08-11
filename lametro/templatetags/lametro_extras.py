@@ -58,7 +58,7 @@ def format_full_text(full_text):
 @register.filter
 def parse_subject(text):
     if text:
-        before_keyowrd, keyword, after_keyword = text.partition('SUBJECT:')
+        before_keyword, keyword, after_keyword = text.partition('SUBJECT:')
         if after_keyword:
             return after_keyword
 
