@@ -3,12 +3,7 @@
 
 <p>
     <a class="small" href="{% url 'lametro:bill_detail' r.object.slug %}">
-    {{ r.object.identifier}} 
-    {% if r.object.ocr_full_text|format_full_text|parse_subject %}
-        -{{ r.object.ocr_full_text | format_full_text | parse_subject }}
-    {% else %}
-        - {{ r.object.bill_type|upper}}
-    {% endif %}
+        {{ r.object.identifier}} - {{r.sort_name|upper}}
     </a>
     {{ r.object.inferred_status | inferred_status_label | safe }}
 </p>

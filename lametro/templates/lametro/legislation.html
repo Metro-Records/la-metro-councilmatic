@@ -10,8 +10,8 @@
             <div class="col-sm-12">
                 <h1 class="bill-page-title">
                     <br class="non-mobile-only" />
-                    {% if legislation.ocr_full_text %}
-                        {{ legislation.identifier}} -{{ legislation.ocr_full_text| format_full_text | parse_subject}}
+                    {% if legislation.ocr_full_text|format_full_text|parse_subject %}
+                        {{ legislation.identifier}} - {{ legislation.ocr_full_text| format_full_text | parse_subject}}
                     {% else %}
                         {{ legislation.identifier}}
                     {% endif %}

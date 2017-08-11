@@ -27,29 +27,26 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return action
 
     def prepare_sort_name(self, obj):
-        text = ''
-
         full_text = obj.ocr_full_text
+        results = ''
 
+        # Parse the subject line from ocr_full_text
         if full_text:
             txt_as_array = full_text.split("..")
+            for item in txt_as_array:
+                if 'SUBJECT:' in item:
+                    array_with_subject = item.split('\n\n')
+                    
+                    for el in array_with_subject:
+                        if 'SUBJECT:' in el:
+                            results = item.replace('\n', '')
 
-            for arr in txt_as_array:
-                if arr:
-                    sliced_arr = arr.split( )[1:]
-                    text += " ".join(sliced_arr) + "<br /><br />"
+        # Isolate text after 'SUBJECT'
+        if results:
+            before_keyword, keyword, after_keyword = results.partition('SUBJECT:')
+            if after_keyword:
+                # Do not corrupt search results with brackets
+                if '[PROJECT OR SERVICE NAME]' not in after_keyword and '[DESCRIPTION]' not in after_keyword and '[CONTRACT NUMBER]' not in after_keyword:
+                    return after_keyword.strip()
 
-        text_snippet = ''
-
-        if text:
-            text_slice = text[:300]
-
-            re_results = re.search(r'SUBJECT:(.*?)ACTION:', str(text_slice))
-
-            if re_results:
-                text_snippet_initial = re_results.group(1).lstrip()
-
-                if '[PROJECT OR SERVICE NAME]' not in text_snippet_initial and '[DESCRIPTION]' not in text_snippet_initial and '[CONTRACT NUMBER]' not in text_snippet_initial:
-                    text_snippet = text_snippet_initial
-
-        return text_snippet
+        return obj.bill_type
