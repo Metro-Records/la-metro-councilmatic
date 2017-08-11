@@ -21,7 +21,7 @@
                     {{ legislation.bill_type }}
 
                     {% if legislation.inferred_status %}
-                        {{ legislation.inferred_status | inferred_status_label | safe }}
+                        {{ legislation.inferred_status |inferred_status_label | safe }}
                     {% endif %}
                     <a href="rss/" title="RSS feed for Legislation {{legislation.friendly_name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
 
@@ -73,7 +73,7 @@
 
                 <div class='panel panel-default'>
                     <div class='panel-body'>
-                        {{ legislation.ocr_full_text| prepare_title |safe }}
+                        {{ legislation.ocr_full_text|prepare_title}}
                     </div>
                 </div>
 
