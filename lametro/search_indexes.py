@@ -40,13 +40,12 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
                     for el in array_with_subject:
                         if 'SUBJECT:' in el:
                             results = item.replace('\n', '')
-
-        # Isolate text after 'SUBJECT'
-        if results:
-            before_keyword, keyword, after_keyword = results.partition('SUBJECT:')
-            if after_keyword:
-                # Do not corrupt search results with brackets
-                if '[PROJECT OR SERVICE NAME]' not in after_keyword and '[DESCRIPTION]' not in after_keyword and '[CONTRACT NUMBER]' not in after_keyword:
-                    return after_keyword.strip()
-
-        return obj.bill_type
+            # Isolate text after 'SUBJECT'
+            if results:
+                before_keyword, keyword, after_keyword = results.partition('SUBJECT:')
+                if after_keyword:
+                    # Do not corrupt search results with brackets
+                    if '[PROJECT OR SERVICE NAME]' not in after_keyword and '[DESCRIPTION]' not in after_keyword and '[CONTRACT NUMBER]' not in after_keyword:
+                        return after_keyword.strip()
+        else:
+            return obj.bill_type
