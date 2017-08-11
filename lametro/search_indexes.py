@@ -1,8 +1,11 @@
-from councilmatic_core.haystack_indexes import BillIndex
-from haystack import indexes
-from councilmatic_core.models import Action
-from lametro.models import LAMetroBill
 import re
+
+from haystack import indexes
+from councilmatic_core.haystack_indexes import BillIndex
+from councilmatic_core.models import Action
+
+from lametro.models import LAMetroBill
+from lametro.utils import format_full_text, parse_subject
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
@@ -30,22 +33,9 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         full_text = obj.ocr_full_text
         results = ''
 
-        # Parse the subject line from ocr_full_text
         if full_text:
-            txt_as_array = full_text.split("..")
-            for item in txt_as_array:
-                if 'SUBJECT:' in item:
-                    array_with_subject = item.split('\n\n')
-                    
-                    for el in array_with_subject:
-                        if 'SUBJECT:' in el:
-                            results = item.replace('\n', '')
-            # Isolate text after 'SUBJECT'
+            results = format_full_text(full_text)
             if results:
-                before_keyword, keyword, after_keyword = results.partition('SUBJECT:')
-                if after_keyword:
-                    # Do not corrupt search results with brackets
-                    if '[PROJECT OR SERVICE NAME]' not in after_keyword and '[DESCRIPTION]' not in after_keyword and '[CONTRACT NUMBER]' not in after_keyword:
-                        return after_keyword.strip()
+                return parse_subject(results)
         else:
             return obj.bill_type

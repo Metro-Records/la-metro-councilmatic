@@ -12,6 +12,8 @@ from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Event
 
+from lametro.utils import format_full_text, parse_subject
+
 register = template.Library()
 
 @register.filter
@@ -44,35 +46,15 @@ def format_district(label):
 
 # Filter for legislation detail view
 @register.filter
-def format_full_text(full_text):
-    results = ''
+def prepare_title(full_text):
+    formatted_text = format_full_text(full_text)
 
-    if full_text:
-        txt_as_array = full_text.split("..")
-        for item in txt_as_array:
-            if 'SUBJECT:' in item:
-                array_with_subject = item.split('\n\n')
-                for item in array_with_subject:
-                    if 'SUBJECT:' in item:
-                        results = item.replace('\n', '')
-    return results
+    return parse_subject(formatted_text)
 
-# Filter for legislation detail view
-@register.filter
-def parse_subject(text):
-    if text:
-        before_keyword, keyword, after_keyword = text.partition('SUBJECT:')
-        if after_keyword:
-            if '[PROJECT OR SERVICE NAME]' not in after_keyword and '[DESCRIPTION]' not in after_keyword and '[CONTRACT NUMBER]' not in after_keyword:
-                return after_keyword.strip()
-
-    return None
 
 @register.filter
 def full_text_doc_url(url):
-    print(url)
     query = {'document_url': url, 'filename': 'agenda'}
-    print(query)
     pic_query = {'file': PIC_BASE_URL + '?' + urllib.parse.urlencode(query)}
 
     return urllib.parse.urlencode(pic_query)
