@@ -68,7 +68,9 @@ def parse_subject(text):
 
 @register.filter
 def full_text_doc_url(url):
+    print(url)
     query = {'document_url': url, 'filename': 'agenda'}
+    print(query)
     pic_query = {'file': PIC_BASE_URL + '?' + urllib.parse.urlencode(query)}
 
     return urllib.parse.urlencode(pic_query)
@@ -146,6 +148,7 @@ def revised_title(text_blob):
         '2014': '7/1/2014 to 6/30/2015',
         '2015': '7/1/2015 to 6/30/2016',
         '2016': '7/1/2016 to 6/30/2017',
+        '2017': '7/1/2017 to 6/30/2017',
     }
     if text_blob in ['2014', '2015', '2016', '2017']:
         return session_dict[text_blob]
