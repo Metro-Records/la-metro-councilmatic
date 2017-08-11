@@ -111,6 +111,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MERGER_BASE_URL = 'https://metro-pdf-merger.datamade.us'
 # MERGER_BASE_URL = 'http://0.0.0.0:5000'
 
+PIC_BASE_URL = 'https://pic-staging.datamade.us/lametro/document/'    
+# PIC_BASE_URL = 'http://127.0.0.1:5000/lametro/document/'
+
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 ADV_CACHE_INCLUDE_PK = True
