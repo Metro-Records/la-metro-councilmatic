@@ -12,6 +12,8 @@ from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Event
 
+from lametro.utils import format_full_text, parse_subject
+
 register = template.Library()
 
 @register.filter
@@ -42,35 +44,17 @@ def format_district(label):
         formatted_label = label_parts[-1]
     return formatted_label
 
+# Filter for legislation detail view
 @register.filter
-def format_full_text(full_text):
-    results = ''
+def prepare_title(full_text):
+    formatted_text = format_full_text(full_text)
 
-    if full_text:
-        txt_as_array = full_text.split("..")
-        for item in txt_as_array:
-            if 'SUBJECT:' in item:
-                sliced_arr = item.split('\n\n')
+    return parse_subject(formatted_text)
 
-                for item in sliced_arr:
-                    if 'SUBJECT:' in item:
-                        results = item.replace('\n', '')
-    return results
-
-@register.filter
-def parse_subject(text):
-    if text:
-        before_keyowrd, keyword, after_keyword = text.partition('SUBJECT:')
-        if after_keyword:
-            return after_keyword
-
-    return ''
 
 @register.filter
 def full_text_doc_url(url):
-    print(url)
     query = {'document_url': url, 'filename': 'agenda'}
-    print(query)
     pic_query = {'file': PIC_BASE_URL + '?' + urllib.parse.urlencode(query)}
 
     return urllib.parse.urlencode(pic_query)
@@ -86,7 +70,6 @@ def appointment_label(label):
         else:
             appointment_label = ', nominated by the '.join(label_parts) + ' Subcommittee'
     else:
-        print(label)
         appointment_label = full_label
 
     return appointment_label
@@ -148,7 +131,7 @@ def revised_title(text_blob):
         '2014': '7/1/2014 to 6/30/2015',
         '2015': '7/1/2015 to 6/30/2016',
         '2016': '7/1/2016 to 6/30/2017',
-        '2017': '7/1/2017 to 6/30/2017',
+        '2017': '7/1/2017 to 6/30/2018',
     }
     if text_blob in ['2014', '2015', '2016', '2017']:
         return session_dict[text_blob]

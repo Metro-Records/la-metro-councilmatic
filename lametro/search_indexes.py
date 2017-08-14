@@ -1,8 +1,11 @@
-from councilmatic_core.haystack_indexes import BillIndex
-from haystack import indexes
-from councilmatic_core.models import Action
-from lametro.models import LAMetroBill
 import re
+
+from haystack import indexes
+from councilmatic_core.haystack_indexes import BillIndex
+from councilmatic_core.models import Action
+
+from lametro.models import LAMetroBill
+from lametro.utils import format_full_text, parse_subject
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
@@ -27,30 +30,12 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return action
 
     def prepare_sort_name(self, obj):
-        # return obj.friendly_name.replace(" ", "")
-        text = ''
-
         full_text = obj.ocr_full_text
+        results = ''
 
         if full_text:
-            txt_as_array = full_text.split("..")
-
-            for arr in txt_as_array:
-                if arr:
-                    sliced_arr = arr.split( )[1:]
-                    text += " ".join(sliced_arr) + "<br /><br />"
-
-        text_snippet = ''
-
-        if text:
-            text_slice = text[:300]
-
-            re_results = re.search(r'SUBJECT:(.*?)ACTION:', str(text_slice))
-
-            if re_results:
-                text_snippet_initial = re_results.group(1).lstrip()
-
-                if '[PROJECT OR SERVICE NAME]' not in text_snippet_initial and '[DESCRIPTION]' not in text_snippet_initial and '[CONTRACT NUMBER]' not in text_snippet_initial:
-                    text_snippet = text_snippet_initial
-
-        return text_snippet
+            results = format_full_text(full_text)
+            if results:
+                return parse_subject(results)
+        else:
+            return obj.bill_type
