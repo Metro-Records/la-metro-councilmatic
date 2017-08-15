@@ -145,3 +145,15 @@ def parse_agenda_item(text):
         return number
     else: 
         return ''
+
+
+# @register.filter
+# def updates_made(event_id):
+    # Find the event
+    # Find the agenda -- eventdocument (if it exists)
+    # Does the event have an agenda?
+    # If yes, how does updated_at for the eventdocument compare to updated_at for the event?
+    # IF eventdocument.updated_at < event.updated_at:
+        # return true (i.e., the event has been updated, since the eventdocument was finalized)
+    # ELSE 
+        # return false
