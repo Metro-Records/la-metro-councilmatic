@@ -127,7 +127,7 @@ class LAMetroEventDetail(EventDetailView):
         # Logic for getting relevant board report information.
         with connection.cursor() as cursor:
             query = '''
-                SELECT
+                SELECT DISTINCT
                     b.identifier,
                     b.ocd_id,
                     b.slug,
