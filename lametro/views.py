@@ -357,6 +357,7 @@ class LABoardMembersView(CouncilMembersView):
             ON m.person_id=p.ocd_id
             WHERE m.organization_id='ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
             AND m.end_date >= '{0}'
+            AND m.person_id <> 'ocd-person/912c8ddf-8d04-4f7f-847d-2daf84e096e2'
             GROUP BY p.ocd_id, p.name
             ORDER BY last_name
             '''.format(today)
@@ -384,9 +385,7 @@ class LABoardMembersView(CouncilMembersView):
             # Create tuple-like object...iterable and accessible by field names.
             membership_tuple = namedtuple('Membership', columns)
             membership_objects = [membership_tuple(*r) for r in cursor_copy]
-
             membership_objects = sorted(membership_objects, key=lambda x: x[5])
-
             context['membership_objects'] = membership_objects
 
             board = Organization.objects.get(ocd_id='ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c')
