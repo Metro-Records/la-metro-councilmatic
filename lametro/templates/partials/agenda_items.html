@@ -1,10 +1,8 @@
 
 {% if meeting.documents.all %}
-  <div class="col-xs-6">
+  <div class="col-xs-7">
       {% if meeting.documents.all %}
-        {% for document in meeting.documents.all %}
-            <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{document.url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
-        {% endfor %}
+            <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{meeting.documents.all.first.url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
       {% endif %}
   </div>
 {% else %}

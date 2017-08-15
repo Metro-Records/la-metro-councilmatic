@@ -189,7 +189,7 @@ class LAMetroEvent(Event):
     @classmethod
     def current_meeting(cls):
         # For testing...
-        # meeting_time = datetime.now(app_timezone) - timedelta(days=6) + timedelta(hours=5) + timedelta(minutes=6)
+        # meeting_time = datetime.now(app_timezone) - timedelta(days=26) - timedelta(hours=3) + timedelta(minutes=6)
         # meeting_end_time = meeting_time - timedelta(hours=3)
         # print(meeting_time, "TIMEEEE")
         
