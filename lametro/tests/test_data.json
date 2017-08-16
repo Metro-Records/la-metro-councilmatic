@@ -1,0 +1,45 @@
+[ 
+    {
+        "model": "councilmatic_core.event", 
+        "pk": 1, 
+        "fields": {
+            "ocd_id": "ocd-event/17fdaaa3-0aba-4df0-9893-2c2e8e94d18d", 
+            "ocd_created_at": "2017-05-27 11:10:46.574-05", 
+            "ocd_updated_at": "2017-05-27 11:10:46.574-05", 
+            "name": "System Safety, Security and Operations Committee", 
+            "start_time": "2017-05-18 12:15:00-05",  
+            "updated_at": "2017-05-17 11:06:47.1853"
+        } 
+    },
+    {
+        "model": "councilmatic_core.event", 
+        "pk": 2, 
+        "fields": {
+            "ocd_id": "ocd-event/c17e3544-dde3-4e40-8061-6163025298c7", 
+            "ocd_created_at": "2017-05-27 11:10:46.574-05", 
+            "ocd_updated_at": "2017-05-27 11:10:46.574-05", 
+            "name": "Regular Board Meeting", 
+            "start_time": "2017-07-27 12:15:00-05",  
+            "updated_at": "2017-07-25 11:06:47.1853",
+            "slug": "regular-board-meeting-6163025298c7"
+        } 
+    },
+    {
+        "model": "councilmatic_core.eventdocument",
+        "pk": 1,
+        "fields": {
+            "url": "https://metro.legistar.com/View.ashx?M=A&ID=545192&GUID=19F05A99-F3FB-4354-969F-67BE32A46081",
+            "event_id": "ocd-event/17fdaaa3-0aba-4df0-9893-2c2e8e94d18d",
+            "updated_at": "2017-05-16 11:06:47.1853"
+        }
+    },
+    {
+        "model": "councilmatic_core.eventdocument",
+        "pk": 2,
+        "fields": {
+            "url": "https://metro.legistar.com/View.ashx?M=A&ID=549038&GUID=D1A419FE-908C-4EFA-A4B6-BBC63DE5FED5",
+            "event_id": "ocd-event/c17e3544-dde3-4e40-8061-6163025298c7",
+            "updated_at": "2017-07-26 11:06:47.1853"
+        }
+    }  
+]

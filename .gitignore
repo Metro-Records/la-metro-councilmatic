@@ -25,3 +25,5 @@ downloads
 
 merged_pdfs/*
 debug.log
+
+.cache
