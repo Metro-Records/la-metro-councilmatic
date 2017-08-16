@@ -149,11 +149,13 @@ def parse_agenda_item(text):
 
 @register.filter
 def updates_made(event_id):
+    ''' This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated. 
+        If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page. 
+    '''
     event = Event.objects.get(ocd_id=event_id)
 
-    try:
-        document = EventDocument.objects.get(event_id=event_id)
-    except EventDocument.DoesNotExist:
-        return False
-    else:
-        return True if document.updated_at < event.updated_at else False
+    # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded 
+    document = EventDocument.objects.filter(event_id=event_id).order_by('-updated_at').first()
+    if document:
+        updated = document.updated_at < event.updated_at
+        return updated 
