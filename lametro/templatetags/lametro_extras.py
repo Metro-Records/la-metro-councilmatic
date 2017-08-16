@@ -10,7 +10,7 @@ import urllib
 
 from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic_core.models import Person, Event
+from councilmatic_core.models import Person, Event, EventDocument
 
 from lametro.utils import format_full_text, parse_subject
 
@@ -147,13 +147,13 @@ def parse_agenda_item(text):
         return ''
 
 
-# @register.filter
-# def updates_made(event_id):
-    # Find the event
-    # Find the agenda -- eventdocument (if it exists)
-    # Does the event have an agenda?
-    # If yes, how does updated_at for the eventdocument compare to updated_at for the event?
-    # IF eventdocument.updated_at < event.updated_at:
-        # return true (i.e., the event has been updated, since the eventdocument was finalized)
-    # ELSE 
-        # return false
+@register.filter
+def updates_made(event_id):
+    event = Event.objects.get(ocd_id=event_id)
+
+    try:
+        document = EventDocument.objects.get(event_id=event_id)
+    except EventDocument.DoesNotExist:
+        return False
+    else:
+        return True if document.updated_at < event.updated_at else False
