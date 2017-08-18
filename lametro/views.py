@@ -187,12 +187,13 @@ class LAMetroEventDetail(EventDetailView):
                 for document in event.documents.all():
                     if "Agenda" in document.note:
                         context['agenda_url'] = document.url
+                        context['document_timestamp'] = document.updated_at
                     elif "Manual upload" in document.note:
                         context['uploaded_agenda_url'] = document.url
+                        context['document_timestamp'] = document.updated_at
 
             context['related_board_reports'] = related_board_reports
             context['base_url'] = PIC_BASE_URL # Give JS access to this variable
-            context['now_timestamp'] = datetime.now(app_timezone)
 
         return context
 
