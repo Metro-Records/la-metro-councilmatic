@@ -100,8 +100,8 @@ class LAMetroEventDetail(EventDetailView):
         if form.is_valid():
             agenda_url = form['agenda_url'].value()
             document_obj, created = EventDocument.objects.get_or_create(event=event,
-                url=agenda_url)
-            document_obj.note = ('Event Document - Manual upload at ' + str(timezone.now()))
+                url=agenda_url, updated_at= timezone.now())
+            document_obj.note = ('Event Document - Manual upload')
             document_obj.save()
         
             return HttpResponseRedirect('/event/%s' % event_slug)

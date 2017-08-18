@@ -1,3 +1,5 @@
+{% load lametro_extras %}
+
 <a href="{{event.event_page_url}}">
     <div class="row">
         <div class="col-xs-3 no-pad-right">
@@ -12,7 +14,12 @@
         </div>
         <div class="col-xs-9">
             <p>
-                {{event.name}}<br/>
+                {{event.name}}
+
+                {% if event.ocd_id|updates_made %}
+                    <span class='label label-info label-teal'>Updated</span>
+                {% endif %}
+                <br/>
                 <span class="small text-muted">{{event.description}}</span>
             </p>
         </div>
