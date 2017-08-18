@@ -191,6 +191,11 @@ class LAMetroEventDetail(EventDetailView):
                     elif "Manual upload" in document.note:
                         context['uploaded_agenda_url'] = document.url
                         context['document_timestamp'] = document.updated_at
+                        '''
+                        LA Metro Councilmatic uses the adv_cache library to partially cache templates: in the event view, we cache the entire template, except the iframe. (N.B. With this library, the views do not cached, unless explicitly wrapped in a django cache decorator.
+                        Nonetheless, several popular browsers (e.g., Chrome and Firefox) retrieve cached iframe images, regardless of the site's caching specifications. 
+                        We use the agenda's "updated_at" timestamp to bust the iframe cache: we save it inside context and then assign it as the "name" of the iframe, preventing the browser from retrieving a cached iframe, when the timestamp changes.
+                        '''
 
             context['related_board_reports'] = related_board_reports
             context['base_url'] = PIC_BASE_URL # Give JS access to this variable
