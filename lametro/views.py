@@ -192,6 +192,7 @@ class LAMetroEventDetail(EventDetailView):
 
             context['related_board_reports'] = related_board_reports
             context['base_url'] = PIC_BASE_URL # Give JS access to this variable
+            context['now_timestamp'] = datetime.now(app_timezone)
 
         return context
 
