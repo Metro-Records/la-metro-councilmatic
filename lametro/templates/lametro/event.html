@@ -6,8 +6,6 @@
 {% block title %}{{event.name}}{% endblock %}
 {% block content %}
 
-{% cache 600 event_wrapper '{{event.ocd_id}}' %}
-
     <div class="row-fluid">
         <div class="col-sm-12">
             <br/>
@@ -101,7 +99,7 @@
 
                         </div>
                     </div>
-                    {% nocache %}
+
                     <iframe
                         id="pdf-embed-agenda"
                         class="pdf-viewer hidden-xs"
@@ -112,7 +110,6 @@
                         height="600px"
                         src={% if agenda_url %}"/pdfviewer/?{{agenda_url|full_text_doc_url}}"{% elif uploaded_agenda_url %}"/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}"{% endif %}>
                     </iframe>
-                    {% endnocache %}
 
                     {% else %}
                         {% if user.is_authenticated %}
@@ -156,7 +153,6 @@
     }
     </script>
 
-{% endcache %}
 {% endblock %}
 
 {% block extra_js %}
