@@ -8,6 +8,7 @@ from lametro.models import LAMetroBill
 from lametro.utils import format_full_text, parse_subject
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
+    topics = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return LAMetroBill
@@ -38,4 +39,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
             if results:
                 return parse_subject(results)
         else:
-            return obj.bill_type
+            return obj.bill_type    
+
+    def prepare_topics(self, obj):
+        return [s.subject for s in obj.subjects.all()]
