@@ -75,6 +75,10 @@ class LAMetroBill(Bill):
 
         return action
 
+    @property
+    def topics(self):
+        return [s.subject for s in self.subjects.all()]
+
 class LAMetroPost(Post):
 
     class Meta:

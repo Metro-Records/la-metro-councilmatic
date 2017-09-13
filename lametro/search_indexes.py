@@ -8,7 +8,6 @@ from lametro.models import LAMetroBill
 from lametro.utils import format_full_text, parse_subject
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
-    # Using as a reference: https://github.com/datamade/chi-councilmatic/blob/47c5e7d26da1cc6012e0ae7831f499e8be35405a/chicago/search_indexes.py
     topics = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
@@ -40,7 +39,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
             if results:
                 return parse_subject(results)
         else:
-            return obj.bill_type
+            return obj.bill_type    
 
     def prepare_topics(self, obj):
-        return obj.subjects.all()
+        return [s.subject for s in obj.subjects.all()]
