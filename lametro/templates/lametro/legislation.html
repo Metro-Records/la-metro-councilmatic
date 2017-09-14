@@ -91,7 +91,7 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Action</th>
-                                <th>Legislative body</th>
+                                <th>Committee</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,31 +118,30 @@
                 <div class="divider"></div>
             {% endif %}
 
-            {% if legislation.unique_related_upcoming_events %}
-                <h3><i class='fa fa-fw fa-calendar-o'></i> Upcoming {{ CITY_VOCAB.EVENTS }}</h3>
 
-                {% for event in legislation.unique_related_upcoming_events %}
-                    <p>
-                        {{event.start_time | date:'M d, Y' }} - {{event.link_html | safe}}
-                    </p>
-                {% endfor %}
-
+            {% if related_bills %}
+                <h3 class="no-pad-bottom"><i class="fa fa-file-text" aria-hidden="true"></i> Related Board Reports</h3>
+                <div class="table-responsive">
+                    <table class='table table-responsive' id='committee-actions'>
+                        <thead>
+                            <tr>
+                                <th>Board Report</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bill in related_bills %}
+                                <tr>
+                                    <td class='text-muted small'>
+                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a> - {{ bill.ocr_full_text|prepare_title }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 <div class="divider"></div>
             {% endif %}
 
-            {% if legislation.addresses %}
-                <h3>
-                    <i class='fa fa-map-marker'></i> Locations mentioned
-                </h3>
-                <ul class="list-unstyled">
-                  {% for address in legislation.addresses %}
-                    <li><a target='_blank' href="https://maps.google.com/maps?q={{ address|urlencode }}+{{ CITY_NAME }}">
-                      {{ address }} {{ CITY_NAME }}</a></li>
-                  {% endfor %}
-                </ul>
-                <img class='img-thumbnail img-rounded' src="https://maps.googleapis.com/maps/api/staticmap?size=400x200&zoom=14&maptype=roadmap{% for address in legislation.addresses %}&markers={{ address }}+{{ CITY_NAME }}{% endfor %}">
-                <div class="divider"></div>
-            {% endif %}
         </div>
 
         <!-- New col added, here. -->
