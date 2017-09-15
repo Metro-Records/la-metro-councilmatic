@@ -1,6 +1,8 @@
 import pytest
 
-from councilmatic_core.models import Event, EventDocument
+from django.core.urlresolvers import reverse
+
+from councilmatic_core.models import Event, EventDocument, Bill, RelatedBill
 from lametro.models import LAMetroEvent
 from lametro.templatetags.lametro_extras import updates_made
 
@@ -28,4 +30,27 @@ def test_updates_made_false(django_db_setup):
     '''
     event = Event.objects.get(ocd_id='ocd-event/c17e3544-dde3-4e40-8061-6163025298c7')
     assert updates_made(event.ocd_id) == False     
+
+@pytest.mark.django_db
+def test_related_bill_url(django_db_setup, client):
+    '''
+    This test checks that the bill detail view returns a successful response. 
+    '''
+    bill = Bill.objects.get(ocd_id='ocd-bill/1008870f-023e-4d5d-8626-fe00f043edd2')
+    url = reverse('bill_detail', kwargs={'slug': bill.slug})
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+@pytest.mark.django_db
+def test_related_bill_relation(django_db_setup, client):
+    '''
+    This test checks that a bill points to a related bill.
+    '''
+    bill = Bill.objects.get(ocd_id='ocd-bill/1008870f-023e-4d5d-8626-fe00f043edd2')
+    related_bill = bill.related_bills.first()
+
+    assert related_bill.related_bill_identifier == '2017-0443'
+
+
 
