@@ -62,7 +62,6 @@ class LABillDetail(BillDetailView):
 
         context['board_report'] = self.get_object().attachments.get(note="Board Report")
         item = context['legislation']
-
         actions = Action.objects.filter(_bill_id=item.ocd_id)
         organization_lst = [action.organization for action in actions]
         context['sponsorships'] = set(organization_lst)
