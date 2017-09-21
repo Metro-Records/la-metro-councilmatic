@@ -43,13 +43,17 @@ class LAMetroBill(Bill):
 
     def _status(self, description):
         if description:
-            if 'approved' in description.lower():
+            if description.upper() in ['APPROVED', 'APPROVED AS AMENDED', 'APPROVED THE CONSENT CALENDAR']:
                 return 'Approved'
-            elif 'adopted' in description.lower():
+            elif description.upper() in ['ADOPTED', 'ADOPTED AS AMENDED']:
                 return 'Adopted'
-            elif description.lower() in ['recommended', 'discussed', 'referred', 'forwarded']:
+            elif description.upper() in ['RECOMMENDED FOR APPROVAL', 'RECOMMENDED FOR APPROVAL AS AMENDED', 'REFERRED', 'FORWARDED DUE TO ABSENCES AND CONFLICTS', 'FORWARDED WITHOUT RECOMMENDATION', 'NO ACTION TAKEN', 'NOT DISCUSSED']:
                 return 'Active'
-            elif 'withdrawn' in description.lower():
+            elif description.upper() in ['RECEIVED', 'RECEIVED AND FILED']:
+                return 'Received'
+            elif description.upper() == 'FAILED':
+                return 'Failed'
+            elif description.upper() == 'WITHDRAWN':
               return 'Withdrawn'
         else:
             return None
