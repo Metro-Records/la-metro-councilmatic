@@ -25,7 +25,17 @@
 
             {% if facet_name == 'topics' %}
                 {% for name, count in facets.fields.topics %}
-                    {% include 'partials/search_filter_item.html' %}
+                    <li class="small">
+                        {% if name in selected_list %}
+                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}"><strong>{{ name }}</strong></a>
+                            <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
+                               <i class="fa fa-times"></i>
+                            </a>
+                        {% else %}
+                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name }}</a>
+                        {% endif %}
+                        <span class="badge badge-facet pull-right">{{ count }}</span>
+                    </li>
                 {% endfor %}
             {% elif facet_name == 'sponsorships' %}
                 {% if facets.fields.legislative_session|length > 1 %}
@@ -68,15 +78,11 @@
                 {% endif %}
 
             {% else %}
-
                 {% for name, count in item_list %}
                     {% if count %}
-
                         {% include 'partials/search_filter_item.html' %}
-
                     {% endif %}
                 {% endfor %}
-
             {% endif %}
 
 
