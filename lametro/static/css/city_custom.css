@@ -116,7 +116,25 @@ div#google_translate_element {
 
 .login { margin-top: 2em; }
 
+
+/* Labels for statues */
+.label {
+    padding: .25em .6em .25em;
+}
+
 .label-teal { background-color: #49A6AB; }
+
+.label-received, .label-approved, .label-adopted { 
+    background-color: #1D9A43;
+}
+
+.label-active {
+    background-color: #E3D626;
+}
+
+.label-failed, .label-withdrawn {
+    background-color: #E00700;
+}
 
 /* Styles for order by options on search page */
 .nav a.sort-by, .nav a.btn { margin-left: 1.8em; }
