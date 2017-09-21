@@ -161,7 +161,7 @@
 
                                         {{bill.inferred_status | inferred_status_label | safe}}
                                     </td>
-                                    <td class='text-muted small'>{{ bill.get_last_action_date|date:'n/d/Y' }}</td>
+                                    <td class='text-muted small' align='right'>{{ bill.get_last_action_date|date:'n/d/Y' }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
