@@ -21,7 +21,7 @@
                     {{ legislation.bill_type }}
 
                     {% if legislation.inferred_status %}
-                        {{ legislation.inferred_status |inferred_status_label | safe }}
+                        {{ legislation.inferred_status | inferred_status_label | safe }}
                     {% endif %}
                     <a href="rss/" title="RSS feed for Legislation {{legislation.friendly_name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
 
@@ -118,30 +118,6 @@
                 <div class="divider"></div>
             {% endif %}
 
-
-            {% if related_bills %}
-                <h3 class="no-pad-bottom"><i class="fa fa-file-text" aria-hidden="true"></i> Related Board Reports</h3>
-                <div class="table-responsive">
-                    <table class='table table-responsive' id='committee-actions'>
-                        <thead>
-                            <tr>
-                                <th>Board Report</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for bill in related_bills %}
-                                <tr>
-                                    <td class='text-muted small'>
-                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a> - {{ bill.ocr_full_text|prepare_title }}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="divider"></div>
-            {% endif %}
-
         </div>
 
         <!-- New col added, here. -->
@@ -163,23 +139,29 @@
 
             <br>
 
-            {% if sponsorships %}
+            {% if related_bills %}
+                <h3 class="no-pad-bottom"><i class="fa fa-file-text" aria-hidden="true"></i> Related Board Reports</h3>
                 <div class="table-responsive">
-                    <table class='table table-responsive' id='council-members'>
+                    <table class='table table-responsive' id='committee-actions'>
                         <thead>
                             <tr>
-                                <th>
-                                    Sponsored by
-                                </th>
+                                <th>Board Report</th>
+                                <th class='no-wrap'>Last action</th>                            
                             </tr>
                         </thead>
                         <tbody>
-                            {% for s in sponsorships %}
+                            {% for bill in related_bills %}
                                 <tr>
-                                    <td>
-                                        {{ s.name }}
-                                        {{ s.person.link_html | safe }}
+                                    <td class='text-muted small'>
+                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a> 
+                                        
+                                        {% if bill.ocr_full_text|prepare_title %}
+                                            - {{ bill.ocr_full_text|prepare_title }}
+                                        {% endif %}
+
+                                        {{bill.inferred_status | inferred_status_label | safe}}
                                     </td>
+                                    <td class='text-muted small'>{{ bill.get_last_action_date|date:'n/d/Y' }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

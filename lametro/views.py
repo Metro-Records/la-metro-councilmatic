@@ -62,6 +62,7 @@ class LABillDetail(BillDetailView):
 
         context['board_report'] = self.get_object().attachments.get(note="Board Report")
         item = context['legislation']
+        print(type(item), "!!!")
         actions = Action.objects.filter(_bill_id=item.ocd_id)
         organization_lst = [action.organization for action in actions]
         context['sponsorships'] = set(organization_lst)
@@ -77,7 +78,7 @@ class LABillDetail(BillDetailView):
 
         # Create list of related board reports
         if context['legislation'].related_bills.all():
-            context['related_bills'] = [Bill.objects.get(identifier=bill.related_bill_identifier) for bill in context['legislation'].related_bills.all()]
+            context['related_bills'] = [LAMetroBill.objects.get(identifier=bill.related_bill_identifier) for bill in context['legislation'].related_bills.all()]
 
         return context
 
