@@ -77,7 +77,7 @@ class LABillDetail(BillDetailView):
 
         # Create list of related board reports
         if context['legislation'].related_bills.all():
-            context['related_bills'] = [Bill.objects.get(identifier=bill.related_bill_identifier) for bill in context['legislation'].related_bills.all()]
+            context['related_bills'] = [LAMetroBill.objects.get(identifier=bill.related_bill_identifier) for bill in context['legislation'].related_bills.all()]
 
         return context
 
