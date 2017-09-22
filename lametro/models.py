@@ -36,10 +36,7 @@ class LAMetroBill(Bill):
 
         bill_type = self.bill_type
 
-        if bill_type.lower() in ['informational report', 'public hearing', 'appointment', 'oral report / presentation']:
-            return None
-        else:
-            return self._status(description)
+        return self._status(description)
 
     def _status(self, description):
         if description:
