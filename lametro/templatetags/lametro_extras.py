@@ -146,6 +146,14 @@ def parse_agenda_item(text):
     else: 
         return ''
 
+@register.filter
+def short_topic_name(text):
+    if len(text) > 40:
+        blurb = text[:40]
+        blurb = blurb[:blurb.rfind(' ')] + ' ...'
+        return blurb
+    else:
+        return text
 
 @register.filter
 def updates_made(event_id):

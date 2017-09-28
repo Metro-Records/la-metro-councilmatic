@@ -1,4 +1,5 @@
 {% load extras %}
+{% load lametro_extras %}
 
 {% if facet_label != 'Controlling Body' %}
 
@@ -27,12 +28,12 @@
                 {% for name, count in facets.fields.topics %}
                     <li class="small">
                         {% if name in selected_list %}
-                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}"><strong>{{ name }}</strong></a>
+                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}"><strong>{{ name | short_topic_name }}</strong></a>
                             <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
                                <i class="fa fa-times"></i>
                             </a>
                         {% else %}
-                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name }}</a>
+                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name | short_topic_name }}</a>
                         {% endif %}
                         <span class="badge badge-facet pull-right">{{ count }}</span>
                     </li>
