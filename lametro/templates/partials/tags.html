@@ -16,7 +16,8 @@
     </p>
 {% endif %}
 
-<p class="condensed">
+<div class="row">
+    <div class="col-xs-11">
     {% if result.object.topics %}
         <i class="fa fa-fw fa-tag"></i>
         {% for tag in result.object.topics %}
@@ -35,4 +36,5 @@
         <br/>
     {% endif %}
     </br>
-</p>
+    </div>
+</div>
