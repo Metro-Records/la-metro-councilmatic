@@ -156,14 +156,14 @@ class Command(BaseCommand):
 
         if all_documents:
             query = '''
-            SELECT
+            SELECT 
                 event_id,
                 event_agenda,
-                array_agg(url ORDER BY identifier, bill_id, note)
+                array_agg(url ORDER BY item_order, bill_id, note)
             FROM (
-                SELECT
-                    b.identifier,
+                SELECT DISTINCT
                     i.event_id,
+                    i.order as item_order,
                     d_bill.url,
                     d_bill.bill_id,
                     d_event.url as event_agenda,
@@ -200,14 +200,14 @@ class Command(BaseCommand):
                 psql_ready_ids = bill_ids_str[:-1]
 
                 query = '''
-                SELECT
+                SELECT 
                     event_id,
                     event_agenda,
-                    array_agg(url ORDER BY identifier, bill_id, note)
+                    array_agg(url ORDER BY item_order, bill_id, note)
                 FROM (
-                    SELECT
-                        b.identifier,
+                    SELECT DISTINCT
                         i.event_id,
+                        i.order as item_order,
                         d_bill.url,
                         d_bill.bill_id,
                         d_event.url as event_agenda,
