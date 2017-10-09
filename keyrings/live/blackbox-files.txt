@@ -1,4 +1,5 @@
 configs/lametro-staging.conf.nginx
+configs/lametro-staging.conf.supervisor
 configs/lametro.conf.nginx
 configs/settings_deployment_production.py
 configs/settings_deployment_staging.py
