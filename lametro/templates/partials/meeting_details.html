@@ -25,9 +25,9 @@
             {% endif %}
 
             {% if current_meeting %}
-                {% if meeting.media_url %}
+                {% if meeting.guid %}
                     <div class="col-xs-5">
-                        <p><a class="btn btn-salmon" href="{{meeting.media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                        <p><a class="btn btn-salmon" href="http://metro.granicus.com/mediaplayer.php?event_id={{meeting.guid}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
                     </div>
                 {% else %}
                     <div class="col-xs-5">

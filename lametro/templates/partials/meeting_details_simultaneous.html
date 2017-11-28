@@ -5,28 +5,19 @@
     <div class="row">
       <div class="col-xs-12">
         {% for meeting in current_meeting_queryset %}
-            {% if "Board Meeting" in meeting.name %}
-                <p>
-                    {{ meeting.link_html | safe }}<br/>
-                    <span class="small text-muted">{{ meeting.description }}</span>
+            <p>
+                {{ meeting.link_html | safe }}<br/>
+                <span class="small text-muted">{{ meeting.description }}</span>
+                {% if meeting.documents.all %}   
+                    <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all.first.url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a><br>
+                {% endif %}
 
-                    {% if meeting.documents.all %}   
-                        <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all.first.url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
-                    {% endif %}
-                </p>
-            {% endif %}
-        {% endfor %}
-        {% for meeting in current_meeting_queryset %}
-            {% if "Board Meeting" not in meeting.name %}
-                <p>
-                    {{ meeting.link_html | safe }}<br/>
-                    <span class="small text-muted">{{ meeting.description }}</span>
-
-                    {% if meeting.documents.all %}
-                        <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all.first.url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
-                    {% endif %}
-                </p>
-            {% endif %}
+                {% if meeting.guid %}
+                        <a href="http://metro.granicus.com/mediaplayer.php?event_id={{meeting.guid}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a>
+                {% else %}
+                        <a href="http://metro.granicus.com/MediaPlayer.php?camera_id=2" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a>
+                {% endif %}
+            </p>
         {% endfor %}
  
         <p class="small text-muted">
@@ -34,8 +25,6 @@
             <i class="fa fa-fw fa-clock-o"></i> {{ current_meeting_queryset.first.start_time | date:"g:i a"}}<br/>
             <i class="fa fa-fw fa-map-marker"></i> {{ current_meeting_queryset.first.location_name}}<br />
         </p>
-
-        <p><a class="btn btn-salmon" href="http://metro.granicus.com/MediaPlayer.php?camera_id=2" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
 
       </div>
     </div>
