@@ -1,5 +1,5 @@
-10 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py import_data >> /tmp/lametro-loaddata.log 2>&1
-10 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py compile_pdfs >> /tmp/lametro-compilepdfs.log 2>&1
-10 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py update_index
+10,25,40,55 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py import_data >> /tmp/lametro-loaddata.log 2>&1
+10,25,40,55 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py compile_pdfs >> /tmp/lametro-compilepdfs.log 2>&1
+10,25,40,55 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py update_index
 # Run every Friday night to insure all pdfs are up-to-date.
 0 20 * * 5 datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py compile_pdfs --all_documents >> /tmp/lametro-compilepdfs.log 2>&1
