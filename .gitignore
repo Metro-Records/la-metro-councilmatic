@@ -31,5 +31,3 @@ debug.log
 /configs/lametro.conf.nginx
 /configs/lametro-staging.conf.supervisor
 /configs/lametro.conf.supervisor
-/scripts/lametro-crontasks
-/scripts/lametro-staging-crontasks
