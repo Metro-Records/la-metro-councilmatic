@@ -1,6 +1,7 @@
 import pytz
 import re
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.db import models
@@ -218,14 +219,15 @@ class LAMetroEvent(Event):
     @classmethod
     def upcoming_committee_meetings(cls):
         meetings = cls.objects.filter(start_time__gt=timezone.now())\
-                  .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+1, 1))\
+                  .filter(start_time__lt=(timezone.now() + relativedelta(months=1)))\
                   .exclude(name__icontains='Board Meeting')\
                   .order_by('start_time').all()
 
         if not meetings:
             meetings = cls.objects.filter(start_time__gt=timezone.now())\
-                  .filter(start_time__lt=datetime(timezone.now().year, timezone.now().month+2, 1))\
+                  .filter(start_time__lt=(timezone.now() + relativedelta(months=2)))\
                   .exclude(name__icontains='Board Meeting')\
                   .order_by('start_time').all()
+
 
         return meetings
