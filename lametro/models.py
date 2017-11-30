@@ -190,31 +190,29 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        # A board meeting lasts 3 hours, and a committee event lasts 1 hour.
-        # Find all events occuring in the next three hours, and then filter accordingly. 
-        meeting_time = datetime.now(app_timezone) + timedelta(minutes=6)
-        meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
+        # Create the boundaries for discovering events (in progess) within the timeframe stipulated 
+        # by Metro.
+        # Then, filter the events according to these boundaries.
+        six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
+        three_hours_ago = datetime.now(app_timezone) - timedelta(hours=3)
 
-        found_events = cls.objects.filter(start_time__lt=meeting_time)\
-                  .filter(start_time__gt=meeting_end_time)\
+        found_events = cls.objects.filter(start_time__lt=six_minutes_from_now)\
+                  .filter(start_time__gt=three_hours_ago)\
                   .exclude(status='cancelled')\
                   .order_by('start_time')
 
         if found_events:
-            # Is there more than one event going on?
             if len(found_events) > 1: 
-                return calculate_current_meetings(found_events, meeting_time)   
+                return calculate_current_meetings(found_events, six_minutes_from_now)   
             else:
-                if "Committee" in found_events.first().name:
-                    meeting_end_time = meeting_time - timedelta(hours=1)
-                        
-                    return cls.objects.filter(start_time__lt=meeting_time)\
-                              .filter(start_time__gt=meeting_end_time)\
-                              .exclude(status='cancelled')\
-                              .order_by('start_time').first()
-                
-                else:
+                # A board meeting lasts 3 hours, and a committee event lasts 1 hour.
+                # Change the value of "_hour_ago" for committee meetings to 1 hour.
+                if found_events.filter(name__icontains='Board Meeting')
                     return found_events.first()
+                else:
+                    one_hour_ago = six_minutes_from_now - timedelta(hours=1)
+                        
+                    return found_events.filter(start_time__gt=one_hour_ago).first()
 
 
     @classmethod
