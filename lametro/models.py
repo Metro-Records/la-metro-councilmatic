@@ -207,7 +207,7 @@ class LAMetroEvent(Event):
             else:
                 # A board meeting lasts 3 hours, and a committee event lasts 1 hour.
                 # Change the value of "_hour_ago" for committee meetings to 1 hour.
-                if found_events.filter(name__icontains='Board Meeting')
+                if found_events.filter(name__icontains='Board Meeting'):
                     return found_events.first()
                 else:
                     one_hour_ago = six_minutes_from_now - timedelta(hours=1)
