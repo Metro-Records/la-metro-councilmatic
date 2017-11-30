@@ -216,7 +216,8 @@ class LAMetroEvent(Event):
 
                 # Are all returned events at the same time?
                 if start_check == end_check:
-                    if ("Board Meeting" in found_events.first().name) or ("Board Meeting" in found_events.last().name):
+                    if found_events.filter(name__icontains='Board Meeting'):
+
                         return found_events
                     else:
                         # Concurrent committee meetings should only last one hour.
