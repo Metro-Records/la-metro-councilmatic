@@ -191,16 +191,11 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        # Metro testing on Monday @ 1:00
-        # six_minutes_from_now = datetime.now(app_timezone) - timedelta(days=18) - timedelta(hours=0)
-        six_minutes_from_now = datetime.strptime('Nov 16 2017  10:33AM', '%b %d %Y %I:%M%p')
-        three_hours_ago = six_minutes_from_now - timedelta(hours=3)
-
         # Create the boundaries for discovering events (in progess) within the timeframe stipulated 
         # by Metro.
         # Then, filter the events according to these boundaries.
-        # six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
-        # three_hours_ago = datetime.now(app_timezone) - timedelta(hours=3)
+        six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
+        three_hours_ago = datetime.now(app_timezone) - timedelta(hours=3)
 
         found_events = cls.objects.filter(start_time__lt=six_minutes_from_now)\
                   .filter(start_time__gt=three_hours_ago)\
