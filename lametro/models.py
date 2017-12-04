@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, Action
 
+from .utils import calculate_current_meetings
+
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 class LAMetroBill(Bill):
@@ -186,77 +188,32 @@ class LAMetroEvent(Event):
                   .exclude(status='cancelled')\
                   .order_by('start_time').first()
 
-        # USED TO TEST THE CURRENT BOARD MEETING METHOD. Keep for now.
-        # faketime = datetime.now(app_timezone) - timedelta(days=30) - timedelta(hours=1)
-        # return cls.objects.filter(start_time__gt=faketime)\
-        #           .filter(name__icontains="Board Meeting")\
-        #           .order_by('start_time').first()
 
     @classmethod
     def current_meeting(cls):
-        # For testing...
-        # meeting_time = datetime.now(app_timezone) - timedelta(days=8) + timedelta(hours=2) + timedelta(minutes=13)
-        # meeting_end_time = meeting_time - timedelta(hours=3)
-        # print(meeting_time, "TIMEEEE")
-        
-        meeting_time = datetime.now(app_timezone) + timedelta(minutes=6)
-        meeting_end_time = datetime.now(app_timezone) - timedelta(hours=3)
+        # Create the boundaries for discovering events (in progess) within the timeframe stipulated 
+        # by Metro.
+        # Then, filter the events according to these boundaries.
+        six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
+        three_hours_ago = datetime.now(app_timezone) - timedelta(hours=3)
 
-        # Is there an event going on in the next three hours?
-        found_events = cls.objects.filter(start_time__lt=meeting_time)\
-                  .filter(start_time__gt=meeting_end_time)\
+        found_events = cls.objects.filter(start_time__lt=six_minutes_from_now)\
+                  .filter(start_time__gt=three_hours_ago)\
                   .exclude(status='cancelled')\
                   .order_by('start_time')
 
         if found_events:
-            # Is there more than one event going on?
-            if len(found_events) > 1:    
-                start_check = found_events.first().start_time
-                end_check = found_events.last().start_time
-
-                # Are all returned events at the same time?
-                if start_check == end_check:
-                    if found_events.filter(name__icontains='Board Meeting'):
-
-                        return found_events
-                    else:
-                        # Concurrent committee meetings should only last one hour.
-                        meeting_end_time = meeting_time - timedelta(hours=1)
-                        
-                        return cls.objects.filter(start_time__lt=meeting_time)\
-                                  .filter(start_time__gt=meeting_end_time)\
-                                  .exclude(status='cancelled')\
-                                  .order_by('start_time')
-                else:
-                    # To find committee events...
-                    event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name)]
-
-                    if len(event_names) > 0:
-                        # Set meeting time to one hour
-                        meeting_end_time = meeting_time - timedelta(hours=1)
-                        
-                        found_events = cls.objects.filter(start_time__lt=meeting_time)\
-                                  .filter(start_time__gt=meeting_end_time)\
-                                  .exclude(status='cancelled')\
-                                  .order_by('start_time')
-
-                        if len(found_events) > 1:
-                            return found_events
-                        else:
-                            return found_events.first()
-                    else:
-                        return found_events.first()                
+            if len(found_events) > 1: 
+                return calculate_current_meetings(found_events, six_minutes_from_now)   
             else:
-                if "Committee" in found_events.first().name:
-                    meeting_end_time = meeting_time - timedelta(hours=1)
-                        
-                    return cls.objects.filter(start_time__lt=meeting_time)\
-                              .filter(start_time__gt=meeting_end_time)\
-                              .exclude(status='cancelled')\
-                              .order_by('start_time').first()
-                
-                else:
+                # A board meeting lasts 3 hours, and a committee event lasts 1 hour.
+                # Change the value of "_hour_ago" for committee meetings to 1 hour.
+                if found_events.filter(name__icontains='Board Meeting'):
                     return found_events.first()
+                else:
+                    one_hour_ago = six_minutes_from_now - timedelta(hours=1)
+                        
+                    return found_events.filter(start_time__gt=one_hour_ago).first()
 
 
     @classmethod
