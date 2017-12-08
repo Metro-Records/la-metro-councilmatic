@@ -16,7 +16,6 @@ downloads
 /keyrings/live/pubring.gpg~
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
-/scripts/after_install.sh
 /scripts/app_start.sh
 /scripts/app_stop.sh
 /scripts/validate_service.sh
@@ -31,3 +30,4 @@ debug.log
 /configs/lametro.conf.nginx
 /configs/lametro-staging.conf.supervisor
 /configs/lametro.conf.supervisor
+/scripts/after_install.sh
