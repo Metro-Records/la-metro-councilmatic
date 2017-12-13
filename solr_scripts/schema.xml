@@ -16,6 +16,8 @@
  limitations under the License.
 -->
 
+<!-- Customized by DataMade -->
+
 <schema name="default" version="1.5">
   <types>
     <fieldtype name="string"  class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
