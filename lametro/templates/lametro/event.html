@@ -113,14 +113,53 @@
 
                     {% else %}
                         {% if user.is_authenticated %}
-                            <div class="well">
-                                <h4>Agenda upload</h4>
-                                
-                                <p>This event does not have an agenda. To add one, please find the corresponding agenda URL on Legistar, and paste it here.</p>
-                                
-                                {% include 'partials/agenda_url_form.html' %}
-                                
+
+                         <p>This event does not have an agenda. To add one, please provide a link to Legistar or directly upload a PDF. <span class="text-uppercase"><strong>Only upload a PDF during a Legistar outage!</strong></span></p>
+
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                          <!-- URL Upload -->
+                          <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingOne">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseURL" aria-expanded="true" aria-controls="collapseURL">
+                                  Upload an Agenda URL
+                                </a>
+                              </h4>
                             </div>
+                            <div id="collapseURL" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                              <div class="panel-body">
+                                                                                 
+                                <p>Find the corresponding agenda URL on Legistar, and paste it here.</p>
+                                                        
+                                {% include 'partials/agenda_url_form.html' %}                       
+                                                   
+                              </div>
+                            </div>
+                          </div>
+                          <!-- PDF Upload -->
+                          <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingTwo">
+                              <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePDF" aria-expanded="false" aria-controls="collapsePDF">
+                                  Upload an Agenda PDF
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="collapsePDF" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                              <div class="panel-body">
+                                {% if legistar_ok %}
+                                    <div class="alert alert-info" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> <strong>Caution!</strong> Our system does NOT detect a Legistar outage. Do not use this option.</div>
+                                {% else %}
+                                    <div class="alert alert-info" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Our system detects a Legistar outage. Procede with this option but exercise caution.</div>
+                                {% endif %}
+
+                                
+                                
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         {% else %}
                         <p>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings. If you are unable to access an Agenda within either of these time frames, please visit: <a href="http://metro.legistar.com/calendar.aspx" target="_blank">http://metro.legistar.com/calendar.aspx</a>.</p>
                         {% endif %}

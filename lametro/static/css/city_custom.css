@@ -80,6 +80,10 @@ h1, .h1 {
     padding-top: 0px;
 }
 
+div#collapseURL .panel-body, div#collapsePDF .panel-body {
+    padding-top: 28px;
+}
+
 .infobox {
     width: 22px;
     margin: 0;

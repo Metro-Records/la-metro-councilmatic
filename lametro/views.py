@@ -92,15 +92,6 @@ class LABillDetail(BillDetailView):
         return context
 
 
-def delete_submission(request, event_slug):
-    event = Event.objects.get(slug=event_slug)
-    event_doc = EventDocument.objects.filter(event_id=event.ocd_id).get(note__icontains='Manual upload')
-    if event_doc: 
-        event_doc.delete()
-
-    return HttpResponseRedirect('/event/%s' % event_slug)
-
-
 class LAMetroEventDetail(EventDetailView):
     model = LAMetroEvent
     template_name = 'lametro/event.html'
@@ -127,6 +118,12 @@ class LAMetroEventDetail(EventDetailView):
         context = super(EventDetailView, self).get_context_data(**kwargs)
         # Create URL for packet download.
         event = context['event']
+
+        # Metro admins should see a status report if Legistar is down.
+        # GET the calendar page, which contains relevant URL for agendas.
+        if self.request.user.is_authenticated():
+            r = requests.get('https://metro.legistar.com/calendar.aspx')
+            context['legistar_ok'] = r.ok
 
         packet_slug = event.ocd_id.replace('/', '-')
         try:
@@ -215,6 +212,15 @@ class LAMetroEventDetail(EventDetailView):
             context['base_url'] = PIC_BASE_URL # Give JS access to this variable
 
         return context
+
+
+def delete_submission(request, event_slug):
+    event = Event.objects.get(slug=event_slug)
+    event_doc = EventDocument.objects.filter(event_id=event.ocd_id).get(note__icontains='Manual upload')
+    if event_doc: 
+        event_doc.delete()
+
+    return HttpResponseRedirect('/event/%s' % event_slug)
 
 
 class LAMetroEventsView(EventsView):
