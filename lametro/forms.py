@@ -20,4 +20,8 @@ class AgendaUrlForm(forms.Form):
           elif r.status_code == 404:
               raise forms.ValidationError('Broken URL! Returns a 404.')
         except requests.exceptions.MissingSchema as e:
-            raise forms.ValidationError('Not a valid URL! Check your link, and resubmit.') 
+            raise forms.ValidationError('Not a valid URL! Check your link, and resubmit.')
+
+# class AgendaPdfForm(forms.Form):
+
+#       agenda_document = forms.
