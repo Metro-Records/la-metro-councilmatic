@@ -29,7 +29,7 @@ from django.shortcuts import render_to_response, redirect
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
-from lametro.forms import AgendaUrlForm
+from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
@@ -98,11 +98,13 @@ class LAMetroEventDetail(EventDetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object() # Assign object to detail view, so that get_context_data can find this variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
-        form = AgendaUrlForm(request.POST)
+        url_form = AgendaUrlForm(request.POST)
+        pdf_form = AgendaPdfForm(request.POST)
         event = self.get_object()
         event_slug = event.slug
 
-        if form.is_valid():
+        # Look for the button name (either 'url_form' or 'pdf_form') in the request.
+        if url_form.is_valid() and 'url_form' in request.POST:
             agenda_url = form['agenda_url'].value()
             document_obj, created = EventDocument.objects.get_or_create(event=event,
                 url=agenda_url, updated_at= timezone.now())
@@ -110,8 +112,12 @@ class LAMetroEventDetail(EventDetailView):
             document_obj.save()
         
             return HttpResponseRedirect('/event/%s' % event_slug)
+        elif pdf_form.is_valid() and 'pdf_form' in request.POST:
+            agenda_pdf = form['agenda_pdf'].value()
+
+            return HttpResponseRedirect('/event/%s' % event_slug)
         else:
-            return self.render_to_response(self.get_context_data(form=form))
+            return self.render_to_response(self.get_context_data(url_form=url_form, pdf_form=pdf_form))
 
 
     def get_context_data(self, **kwargs):

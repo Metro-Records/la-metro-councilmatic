@@ -22,6 +22,17 @@ class AgendaUrlForm(forms.Form):
         except requests.exceptions.MissingSchema as e:
             raise forms.ValidationError('Not a valid URL! Check your link, and resubmit.')
 
-# class AgendaPdfForm(forms.Form):
+class AgendaPdfForm(forms.Form):
 
-#       agenda_document = forms.
+      agenda_pdf = forms.FileField(
+          label='Agenda PDF',
+          error_messages={ 'required': 'Oh no! Please provide a valid PDF.'},
+          )
+
+      def clean_agenda_pdf(self):
+          agenda_pdf = self.cleaned_data['agenda_pdf']
+
+          if file_upload.name.lower().endswith('pdf'):
+              return file_upload
+          else:
+              raise forms.ValidationError('File type not supported. Please submit a PDF.')

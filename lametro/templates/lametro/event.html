@@ -131,8 +131,10 @@
                               <div class="panel-body">
                                                                                  
                                 <p>Find the corresponding agenda URL on Legistar, and paste it here.</p>
-                                                        
-                                {% include 'partials/agenda_url_form.html' %}                       
+                                      
+                                {% with form=url_form name='url_form' %}                  
+                                    {% include 'partials/agenda_url_form.html' %}  
+                                {% endwith %}                     
                                                    
                               </div>
                             </div>
@@ -154,7 +156,9 @@
                                     <div class="alert alert-info" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Our system detects a Legistar outage. Procede with this option but exercise caution.</div>
                                 {% endif %}
 
-
+                                {% with form=url_form name='pdf_form' %}                  
+                                    {% include 'partials/agenda_url_form.html' %}  
+                                {% endwith %}  
                                 
                               </div>
                             </div>
