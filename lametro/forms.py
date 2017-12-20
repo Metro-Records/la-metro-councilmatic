@@ -4,14 +4,15 @@ from django import forms
 
 class AgendaUrlForm(forms.Form):
 
-    agenda_url = forms.CharField(
+    agenda = forms.CharField(
         label='Agenda URL',
         max_length=500,
         error_messages={ 'required': 'Whoops! Please provide a valid URL.' },
+        widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter URL...', 'id': 'agenda_form'}),
         )
 
-    def clean_agenda_url(self):
-        agenda_url = self.cleaned_data['agenda_url']
+    def clean_agenda(self):
+        agenda_url = self.cleaned_data['agenda']
 
         try:
           r = requests.head(agenda_url)
@@ -24,15 +25,17 @@ class AgendaUrlForm(forms.Form):
 
 class AgendaPdfForm(forms.Form):
 
-      agenda_pdf = forms.FileField(
+      agenda = forms.FileField(
           label='Agenda PDF',
           error_messages={ 'required': 'Oh no! Please provide a valid PDF.'},
           )
 
-      def clean_agenda_pdf(self):
-          agenda_pdf = self.cleaned_data['agenda_pdf']
+      def clean_agenda(self):
+          agenda_pdf = self.cleaned_data['agenda']
 
-          if file_upload.name.lower().endswith('pdf'):
-              return file_upload
+          print("cleaning...", agenda_pdf.name.lower())
+
+          if agenda_pdf.name.lower().endswith('pdf'):
+              return agenda_pdf
           else:
               raise forms.ValidationError('File type not supported. Please submit a PDF.')

@@ -130,8 +130,8 @@
                             <div id="collapseURL" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                               <div class="panel-body">
                                                                                  
-                                <p>Find the corresponding agenda URL on Legistar, and paste it here.</p>
-                                      
+                                <p>Find the corresponding agenda URL on Legistar, and paste it here.</p> 
+                                <!-- The variable "name" identifies the modal and form submit button -->
                                 {% with form=url_form name='url_form' %}                  
                                     {% include 'partials/agenda_url_form.html' %}  
                                 {% endwith %}                     
@@ -156,9 +156,10 @@
                                     <div class="alert alert-info" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Our system detects a Legistar outage. Procede with this option but exercise caution.</div>
                                 {% endif %}
 
-                                {% with form=url_form name='pdf_form' %}                  
-                                    {% include 'partials/agenda_url_form.html' %}  
-                                {% endwith %}  
+                                <!-- The variable "name" identifies the modal and form submit button -->
+                                {% with form=pdf_form name='pdf_form' %}                  
+                                    {% include 'partials/agenda_pdf_form.html' %}  
+                                {% endwith %}   
                                 
                               </div>
                             </div>
@@ -202,7 +203,7 @@
 {% block extra_js %}
     <script>
     $(document).ready(function() {
-        $('#agendaModal').on('shown.bs.modal', function (e) {  
+        $('#url_form_modal').on('shown.bs.modal', function (e) {  
             e.preventDefault()
             agenda_url_submitted = $('#agenda_url').val()
             agenda_url_clean = full_text_doc_url(agenda_url_submitted)
@@ -216,6 +217,28 @@
 
             return doc_url 
         };
+
+        $('#pdf_form_modal').on('shown.bs.modal', function (e) { 
+            console.log("trying to submit pdf...")
+            // e.preventDefault()
+            // agenda_url_submitted = $('#agenda_pdf').val()
+            // agenda_url_clean = full_text_doc_url(agenda_url_submitted)
+            // document.getElementById('pdf-embed-agenda-check').src = agenda_url_clean
+        });
+
+
+
+        // function upload_img(input) {
+        //     if (input.files && input.files[0]) {
+        //         var reader = new FileReader();
+
+        //         reader.onload = function (e) {
+        //             $('#img_id').attr('src', e.target.result);
+        //         }
+
+        //         reader.readAsDataURL(input.files[0]);
+        //     }
+        // };
 
         // for reference purposes
         console.log( "OCD ID: {{event.ocd_id}}" )

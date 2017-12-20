@@ -99,13 +99,13 @@ class LAMetroEventDetail(EventDetailView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object() # Assign object to detail view, so that get_context_data can find this variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
         url_form = AgendaUrlForm(request.POST)
-        pdf_form = AgendaPdfForm(request.POST)
+        pdf_form = AgendaPdfForm(request.POST, request.FILES)
         event = self.get_object()
         event_slug = event.slug
 
         # Look for the button name (either 'url_form' or 'pdf_form') in the request.
         if url_form.is_valid() and 'url_form' in request.POST:
-            agenda_url = form['agenda_url'].value()
+            agenda_url = url_form['agenda'].value()
             document_obj, created = EventDocument.objects.get_or_create(event=event,
                 url=agenda_url, updated_at= timezone.now())
             document_obj.note = ('Event Document - Manual upload')
@@ -113,7 +113,9 @@ class LAMetroEventDetail(EventDetailView):
         
             return HttpResponseRedirect('/event/%s' % event_slug)
         elif pdf_form.is_valid() and 'pdf_form' in request.POST:
-            agenda_pdf = form['agenda_pdf'].value()
+            agenda_pdf = request.FILES['agenda']
+
+            handle_uploaded_agenda(agenda_pdf)
 
             return HttpResponseRedirect('/event/%s' % event_slug)
         else:
@@ -217,8 +219,19 @@ class LAMetroEventDetail(EventDetailView):
             context['related_board_reports'] = related_board_reports
             context['base_url'] = PIC_BASE_URL # Give JS access to this variable
 
+            # Render forms if not a POST request
+            if 'url_form' not in context:
+                context['url_form'] = AgendaUrlForm()
+            if 'pdf_form' not in context:
+                context['pdf_form'] = AgendaPdfForm()
+
         return context
 
+
+def handle_uploaded_agenda(agenda):
+    with open('static/pdf/%s' % agenda.name, 'wb+') as destination:
+        for chunk in agenda.chunks():
+            destination.write(chunk)
 
 def delete_submission(request, event_slug):
     event = Event.objects.get(slug=event_slug)
