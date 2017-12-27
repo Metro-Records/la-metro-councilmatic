@@ -203,42 +203,24 @@
 {% block extra_js %}
     <script>
     $(document).ready(function() {
+        // Admin view: Display preview of event document submitted via URL
         $('#url_form_modal').on('shown.bs.modal', function (e) {  
-            e.preventDefault()
-            agenda_url_submitted = $('#agenda_url').val()
-            agenda_url_clean = full_text_doc_url(agenda_url_submitted)
+            e.preventDefault();
+            agenda_url_submitted = $('#agenda_url').val();
+            agenda_url_clean = full_text_doc_url(agenda_url_submitted);
             document.getElementById('pdf-embed-agenda-check').src = agenda_url_clean
         });
 
-        function full_text_doc_url(url) {
-            base_url = '{{base_url}}'
-            encoded_url = encodeURIComponent(url)
-            doc_url = base_url + '?filename=agenda&document_url=' + encoded_url
+        // Admin view: Cancel submission of PDF
+        $('#pdf-form-cancel').on('click', function() {
+            document.getElementById('pdf-check-viewer-test').src = '';
+            document.getElementById('pdf-form-input').value= null;
 
-            return doc_url 
-        };
-
-        $('#pdf_form_modal').on('shown.bs.modal', function (e) { 
-            console.log("trying to submit pdf...")
-            // e.preventDefault()
-            // agenda_url_submitted = $('#agenda_pdf').val()
-            // agenda_url_clean = full_text_doc_url(agenda_url_submitted)
-            // document.getElementById('pdf-embed-agenda-check').src = agenda_url_clean
+            $('#pdf-form-message').addClass('hidden');
+            $('#pdf-check-viewer-test').addClass('hidden');
+            $('#pdf-form-cancel').addClass('hidden');
+            $('#pdf-form-submit').addClass('hidden');
         });
-
-
-
-        // function upload_img(input) {
-        //     if (input.files && input.files[0]) {
-        //         var reader = new FileReader();
-
-        //         reader.onload = function (e) {
-        //             $('#img_id').attr('src', e.target.result);
-        //         }
-
-        //         reader.readAsDataURL(input.files[0]);
-        //     }
-        // };
 
         // for reference purposes
         console.log( "OCD ID: {{event.ocd_id}}" )

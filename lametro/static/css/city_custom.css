@@ -187,6 +187,50 @@ div#toggleControls { margin-bottom: 1em; }
     border-top-left-radius: 6px; 
 }
 
+/* Styles for calendar pop-up. */
+#date-search .form-control { width: 50%; }
+
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: #fff;
+}
+
+.datepicker table tr td span.active.active, .datepicker table tr td span.active:hover.active {background-color: #49A6AB !important;
+}
+
+.btn-teal {
+    background-color: #49A6AB;
+    border: #49A6AB;
+    color: #fff;
+}
+
+.btn-teal:hover, .btn-teal.active { background-color: #70BEC2; }
+
+.btn-salmon {
+    background-color: #EB6864;
+    border: #EB6864;
+    color: #fff;
+}
+
+.btn-salmon:hover, .btn-salmon.active { background-color: #EF8481; }
+
+#events-form > div.col-xs-8, #events-form > div.col-xs-2 { padding-right: 0; }
+
+.scrollable {    
+    overflow: scroll;
+    height: 700px;
+}
+
+.skinny-list {
+    width: 90%; 
+    display: inline-block;
+}
+
+/* Styles for event detail */
+#pdf-check-viewer-test {
+    margin-bottom: 14px;
+}
+
+
 /* Media queries */
 @media only screen and (max-width : 767px) {
 
@@ -227,42 +271,4 @@ div#toggleControls { margin-bottom: 1em; }
     .navbar-header {
         float:none;
     }
-}
-
-/* Styles for calendar pop-up. */
-#date-search .form-control { width: 50%; }
-
-.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-    background-color: #fff;
-}
-
-.datepicker table tr td span.active.active, .datepicker table tr td span.active:hover.active {background-color: #49A6AB !important;
-}
-
-.btn-teal {
-    background-color: #49A6AB;
-    border: #49A6AB;
-    color: #fff;
-}
-
-.btn-teal:hover, .btn-teal.active { background-color: #70BEC2; }
-
-.btn-salmon {
-    background-color: #EB6864;
-    border: #EB6864;
-    color: #fff;
-}
-
-.btn-salmon:hover, .btn-salmon.active { background-color: #EF8481; }
-
-#events-form > div.col-xs-8, #events-form > div.col-xs-2 { padding-right: 0; }
-
-.scrollable {    
-    overflow: scroll;
-    height: 700px;
-}
-
-.skinny-list {
-    width: 90%; 
-    display: inline-block;
 }

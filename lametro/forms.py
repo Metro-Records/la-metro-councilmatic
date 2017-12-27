@@ -8,7 +8,7 @@ class AgendaUrlForm(forms.Form):
         label='Agenda URL',
         max_length=500,
         error_messages={ 'required': 'Whoops! Please provide a valid URL.' },
-        widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter URL...', 'id': 'agenda_form'}),
+        widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter URL...', 'id': 'agenda_url'}),
         )
 
     def clean_agenda(self):

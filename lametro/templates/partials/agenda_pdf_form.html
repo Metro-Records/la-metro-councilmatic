@@ -4,8 +4,10 @@
 <form role="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
-    <input type='file' onchange='preview_pdf(this);' />
+    <!-- Upload a file and trigger the previewPDF function -->
+    <input id='pdf-form-input' type='file' onchange='previewPDF(this);' />
     
+    <p class="hidden" id="pdf-form-message"><br>You submitted the below agenda. Does it look correct?</p>
     <iframe
         id="pdf-check-viewer-test"
         class="pdf-viewer hidden"
@@ -21,29 +23,11 @@
         <span class="error-block" style="color: #eb6864;">{{form.agenda.errors}}</span>
     {% endif %}
 
-    <br>
+    <button type="button" class="btn btn-default hidden" id="pdf-form-cancel"><i class="fa fa-times" aria-hidden="true"></i> No, that's not right</button>
 
-    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> No, that's not right</button>
-
-    <button type="submit" class="btn btn-teal" name="{{name}}"><i class="fa fa-check" aria-hidden="true"></i> Looks good! Submit</button>
+    <button type="submit" class="btn btn-teal hidden" id="pdf-form-submit" name="{{name}}"><i class="fa fa-check" aria-hidden="true"></i> Looks good! Submit</button>
 
 </form>
-
-<!-- For PDF preview -->
-<script>
-  function preview_pdf(input) {
-      if (input.files && input.files[0]) {
-          var reader = new FileReader();
-
-          reader.onload = function (e) {
-              $('#pdf-check-viewer-test').removeClass('hidden');
-              document.getElementById('pdf-check-viewer-test').src = e.target.result
-          }
-
-          reader.readAsDataURL(input.files[0]);
-      }
-  };
-</script>
 
 
 
