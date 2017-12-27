@@ -28,6 +28,7 @@ class AgendaPdfForm(forms.Form):
       agenda = forms.FileField(
           label='Agenda PDF',
           error_messages={ 'required': 'Oh no! Please provide a valid PDF.'},
+          widget=forms.FileInput(attrs={'id':'pdf-form-input', 'onchange':'previewPDF(this);'}),
           )
 
       def clean_agenda(self):

@@ -98,24 +98,30 @@ class LAMetroEventDetail(EventDetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object() # Assign object to detail view, so that get_context_data can find this variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
-        url_form = AgendaUrlForm(request.POST)
-        pdf_form = AgendaPdfForm(request.POST, request.FILES)
         event = self.get_object()
         event_slug = event.slug
 
-        # Look for the button name (either 'url_form' or 'pdf_form') in the request.
-        if url_form.is_valid() and 'url_form' in request.POST:
+        # Look for the button name and assign form values.
+        if 'url_form' in request.POST:
+            url_form = AgendaUrlForm(request.POST)
+            pdf_form = AgendaPdfForm()
+        elif 'pdf_form' in request.POST:
+            pdf_form = AgendaPdfForm(request.POST, request.FILES)
+            url_form = AgendaUrlForm()
+
+        # Validate forms and redirect.
+        if url_form.is_valid():
             agenda_url = url_form['agenda'].value()
             document_obj, created = EventDocument.objects.get_or_create(event=event,
                 url=agenda_url, updated_at= timezone.now())
-            document_obj.note = ('Event Document - Manual upload')
+            document_obj.note = ('Event Document - Manual upload URL')
             document_obj.save()
         
             return HttpResponseRedirect('/event/%s' % event_slug)
         elif pdf_form.is_valid() and 'pdf_form' in request.POST:
             agenda_pdf = request.FILES['agenda']
 
-            handle_uploaded_agenda(agenda_pdf)
+            handle_uploaded_agenda(agenda=agenda_pdf, event=event)
 
             return HttpResponseRedirect('/event/%s' % event_slug)
         else:
@@ -207,8 +213,11 @@ class LAMetroEventDetail(EventDetailView):
                     if "Agenda" in document.note:
                         context['agenda_url'] = document.url
                         context['document_timestamp'] = document.updated_at
-                    elif "Manual upload" in document.note:
+                    elif "Manual upload URL" in document.note:
                         context['uploaded_agenda_url'] = document.url
+                        context['document_timestamp'] = document.updated_at
+                    elif "Manual upload PDF" in document.note:
+                        context['uploaded_agenda_pdf'] = document.url
                         context['document_timestamp'] = document.updated_at
                         '''
                         LA Metro Councilmatic uses the adv_cache library to partially cache templates: in the event view, we cache the entire template, except the iframe. (N.B. With this library, the views do not cached, unless explicitly wrapped in a django cache decorator.
@@ -228,16 +237,35 @@ class LAMetroEventDetail(EventDetailView):
         return context
 
 
-def handle_uploaded_agenda(agenda):
-    with open('static/pdf/%s' % agenda.name, 'wb+') as destination:
+def handle_uploaded_agenda(agenda, event):
+    with open('lametro/static/pdf/%s' % agenda.name, 'wb+') as destination:
         for chunk in agenda.chunks():
             destination.write(chunk)
 
+    # Create the document in database
+    document_obj, created = EventDocument.objects.get_or_create(event=event,
+        url='pdf/%s' % agenda.name, updated_at= timezone.now())
+    document_obj.note = ('Event Document - Manual upload PDF')
+    document_obj.save()
+
+
+# from fabric.api import *
+# # Hosts to deploy onto
+# # env.hosts = ['www1.example.com', 'www2.example.com']
+
+# # Where your project code lives on the server
+# env.project_root = '/home/datamade/lametro-staging'
+
+# def deploy_static():
+#     with cd(env.project_root):
+#         run('./manage.py collectstatic -v0 --noinput')
+
+
 def delete_submission(request, event_slug):
     event = Event.objects.get(slug=event_slug)
-    event_doc = EventDocument.objects.filter(event_id=event.ocd_id).get(note__icontains='Manual upload')
-    if event_doc: 
-        event_doc.delete()
+    event_doc = EventDocument.objects.filter(event_id=event.ocd_id, note__icontains='Manual upload')
+    for e in event_doc: 
+        e.delete()
 
     return HttpResponseRedirect('/event/%s' % event_slug)
 

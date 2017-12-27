@@ -5,7 +5,7 @@
     {% csrf_token %}
     
     <!-- Upload a file and trigger the previewPDF function -->
-    <input id='pdf-form-input' type='file' onchange='previewPDF(this);' />
+    {{form.agenda}}
     
     <p class="hidden" id="pdf-form-message"><br>You submitted the below agenda. Does it look correct?</p>
     <iframe
@@ -24,7 +24,6 @@
     {% endif %}
 
     <button type="button" class="btn btn-default hidden" id="pdf-form-cancel"><i class="fa fa-times" aria-hidden="true"></i> No, that's not right</button>
-
     <button type="submit" class="btn btn-teal hidden" id="pdf-form-submit" name="{{name}}"><i class="fa fa-check" aria-hidden="true"></i> Looks good! Submit</button>
 
 </form>
