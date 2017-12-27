@@ -3,7 +3,6 @@ function full_text_doc_url_js(url, base_url) {
     encoded_url = encodeURIComponent(url)
     doc_url = base_url + '?filename=agenda&document_url=' + encoded_url
 
-    console.log(doc_url)
     return doc_url 
 };
 

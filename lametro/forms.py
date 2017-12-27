@@ -1,6 +1,7 @@
 import requests
 
 from django import forms
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 class AgendaUrlForm(forms.Form):
 
@@ -34,9 +35,7 @@ class AgendaPdfForm(forms.Form):
       def clean_agenda(self):
           agenda_pdf = self.cleaned_data['agenda']
 
-          print("cleaning...", agenda_pdf.name.lower())
-
-          if agenda_pdf.name.lower().endswith('pdf'):
+          if isinstance(agenda_pdf, InMemoryUploadedFile) and agenda_pdf.name.lower().endswith('pdf'):
               return agenda_pdf
           else:
               raise forms.ValidationError('File type not supported. Please submit a PDF.')
