@@ -1,6 +1,7 @@
 import pytest
 
 from django.core.urlresolvers import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from councilmatic_core.models import Event, EventDocument, Bill, RelatedBill
 from lametro.models import LAMetroEvent
@@ -17,8 +18,6 @@ def test_agenda_creation(django_db_setup):
     document_obj, created = EventDocument.objects.get_or_create(event=event, url='https://metro.legistar.com/View.ashx?M=A&ID=545192&GUID=19F05A99-F3FB-4354-969F-67BE32A46081')
     assert not created == True
 
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.files.uploadedfile import InMemoryUploadedFile
 
 def test_agenda_pdf_form_submit():
     '''
@@ -33,6 +32,17 @@ def test_agenda_pdf_form_submit():
         assert agenda_pdf_form.is_valid() == True
 
 
+def test_agenda_pdf_form_error():
+    '''
+    This unit test checks that a non-pdf raises an error.
+    '''
+
+    with open('lametro/tests/test_image.gif', 'rb') as agenda:
+        bad_agenda_file = agenda.read()
+
+        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_image.gif', bad_agenda_file, content_type='image/gif')})
+
+        assert agenda_pdf_form.is_valid() == False
 
 
 @pytest.mark.django_db

@@ -221,11 +221,7 @@
         $('#pdf-form-cancel').on('click', function() {
             document.getElementById('pdf-check-viewer-test').src = '';
             document.getElementById('pdf-form-input').value= null;
-
-            $('#pdf-form-message').addClass('hidden');
-            $('#pdf-check-viewer-test').addClass('hidden');
-            $('#pdf-form-cancel').addClass('hidden');
-            $('#pdf-form-submit').addClass('hidden');
+            $('#pdf-form-message, #pdf-check-viewer-test, #pdf-form-cancel, #pdf-form-submit').addClass('hidden');
         });
 
         // for reference purposes
