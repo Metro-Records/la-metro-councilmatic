@@ -26,6 +26,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
+from django.core import management
 
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
@@ -249,17 +250,8 @@ def handle_uploaded_agenda(agenda, event):
     document_obj.note = ('Event Document - Manual upload PDF')
     document_obj.save()
 
-
-# from fabric.api import *
-# # Hosts to deploy onto
-# # env.hosts = ['www1.example.com', 'www2.example.com']
-
-# # Where your project code lives on the server
-# env.project_root = '/home/datamade/lametro-staging'
-
-# def deploy_static():
-#     with cd(env.project_root):
-#         run('./manage.py collectstatic -v0 --noinput')
+    # Collect static to render PDF on server
+    management.call_command('collectstatic', 'noinput')
 
 
 def delete_submission(request, event_slug):
