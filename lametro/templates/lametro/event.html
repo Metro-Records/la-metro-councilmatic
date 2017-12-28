@@ -55,9 +55,11 @@
                     </p>
                     {% endif %}
               
+                    <!-- Check that the database has an agenda to display -->
                     {% if agenda_url or uploaded_agenda_url or uploaded_agenda_pdf %}
 
-                    {% if uploaded_agenda_url or uploaded_agenda_pdf and not agenda_url%}
+                    <!-- An event can have both manually uploaded and auto-imported agendas, i.e., if a Metro Admin uploads an agenda and then import_data runs. Give the Admin an option to delete the manually uploaded agenda, but ONLY if an auto-imported agenda does not exist. -->
+                    {% if not agenda_url%}
                         {% if user.is_authenticated %}
                             <div class="well">
                                 <p>An admin submitted a URL to render this agenda. Not seeing what you expect? Delete this agenda, and afterwards, you can resubmit.</p>

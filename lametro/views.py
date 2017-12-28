@@ -251,7 +251,7 @@ def handle_uploaded_agenda(agenda, event):
     document_obj.save()
 
     # Collect static to render PDF on server
-    management.call_command('collectstatic', 'noinput')
+    management.call_command('collectstatic', '--noinput')
 
 
 def delete_submission(request, event_slug):
