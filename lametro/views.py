@@ -11,6 +11,7 @@ import requests
 import sqlalchemy as sa
 from collections import namedtuple
 import json as simplejson
+import os
 
 from haystack.query import SearchQuerySet
 from django.db import transaction, connection, connections
@@ -238,13 +239,13 @@ class LAMetroEventDetail(EventDetailView):
 
 
 def handle_uploaded_agenda(agenda, event):
-    with open('lametro/static/pdf/%s' % agenda.name, 'wb+') as destination:
+    with open('lametro/static/pdf/agenda-%s.pdf' % event.slug, 'wb+') as destination:
         for chunk in agenda.chunks():
             destination.write(chunk)
 
     # Create the document in database
     document_obj, created = EventDocument.objects.get_or_create(event=event,
-        url='pdf/%s' % agenda.name, updated_at= timezone.now())
+        url='pdf/agenda-%s.pdf' % event.slug, updated_at= timezone.now())
     document_obj.note = ('Event Document - Manual upload PDF')
     document_obj.save()
 
@@ -264,7 +265,14 @@ def handle_uploaded_agenda(agenda, event):
 def delete_submission(request, event_slug):
     event = Event.objects.get(slug=event_slug)
     event_doc = EventDocument.objects.filter(event_id=event.ocd_id, note__icontains='Manual upload')
-    for e in event_doc: 
+
+    for e in event_doc:
+        # Remove stored PDF from Metro app.
+        if 'Manual upload PDF' in e.note:
+            try:
+                os.remove('lametro/static/%s' % e.url )
+            except OSError:
+                pass
         e.delete()
 
     return HttpResponseRedirect('/event/%s' % event_slug)
