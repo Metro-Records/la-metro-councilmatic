@@ -12,11 +12,7 @@ function previewPDF(input) {
 
         reader.onload = function (e) {
             // Show buttons and preview
-            $('#pdf-form-message').removeClass('hidden');
-            $('#pdf-check-viewer-test').removeClass('hidden');
-            $('#pdf-form-cancel').removeClass('hidden');
-            $('#pdf-form-submit').removeClass('hidden');
-
+            $('#pdf-form-message, #pdf-check-viewer-test, #pdf-form-cancel, #pdf-form-submit').removeClass('hidden');
             document.getElementById('pdf-check-viewer-test').src = e.target.result
         }
 
