@@ -8,14 +8,22 @@ mkdir -p /home/datamade/la-metro-councilmatic
 if [ "$DEPLOYMENT_GROUP_NAME" == "staging" ]
 then
     # Preserve uploaded PDFs
-    mv /home/datamade/lametro-staging/lametro/static/pdf/agenda-*.pdf /tmp
+    if /home/datamade/lametro-staging/lametro/static/pdf/agenda-*.pdf
+    then
+      mv /home/datamade/lametro-staging/lametro/static/pdf/agenda-*.pdf /tmp
+    fi
+
     rm -Rf /home/datamade/lametro-staging
     mkdir -p /home/datamade/lametro-staging
 fi
 if [ "$DEPLOYMENT_GROUP_NAME" == "production" ]
 then
     # Preserve uploaded PDFs
-    mv /home/datamade/lametro/lametro/static/pdf/agenda-*.pdf /tmp
+    if /home/datamade/lametro/lametro/static/pdf/agenda-*.pdf
+    then
+      mv /home/datamade/lametro/lametro/static/pdf/agenda-*.pdf /tmp
+    fi
+
     rm -Rf /home/datamade/lametro
     mkdir -p /home/datamade/lametro
 fi
