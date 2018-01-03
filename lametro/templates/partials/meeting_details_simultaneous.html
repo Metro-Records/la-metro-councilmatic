@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load lametro_extras %}
 
 <!-- Meeting info -->
 <div class="col-xs-6">
@@ -8,8 +9,8 @@
             <p>
                 {{ meeting.link_html | safe }}<br/>
                 <span class="small text-muted">{{ meeting.description }}</span>
-                {% if meeting.documents.all %}   
-                    <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all.first.url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a><br>
+                {% if meeting.documents.all %}  
+                    <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a><br>
                 {% endif %}
             </p>
         {% endfor %}

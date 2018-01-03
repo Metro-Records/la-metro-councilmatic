@@ -45,6 +45,7 @@ class LAMetroIndexView(IndexView):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
         # Determine if current_meeting returns a queryset or object
+        extra['current_meeting'] = None
         try: 
             len(self.event_model.current_meeting())
             extra['current_meeting_queryset'] = self.event_model.current_meeting()
