@@ -32,7 +32,7 @@
 
             <p class="small">
                 {% if 'https://metro.legistar.com' in event.source_url %}
-                    {% if not agenda_url and not uploaded_agenda_url %}
+                    {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
                         Not seeing an agenda? Please use this link:<br>
                     {% endif %}
                     <a href='{{event.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
@@ -55,9 +55,11 @@
                     </p>
                     {% endif %}
               
-                    {% if agenda_url or uploaded_agenda_url %}
+                    <!-- Check that the database has an agenda to display -->
+                    {% if agenda_url or uploaded_agenda_url or uploaded_agenda_pdf %}
 
-                    {% if uploaded_agenda_url and not agenda_url%}
+                    <!-- An event can have both manually uploaded and auto-imported agendas, i.e., if a Metro Admin uploads an agenda and then import_data runs. Give the Admin an option to delete the manually uploaded agenda, but ONLY if an auto-imported agenda does not exist. -->
+                    {% if not agenda_url%}
                         {% if user.is_authenticated %}
                             <div class="well">
                                 <p>An admin submitted a URL to render this agenda. Not seeing what you expect? Delete this agenda, and afterwards, you can resubmit.</p>
@@ -70,7 +72,10 @@
                         <div class="col-xs-8">
                             <h4>Agenda</h4>
                             <p>
-                                <a id="pdf-download-link" target='_blank' href={% if agenda_url %}'{{agenda_url}}'{% elif uploaded_agenda_url %}'{{uploaded_agenda_url}}'{% endif %}><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda</a>
+                                <a id="pdf-download-link" target='_blank' href={% if agenda_url %}'{{agenda_url}}'{% elif uploaded_agenda_url %}'{{uploaded_agenda_url}}'{% elif uploaded_agenda_pdf %}'/static/{{uploaded_agenda_pdf}}'{% endif %}>
+                                    <i class="fa fa-file-text-o" aria-hidden="true"></i> 
+                                    Download Agenda
+                                </a>
                             </p>
                             {% if packet_url %}
                             <p>
@@ -99,7 +104,7 @@
 
                         </div>
                     </div>
-
+   
                     <iframe
                         id="pdf-embed-agenda"
                         class="pdf-viewer hidden-xs"
@@ -108,19 +113,64 @@
                         seamless="true"
                         width="100%"
                         height="600px"
-                        src={% if agenda_url %}"/pdfviewer/?{{agenda_url|full_text_doc_url}}"{% elif uploaded_agenda_url %}"/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}"{% endif %}>
+                        src={% if agenda_url %}"/pdfviewer/?{{agenda_url|full_text_doc_url}}"{% elif uploaded_agenda_url %}"/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}"{% elif uploaded_agenda_pdf %}"{% static uploaded_agenda_pdf %}"{% endif %}>
                     </iframe>
 
                     {% else %}
                         {% if user.is_authenticated %}
-                            <div class="well">
-                                <h4>Agenda upload</h4>
-                                
-                                <p>This event does not have an agenda. To add one, please find the corresponding agenda URL on Legistar, and paste it here.</p>
-                                
-                                {% include 'partials/agenda_url_form.html' %}
-                                
+
+                         <p>This event does not have an agenda. To add one, please provide a link to Legistar or directly upload a PDF. <span class="text-uppercase"><strong>Only upload a PDF during a Legistar outage!</strong></span></p>
+                         <br>
+
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                          <!-- URL Upload -->
+                          <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingOne">
+                              <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseURL" aria-expanded="true" aria-controls="collapseURL">
+                                  <i class="fa fa-link" aria-hidden="true"></i> Upload an Agenda URL
+                                </a>
+                              </h4>
                             </div>
+                            <div id="collapseURL" class="panel-collapse collapse {% if url_form.errors %}in{% endif %}" role="tabpanel" aria-labelledby="headingOne">
+                              <div class="panel-body">
+                                                                                 
+                                <p>Find the corresponding agenda URL on Legistar, and paste it here.</p> 
+                                <!-- The variable "name" identifies the modal and form submit button -->
+                                {% with form=url_form name='url_form' %}                  
+                                    {% include 'partials/agenda_url_form.html' %}  
+                                {% endwith %}                     
+                                                   
+                              </div>
+                            </div>
+                          </div>
+                          <!-- PDF Upload -->
+                          <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingTwo">
+                              <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapsePDF" aria-expanded="false" aria-controls="collapsePDF">
+                                  <i class="fa fa-file-text" aria-hidden="true"></i> Upload an Agenda PDF
+                                </a>
+                              </h4>
+                            </div>
+                            <div id="collapsePDF" class="panel-collapse collapse {% if pdf_form.errors %}in{% endif %}" role="tabpanel" aria-labelledby="headingTwo">
+                              <div class="panel-body">
+                                {% if legistar_ok %}
+                                    <div class="alert alert-info" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> <strong>Caution!</strong> Our system does NOT detect a Legistar outage. Do not use this option.</div>
+                                {% else %}
+                                    <div class="alert alert-info" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Our system detects a Legistar outage. Proceed with this option but exercise caution.</div>
+                                {% endif %}
+
+                                <!-- The variable "name" identifies the modal and form submit button -->
+                                {% with form=pdf_form name='pdf_form' %}                  
+                                    {% include 'partials/agenda_pdf_form.html' %}  
+                                {% endwith %}   
+                                
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         {% else %}
                         <p>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings. If you are unable to access an Agenda within either of these time frames, please visit: <a href="http://metro.legistar.com/calendar.aspx" target="_blank">http://metro.legistar.com/calendar.aspx</a>.</p>
                         {% endif %}
@@ -158,20 +208,21 @@
 {% block extra_js %}
     <script>
     $(document).ready(function() {
-        $('#agendaModal').on('shown.bs.modal', function (e) {  
-            e.preventDefault()
-            agenda_url_submitted = $('#agenda_url').val()
-            agenda_url_clean = full_text_doc_url(agenda_url_submitted)
+        // Admin view: Display preview of event document submitted via URL
+        $('#url_form_modal').on('shown.bs.modal', function (e) {  
+            e.preventDefault();
+            agenda_url_submitted = $('#agenda_url').val();
+            base_url = '{{base_url}}'
+            agenda_url_clean = full_text_doc_url_js(agenda_url_submitted, base_url);
             document.getElementById('pdf-embed-agenda-check').src = agenda_url_clean
         });
 
-        function full_text_doc_url(url) {
-            base_url = '{{base_url}}'
-            encoded_url = encodeURIComponent(url)
-            doc_url = base_url + '?filename=agenda&document_url=' + encoded_url
-
-            return doc_url 
-        };
+        // Admin view: Cancel submission of PDF
+        $('#pdf-form-cancel').on('click', function() {
+            document.getElementById('pdf-check-viewer-test').src = '';
+            document.getElementById('pdf-form-input').value= null;
+            $('#pdf-form-message, #pdf-check-viewer-test, #pdf-form-cancel, #pdf-form-submit').addClass('hidden');
+        });
 
         // for reference purposes
         console.log( "OCD ID: {{event.ocd_id}}" )

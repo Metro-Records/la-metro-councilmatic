@@ -172,3 +172,14 @@ def updates_made(event_id):
     else:
         updated = document.updated_at < event.updated_at
         return updated 
+
+@register.filter
+def find_agenda_url(all_documents):
+    '''
+    This filter determines how to format the URL link, particularly, in the case of manually uploaded agenda.
+    '''
+    valid_urls = [x.url for x in all_documents if (x.note == 'Agenda' or x.note == 'Event Document - Manual upload URL')]
+    pdf_url = [('static/' + x.url) for x in all_documents if x.note == 'Event Document - Manual upload PDF']
+    valid_urls += pdf_url
+
+    return valid_urls[0]

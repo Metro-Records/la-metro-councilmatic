@@ -11,6 +11,7 @@ import requests
 import sqlalchemy as sa
 from collections import namedtuple
 import json as simplejson
+import os
 
 from haystack.query import SearchQuerySet
 from django.db import transaction, connection, connections
@@ -25,11 +26,12 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, redirect
+from django.core import management
 
 from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
-from lametro.forms import AgendaUrlForm
+from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
@@ -43,6 +45,7 @@ class LAMetroIndexView(IndexView):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
         # Determine if current_meeting returns a queryset or object
+        extra['current_meeting'] = None
         try: 
             len(self.event_model.current_meeting())
             extra['current_meeting_queryset'] = self.event_model.current_meeting()
@@ -92,41 +95,52 @@ class LABillDetail(BillDetailView):
         return context
 
 
-def delete_submission(request, event_slug):
-    event = Event.objects.get(slug=event_slug)
-    event_doc = EventDocument.objects.filter(event_id=event.ocd_id).get(note__icontains='Manual upload')
-    if event_doc: 
-        event_doc.delete()
-
-    return HttpResponseRedirect('/event/%s' % event_slug)
-
-
 class LAMetroEventDetail(EventDetailView):
     model = LAMetroEvent
     template_name = 'lametro/event.html'
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object() # Assign object to detail view, so that get_context_data can find this variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
-        form = AgendaUrlForm(request.POST)
         event = self.get_object()
         event_slug = event.slug
 
-        if form.is_valid():
-            agenda_url = form['agenda_url'].value()
+        # Look for the button name and assign form values.
+        if 'url_form' in request.POST:
+            url_form = AgendaUrlForm(request.POST)
+            pdf_form = AgendaPdfForm()
+        elif 'pdf_form' in request.POST:
+            pdf_form = AgendaPdfForm(request.POST, request.FILES)
+            url_form = AgendaUrlForm()
+
+        # Validate forms and redirect.
+        if url_form.is_valid():
+            agenda_url = url_form['agenda'].value()
             document_obj, created = EventDocument.objects.get_or_create(event=event,
                 url=agenda_url, updated_at= timezone.now())
-            document_obj.note = ('Event Document - Manual upload')
+            document_obj.note = ('Event Document - Manual upload URL')
             document_obj.save()
         
             return HttpResponseRedirect('/event/%s' % event_slug)
+        elif pdf_form.is_valid() and 'pdf_form' in request.POST:
+            agenda_pdf = request.FILES['agenda']
+
+            handle_uploaded_agenda(agenda=agenda_pdf, event=event)
+
+            return HttpResponseRedirect('/event/%s' % event_slug)
         else:
-            return self.render_to_response(self.get_context_data(form=form))
+            return self.render_to_response(self.get_context_data(url_form=url_form, pdf_form=pdf_form))
 
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
         # Create URL for packet download.
         event = context['event']
+
+        # Metro admins should see a status report if Legistar is down.
+        # GET the calendar page, which contains relevant URL for agendas.
+        if self.request.user.is_authenticated():
+            r = requests.get('https://metro.legistar.com/calendar.aspx')
+            context['legistar_ok'] = r.ok
 
         packet_slug = event.ocd_id.replace('/', '-')
         try:
@@ -202,8 +216,11 @@ class LAMetroEventDetail(EventDetailView):
                     if "Agenda" in document.note:
                         context['agenda_url'] = document.url
                         context['document_timestamp'] = document.updated_at
-                    elif "Manual upload" in document.note:
+                    elif "Manual upload URL" in document.note:
                         context['uploaded_agenda_url'] = document.url
+                        context['document_timestamp'] = document.updated_at
+                    elif "Manual upload PDF" in document.note:
+                        context['uploaded_agenda_pdf'] = document.url
                         context['document_timestamp'] = document.updated_at
                         '''
                         LA Metro Councilmatic uses the adv_cache library to partially cache templates: in the event view, we cache the entire template, except the iframe. (N.B. With this library, the views do not cached, unless explicitly wrapped in a django cache decorator.
@@ -214,7 +231,44 @@ class LAMetroEventDetail(EventDetailView):
             context['related_board_reports'] = related_board_reports
             context['base_url'] = PIC_BASE_URL # Give JS access to this variable
 
+            # Render forms if not a POST request
+            if 'url_form' not in context:
+                context['url_form'] = AgendaUrlForm()
+            if 'pdf_form' not in context:
+                context['pdf_form'] = AgendaPdfForm()
+
         return context
+
+
+def handle_uploaded_agenda(agenda, event):
+    with open('lametro/static/pdf/agenda-%s.pdf' % event.slug, 'wb+') as destination:
+        for chunk in agenda.chunks():
+            destination.write(chunk)
+
+    # Create the document in database
+    document_obj, created = EventDocument.objects.get_or_create(event=event,
+        url='pdf/agenda-%s.pdf' % event.slug, updated_at= timezone.now())
+    document_obj.note = ('Event Document - Manual upload PDF')
+    document_obj.save()
+
+    # Collect static to render PDF on server
+    management.call_command('collectstatic', '--noinput')
+
+
+def delete_submission(request, event_slug):
+    event = Event.objects.get(slug=event_slug)
+    event_doc = EventDocument.objects.filter(event_id=event.ocd_id, note__icontains='Manual upload')
+
+    for e in event_doc:
+        # Remove stored PDF from Metro app.
+        if 'Manual upload PDF' in e.note:
+            try:
+                os.remove('lametro/static/%s' % e.url )
+            except OSError:
+                pass
+        e.delete()
+
+    return HttpResponseRedirect('/event/%s' % event_slug)
 
 
 class LAMetroEventsView(EventsView):

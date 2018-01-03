@@ -7,6 +7,7 @@ settings_deployment.py
 # Collected Static Files
 static/**
 **/static/images/ocd-person/*.jpg
+**/static/pdf/agenda-*.pdf
 
 solr-4.10.4/**
 

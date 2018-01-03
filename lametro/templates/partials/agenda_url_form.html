@@ -1,24 +1,25 @@
 {% load extras %}
 {% load lametro_extras %}
 
-<form role="form" method="POST">
+<form role="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="text" class="form-control" id="agenda_url" name="agenda_url" placeholder="Enter URL...">
+    
+    {{form.agenda}}
 
-    {% if form.agenda_url.errors %}
+    {% if form.agenda.errors %}
         <br> 
-        <span class="error-block" style="color: #eb6864;">{{form.agenda_url.errors}}</span>
+        <span class="error-block" style="color: #eb6864;">{{form.agenda.errors}}</span>
     {% endif %}
 
     <br>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#agendaModal">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{name}}_modal">
       <i class="fa fa-arrow-right" aria-hidden="true"></i> Preview and Submit
     </button>
 
     <!-- Modal -->
-    <div class="modal fade" id="agendaModal" tabindex="-1" role="dialog" aria-labelledby="agendaModalTitle" aria-hidden="true">
+    <div class="modal fade" id="{{name}}_modal" tabindex="-1" role="dialog" aria-labelledby="agendaModalTitle" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -36,19 +37,17 @@
                   src="">
               </iframe>
           </div>
+
           <div class="modal-footer">
-
             <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> No, that's not right</button>
-
-            <button type="submit" class="btn btn-teal"><i class="fa fa-check" aria-hidden="true"></i> Looks good! Submit</button>
-
+            <button type="submit" class="btn btn-teal" name="{{name}}"><i class="fa fa-check" aria-hidden="true"></i> Looks good! Submit</button>
           </div>
         </div>
       </div>
     </div>
 
-    
 </form>
+
 
 
 

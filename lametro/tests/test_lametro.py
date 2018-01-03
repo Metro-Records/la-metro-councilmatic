@@ -1,17 +1,49 @@
 import pytest
 
 from django.core.urlresolvers import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from councilmatic_core.models import Event, EventDocument, Bill, RelatedBill
 from lametro.models import LAMetroEvent
 from lametro.templatetags.lametro_extras import updates_made
+from lametro.forms import AgendaPdfForm
 
-# Test that the same agenda url does not get added twice.
+# Tests for adding agendas manually.
 @pytest.mark.django_db
 def test_agenda_creation(django_db_setup):
+    '''
+    Test that the same agenda url does not get added twice.
+    '''
     event = Event.objects.get(ocd_id='ocd-event/17fdaaa3-0aba-4df0-9893-2c2e8e94d18d')
     document_obj, created = EventDocument.objects.get_or_create(event=event, url='https://metro.legistar.com/View.ashx?M=A&ID=545192&GUID=19F05A99-F3FB-4354-969F-67BE32A46081')
     assert not created == True
+
+
+def test_agenda_pdf_form_submit():
+    '''
+    This unit test checks that a pdf validates the form.
+    '''
+
+    with open('lametro/tests/test_agenda.pdf', 'rb') as agenda:
+        agenda_file = agenda.read()
+
+        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_agenda.pdf', agenda_file, content_type='application/pdf')})
+    
+        assert agenda_pdf_form.is_valid() == True
+
+
+def test_agenda_pdf_form_error():
+    '''
+    This unit test checks that a non-pdf raises an error.
+    '''
+
+    with open('lametro/tests/test_image.gif', 'rb') as agenda:
+        bad_agenda_file = agenda.read()
+
+        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_image.gif', bad_agenda_file, content_type='image/gif')})
+
+        assert agenda_pdf_form.is_valid() == False
+
 
 @pytest.mark.django_db
 def test_updates_made_true(django_db_setup):
