@@ -45,12 +45,19 @@ class LAMetroIndexView(IndexView):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
         # Determine if current_meeting returns a queryset or object
-        extra['current_meeting'] = None
-        try: 
-            len(self.event_model.current_meeting())
+        # extra['current_meeting'] = None
+        # try: 
+        #     len(self.event_model.current_meeting())
+        #     extra['current_meeting_queryset'] = self.event_model.current_meeting()
+        # except TypeError:
+        #     extra['current_meeting'] = self.event_model.current_meeting()
+
+        if len(self.event_model.current_meeting()) > 1:
             extra['current_meeting_queryset'] = self.event_model.current_meeting()
-        except TypeError:
-            extra['current_meeting'] = self.event_model.current_meeting()
+        elif len(self.event_model.current_meeting()) == 1:
+            extra['current_meeting'] = self.event_model.current_meeting().first()
+        else: 
+            extra['current_meeting'] = None
 
         # Get the custom-built Metro media player URL
         if extra['current_meeting']:

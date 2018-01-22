@@ -32,9 +32,11 @@ def parse_subject(text):
 def calculate_current_meetings(found_events, now_with_buffer):
     earliest_start = found_events.first().start_time
     latest_start = found_events.last().start_time
-    # Sometimes multiple events happen at the same time (though in reality, they occur one-after-the-other). Example: the committee events at 1:00 on 05/17/2017.
-    # Check for this situation, and then determine if these events include a board meeting.
-    # If current events do not include a board meeting, the end time should be one hour.
+    # Sometimes, the found_events include just one event object. Example: the first committee meeting of the day - 9:00 am on 01/18/2018
+    # Sometimes, multiple events happen at the same time (though in reality, they occur one-after-the-other). Example: the committee events at 1:00 pm on 05/17/2017.
+    # Check for these situations, and then determine if the found_events include a board meeting.
+    # If so, then the start_time should remain greater than "three hours ago."
+    # If not, then the start_time should be determined by that of the next meeting. 
     if earliest_start == latest_start:
         if found_events.filter(name__icontains='Board Meeting'):
             # Custom order: show the board meeting first.
@@ -42,23 +44,34 @@ def calculate_current_meetings(found_events, now_with_buffer):
             # false comes before true.
             return found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
         else:
-            one_hour_ago = now_with_buffer - timedelta(hours=1)
-            
-            return found_events.filter(start_time__gt=one_hour_ago)
+            event = found_events.first()
 
+            next_event_start_time = event.get_next_by_start_time().start_time
+            meeting_duration = next_event_start_time - event.start_time
+            # This can be one hour or greater, e.g., 1 hour and 9 minutes
+            time_ago = now_with_buffer - meeting_duration
+
+            return found_events.filter(start_time__gt=time_ago)
+
+    # Most often, the found_events includes several event objects with different start times. 
+    # Why? The found_events ibject includes all events from three hours ago.
+    # Determine if found_events has committee events.
     else:
         # To find committee events...
         event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name)]
 
         if event_names:
-            # Set meeting time to one hour
-            one_hour_ago = now_with_buffer - timedelta(hours=1)
-            
-            found_events = found_events.filter(start_time__gt=one_hour_ago)
+            event = found_events.last()
 
-            if len(found_events) > 1:
-                return found_events
-            else:
-                return found_events.first()
+            next_event_start_time = event.get_next_by_start_time().start_time
+            meeting_duration = next_event_start_time - event.start_time
+            # meeting_duration can be one hour or greater, e.g., 1 hour and 9 minutes.
+            # However, meeting_duration cannot be greater than 90 minutes. 
+            if meeting_duration > timedelta(minutes=90):
+                meeting_duration = timedelta(minutes=90)
+
+            time_ago = now_with_buffer - meeting_duration
+
+            return found_events.filter(start_time__gt=time_ago)
         else:
-            return found_events.first()                
+            return found_events              
