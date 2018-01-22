@@ -204,7 +204,6 @@ class LAMetroEvent(Event):
         # This method returns a list (with zero or more elements).
         # six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
         # three_hours_ago = datetime.now(app_timezone) - timedelta(hours=3)
-
         found_events = cls.objects.filter(start_time__lt=six_minutes_from_now)\
                   .filter(start_time__gt=three_hours_ago)\
                   .exclude(status='cancelled')\
@@ -212,24 +211,6 @@ class LAMetroEvent(Event):
 
         if found_events:
             return calculate_current_meetings(found_events, six_minutes_from_now)
-
-            # if len(found_events) > 1: 
-            #     return calculate_current_meetings(found_events, six_minutes_from_now)   
-            # else:
-            #     # A board meeting lasts 3 hours, and a committee event lasts 1 hour.
-            #     # Change the value of "_hour_ago" for committee meetings to 1 hour.
-            #     if found_events.filter(name__icontains='Board Meeting'):
-            #         return found_events.first()
-            #     else:
-            #         event = found_events.first()
-            #         # Successive committee events last until six minutes before the next one begins.
-            #         # Find when the next event begins, the duration of the curent meting.
-            #         next_event_start_time = event.get_next_by_start_time().start_time
-            #         meeting_duration = next_event_start_time - event.start_time
-            #         # This will be one hour or greater, e.g., 1 hour and 9 minutes
-            #         time_ago = six_minutes_from_now - meeting_duration
-
-            #         return found_events.filter(start_time__gt=time_ago).first()
 
 
     @classmethod
