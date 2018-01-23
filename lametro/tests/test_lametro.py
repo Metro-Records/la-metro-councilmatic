@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime, timedelta
 
 from django.core.urlresolvers import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -7,6 +8,7 @@ from councilmatic_core.models import Event, EventDocument, Bill, RelatedBill
 from lametro.models import LAMetroEvent
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
+from lametro.utils import calculate_current_meetings
 
 # Tests for adding agendas manually.
 @pytest.mark.django_db
@@ -84,5 +86,46 @@ def test_related_bill_relation(django_db_setup, client):
 
     assert related_bill.related_bill_identifier == '2017-0443'
 
+@pytest.mark.django_db
+def test_current_committee_meeting_first(django_db_setup):
+    '''
+    This test insures that the `calculate_current_meetings` function returns the first committee event, in a succession of events.
+    For this case, the meeting is at 11:00 am, and a 12:15 pm meeting follows.
+    '''
+    # Set the time to 10:55 pm (i.e., five minutes before an 11:00 event).
+    six_minutes_from_now = datetime(2017,5,18,10,55) + timedelta(minutes=6)
+    three_hours_ago = datetime(2017,5,18,10,55) - timedelta(hours=3)
+    found_events = Event.objects.filter(start_time__lt=six_minutes_from_now)\
+              .filter(start_time__gt=three_hours_ago)\
+              .exclude(status='cancelled')\
+              .order_by('start_time')
 
+    assert len(found_events) == 1
 
+    current_meeting = calculate_current_meetings(found_events, six_minutes_from_now)
+
+    assert len(current_meeting) == 1
+    assert current_meeting.first().name == 'Construction Committee'
+
+@pytest.mark.django_db
+def test_current_committee_meeting_last(django_db_setup):
+    '''
+    This test insures that the `calculate_current_meetings` function returns the second and last committee event, in a succession of events.
+    For this case, the meeting is at 12:15 pm, and no other events follow.
+    '''
+    # Set the time to 12:10 pm (i.e., five minutes before an 12:15 event).
+    six_minutes_from_now = datetime(2017,5,18,12,10) + timedelta(minutes=6)
+    three_hours_ago = datetime(2017,5,18,12,10) - timedelta(hours=3)
+    found_events = Event.objects.filter(start_time__lt=six_minutes_from_now)\
+              .filter(start_time__gt=three_hours_ago)\
+              .exclude(status='cancelled')\
+              .order_by('start_time')
+
+    assert len(found_events) > 1
+    
+    current_meeting = calculate_current_meetings(found_events, six_minutes_from_now)
+
+    assert len(current_meeting) == 1
+    assert current_meeting.first().name == 'System Safety, Security and Operations Committee'
+
+    

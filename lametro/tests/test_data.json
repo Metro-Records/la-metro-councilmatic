@@ -16,12 +16,25 @@
         "pk": 2, 
         "fields": {
             "ocd_id": "ocd-event/c17e3544-dde3-4e40-8061-6163025298c7", 
-            "ocd_created_at": "2017-05-27 11:10:46.574-05", 
-            "ocd_updated_at": "2017-05-27 11:10:46.574-05", 
+            "ocd_created_at": "2017-05-28 11:10:46.574-05", 
+            "ocd_updated_at": "2017-05-28 11:10:46.574-05", 
             "name": "Regular Board Meeting", 
             "start_time": "2017-07-27 12:15:00-05",  
             "updated_at": "2017-07-25 11:06:47.1853",
             "slug": "regular-board-meeting-6163025298c7"
+        } 
+    },
+    {
+        "model": "councilmatic_core.event", 
+        "pk": 3, 
+        "fields": {
+            "ocd_id": "ocd-event/bf574f9a-1d38-4f49-85d9-d643d06da8f8", 
+            "ocd_created_at": "2017-05-10 11:10:46.574-05", 
+            "ocd_updated_at": "2017-05-10 11:10:46.574-05", 
+            "name": "Construction Committee", 
+            "start_time": "2017-05-18 11:00:00-05",  
+            "updated_at": "2017-05-10 11:10:46.574-05",
+            "slug": "construction-committee-d643d06da8f8"
         } 
     },
     {
