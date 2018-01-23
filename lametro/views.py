@@ -44,27 +44,17 @@ class LAMetroIndexView(IndexView):
     def extra_context(self):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
-        # Determine if current_meeting returns a queryset or object
-        # extra['current_meeting'] = None
-        # try: 
-        #     len(self.event_model.current_meeting())
-        #     extra['current_meeting_queryset'] = self.event_model.current_meeting()
-        # except TypeError:
-        #     extra['current_meeting'] = self.event_model.current_meeting()
-
-        if len(self.event_model.current_meeting()) > 1:
-            extra['current_meeting_queryset'] = self.event_model.current_meeting()
-        elif len(self.event_model.current_meeting()) == 1:
-            extra['current_meeting'] = self.event_model.current_meeting().first()
-        else: 
-            extra['current_meeting'] = None
-
+        extra['current_meeting'] = self.event_model.current_meeting()
         # Get the custom-built Metro media player URL
+        # Use the generic link when multiple meetings happen concurrently
         if extra['current_meeting']:
-            guid = extra['current_meeting'].guid
-            media_url = 'http://metro.granicus.com/mediaplayer.php?event_id={}'.format(guid)
-            response = requests.get(media_url)
-            if not response.ok:
+            if len(extra['current_meeting']) == 1:
+                guid = extra['current_meeting'].first().guid
+                media_url = 'http://metro.granicus.com/mediaplayer.php?event_id={}'.format(guid)
+                response = requests.get(media_url)
+                if not response.ok:
+                    media_url = 'http://metro.granicus.com/MediaPlayer.php?camera_id=2'
+            else:
                 media_url = 'http://metro.granicus.com/MediaPlayer.php?camera_id=2'
 
             extra['media_url'] = media_url
