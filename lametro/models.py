@@ -191,11 +191,11 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        # Test
-        now = datetime.now(app_timezone) - timedelta(days=6) + timedelta(hours=4) - timedelta(minutes=6)
+        # Testing....
+        now = datetime.now(app_timezone) + timedelta(days=22) + timedelta(hours=3) - timedelta(minutes=28)
         print("NOW:", now)
         six_minutes_from_now = now + timedelta(minutes=6) 
-        three_hours_ago = six_minutes_from_now - timedelta(hours=3)
+        three_hours_ago = now - timedelta(hours=3)
 
        
         # Create the boundaries for discovering events (in progess) within the timeframe stipulated 

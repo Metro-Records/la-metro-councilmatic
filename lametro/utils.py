@@ -46,11 +46,7 @@ def calculate_current_meetings(found_events, now_with_buffer):
             return found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
         else:
             event = found_events.first()
-
-            next_event_start_time = event.get_next_by_start_time().start_time
-            meeting_duration = next_event_start_time - event.start_time
-            # This can be one hour or greater, e.g., 1 hour and 9 minutes
-            time_ago = now_with_buffer - meeting_duration
+            time_ago = now_with_buffer - calculate_meeting_duration(event)
 
             return found_events.filter(start_time__gt=time_ago)
 
@@ -63,22 +59,23 @@ def calculate_current_meetings(found_events, now_with_buffer):
         if event_names:
             # Find the latest event, since found_events may contain an earlier committee event that has ended.
             event = found_events.last()
-            next_event = event.get_next_by_start_time()
+            time_ago = now_with_buffer - calculate_meeting_duration(event)
             last_event = event.get_previous_by_start_time()
-
-            # Are two committee meetings happening concurrently?
-            if next_event.start_time == event.start_time:
-                next_event = next_event.get_next_by_start_time()
-
-            meeting_duration = next_event.start_time - event.start_time
-
-            # meeting_duration can be one hour or greater, e.g., 1 hour and 9 minutes.
-            # However, meeting_duration cannot be greater than 120 minutes. 
-            if meeting_duration > timedelta(minutes=120):
-                meeting_duration = timedelta(minutes=120)
-
-            time_ago = now_with_buffer - meeting_duration
 
             return found_events.filter(start_time__gt=time_ago).filter(start_time__gt=last_event.start_time)
         else:
             return found_events              
+
+def calculate_meeting_duration(event):
+    next_event = event.get_next_by_start_time()
+    # Are two committee meetings happening concurrently?
+    if next_event.start_time == event.start_time:
+        next_event = next_event.get_next_by_start_time()
+
+    meeting_duration = next_event.start_time - event.start_time
+    # meeting_duration can be one hour or greater, e.g., 1 hour and 9 minutes.
+    # However, meeting_duration cannot be greater than 120 minutes. 
+    if meeting_duration > timedelta(minutes=120):
+        meeting_duration = timedelta(minutes=120)
+
+    return meeting_duration

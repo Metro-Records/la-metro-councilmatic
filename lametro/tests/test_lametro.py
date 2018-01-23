@@ -113,7 +113,7 @@ def test_current_committee_meeting_last(django_db_setup):
     This test insures that the `calculate_current_meetings` function returns the second and last committee event, in a succession of events.
     For this case, the meeting is at 12:15 pm, and no other events follow.
     '''
-    # Set the time to 12:10 pm (i.e., five minutes before an 12:15 event).
+    # Set the time to 12:10 pm (i.e., five minutes before a 12:15 event).
     six_minutes_from_now = datetime(2017,5,18,12,10) + timedelta(minutes=6)
     three_hours_ago = datetime(2017,5,18,12,10) - timedelta(hours=3)
     found_events = Event.objects.filter(start_time__lt=six_minutes_from_now)\
@@ -122,7 +122,7 @@ def test_current_committee_meeting_last(django_db_setup):
               .order_by('start_time')
 
     assert len(found_events) > 1
-    
+
     current_meeting = calculate_current_meetings(found_events, six_minutes_from_now)
 
     assert len(current_meeting) == 1
