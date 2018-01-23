@@ -32,12 +32,9 @@ def parse_subject(text):
 def calculate_current_meetings(found_events, now_with_buffer):
     earliest_start = found_events.first().start_time
     latest_start = found_events.last().start_time
-    
-    # This DO NOT work: if it's 1:00 on 1/17, then the found_events list will still include the 11:00 am meeting on 1/17.....so the logic will always default to the ELSE (which assumes just one meeting)
-
-
-    # Sometimes, the found_events include just one event object. Example: the first committee meeting of the day - 9:00 am on 01/18/2018
-    # Sometimes, multiple events happen at the same time (though in reality, they occur one-after-the-other). Example: the committee events at 1:00 pm on 05/17/2017.
+    # The IF statement handles the below cases:
+    # (1) found_events includes just one event object. Example: the first committee meeting of the day - 9:00 am on 01/18/2018
+    # (2) found_events includes multiple events that all happen at the same time (though in reality, they occur one-after-the-other). Example: the events at 9:00 am on 11/30/2017
     # Check for these situations, and then determine if the found_events include a board meeting.
     # If so, then the start_time should remain greater than "three hours ago."
     # If not, then the start_time should be determined by that of the next meeting. 
@@ -61,22 +58,27 @@ def calculate_current_meetings(found_events, now_with_buffer):
     # Why? The found_events object includes all events from three hours ago.
     # Determine if found_events has committee events.
     else:
-        print("here!!!")
-        # To find committee events...
-        event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name)]
+        event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name) or ("TAP Public Hearing" in e.name)]
 
         if event_names:
+            # Find the latest event, since found_events may contain an earlier committee event that has ended.
             event = found_events.last()
+            next_event = event.get_next_by_start_time()
+            last_event = event.get_previous_by_start_time()
 
-            next_event_start_time = event.get_next_by_start_time().start_time
-            meeting_duration = next_event_start_time - event.start_time
+            # Are two committee meetings happening concurrently?
+            if next_event.start_time == event.start_time:
+                next_event = next_event.get_next_by_start_time()
+
+            meeting_duration = next_event.start_time - event.start_time
+
             # meeting_duration can be one hour or greater, e.g., 1 hour and 9 minutes.
-            # However, meeting_duration cannot be greater than 90 minutes. 
+            # However, meeting_duration cannot be greater than 120 minutes. 
             if meeting_duration > timedelta(minutes=120):
                 meeting_duration = timedelta(minutes=120)
 
             time_ago = now_with_buffer - meeting_duration
 
-            return found_events.filter(start_time__gt=time_ago)
+            return found_events.filter(start_time__gt=time_ago).filter(start_time__gt=last_event.start_time)
         else:
             return found_events              
