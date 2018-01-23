@@ -32,6 +32,10 @@ def parse_subject(text):
 def calculate_current_meetings(found_events, now_with_buffer):
     earliest_start = found_events.first().start_time
     latest_start = found_events.last().start_time
+    
+    # This DO NOT work: if it's 1:00 on 1/17, then the found_events list will still include the 11:00 am meeting on 1/17.....so the logic will always default to the ELSE (which assumes just one meeting)
+
+
     # Sometimes, the found_events include just one event object. Example: the first committee meeting of the day - 9:00 am on 01/18/2018
     # Sometimes, multiple events happen at the same time (though in reality, they occur one-after-the-other). Example: the committee events at 1:00 pm on 05/17/2017.
     # Check for these situations, and then determine if the found_events include a board meeting.
@@ -54,9 +58,10 @@ def calculate_current_meetings(found_events, now_with_buffer):
             return found_events.filter(start_time__gt=time_ago)
 
     # Most often, the found_events includes several event objects with different start times. 
-    # Why? The found_events ibject includes all events from three hours ago.
+    # Why? The found_events object includes all events from three hours ago.
     # Determine if found_events has committee events.
     else:
+        print("here!!!")
         # To find committee events...
         event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name)]
 
@@ -67,8 +72,8 @@ def calculate_current_meetings(found_events, now_with_buffer):
             meeting_duration = next_event_start_time - event.start_time
             # meeting_duration can be one hour or greater, e.g., 1 hour and 9 minutes.
             # However, meeting_duration cannot be greater than 90 minutes. 
-            if meeting_duration > timedelta(minutes=90):
-                meeting_duration = timedelta(minutes=90)
+            if meeting_duration > timedelta(minutes=120):
+                meeting_duration = timedelta(minutes=120)
 
             time_ago = now_with_buffer - meeting_duration
 
