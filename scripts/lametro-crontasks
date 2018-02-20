@@ -1,6 +1,6 @@
 # /etc/cron.d/lametro-crontasks
-10,25,40,55 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py import_data >> /tmp/lametro-loaddata.log 2>&1
-10,25,40,55 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py compile_pdfs >> /tmp/lametro-compilepdfs.log 2>&1
-10,25,40,55 * * * * datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py update_index
-# Run every Friday night to insure all pdfs are up-to-date.
-0 20 * * 5 datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py compile_pdfs --all_documents >> /tmp/lametro-compilepdfs.log 2>&1
+APPDIR=/home/datamade/lametro
+PYTHONDIR=/home/datamade/.virtualenvs/lametro/bin/python
+10,25,40,55 * * * * datamade /usr/bin/flock -n /tmp/lametro_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py import_data >> /tmp/lametro-loaddata.log 2>&1 && $PYTHONDIR manage.py compile_pdfs >> /tmp/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py update_index >> /tmp/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /tmp/lametro-integrity.log'
+# Run every Friday night to insure all pdfs are up-to-date (for peace of mind).
+0 23 * * 5 datamade cd /home/datamade/lametro && /home/datamade/.virtualenvs/lametro/bin/python manage.py compile_pdfs --all_documents >> /tmp/lametro-compilepdfs.log 2>&1
