@@ -1,4 +1,5 @@
 import pytest
+import pytz
 from datetime import datetime, timedelta
 
 from django.core.urlresolvers import reverse
@@ -78,44 +79,68 @@ def test_updates_made_false(event, event_document):
 
     assert updates_made(event.ocd_id) == False    
 
-# @pytest.mark.django_db
-# def test_current_committee_meeting_first(django_db_setup):
-#     '''
-#     This test insures that the `calculate_current_meetings` function returns the first committee event, in a succession of events.
-#     For this case, the meeting is at 11:00 am, and a 12:15 pm meeting follows.
-#     '''
-#     # Set the time to 10:55 pm (i.e., five minutes before an 11:00 event).
-#     six_minutes_from_now = datetime(2017,5,18,10,55) + timedelta(minutes=6)
-#     three_hours_ago = datetime(2017,5,18,10,55) - timedelta(hours=3)
-#     found_events = Event.objects.filter(start_time__lt=six_minutes_from_now)\
-#               .filter(start_time__gt=three_hours_ago)\
-#               .exclude(status='cancelled')\
-#               .order_by('start_time')
 
-#     assert len(found_events) == 1
+@pytest.mark.parametrize('now,progress_value,num_found,num_current,name', [
+    (datetime(2018,1,18,8,55), False, 1, 1, 'System Safety, Security and Operations Committee'),
+    (datetime(2018,1,18,9,54), False, 1, 1, 'System Safety, Security and Operations Committee'),
+    (datetime(2018,1,18,10,1), True, 1, 1, 'System Safety, Security and Operations Committee'),
+    (datetime(2018,1,18,10,1), False, 1, 0, None),
+])
+def test_current_committee_meeting_first(event, 
+                                         mocker, 
+                                         now,
+                                         progress_value,
+                                         num_found,
+                                         num_current,
+                                         name):
+    '''
+    This test insures that the `calculate_current_meetings` function returns the first committee event, in a succession of events.
+    This test consider four cases to determine if the 'System Safety, Security and Operations Committee' show appear as current:
+    (1) Set the time to 8:55 am (i.e., five minutes before a 9:00 event, when the event should first appear).
+    (2) Set the time to 9:54 am: the event should continue, regardless of Legistar.
+    (3) Set the time to 10:01 am: the event should continue, because Legistar lists it as "In progress."
+    (4) Set the time to 10:01 am: the event should NOT continue, because Legistar does not list it as "In progress."
+    '''
 
-#     current_meeting = calculate_current_meetings(found_events, six_minutes_from_now)
+    previous_meeting_info = {
+        'ocd_id': 'ocd-event/4cb9995c-c42f-4eb9-a8b4-f8e135045661',
+        'name': 'Planning and Programming Committee', 
+        'start_time': '2018-01-17 2:00:00',
+        'slug': 'planning-and-programming-committee-f8e135045661'
+    }
+    previous_meeting = event.build(**previous_meeting_info)
 
-#     assert len(current_meeting) == 1
-#     assert current_meeting.first().name == 'Construction Committee'
+    safety_meeting_info = {
+        'ocd_id': 'ocd-event/5e84e91d-279c-4c83-a463-4a0e05784b62',
+        'name': 'System Safety, Security and Operations Committee', 
+        'start_time': '2018-01-18 9:00:00',
+    }
+    safety_meeting = event.build(**safety_meeting_info)
 
-# @pytest.mark.django_db
-# def test_current_committee_meeting_last(django_db_setup):
-#     '''
-#     This test insures that the `calculate_current_meetings` function returns the second and last committee event, in a succession of events.
-#     For this case, the meeting is at 12:15 pm, and no other events follow.
-#     '''
-#     # Set the time to 12:10 pm (i.e., five minutes before a 12:15 event).
-#     six_minutes_from_now = datetime(2017,5,18,12,10) + timedelta(minutes=6)
-#     three_hours_ago = datetime(2017,5,18,12,10) - timedelta(hours=3)
-#     found_events = Event.objects.filter(start_time__lt=six_minutes_from_now)\
-#               .filter(start_time__gt=three_hours_ago)\
-#               .exclude(status='cancelled')\
-#               .order_by('start_time')
+    next_meeting_info = {
+        'ocd_id': 'ocd-event/0e793ec8-5091-4099-a115-0560d127d6f9',
+        'name': 'Construction Committee', 
+        'start_time': '2018-01-18 10:15:00',
+        'slug': 'construction-committee-0560d127d6f9'
+    }
+    next_meeting = event.build(**next_meeting_info)
 
-#     assert len(found_events) > 1
+    six_minutes_from_now = now + timedelta(minutes=6)
+    three_hours_ago = now - timedelta(hours=6)
+    found_events = Event.objects.filter(start_time__lt=six_minutes_from_now)\
+              .filter(start_time__gt=three_hours_ago)\
+              .exclude(status='cancelled')\
+              .order_by('start_time')
 
-#     current_meeting = calculate_current_meetings(found_events, six_minutes_from_now)
+    assert len(found_events) == num_found
+    assert len(found_events.filter(name='System Safety, Security and Operations Committee')) == num_found
 
-#     assert len(current_meeting) == 1
-#     assert current_meeting.first().name == 'System Safety, Security and Operations Committee'
+    # Mock this helper function to return false, when checking for progress of the previous meeting.
+    mocker.patch('lametro.utils.legistar_meeting_progress',
+                 return_value=progress_value)
+
+    current_meeting = calculate_current_meetings(found_events, six_minutes_from_now)
+
+    assert len(current_meeting) == num_current
+    if current_meeting.first():
+        assert current_meeting.first().name == name

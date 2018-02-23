@@ -192,17 +192,14 @@ class LAMetroEvent(Event):
     @classmethod
     def current_meeting(cls):
         # Testing....
-        fakenow = datetime.now(app_timezone) - timedelta(days=36) - timedelta(hours=6) + timedelta(minutes=45)
+        fakenow = datetime.now(app_timezone) - timedelta(days=36) - timedelta(hours=0) + timedelta(minutes=48)
         print('NOW: ', fakenow)
         six_minutes_from_now = fakenow + timedelta(minutes=6)
-        three_hours_ago = fakenow - timedelta(hours=3)
+        three_hours_ago = fakenow - timedelta(hours=6)
 
-        # Create the boundaries for discovering events (in progess) within the timeframe stipulated 
-        # by Metro.
-        # Then, filter the events according to these boundaries.
+        # We look for everything in the last 6 hours, because the maximum recorded meeting is 5.38 hours (according to the spreadsheet provided by Metro in issue #251).
         # six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
-        # three_hours_ago = datetime.now(app_timezone) - timedelta(hours=3)
-
+        # three_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
         found_events = cls.objects.filter(start_time__lt=six_minutes_from_now)\
                   .filter(start_time__gt=three_hours_ago)\
                   .exclude(status='cancelled')\
@@ -226,10 +223,6 @@ class LAMetroEvent(Event):
         #  Solution 1: calculate the current meeting, given particular parameters, and use Legistar to determine when a meeting has ended.
         if found_events:
             return calculate_current_meetings(found_events, six_minutes_from_now)
-
-
-
-
 
         # Solution 2: rely entirely on Legistar.
         # Iterate over all events scheduled within the next six hours, and inspect Legistar for presence of "In progress"

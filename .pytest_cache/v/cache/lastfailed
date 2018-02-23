@@ -1,6 +1,6 @@
 {
   "lametro/tests/test_events.py::test_current_committee_meeting_first": true,
   "lametro/tests/test_events.py::test_current_committee_meeting_last": true,
-  "tests/test_events.py::test_current_committee_meeting_first": true,
+  "tests/test_events.py::test_current_committee_meeting_first[now0]": true,
   "tests/test_events.py::test_current_committee_meeting_last": true
 }

@@ -6,3 +6,4 @@ PyPDF2==1.26.0
 requests==2.7.0
 pytest
 pytest-django
+pytest-mock==1.6.3
