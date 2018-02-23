@@ -191,19 +191,19 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        # Testing....
-        fakenow = datetime.now(app_timezone) - timedelta(days=36) - timedelta(hours=0) + timedelta(minutes=48)
-        print('NOW: ', fakenow)
-        six_minutes_from_now = fakenow + timedelta(minutes=6)
-        three_hours_ago = fakenow - timedelta(hours=6)
+        # QA Testing....
+        # fakenow = datetime(2018,1,18,10,10)
+        # six_minutes_from_now = fakenow + timedelta(minutes=6)
+        # three_hours_ago = fakenow - timedelta(hours=6)
 
         # We look for everything in the last 6 hours, because the maximum recorded meeting is 5.38 hours (according to the spreadsheet provided by Metro in issue #251).
-        # six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
-        # three_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
-        found_events = cls.objects.filter(start_time__lt=six_minutes_from_now)\
-                  .filter(start_time__gt=three_hours_ago)\
+        six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
+        three_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
+        found_events = cls.objects.filter(start_time__lte=six_minutes_from_now)\
+                  .filter(start_time__gte=three_hours_ago)\
                   .exclude(status='cancelled')\
                   .order_by('start_time')
+
 
         '''
         Create the boundaries for discovering events (in progess) within the timeframe stipulated 

@@ -31,35 +31,33 @@ def parse_subject(text):
 
 
 def calculate_current_meetings(found_events, now_with_buffer):
-    earliest_start = found_events.first().start_time
-    latest_start = found_events.last().start_time
-    # The IF statement handles the below cases:
-    # (1) found_events includes just one event object. Example: the first committee meeting of the day - 9:00 am on 01/18/2018
-    # (2) found_events includes multiple events that all happen at the same time (though in reality, they occur one-after-the-other). Example: the events at 9:00 am on 11/30/2017
-    # Check for these situations, and then determine if the found_events include a board meeting.
-    # If so, then the start_time should remain greater than "three hours ago."
-    # If not, then the start_time should be determined by that of the next meeting. 
-    if earliest_start == latest_start:
-        # Custom order: show the board meeting first.
-        # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since
-        # false comes before true.
-        found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
-        
-    # Metro provided a spreadsheet of average meeting times. The minimum average time a meeting lasts is 52 minutes: let's round to 60 and remove the 6-minute buffer. 
-    time_ago = now_with_buffer - timedelta(minutes=66)
+    # Metro provided a spreadsheet of average meeting times. The minimum average time a meeting lasts is 52 minutes: let's round to 55 and remove the 5-minute buffer. 
+    time_ago = now_with_buffer - timedelta(minutes=60)
+    # Custom order: show the board meeting first, when there is one.
+    # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since false comes before true.
+    found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
 
-    if found_events.filter(start_time__gt=time_ago):
+    if found_events.filter(start_time__gte=time_ago):
         # Check if previous event is still going on in Legistar.
-        previous_meeting = found_events.last().get_previous_by_start_time()
+        previous_meeting = found_events.filter(start_time__gte=time_ago).last().get_previous_by_start_time()
         if legistar_meeting_progress(previous_meeting):
             return Event.objects.filter(ocd_id=previous_meeting.ocd_id)
 
-        return found_events.filter(start_time__gt=time_ago)
-       
+        return found_events.filter(start_time__gte=time_ago)  
     else:  
-        # Check if calculated event is still going on.
-        if legistar_meeting_progress(found_events.last()):
-            return found_events
+        # The IF statement handles the below cases:
+        # (1) found_events includes just one event object. Example: the first committee meeting of the day - 9:00 am on 01/18/2018
+        # (2) found_events includes multiple events that all happen at the same time (though in reality, they occur one-after-the-other). Example: the events at 9:00 am on 11/30/2017
+        earliest_start = found_events.first().start_time
+        latest_start = found_events.last().start_time 
+
+        if earliest_start == latest_start:
+            for event in found_events:
+                if legistar_meeting_progress(event):
+                    return found_events
+        else: 
+            if legistar_meeting_progress(found_events.last()):
+                return Event.objects.filter(ocd_id=found_events.last().ocd_id)
 
         return Event.objects.none()
 
