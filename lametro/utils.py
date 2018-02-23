@@ -40,20 +40,22 @@ def calculate_current_meetings(found_events, now_with_buffer):
     # If so, then the start_time should remain greater than "three hours ago."
     # If not, then the start_time should be determined by that of the next meeting. 
     if earliest_start == latest_start:
-        # OLD CODE
-        if found_events.filter(name__icontains='Board Meeting'):
-            # Custom order: show the board meeting first.
-            # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since
-            # false comes before true.
-            return found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
-        else:
-            event = found_events.first()
-            time_ago = now_with_buffer - calculate_meeting_duration(event)
+        # # OLD CODE
+        # if found_events.filter(name__icontains='Board Meeting'):
+        #     # Custom order: show the board meeting first.
+        #     # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since
+        #     # false comes before true.
+        #     return found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
+        # else:
+        #     event = found_events.first()
+        #     time_ago = now_with_buffer - calculate_meeting_duration(event)
 
-            return found_events.filter(start_time__gt=time_ago)
+        #     return found_events.filter(start_time__gt=time_ago)
 
 
-        # found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
+        found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
+
+
         # Minimum average time a meeting lasts. 
         # time_ago = now_with_buffer - timedelta(minutes=48)
         # if ordered_found_events.filter(start_time__gt=time_ago):
@@ -76,58 +78,58 @@ def calculate_current_meetings(found_events, now_with_buffer):
     # Most often, the found_events includes several event objects with different start times. 
     # Why? The found_events object includes all events from three hours ago.
     # Determine if found_events has committee events.
-    else:
+    # else:
         # OLD
-        event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name) or ("TAP Public Hearing" in e.name)]
+        # event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name) or ("TAP Public Hearing" in e.name)]
 
-        if event_names:
-            # Find the latest event, since found_events may contain an earlier committee event that has ended.
-            event = found_events.last()
-            time_ago = now_with_buffer - calculate_meeting_duration(event)
-            last_event = event.get_previous_by_start_time()
+        # if event_names:
+        #     # Find the latest event, since found_events may contain an earlier committee event that has ended.
+        #     event = found_events.last()
+        #     time_ago = now_with_buffer - calculate_meeting_duration(event)
+        #     last_event = event.get_previous_by_start_time()
 
-            return found_events.filter(start_time__gt=time_ago).filter(start_time__gt=last_event.start_time)
-        else:
-            return found_events  
+        #     return found_events.filter(start_time__gt=time_ago).filter(start_time__gt=last_event.start_time)
+        # else:
+        #     return found_events  
 
 
 
         
-    # # Minimum average time a meeting lasts. 
-    # time_ago = now_with_buffer - timedelta(minutes=60)
+    # Minimum average time a meeting lasts. 
+    time_ago = now_with_buffer - timedelta(minutes=48)
 
-    # if found_events.filter(start_time__gt=time_ago):
-    #     # Check if previous event is still going on in Legistar.
-    #     previous_meeting = found_events.last().get_previous_by_start_time()
+    if found_events.filter(start_time__gt=time_ago):
+        # Check if previous event is still going on in Legistar.
+        previous_meeting = found_events.last().get_previous_by_start_time()
 
-    #     if legistar_meeting_progress(previous_meeting):
-    #         return Event.objects.filter(ocd_id=previous_meeting.ocd_id)
+        if legistar_meeting_progress(previous_meeting):
+            return Event.objects.filter(ocd_id=previous_meeting.ocd_id)
 
-    #     return found_events.filter(start_time__gt=time_ago)
+        return found_events.filter(start_time__gt=time_ago)
        
-    # else:  
-    #     # Check if this event is still going on.
-    #     if legistar_meeting_progress(found_events.last()):
-    #         return found_events
+    else:  
+        # Check if this event is still going on.
+        if legistar_meeting_progress(found_events.last()):
+            return found_events
 
-    #     return Event.objects.none()
-
-
+        return Event.objects.none()
 
 
-def calculate_meeting_duration(event):
-    next_event = event.get_next_by_start_time()
-    # Are two committee meetings happening concurrently?
-    if next_event.start_time == event.start_time:
-        next_event = next_event.get_next_by_start_time()
 
-    meeting_duration = next_event.start_time - event.start_time
-    # meeting_duration can be one hour or greater, e.g., 1 hour and 9 minutes.
-    # However, meeting_duration cannot be greater than 120 minutes. 
-    if meeting_duration > timedelta(minutes=60):
-        meeting_duration = timedelta(minutes=60)
 
-    return meeting_duration
+# def calculate_meeting_duration(event):
+#     next_event = event.get_next_by_start_time()
+#     # Are two committee meetings happening concurrently?
+#     if next_event.start_time == event.start_time:
+#         next_event = next_event.get_next_by_start_time()
+
+#     meeting_duration = next_event.start_time - event.start_time
+#     # meeting_duration can be one hour or greater, e.g., 1 hour and 9 minutes.
+#     # However, meeting_duration cannot be greater than 120 minutes. 
+#     if meeting_duration > timedelta(minutes=60):
+#         meeting_duration = timedelta(minutes=60)
+
+#     return meeting_duration
 
 # def compare_to_previous_meeting(event):
 #     calculated_current_meeting = event.first()
