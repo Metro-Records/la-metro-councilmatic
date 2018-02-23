@@ -76,6 +76,7 @@ def legistar_meeting_progress(event):
 
     organization_detail_url = Organization.objects.get(name=organization_name).source_url
 
+    # We need a timeout here....
     r = requests.get(organization_detail_url)
     event_date = '{month}/{day}/{year}'.format(month=event.start_time.month, day=event.start_time.day, year=event.start_time.year)
     in_progress = 'In&amp;nbsp;progress' in r.content.decode('utf-8') and event_date in r.content.decode('utf-8')

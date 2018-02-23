@@ -223,9 +223,6 @@ class LAMetroEvent(Event):
                   .exclude(status='cancelled')\
                   .order_by('start_time')
 
-
-        for e in found_events:
-            print(e.name, "------", e.start_time)
         #  Solution 1: calculate the current meeting, given particular parameters, and use Legistar to determine when a meeting has ended.
         if found_events:
             return calculate_current_meetings(found_events, six_minutes_from_now)
