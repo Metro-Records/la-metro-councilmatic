@@ -12,6 +12,7 @@ static/**
 solr-4.10.4/**
 
 **/__pycache__
+.pytest_cache/
 
 downloads
 /keyrings/live/pubring.gpg~
