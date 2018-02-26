@@ -191,58 +191,32 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        # QA Testing....
-        # fakenow = datetime(2018,1,18,10,10)
-        # six_minutes_from_now = fakenow + timedelta(minutes=6)
-        # three_hours_ago = fakenow - timedelta(hours=6)
-
-        # We look for everything in the last 6 hours, because the maximum recorded meeting is 5.38 hours (according to the spreadsheet provided by Metro in issue #251).
-        six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
-        three_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
-        found_events = cls.objects.filter(start_time__lte=six_minutes_from_now)\
-                  .filter(start_time__gte=three_hours_ago)\
-                  .exclude(status='cancelled')\
-                  .order_by('start_time')
-
-
         '''
         Create the boundaries for discovering events (in progess) within the timeframe stipulated 
         by Metro. A meeting displays as current if:
-        (1) "now" is six minutes or less before the designated start time;
-        (2) the previous meeting has ended (determined by looking for "In progress" on Legistar);
+        (1) "now" is five minutes or less before the designated start time;
+        (2) the previous meeting has ended (determined by looking for "In progress" on Legistar).
+
+        The maximum recorded meeting duration is 5.38 hours, according to the spreadsheet provided by 
+        Metro in issue #251.
+        So, to determine initial list of possible current events, we look for all events scheduled 
+        in the past 6 hours.
 
         This method returns a list (with zero or more elements).
         '''
-        # six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
-        # three_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
-        found_events = cls.objects.filter(start_time__lt=six_minutes_from_now)\
-                  .filter(start_time__gt=three_hours_ago)\
+        # fakenow = datetime(2018,1,18,10,10)
+        # five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
+        # six_hours_ago = fakenow - timedelta(hours=6)
+
+        five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
+        six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
+        found_events = cls.objects.filter(start_time__lte=five_minutes_from_now)\
+                  .filter(start_time__gte=six_hours_ago)\
                   .exclude(status='cancelled')\
                   .order_by('start_time')
 
-        #  Solution 1: calculate the current meeting, given particular parameters, and use Legistar to determine when a meeting has ended.
         if found_events:
-            return calculate_current_meetings(found_events, six_minutes_from_now)
-
-        # Solution 2: rely entirely on Legistar.
-        # Iterate over all events scheduled within the next six hours, and inspect Legistar for presence of "In progress"
-        # PRO: we can eliminate the complex logic for finding and displaying current meetings. 
-        # PRO: we do not need to worry about the weirdness of "simultaneous meetings."
-        # CON: this solution could add significant load time to the index page, since it has to hit Legistar up to four times. 
-        # CON: the Legistar server can be slow to respond (again, causing slowness for loading the Metro home page)
-        # CON: the home page may be confusing – meetings can start late (sometimes 30 minutes late), and the dissonance between the start time on the web interface and the current-meeting view may confuse users.
-
-        # if found_events:
-        #     for e in events:
-        #         organization_name = EventParticipant.objects.get(event_id=e.ocd_id).entity_name
-        #         organization_detail_url = Organization.objects.get(name=organization_name).source_url
-
-        #         import requests
-
-        #         r = requests.get(organization_detail_url)
-        #         if 'In&amp;nbsp;progress' in r.content.decode('utf-8'):
-        #             return e
-                
+            return calculate_current_meetings(found_events, five_minutes_from_now)
 
 
     @classmethod

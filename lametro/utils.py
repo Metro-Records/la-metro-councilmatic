@@ -31,7 +31,7 @@ def parse_subject(text):
 
 
 def calculate_current_meetings(found_events, now_with_buffer):
-    # Metro provided a spreadsheet of average meeting times. The minimum average time a meeting lasts is 52 minutes: let's round to 55 and remove the 5-minute buffer. 
+    # Metro provided a spreadsheet of average meeting times. The minimum average time a meeting lasts is 52 minutes: let's round to 55 and add the 5-minute buffer. 
     time_ago = now_with_buffer - timedelta(minutes=60)
     # Custom order: show the board meeting first, when there is one.
     # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since false comes before true.
@@ -63,6 +63,11 @@ def calculate_current_meetings(found_events, now_with_buffer):
 
 
 def legistar_meeting_progress(event):
+    '''
+    The organization detail page on Legistar flags current meetings as 'In progress.' 
+    Ping the organization page to check whether the most recently scheduled meeting has an 'In progress' flag.
+    We use this to determine if a meeting has ended. 
+    '''
     in_progress = False
     organization_name = EventParticipant.objects.get(event_id=event.ocd_id).entity_name
 
