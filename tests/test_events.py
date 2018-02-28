@@ -90,7 +90,6 @@ def test_updates_made_false(event, event_document):
     (datetime(2018,1,18,11,9), False, 2, 1, 'Construction Committee'),
     (datetime(2017,11,30,8,55), False, 2, 2, 'Regular Board Meeting'),
     (datetime(2017,11,30,9,54), False, 2, 2, 'Regular Board Meeting'),
-    (datetime(2017,11,30,9,55), True, 2, 2, 'Regular Board Meeting'),
 ])
 def test_current_committee_meeting_first(event, 
                                          mocker, 
@@ -117,7 +116,6 @@ def test_current_committee_meeting_first(event,
     This consider cases to determine if a Board Meeting and Crenshaw Project meeting should appear as concurrent, with the Board Meeting first in the queryset:
     (1) Set the time to 8:55 am (i.e., five minutes before a 9:00 event, when the event should first appear).
     (2) Set the time to 9:54 am: the events should continue regardless of Legistar.
-    (3) Set the time to 9:54 am: the events should continue, because Legistar lists one as "In progress."
     '''
 
     planning_meeting_info = {
@@ -167,20 +165,20 @@ def test_current_committee_meeting_first(event,
     }
     event.build(**crenshaw_meeting_info)
 
-    six_minutes_from_now = now + timedelta(minutes=6)
-    three_hours_ago = now - timedelta(hours=6)
-    found_events = Event.objects.filter(start_time__lt=six_minutes_from_now)\
-              .filter(start_time__gt=three_hours_ago)\
+    five_minutes_from_now = now + timedelta(minutes=5)
+    six_hours_ago = now - timedelta(hours=6)
+    found_events = Event.objects.filter(start_time__lte=five_minutes_from_now)\
+              .filter(start_time__gte=six_hours_ago)\
               .exclude(status='cancelled')\
               .order_by('start_time')
 
     assert len(found_events) == num_found
 
-    # Mock this helper function to return false, when checking for progress of the previous meeting.
+    # Mock this helper function to return true or false, when checking for progress of the previous meeting (which otherwise requires hitting Legistar).
     mocker.patch('lametro.utils.legistar_meeting_progress',
                  return_value=progress_value)
 
-    current_meeting = calculate_current_meetings(found_events, six_minutes_from_now)
+    current_meeting = calculate_current_meetings(found_events, five_minutes_from_now)
 
     assert len(current_meeting) == num_current
     if current_meeting.first():

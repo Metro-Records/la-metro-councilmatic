@@ -204,8 +204,8 @@ class LAMetroEvent(Event):
 
         This method returns a list (with zero or more elements).
         '''
-        # fakenow = datetime(2018,1,18,10,10)
-        # five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
+        # fakenow = datetime(2018,1,18,12,55)
+        # five_minutes_from_now = fakenow + timedelta(minutes=5)
         # six_hours_ago = fakenow - timedelta(hours=6)
 
         five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)

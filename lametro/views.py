@@ -49,7 +49,6 @@ class LAMetroIndexView(IndexView):
         # Use the generic link when multiple meetings happen concurrently
         if extra['current_meeting']:
             if len(extra['current_meeting']) == 1:
-                print(extra['current_meeting'])
                 guid = extra['current_meeting'].first().guid
                 media_url = 'http://metro.granicus.com/mediaplayer.php?event_id={}'.format(guid)
                 response = requests.get(media_url)
