@@ -1,4 +1,4 @@
 # /etc/cron.d/lametro-crontasks
 APPDIR=/home/datamade/lametro
 PYTHONDIR=/home/datamade/.virtualenvs/lametro/bin/python
-10,25,40,55 * * * * datamade /usr/bin/flock -n /tmp/lametro_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py import_data >> /tmp/lametro-loaddata.log 2>&1 && $PYTHONDIR manage.py compile_pdfs >> /tmp/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 --age=1 >> /tmp/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /tmp/lametro-integrity.log'
+10,25,40,55 * * * * datamade /usr/bin/flock -n /tmp/lametro_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py import_data >> /var/log/councilmatic/lametro-loaddata.log 2>&1 && $PYTHONDIR manage.py compile_pdfs >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 --age=1 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log'
