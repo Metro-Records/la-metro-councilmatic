@@ -1,6 +1,8 @@
 import pytz
 from datetime import datetime, timedelta
 import requests
+import lxml.html
+from lxml.etree import tostring
 
 from django.db.models.expressions import RawSQL
 from django.conf import settings
@@ -75,6 +77,7 @@ def legistar_meeting_progress(event):
     '''
     in_progress = False
     organization_name = EventParticipant.objects.get(event_id=event.ocd_id).entity_name
+    event_date = '{month}/{day}/{year}'.format(month=event.start_time.month, day=event.start_time.day, year=event.start_time.year)
 
     try: 
         organization_detail_url = Organization.objects.get(name=organization_name).source_url
@@ -82,7 +85,12 @@ def legistar_meeting_progress(event):
         return in_progress
 
     r = requests.get(organization_detail_url)
-    event_date = '{month}/{day}/{year}'.format(month=event.start_time.month, day=event.start_time.day, year=event.start_time.year)
-    in_progress = 'In&amp;nbsp;progress' in r.content.decode('utf-8') and event_date in r.content.decode('utf-8')
-    
+    page = lxml.html.fromstring(r.text)
+    table = page.xpath("//table[@id='ctl00_ContentPlaceHolder1_gridCalendar_ctl00']")[0]
+    rows = table.xpath(".//tr")
+
+    for row in rows:
+        if event_date in row.text_content() and 'In\xa0progress' in row.text_content():
+            in_progress = True
+
     return in_progress
