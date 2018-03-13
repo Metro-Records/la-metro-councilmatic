@@ -3,12 +3,12 @@
 
 <p>
     <a class="small" href="{% url 'lametro:bill_detail' r.object.slug %}">
-        {{ r.object.identifier}} 
+        {{ r.object.identifier}}
         {% if r.sort_name %}
             - {{r.sort_name|upper}}
         {% endif %}
     </a>
-    {{ r.object.inferred_status | inferred_status_label | safe }}
+    {{ r.object.inferred_status | inferred_status_label | safe }} 
 </p>
 
 <div class="row">

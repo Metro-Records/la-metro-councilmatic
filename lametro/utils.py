@@ -9,21 +9,37 @@ def format_full_text(full_text):
     results = ''
 
     if full_text:
-        txt_as_array = full_text.split("..")
-        for item in txt_as_array:
-            if 'SUBJECT:' in item:
-                array_with_subject = item.split('\n\n')
-                for item in array_with_subject:
-                    if 'SUBJECT:' in item:
-                        results = item.replace('\n', '')
+        # if 'METRO EXPRESSLANES OPERATION AND' in full_text:
+        #     import pdb
+        #     pdb.set_trace()
+        # txt_as_array = full_text.split("..")
+        txt_as_array = full_text.splitlines()
+        
+        import re
+        match = re.search('(SUBJECT:)(.*)(..ActionACTION:)', full_text.replace('\n', ''))
+        if match:
+            results = match.group(2) 
+        # for item in txt_as_array:
+        #     if 'SUBJECT:' in item:
+        #         array_with_subject = item.split('\n\n')
+        #         for item in array_with_subject:
+        #             if 'SUBJECT:' in item:
+        #                 results = item.replace('\n', '')
+        # subject_header = [line for line in txt_as_array if 'SUBJECT:' in line]
+        # if subject_header:
+        #     results = subject_header[0]
     return results
 
 # Isolate text after 'SUBJECT'
 def parse_subject(text):
+    print(text)
+    return text 
+
     if text:
         before_keyword, keyword, after_keyword = text.partition('SUBJECT:')
         if after_keyword:
             if '[PROJECT OR SERVICE NAME]' not in after_keyword and '[DESCRIPTION]' not in after_keyword and '[CONTRACT NUMBER]' not in after_keyword:
+                print(after_keyword)
                 return after_keyword.strip()
 
     return None
