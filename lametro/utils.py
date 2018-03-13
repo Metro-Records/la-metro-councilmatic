@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timedelta
 
 from django.db.models.expressions import RawSQL
@@ -9,43 +10,17 @@ def format_full_text(full_text):
     results = ''
 
     if full_text:
-        # if 'METRO EXPRESSLANES OPERATION AND' in full_text:
-        #     import pdb
-        #     pdb.set_trace()
-        # txt_as_array = full_text.split("..")
-        txt_as_array = full_text.splitlines()
-        
-        import re
-        match = re.search('(SUBJECT:)(.*)(ACTION:)', full_text.replace('\n', ''))
+        full_text_with_cue = full_text.replace('\n\n', 'NEWLINE').replace('\r\n', 'NEWLINE').replace('\n..', 'NEWLINE')
+
+        match = re.search('(SUBJECT:)(.*?)(NEWLINE|ACTION:)', full_text_with_cue.replace('\n', ''))
         if match:
-            results = match.group(2) 
-        # for item in txt_as_array:
-        #     if 'SUBJECT:' in item:
-        #         array_with_subject = item.split('\n\n')
-        #         for item in array_with_subject:
-        #             if 'SUBJECT:' in item:
-        #                 results = item.replace('\n', '')
-        # subject_header = [line for line in txt_as_array if 'SUBJECT:' in line]
-        # if subject_header:
-        #     results = subject_header[0]
-    if not results:
-        print(full_text, "!!!!")
+            results = match.group(2)
 
     return results
 
-# Isolate text after 'SUBJECT'
 def parse_subject(text):
-    print(text)
-    return text 
-
-    if text:
-        before_keyword, keyword, after_keyword = text.partition('SUBJECT:')
-        if after_keyword:
-            if '[PROJECT OR SERVICE NAME]' not in after_keyword and '[DESCRIPTION]' not in after_keyword and '[CONTRACT NUMBER]' not in after_keyword:
-                print(after_keyword)
-                return after_keyword.strip()
-
-    return None
+    if ('[PROJECT OR SERVICE NAME]' not in text) and ('[DESCRIPTION]' not in text) and ('[CONTRACT NUMBER]' not in text):
+        return text
 
 # Use this helper function when multiple "current meetings" happen simultaneously.
 def calculate_current_meetings(found_events, now_with_buffer):
