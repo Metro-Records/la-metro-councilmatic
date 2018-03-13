@@ -17,7 +17,7 @@
         <td>
           <a href='/board-report/{{ report.slug }}/' target="_blank">View</a>
         </td>
-        <td>{% if report.packet_url %}<a href="{{report.packet_url}}">Download</a>{% endif %}</td>
+        <td><a href={% if report.packet_url %}"{{report.packet_url}}"{% else %}"{{report.url}}"{% endif %}>Download</a></td>
       </tr>
   {% endfor %}
   </table>
