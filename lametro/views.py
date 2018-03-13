@@ -185,15 +185,14 @@ class LAMetroEventDetail(EventDetailView):
             packet_url = None
 
             for obj in cursor:
+                packet_url = None
                 # Add packet slug
                 ocd_id = obj[1]
                 packet_slug = ocd_id.replace('/', '-')
-                try:
-                    r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
-                    if r.status_code == 200:
-                        packet_url = MERGER_BASE_URL + '/document/' + packet_slug
-                except:
-                    packet_url = None
+                
+                r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
+                if r.status_code == 200:
+                    packet_url = MERGER_BASE_URL + '/document/' + packet_slug
 
                 obj = obj + (packet_url,)
 
