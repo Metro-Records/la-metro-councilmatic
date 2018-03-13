@@ -16,7 +16,7 @@ def format_full_text(full_text):
         txt_as_array = full_text.splitlines()
         
         import re
-        match = re.search('(SUBJECT:)(.*)(..ActionACTION:)', full_text.replace('\n', ''))
+        match = re.search('(SUBJECT:)(.*)(ACTION:)', full_text.replace('\n', ''))
         if match:
             results = match.group(2) 
         # for item in txt_as_array:
@@ -28,6 +28,9 @@ def format_full_text(full_text):
         # subject_header = [line for line in txt_as_array if 'SUBJECT:' in line]
         # if subject_header:
         #     results = subject_header[0]
+    if not results:
+        print(full_text, "!!!!")
+
     return results
 
 # Isolate text after 'SUBJECT'
