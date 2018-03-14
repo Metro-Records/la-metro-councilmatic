@@ -90,7 +90,7 @@ def legistar_meeting_progress(event):
     rows = table.xpath(".//tr")
 
     for row in rows:
-        if event_date in row.text_content() and 'In\xa0progress' in row.text_content():
-            in_progress = True
+        if event_date in row.text_content() and 'progress' in row.text_content():
+            return True
 
     return in_progress
