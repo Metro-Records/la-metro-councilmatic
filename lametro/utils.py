@@ -90,7 +90,6 @@ def legistar_meeting_progress(event):
         return False
 
     organization_detail = requests.get(organization_detail_url)
-
     if event_id in organization_detail.text:
         return True
 
