@@ -3,6 +3,7 @@ import pytest
 from django.core.urlresolvers import reverse
 
 from councilmatic_core.models import Bill, RelatedBill
+from lametro.utils import format_full_text, parse_subject
 
 # This collection of tests checks the functionality of Bill-specific views, helper functions, and relations.
 def test_bill_url(client, bill):
@@ -38,3 +39,20 @@ def test_related_bill_relation(client, bill):
 
     assert central_bill.related_bills.count() == 1
     assert central_bill.related_bills.first().related_bill_identifier == '2017-0596'  
+
+def test_format_full_text(bill):
+    '''
+    This test checks that format_full_text correctly parses the subject header. 
+    '''
+    bill_info = {
+        'ocr_full_text': "..Meeting_Body\rPLANNING AND PROGRAMMING COMMITTEE\rNOVEMBER 18, 2015\r\r..Subject/Action\rSUBJECT: EASTSIDE PHASE 2 UPDATE\nBY DIRECTORS SOLIS, GARCIA\n\nACTION:         RECEIVE AND FILE \r\r..Heading\rRECOMMENDATION\r\r..Title\rRECEIVE AND FILE report in response to the Metro Board July 23, 2015 directive to provide bi-monthly updates on the Eastside Transit Corrid\r"
+    }
+
+    bill_with_text = bill.build(**bill_info)
+
+    full_text = bill_with_text.ocr_full_text
+
+    assert format_full_text(full_text) == ' EASTSIDE PHASE 2 UPDATE BY DIRECTORS SOLIS, GARCIA'
+
+
+
