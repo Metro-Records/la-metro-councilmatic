@@ -54,7 +54,7 @@ createdb lametro
 Then, run migrations:
 
 ```bash
-python manage.py migrate --no-initial-data
+python manage.py migrate
 ```
 
 Create an admin user. Terminal will prompt you to provide a username, email, and password. This superuser has access to the Django admin backend.
