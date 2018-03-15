@@ -1,8 +1,15 @@
+import pytz
 from datetime import datetime, timedelta
+import requests
+import lxml.html
+from lxml.etree import tostring
 
 from django.db.models.expressions import RawSQL
+from django.conf import settings
 
-from councilmatic_core.models import Event
+from councilmatic_core.models import Event, EventParticipant, Organization
+
+app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 # Parse the subject line from ocr_full_text
 def format_full_text(full_text):
@@ -28,37 +35,62 @@ def parse_subject(text):
 
     return None
 
-# Use this helper function when multiple "current meetings" happen simultaneously.
-def calculate_current_meetings(found_events, now_with_buffer):
-    earliest_start = found_events.first().start_time
-    latest_start = found_events.last().start_time
-    # Sometimes multiple events happen at the same time (though in reality, they occur one-after-the-other). Example: the committee events at 1:00 on 05/17/2017.
-    # Check for this situation, and then determine if these events include a board meeting.
-    # If current events do not include a board meeting, the end time should be one hour.
-    if earliest_start == latest_start:
-        if found_events.filter(name__icontains='Board Meeting'):
-            # Custom order: show the board meeting first.
-            # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since
-            # false comes before true.
-            return found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
-        else:
-            one_hour_ago = now_with_buffer - timedelta(hours=1)
-            
-            return found_events.filter(start_time__gt=one_hour_ago)
 
-    else:
-        # To find committee events...
-        event_names = [e.name for e in found_events if ("Committee" in e.name) or ("LA SAFE" in e.name) or ("Budget Public Hearing" in e.name) or ("Fare Subsidy Program Public Hearing" in e.name) or ("Crenshaw Project Corporation" in e.name)]
+def calculate_current_meetings(found_events, five_minutes_from_now):
+    # Metro provided a spreadsheet of average meeting times. The minimum average time a meeting lasts is 52 minutes: let's round down to 50 and add the 5-minute buffer, i.e., an event will appear, regardless of Legistar, for 55 minutes past its start time. 
+    time_ago = five_minutes_from_now - timedelta(minutes=50)
+    # Custom order: show the board meeting first, when there is one.
+    # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since false comes before true.
+    found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
+    earliest_start = found_events.earliest('start_time').start_time 
+    latest_start = found_events.latest('start_time').start_time 
 
-        if event_names:
-            # Set meeting time to one hour
-            one_hour_ago = now_with_buffer - timedelta(hours=1)
-            
-            found_events = found_events.filter(start_time__gt=one_hour_ago)
+    if found_events.filter(start_time__gte=time_ago):
+        # Check if previous event is still going on in Legistar.
+        previous_meeting = found_events.filter(start_time__gte=time_ago).last().get_previous_by_start_time()
+        if legistar_meeting_progress(previous_meeting):
+            return Event.objects.filter(ocd_id=previous_meeting.ocd_id)
 
-            if len(found_events) > 1:
+        return found_events.filter(start_time__gte=time_ago)  
+    elif earliest_start == latest_start:  
+        # The IF statement handles the below cases:
+        # (1) found_events includes just one event object. Example: the first committee meeting of the day - 9:00 am on 01/18/2018
+        # (2) found_events includes multiple events that all happen at the same time (though in reality, they occur one-after-the-other). Example: the events at 9:00 am on 11/30/2017
+        for event in found_events:
+            if legistar_meeting_progress(event):
                 return found_events
-            else:
-                return found_events.first()
-        else:
-            return found_events.first()                
+    else: 
+        for event in found_events:
+            if legistar_meeting_progress(event):
+                # The template expects a queryset
+                return Event.objects.filter(ocd_id=event.ocd_id)
+
+    return Event.objects.none()
+
+
+def legistar_meeting_progress(event):
+    '''
+    This function helps determine the status of a meeting (i.e., is it 'In progess'?).
+
+    Granicus provides a list of current events (video ID only) on http://metro.granicus.com/running_events.php.
+    We get that ID and then check if the ID matches that of the event in question.
+    '''
+    organization_name = EventParticipant.objects.get(event_id=event.ocd_id).entity_name.strip()
+    # The strip handles cases where Metro admin added a trailing whitespace to the participant name, e.g., https://ocd.datamade.us/ocd-event/d78836eb-485f-4f5f-b0ce-f89ceaa66d6f/ 
+    try: 
+        organization_detail_url = Organization.objects.get(name=organization_name).source_url
+    except Organization.DoesNotExist: 
+        return False
+
+    # Get video ID from Grancius, if one exists.
+    running_events = requests.get("http://metro.granicus.com/running_events.php")
+    if running_events.json():
+        event_id = running_events.json()[0]
+    else:
+        return False
+
+    organization_detail = requests.get(organization_detail_url)
+    if event_id in organization_detail.text:
+        return True
+
+    return False

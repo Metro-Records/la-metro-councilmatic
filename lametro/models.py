@@ -191,29 +191,28 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        # Create the boundaries for discovering events (in progess) within the timeframe stipulated 
-        # by Metro.
-        # Then, filter the events according to these boundaries.
-        six_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=6)
-        three_hours_ago = datetime.now(app_timezone) - timedelta(hours=3)
+        '''
+        Create the boundaries for discovering events (in progess) within the timeframe stipulated 
+        by Metro. A meeting displays as current if:
+        (1) "now" is five minutes or less before the designated start time;
+        (2) the previous meeting has ended (determined by looking for "In progress" on Legistar).
 
-        found_events = cls.objects.filter(start_time__lt=six_minutes_from_now)\
-                  .filter(start_time__gt=three_hours_ago)\
+        The maximum recorded meeting duration is 5.38 hours, according to the spreadsheet provided by 
+        Metro in issue #251.
+        So, to determine initial list of possible current events, we look for all events scheduled 
+        in the past 6 hours.
+
+        This method returns a list (with zero or more elements).
+        '''
+        five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
+        six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
+        found_events = cls.objects.filter(start_time__lte=five_minutes_from_now)\
+                  .filter(start_time__gte=six_hours_ago)\
                   .exclude(status='cancelled')\
                   .order_by('start_time')
 
         if found_events:
-            if len(found_events) > 1: 
-                return calculate_current_meetings(found_events, six_minutes_from_now)   
-            else:
-                # A board meeting lasts 3 hours, and a committee event lasts 1 hour.
-                # Change the value of "_hour_ago" for committee meetings to 1 hour.
-                if found_events.filter(name__icontains='Board Meeting'):
-                    return found_events.first()
-                else:
-                    one_hour_ago = six_minutes_from_now - timedelta(hours=1)
-                        
-                    return found_events.filter(start_time__gt=one_hour_ago).first()
+            return calculate_current_meetings(found_events, five_minutes_from_now)
 
 
     @classmethod
