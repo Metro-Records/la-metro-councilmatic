@@ -49,7 +49,8 @@ def format_district(label):
 def prepare_title(full_text):
     formatted_text = format_full_text(full_text)
 
-    return parse_subject(formatted_text)
+    if formatted_text:
+        return parse_subject(formatted_text)
 
 
 @register.filter

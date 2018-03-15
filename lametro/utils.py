@@ -12,7 +12,7 @@ def format_full_text(full_text):
     if full_text:
         full_text_with_cue = full_text.replace('\n\n', 'NEWLINE').replace('\r\n', 'NEWLINE').replace('\n..', 'NEWLINE')
 
-        match = re.search('(SUBJECT:)(.*?)(NEWLINE|ACTION:)', full_text_with_cue.replace('\n', ''))
+        match = re.search('(SUBJECT:)(.*?)(NEWLINE|ACTION:)', full_text_with_cue.replace('\n', ' '))
         if match:
             results = match.group(2)
 
