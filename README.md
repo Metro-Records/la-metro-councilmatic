@@ -79,6 +79,12 @@ By default, the import_data command carefully looks at the OCD API; it is a smar
 
 The import_data command has some more nuance than the description above, for the different types of data it loads. If you have any questions, open up an issue and pester us to write better documentation.
 
+Once you've imported the data, create the cache, then you're all set!
+
+```bash
+python manage.py createcachetable
+```
+
 ## Run Metro Board Reports locally
 
 Run the following in terminal:

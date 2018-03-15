@@ -1,5 +1,6 @@
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.staticfiles import views as staticviews
 from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.views.decorators.cache import never_cache
@@ -40,3 +41,8 @@ urlpatterns = [
     url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
     url(r'', include('councilmatic_core.urls')),
 ]
+
+if settings.DEBUG:
+  urlpatterns += [
+    url(r'^static/(?P<path>.*)/$', staticviews.serve),
+  ]
