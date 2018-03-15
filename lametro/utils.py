@@ -38,9 +38,7 @@ def parse_subject(text):
 
 def calculate_current_meetings(found_events, five_minutes_from_now):
     # Metro provided a spreadsheet of average meeting times. The minimum average time a meeting lasts is 52 minutes: let's round down to 50 and add the 5-minute buffer, i.e., an event will appear, regardless of Legistar, for 55 minutes past its start time. 
-    # time_ago = five_minutes_from_now - timedelta(minutes=60)
     time_ago = five_minutes_from_now - timedelta(minutes=50)
-
     # Custom order: show the board meeting first, when there is one.
     # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since false comes before true.
     found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
@@ -77,8 +75,8 @@ def legistar_meeting_progress(event):
     Granicus provides a list of current events (video ID only) on http://metro.granicus.com/running_events.php.
     We get that ID and then check if the ID matches that of the event in question.
     '''
-    organization_name = EventParticipant.objects.get(event_id=event.ocd_id).entity_name
-
+    organization_name = EventParticipant.objects.get(event_id=event.ocd_id).entity_name.strip()
+    # The strip handles cases where Metro admin added a trailing whitespace to the participant name, e.g., https://ocd.datamade.us/ocd-event/d78836eb-485f-4f5f-b0ce-f89ceaa66d6f/ 
     try: 
         organization_detail_url = Organization.objects.get(name=organization_name).source_url
     except Organization.DoesNotExist: 
@@ -92,6 +90,7 @@ def legistar_meeting_progress(event):
         return False
 
     organization_detail = requests.get(organization_detail_url)
+
     if event_id in organization_detail.text:
         return True
 
