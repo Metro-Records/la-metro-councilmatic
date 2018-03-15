@@ -77,3 +77,5 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
+
+TIME_ZONE = 'America/Los_Angeles'

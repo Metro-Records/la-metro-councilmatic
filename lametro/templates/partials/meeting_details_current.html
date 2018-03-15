@@ -1,0 +1,60 @@
+{% load staticfiles %}
+{% load lametro_extras %}
+
+<div>
+    <div>
+        <div class="row" style="margin-top: 1em;">
+            <div class="col-xs-6">
+                <img src='/static/images/Gateway03RT.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
+            </div>
+            <div class="col-xs-6">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <!-- Meeting name(s) -->
+                    {% if current_meeting|length > 1 %}
+                        {% for meeting in current_meeting %}
+                            <p>
+                                {{ meeting.link_html | safe }}<br/>
+                                <span class="small text-muted">{{ meeting.description }}</span>
+                                {% if meeting.documents.all %}  
+                                    <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a><br>
+                                {% endif %}
+                            </p>
+                        {% endfor %}
+                    {% else %}
+                        <h4>
+                          {{ current_meeting.first.link_html | safe }}<br/>
+                          <span class="small text-muted">{{ current_meeting.first.description }}</span>
+                        </h4>
+                    {% endif %}
+             
+                    <!-- Meeting info -->
+                    <p class="small text-muted">
+                        <i class="fa fa-fw fa-calendar-o"></i> {{ current_meeting.first.start_time | date:"D n/d/Y"}}<br/>
+                        <i class="fa fa-fw fa-clock-o"></i> {{ current_meeting.first.start_time | date:"g:i a"}}<br/>
+                        <i class="fa fa-fw fa-map-marker"></i> {{ current_meeting.first.location_name}}<br />
+                    </p>
+
+                    <!-- Links to media url and PDF download -->
+                    {% if current_meeting|length > 1 %}
+                        <p><a class="btn btn-salmon" href="{{media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                    {% else %}
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <p><a class="btn btn-salmon" href="{{media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                            </div>
+                            <div class="col-xs-7">
+                                {% if current_meeting.first.documents.all %}
+                                    <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{current_meeting.first.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}                   
+
+                  </div>
+                </div>
+                </br>
+            </div>
+        </div>
+    </div>
+</div>

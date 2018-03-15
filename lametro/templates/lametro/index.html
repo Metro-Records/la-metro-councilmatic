@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    {% if current_meeting or current_meeting_queryset %}
+    {% if current_meeting %}
 
     <div class="container-fluid" id="section-events">
         <div class="row-fluid">
@@ -39,7 +39,7 @@
                             Current Meeting
                         </h2>
                         {% with meeting=current_meeting %}
-                            {% include "partials/component_upcoming_meetings.html" %}
+                            {% include "partials/meeting_details_current.html" %}
                         {% endwith %}
                     </div>
                     <div class='col-sm-5'>
@@ -64,7 +64,7 @@
                             Next Board Meeting
                         </h2>
                         {% with meeting=upcoming_board_meeting %}
-                            {% include "partials/component_upcoming_meetings.html" %}
+                            {% include "partials/meeting_details_next.html" %}
                         {% endwith %}
                     </div>
                     <div class='col-sm-5'>
