@@ -15,9 +15,10 @@ DEBUG = False
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'chi_councilmatic',
+        'NAME': 'lametro',
         'USER': '',
         'PASSWORD': '',
+        'PORT': 5432,
     }
 }
 
@@ -26,7 +27,7 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
         #'URL': 'http://127.0.0.1:8983/solr'
         # ...or for multicore...
-        'URL': 'http://127.0.0.1:8983/solr/chicago',
+        'URL': 'http://127.0.0.1:8983/solr/lametro',
     },
 }
 
@@ -49,7 +50,7 @@ DISQUS_SHORTNAME = None
 ANALYTICS_TRACKING_CODE = ''
 
 HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), '..'
-                             '/chicago/static/images/')
+                             '/lametro/static/images/')
 
 EXTRA_APPS = ()
 
