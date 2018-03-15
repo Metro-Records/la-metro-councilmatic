@@ -38,7 +38,8 @@ def parse_subject(text):
 
 def calculate_current_meetings(found_events, five_minutes_from_now):
     # Metro provided a spreadsheet of average meeting times. The minimum average time a meeting lasts is 52 minutes: let's round to 55 and add the 5-minute buffer, i.e., an event will appear, regardless of Legistar, for 55 minutes past its start time. 
-    time_ago = five_minutes_from_now - timedelta(minutes=60)
+    # time_ago = five_minutes_from_now - timedelta(minutes=60)
+    time_ago = five_minutes_from_now - timedelta(minutes=10)
 
     # Custom order: show the board meeting first, when there is one.
     # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since false comes before true.
@@ -71,13 +72,14 @@ def calculate_current_meetings(found_events, five_minutes_from_now):
 
 def legistar_meeting_progress(event):
     '''
-    The organization detail page on Legistar flags current meetings as 'In progress.' 
-    Ping the organization page to check whether the most recently scheduled meeting has an 'In progress' flag.
-    We use this to determine if a meeting has ended. 
+    This function helps determine the status of a meeting (i.e., is it 'In progess'?).
+
+    Granicus provides a list of current events (ID only) on http://metro.granicus.com/running_events.php.
+    We get that ID and then check if the ID matches that of the event in question.
     '''
     in_progress = False
     organization_name = EventParticipant.objects.get(event_id=event.ocd_id).entity_name
-    event_date = '{month}/{day}/{year}'.format(month=event.start_time.month, day=event.start_time.day, year=event.start_time.year)
+    # event_date = '{month}/{day}/{year}'.format(month=event.start_time.month, day=event.start_time.day, year=event.start_time.year)
 
     try: 
         organization_detail_url = Organization.objects.get(name=organization_name).source_url
@@ -85,12 +87,35 @@ def legistar_meeting_progress(event):
         return in_progress
 
     r = requests.get(organization_detail_url)
-    page = lxml.html.fromstring(r.text)
-    table = page.xpath("//table[@id='ctl00_ContentPlaceHolder1_gridCalendar_ctl00']")[0]
-    rows = table.xpath(".//tr")
 
-    for row in rows:
-        if event_date in row.text_content() and 'progress' in row.text_content():
-            return True
+    # from selenium import webdriver
+    # browser = webdriver.Chrome()
+    # browser.get(organization_detail_url)
+    # html = browser.page_source
+
+    # import dryscrape
+    # session = dryscrape.Session()
+    # session.visit(my_url)
+    # response = session.body()
+
+    running_events = requests.get("http://metro.granicus.com/running_events.php")
+    event_id = running_events.json()[0]
+    # event_id = '9b7aa99d-a809-468b-b8c4-54facef7e81c'
+    # event_link = 'http://metro.granicus.com/mediaplayer.php?event_id={}'.format(event_id)
+
+
+    # if 'The event you selected is not currently in progress' not in response.text:
+    #     in_progress = True
+
+    if event_id in r.text:
+        in_progress = True
+
+    # page = lxml.html.fromstring(r.text)
+    # table = page.xpath("//table[@id='ctl00_ContentPlaceHolder1_gridCalendar_ctl00']")[0]
+    # rows = table.xpath(".//tr")
+
+    # for row in rows:
+    #     if event_date in row.text_content() and 'progress' in row.text_content():
+    #         return True
 
     return in_progress
