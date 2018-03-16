@@ -40,19 +40,24 @@ def test_related_bill_relation(client, bill):
     assert central_bill.related_bills.count() == 1
     assert central_bill.related_bills.first().related_bill_identifier == '2017-0596'  
 
-def test_format_full_text(bill):
+@pytest.mark.parametrize('text,subject', [
+    ("..Subject\nSUBJECT:\tFOOD SERVICE OPERATOR\n\n..Action\nACTION:\tAWARD SERVICES CONTRACT\n\n..", "\tFOOD SERVICE OPERATOR"),
+    ("..Subject/Action\r\nSUBJECT: MONTHLY REPORT ON CRENSHAW/LAX SAFETY\r\nACTION: RECEIVE AND FILE\r\n", " MONTHLY REPORT ON CRENSHAW/LAX SAFETY"),
+    ("..Subject\nSUBJECT:    REVISED MOTION BY DIRECTORS HAHN, SOLIS,\nGARCIA, AND DUPONT-WALKER\n..Title\n", "    REVISED MOTION BY DIRECTORS HAHN, SOLIS, GARCIA, AND DUPONT-WALKER")
+])
+def test_format_full_text(bill, text, subject):
     '''
     This test checks that format_full_text correctly parses the subject header. 
     '''
     bill_info = {
-        'ocr_full_text': "..Meeting_Body\rPLANNING AND PROGRAMMING COMMITTEE\rNOVEMBER 18, 2015\r\r..Subject/Action\rSUBJECT: EASTSIDE PHASE 2 UPDATE\nBY DIRECTORS SOLIS, GARCIA\n\nACTION:         RECEIVE AND FILE \r\r..Heading\rRECOMMENDATION\r\r..Title\rRECEIVE AND FILE report in response to the Metro Board July 23, 2015 directive to provide bi-monthly updates on the Eastside Transit Corrid\r"
+        'ocr_full_text': text
     }
 
     bill_with_text = bill.build(**bill_info)
 
     full_text = bill_with_text.ocr_full_text
 
-    assert format_full_text(full_text) == ' EASTSIDE PHASE 2 UPDATE BY DIRECTORS SOLIS, GARCIA'
+    assert format_full_text(full_text) == subject
 
 
 
