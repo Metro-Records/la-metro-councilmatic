@@ -1,3 +1,4 @@
+import re
 import pytz
 from datetime import datetime, timedelta
 import requests
@@ -11,29 +12,33 @@ from councilmatic_core.models import Event, EventParticipant, Organization
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
-# Parse the subject line from ocr_full_text
 def format_full_text(full_text):
+    '''
+    The search results and board report titles (on the BillDetail) should show the "SUBJECT:" header from the board report when present.
+    The ocr_full_text contains this information. Some example snippets:
+
+    # Subject header followed by two linebreaks.
+    ..Subject\nSUBJECT:\tFOOD SERVICE OPERATOR\n\n..Action\nACTION:\tAWARD SERVICES CONTRACT\n\n..
+
+    # Subject header followed by a return carriage and linebreak.
+    ..Subject/Action\r\nSUBJECT: MONTHLY REPORT ON CRENSHAW/LAX SAFETY\r\nACTION: RECEIVE AND FILE\r\n
+
+    # Subject header with a linebreak in the middle and without an ACTION header.
+    ..Subject\nSUBJECT:    REVISED MOTION BY DIRECTORS HAHN, SOLIS, \nGARCIA, AND DUPONT-WALKER\n..Title\n
+    '''
     results = ''
 
     if full_text:
-        txt_as_array = full_text.split("..")
-        for item in txt_as_array:
-            if 'SUBJECT:' in item:
-                array_with_subject = item.split('\n\n')
-                for item in array_with_subject:
-                    if 'SUBJECT:' in item:
-                        results = item.replace('\n', '')
+        clean_full_text = full_text.replace('\n\n', 'NEWLINE').replace('\r\n', 'NEWLINE').replace('\n..', 'NEWLINE').replace('\n', ' ')
+        match = re.search('(SUBJECT:)(.*?)(NEWLINE|ACTION:)', clean_full_text)
+        if match:
+            results = match.group(2)
+
     return results
 
-# Isolate text after 'SUBJECT'
 def parse_subject(text):
-    if text:
-        before_keyword, keyword, after_keyword = text.partition('SUBJECT:')
-        if after_keyword:
-            if '[PROJECT OR SERVICE NAME]' not in after_keyword and '[DESCRIPTION]' not in after_keyword and '[CONTRACT NUMBER]' not in after_keyword:
-                return after_keyword.strip()
-
-    return None
+    if ('[PROJECT OR SERVICE NAME]' not in text) and ('[DESCRIPTION]' not in text) and ('[CONTRACT NUMBER]' not in text):
+        return text
 
 
 def calculate_current_meetings(found_events, five_minutes_from_now):
