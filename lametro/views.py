@@ -24,7 +24,7 @@ from django.db.models.functions import Lower
 from django.db.models import Max, Min
 from django.utils import timezone
 from django.utils.text import slugify
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
 from django.shortcuts import render_to_response, redirect
 from django.core import management
 
@@ -636,6 +636,32 @@ class LAPersonDetailView(PersonDetailView):
 
     template_name = 'lametro/person.html'
     model = LAMetroPerson
+
+    def dispatch(self, request, *args, **kwargs):
+        slug = self.kwargs['slug']
+
+        try:
+            person = self.model.objects.get(slug=slug)
+
+        except LAMetroPerson.DoesNotExist:
+            person = None
+
+        else:
+            response = super().dispatch(request, *args, **kwargs)
+
+        if not person:
+            # Grab the first and last name from slug like "john-smith-af5a8ab39aad"
+            short_slug = '-'.join(slug.split('-')[:-1])
+
+            try:
+                person = self.model.objects.get(slug__startswith=short_slug)
+            except (LAMetroPerson.DoesNotExist, LAMetroPerson.MultipleObjectsReturned):
+                # Return a 404 if more than one matching slug, or if there are no matching slugs
+                response = HttpResponseNotFound()
+            else:
+                response = HttpResponsePermanentRedirect(reverse('person', args=[person.slug]))
+
+        return response
 
     def get_context_data(self, **kwargs):
         post_model = LAMetroPost
