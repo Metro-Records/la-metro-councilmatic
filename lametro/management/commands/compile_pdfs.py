@@ -80,7 +80,6 @@ class Command(BaseCommand):
                 data = json.dumps(filenames)
                 url = MERGER_BASE_URL + '/merge_pdfs/' + event_slug
                 requests.post(url, data=data)
-
         LOGGER.info(self.style.SUCCESS(".........."))
         LOGGER.info(self.style.SUCCESS("Command complete. Excellent work, everyone. Go to metro-pdf-merger for results!"))
         print("Command done at: ", datetime.now())
@@ -152,11 +151,8 @@ class Command(BaseCommand):
 
 
     def findEventAgendaPacket(self, all_documents=False):
-        event_agendas = []
-
-        if all_documents:
-            query = '''
-            SELECT 
+        query = '''
+            SELECT
                 event_id,
                 event_agenda,
                 array_agg(url ORDER BY item_order, bill_id, note)
@@ -177,58 +173,53 @@ class Command(BaseCommand):
                 ON i.bill_id=d_bill.bill_id
                 INNER JOIN councilmatic_core_eventdocument as d_event
                 ON i.event_id=d_event.event_id
-                INNER JOIN councilmatic_core_bill AS b
-                ON d_bill.bill_id=b.ocd_id
+        '''
+
+        if all_documents:
+            query += '''
+                ) AS subq
+                GROUP BY event_id, event_agenda
+            '''
+
+            return self.connection.execute(sa.text(query))
+        else:
+            # The compile script typically runs without an `all_documents` argument.
+            # In those cases, the query should only grab data about new bill and event documents.
+            grab_bills = '''
+            SELECT bill_id FROM new_billdocument GROUP BY bill_id
+            '''
+            bill_ids_proxy = self.connection.execute(sa.text(grab_bills))
+            bill_ids_results = [el[0] for el in bill_ids_proxy.fetchall() if el[0]]
+
+            grab_events = '''
+            SELECT event_id FROM new_eventdocument GROUP BY event_id
+            '''
+            event_ids_proxy = self.connection.execute(sa.text(grab_events))
+            event_ids_results = [el[0] for el in event_ids_proxy.fetchall() if el[0]]
+
+            query += '''
+                {where_clause}
                 ) AS subq
             GROUP BY event_id, event_agenda
             '''
 
-            event_agendas = self.connection.execute(sa.text(query))
-        else:
-            grab_ids_query = '''
-            SELECT bill_id FROM new_billdocument GROUP BY bill_id
-            '''
+            params = {}
 
-            bill_ids_proxy = self.connection.execute(sa.text(grab_ids_query))
-            bill_ids_results = bill_ids_proxy.fetchall()
-            bill_ids_str = ''
+            if bill_ids_results and event_ids_results:
+                where_clause = '''
+                    WHERE d_bill.bill_id in :bill_ids
+                    OR i.event_id in :event_ids
+                '''
+                params = {bill_ids: tuple(bill_ids_results), event_ids: tuple(event_ids_results)}
+            elif bill_ids_results:
+                where_clause = 'WHERE d_bill.bill_id in :bill_ids'
+                params = {bill_ids: tuple(bill_ids_results)}
+            elif event_ids_results:
+                where_clause = 'WHERE i.event_id in :event_ids'
+                params = {'event_ids': tuple(event_ids_results)}
+            else:
+                return []
+            
+            query = query.format(where_clause=where_clause)
 
-            if bill_ids_results:
-                for el in bill_ids_results:
-                    bill_ids_str += "'" + str(el.values()[0]) + "',"
-
-                psql_ready_ids = bill_ids_str[:-1]
-
-                query = '''
-                SELECT 
-                    event_id,
-                    event_agenda,
-                    array_agg(url ORDER BY item_order, bill_id, note)
-                FROM (
-                    SELECT DISTINCT
-                        i.event_id,
-                        i.order as item_order,
-                        d_bill.url,
-                        d_bill.bill_id,
-                        d_event.url as event_agenda,
-                        CASE
-                        WHEN trim(lower(d_bill.note)) LIKE 'board report%' THEN '1'
-                        WHEN trim(lower(d_bill.note)) LIKE '0%' THEN 'z'
-                        ELSE trim(lower(d_bill.note))
-                        END AS note
-                    FROM councilmatic_core_billdocument AS d_bill
-                    INNER JOIN councilmatic_core_eventagendaitem as i
-                    ON i.bill_id=d_bill.bill_id
-                    INNER JOIN councilmatic_core_eventdocument as d_event
-                    ON i.event_id=d_event.event_id
-                    INNER JOIN councilmatic_core_bill AS b
-                    ON d_bill.bill_id=b.ocd_id
-                    WHERE d_bill.bill_id in ( {} )
-                    ) AS subq
-                GROUP BY event_id, event_agenda
-                '''.format(psql_ready_ids)
-
-                event_agendas = self.connection.execute(sa.text(query))
-
-        return event_agendas
-
+            return self.connection.execute(sa.text(query), **params)
