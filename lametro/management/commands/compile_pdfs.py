@@ -151,32 +151,29 @@ class Command(BaseCommand):
 
 
     def findEventAgendaPacket(self, all_documents=False):
-        query = '''
-            SELECT
-                event_id,
-                event_agenda,
-                array_agg(url ORDER BY item_order, bill_id, note)
-            FROM (
-                SELECT DISTINCT
-                    i.event_id,
-                    i.order as item_order,
-                    d_bill.url,
-                    d_bill.bill_id,
-                    d_event.url as event_agenda,
-                    CASE
-                    WHEN trim(lower(d_bill.note)) LIKE 'board report%' THEN '1'
-                    WHEN trim(lower(d_bill.note)) LIKE '0%' THEN 'z'
-                    ELSE trim(lower(d_bill.note))
-                    END AS note
-                FROM councilmatic_core_billdocument AS d_bill
-                INNER JOIN councilmatic_core_eventagendaitem as i
-                ON i.bill_id=d_bill.bill_id
-                INNER JOIN councilmatic_core_eventdocument as d_event
-                ON i.event_id=d_event.event_id
-        '''
-
         if all_documents:
-            query += '''
+            query = '''
+                SELECT
+                    event_id,
+                    event_agenda,
+                    array_agg(url ORDER BY item_order, bill_id, note)
+                FROM (
+                    SELECT DISTINCT
+                        i.event_id,
+                        i.order as item_order,
+                        d_bill.url,
+                        d_bill.bill_id,
+                        d_event.url as event_agenda,
+                        CASE
+                        WHEN trim(lower(d_bill.note)) LIKE 'board report%' THEN '1'
+                        WHEN trim(lower(d_bill.note)) LIKE '0%' THEN 'z'
+                        ELSE trim(lower(d_bill.note))
+                        END AS note
+                    FROM councilmatic_core_billdocument AS d_bill
+                    INNER JOIN councilmatic_core_eventagendaitem as i
+                    ON i.bill_id=d_bill.bill_id
+                    INNER JOIN councilmatic_core_eventdocument as d_event
+                    ON i.event_id=d_event.event_id
                 ) AS subq
                 GROUP BY event_id, event_agenda
             '''
@@ -197,10 +194,31 @@ class Command(BaseCommand):
             event_ids_proxy = self.connection.execute(sa.text(grab_events))
             event_ids_results = [el[0] for el in event_ids_proxy.fetchall() if el[0]]
 
-            query += '''
-                {where_clause}
-                ) AS subq
-            GROUP BY event_id, event_agenda
+            query = '''
+                SELECT
+                    event_id,
+                    event_agenda,
+                    array_agg(url ORDER BY item_order, bill_id, note)
+                FROM (
+                    SELECT DISTINCT
+                        i.event_id,
+                        i.order as item_order,
+                        d_bill.url,
+                        d_bill.bill_id,
+                        d_event.url as event_agenda,
+                        CASE
+                        WHEN trim(lower(d_bill.note)) LIKE 'board report%' THEN '1'
+                        WHEN trim(lower(d_bill.note)) LIKE '0%' THEN 'z'
+                        ELSE trim(lower(d_bill.note))
+                        END AS note
+                    FROM councilmatic_core_billdocument AS d_bill
+                    INNER JOIN councilmatic_core_eventagendaitem as i
+                    ON i.bill_id=d_bill.bill_id
+                    INNER JOIN councilmatic_core_eventdocument as d_event
+                    ON i.event_id=d_event.event_id
+                    {where_clause}
+                    ) AS subq
+                GROUP BY event_id, event_agenda
             '''
 
             params = {}
@@ -210,10 +228,10 @@ class Command(BaseCommand):
                     WHERE d_bill.bill_id in :bill_ids
                     OR i.event_id in :event_ids
                 '''
-                params = {bill_ids: tuple(bill_ids_results), event_ids: tuple(event_ids_results)}
+                params = {'bill_ids': tuple(bill_ids_results), 'event_ids': tuple(event_ids_results)}
             elif bill_ids_results:
                 where_clause = 'WHERE d_bill.bill_id in :bill_ids'
-                params = {bill_ids: tuple(bill_ids_results)}
+                params = {'bill_ids': tuple(bill_ids_results)}
             elif event_ids_results:
                 where_clause = 'WHERE i.event_id in :event_ids'
                 params = {'event_ids': tuple(event_ids_results)}
