@@ -155,14 +155,10 @@ class Command(BaseCommand):
 
         if all_documents:
             query = '''
-                SELECT
-                    event_id,
-                    event_agenda,
-                    array_agg(url ORDER BY item_order, bill_id, note)
-                FROM (
+                WITH packet_info AS (
                     SELECT DISTINCT
-                        i.event_id,
-                        i.order as item_order,
+                        agenda_item.event_id,
+                        agenda_item.order as item_order,
                         d_bill.url,
                         d_bill.bill_id,
                         d_event.url as event_agenda,
@@ -172,11 +168,16 @@ class Command(BaseCommand):
                         ELSE trim(lower(d_bill.note))
                         END AS note
                     FROM councilmatic_core_billdocument AS d_bill
-                    INNER JOIN councilmatic_core_eventagendaitem as i
-                    ON i.bill_id=d_bill.bill_id
+                    INNER JOIN councilmatic_core_eventagendaitem as agenda_item
+                    USING (bill_id)
                     INNER JOIN councilmatic_core_eventdocument as d_event
-                    ON i.event_id=d_event.event_id
-                ) AS subq
+                    USING (event_id)
+                    )
+                SELECT
+                    event_id,
+                    event_agenda,
+                    array_agg(url ORDER BY item_order, bill_id, note)
+                FROM packet_info
                 GROUP BY event_id, event_agenda
             '''
 
@@ -185,27 +186,23 @@ class Command(BaseCommand):
             # The compile script typically runs without an `all_documents` argument.
             # In those cases, the query should only grab the related event_ids for new bill and event documents.
             grab_events = '''
-            SELECT DISTINCT event_id
-            FROM councilmatic_core_eventagendaitem as i
-            INNER JOIN new_billdocument as bill_doc
-            ON i.bill_id=bill_doc.bill_id
-            UNION
-            SELECT DISTINCT event_id
-            FROM new_eventdocument
+                SELECT DISTINCT event_id
+                FROM councilmatic_core_eventagendaitem
+                INNER JOIN new_billdocument
+                USING (bill_id)
+                UNION
+                SELECT DISTINCT event_id
+                FROM new_eventdocument
             '''
             event_ids_proxy = self.connection.execute(sa.text(grab_events))
             event_ids_results = [el[0] for el in event_ids_proxy.fetchall() if el[0]]
 
             if event_ids_results:
                 query = '''
-                    SELECT
-                        event_id,
-                        event_agenda,
-                        array_agg(url ORDER BY item_order, bill_id, note)
-                    FROM (
+                    WITH packet_info AS (
                         SELECT DISTINCT
-                            i.event_id,
-                            i.order as item_order,
+                            agenda_item.event_id,
+                            agenda_item.order as item_order,
                             d_bill.url,
                             d_bill.bill_id,
                             d_event.url as event_agenda,
@@ -215,12 +212,17 @@ class Command(BaseCommand):
                             ELSE trim(lower(d_bill.note))
                             END AS note
                         FROM councilmatic_core_billdocument AS d_bill
-                        INNER JOIN councilmatic_core_eventagendaitem as i
-                        ON i.bill_id=d_bill.bill_id
+                        INNER JOIN councilmatic_core_eventagendaitem as agenda_item
+                        USING (bill_id)
                         INNER JOIN councilmatic_core_eventdocument as d_event
-                        ON i.event_id=d_event.event_id
-                        WHERE i.event_id in :event_ids
-                        ) AS subq
+                        USING (event_id)
+                        WHERE agenda_item.event_id in :event_ids
+                        )
+                    SELECT
+                        event_id,
+                        event_agenda,
+                        array_agg(url ORDER BY item_order, bill_id, note)
+                    FROM packet_info
                     GROUP BY event_id, event_agenda
                 '''
 
