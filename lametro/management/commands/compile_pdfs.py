@@ -151,6 +151,8 @@ class Command(BaseCommand):
 
 
     def findEventAgendaPacket(self, all_documents=False):
+        event_agendas = []
+
         if all_documents:
             query = '''
                 SELECT
@@ -178,66 +180,52 @@ class Command(BaseCommand):
                 GROUP BY event_id, event_agenda
             '''
 
-            return self.connection.execute(sa.text(query))
+            event_agendas = self.connection.execute(sa.text(query))
         else:
             # The compile script typically runs without an `all_documents` argument.
-            # In those cases, the query should only grab data about new bill and event documents.
-            grab_bills = '''
-            SELECT bill_id FROM new_billdocument GROUP BY bill_id
-            '''
-            bill_ids_proxy = self.connection.execute(sa.text(grab_bills))
-            bill_ids_results = [el[0] for el in bill_ids_proxy.fetchall() if el[0]]
-
+            # In those cases, the query should only grab the related event_ids for new bill and event documents.
             grab_events = '''
-            SELECT event_id FROM new_eventdocument GROUP BY event_id
+            SELECT DISTINCT event_id
+            FROM councilmatic_core_eventagendaitem as i
+            INNER JOIN new_billdocument as bill_doc
+            ON i.bill_id=bill_doc.bill_id
+            UNION
+            SELECT DISTINCT event_id
+            FROM new_eventdocument
             '''
             event_ids_proxy = self.connection.execute(sa.text(grab_events))
             event_ids_results = [el[0] for el in event_ids_proxy.fetchall() if el[0]]
 
-            query = '''
-                SELECT
-                    event_id,
-                    event_agenda,
-                    array_agg(url ORDER BY item_order, bill_id, note)
-                FROM (
-                    SELECT DISTINCT
-                        i.event_id,
-                        i.order as item_order,
-                        d_bill.url,
-                        d_bill.bill_id,
-                        d_event.url as event_agenda,
-                        CASE
-                        WHEN trim(lower(d_bill.note)) LIKE 'board report%' THEN '1'
-                        WHEN trim(lower(d_bill.note)) LIKE '0%' THEN 'z'
-                        ELSE trim(lower(d_bill.note))
-                        END AS note
-                    FROM councilmatic_core_billdocument AS d_bill
-                    INNER JOIN councilmatic_core_eventagendaitem as i
-                    ON i.bill_id=d_bill.bill_id
-                    INNER JOIN councilmatic_core_eventdocument as d_event
-                    ON i.event_id=d_event.event_id
-                    {where_clause}
-                    ) AS subq
-                GROUP BY event_id, event_agenda
-            '''
-
-            params = {}
-
-            if bill_ids_results and event_ids_results:
-                where_clause = '''
-                    WHERE d_bill.bill_id in :bill_ids
-                    OR i.event_id in :event_ids
+            if event_ids_results:
+                query = '''
+                    SELECT
+                        event_id,
+                        event_agenda,
+                        array_agg(url ORDER BY item_order, bill_id, note)
+                    FROM (
+                        SELECT DISTINCT
+                            i.event_id,
+                            i.order as item_order,
+                            d_bill.url,
+                            d_bill.bill_id,
+                            d_event.url as event_agenda,
+                            CASE
+                            WHEN trim(lower(d_bill.note)) LIKE 'board report%' THEN '1'
+                            WHEN trim(lower(d_bill.note)) LIKE '0%' THEN 'z'
+                            ELSE trim(lower(d_bill.note))
+                            END AS note
+                        FROM councilmatic_core_billdocument AS d_bill
+                        INNER JOIN councilmatic_core_eventagendaitem as i
+                        ON i.bill_id=d_bill.bill_id
+                        INNER JOIN councilmatic_core_eventdocument as d_event
+                        ON i.event_id=d_event.event_id
+                        WHERE i.event_id in :event_ids
+                        ) AS subq
+                    GROUP BY event_id, event_agenda
                 '''
-                params = {'bill_ids': tuple(bill_ids_results), 'event_ids': tuple(event_ids_results)}
-            elif bill_ids_results:
-                where_clause = 'WHERE d_bill.bill_id in :bill_ids'
-                params = {'bill_ids': tuple(bill_ids_results)}
-            elif event_ids_results:
-                where_clause = 'WHERE i.event_id in :event_ids'
-                params = {'event_ids': tuple(event_ids_results)}
-            else:
-                return []
-            
-            query = query.format(where_clause=where_clause)
 
-            return self.connection.execute(sa.text(query), **params)
+                params = {'event_ids': tuple(event_ids_results)}
+            
+                event_agendas = self.connection.execute(sa.text(query), **params)
+
+        return event_agendas
