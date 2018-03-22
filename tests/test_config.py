@@ -79,3 +79,13 @@ MIDDLEWARE_CLASSES = (
 )
 
 TIME_ZONE = 'America/Los_Angeles'
+
+MAP_CONFIG = False
+
+CITY_VOCAB = {
+    'MUNICIPAL_DISTRICT': 'District',       # e.g. 'District'
+    'SOURCE': 'Metro',
+    'COUNCIL_MEMBER': 'Board Member',       # e.g. 'Council Member'
+    'COUNCIL_MEMBERS': 'Board of Directors',      # e.g. 'Council Members'
+    'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
+}
