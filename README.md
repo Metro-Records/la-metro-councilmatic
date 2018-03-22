@@ -165,13 +165,7 @@ configuring things properly.
 
 ## A note on tests
 
-LA Metro Councilmatic has a basic test suite. If you need to run it, then first export your settings:
-
-```bash
-export DJANGO_SETTINGS_MODULE=tests.test_config
-```
-
-Then, run the tests:
+LA Metro Councilmatic has a basic test suite. If you need to run it, simply run:
 
 ```bash
 pytest

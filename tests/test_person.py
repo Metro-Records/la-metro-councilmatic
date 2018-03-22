@@ -1,8 +1,10 @@
 import datetime
-from django.core.urlresolvers import reverse
+from uuid import uuid4
 
+from django.core.urlresolvers import reverse
 import pytest
 
+from .conftest import get_uid_chunk
 from lametro.views import LAMetroPerson
 
 
@@ -31,8 +33,9 @@ def test_person_page_redirects(client, metro_person, mocker):
     # Assert navigating to a partially valid slug, redirects to a valid slug.
 
     partial_slug = '-'.join(person.slug.split('-')[:-1])
+    new_slug = '-'.join([partial_slug, get_uid_chunk()])
 
-    url = reverse('person', kwargs={'slug': partial_slug})
+    url = reverse('person', kwargs={'slug': new_slug})
     rv = client.get(url)
 
     assert rv.status_code == 301

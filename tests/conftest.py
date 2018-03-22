@@ -8,6 +8,16 @@ from councilmatic_core.models import Event, EventDocument, Bill
 from lametro.models import LAMetroPerson
 
 
+def get_uid_chunk(uid=None):
+    '''
+    Create the UID chunk like the one we append to slugs to ensure
+    they're unique.
+    '''
+    if not uid:
+        uid = str(uuid4())
+
+    return uid[:13].replace('-', '')
+
 @pytest.fixture
 @pytest.mark.django_db
 def bill(db):
@@ -81,12 +91,11 @@ def metro_person(db):
     class LAMetroPersonFactory():
         def build(self, **kwargs):
             uid = str(uuid4())
-            slug_uid = uid.replace('-', '')[:13]
 
             person_info = {
                 'ocd_id': 'ocd-person/' + uid,
                 'name': 'Wonder Woman',
-                'slug': 'wonder-woman-' + slug_uid,
+                'slug': 'wonder-woman-' + get_uid_chunk(uid),
             }
 
             person_info.update(kwargs)
