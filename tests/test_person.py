@@ -1,5 +1,4 @@
 import datetime
-from uuid import uuid4
 
 from django.core.urlresolvers import reverse
 import pytest
