@@ -191,6 +191,12 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
+        
+        #use this line to hardcode one current event
+        return Event.objects.filter(start_time='2017-06-15 13:30:00-05')
+        #use this line to hardcode two current events
+        # return Event.objects.filter(start_time='2017-11-30 11:00:00-06')
+
         '''
         Create the boundaries for discovering events (in progess) within the timeframe stipulated 
         by Metro. A meeting displays as current if:
