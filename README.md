@@ -108,20 +108,14 @@ $ sudo apt-get install openjdk-7-jre-headless
 
 On OS X:
 
-1. Download latest Java from
-[http://java.com/en/download/mac_download.jsp?locale=en](http://java.com/en/download/mac_download.jsp?locale=en)
+1. Download latest Java SE Development Kit from
+[http://www.oracle.com/technetwork/java/javase/downloads/jdk10-downloads-4416644.html](http://www.oracle.com/technetwork/java/javase/downloads/jdk10-downloads-4416644.html)
 2. Follow normal install procedure
-3. Change system Java to use the version you just installed:
-
-    ``` bash
-    sudo mv /usr/bin/java /usr/bin/java16
-    sudo ln -s /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java /usr/bin/java
-    ```
 
 **Download & setup Solr**
 
 ``` bash
-wget http://mirror.sdunix.com/apache/lucene/solr/4.10.4/solr-4.10.4.tgz
+wget http://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4.tgz
 tar -xvf solr-4.10.4.tgz
 sudo cp -R solr-4.10.4/example /opt/solr
 
@@ -148,7 +142,7 @@ python manage.py rebuild_index
 
 While developing, if you need to make changes to the fields that are getting
 indexed or how they are getting indexed, you'll need to regenerate the
-schema.xml file that Solr uses to make it's magic. Here's how that works:
+schema.xml file that Solr uses to make its magic. Here's how that works:
 
 ```
 python manage.py build_solr_schema > solr_scripts/schema.xml
