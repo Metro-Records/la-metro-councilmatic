@@ -191,11 +191,6 @@ class LAMetroEvent(Event):
 
     @classmethod
     def current_meeting(cls):
-        
-        #use this line to hardcode one current event
-        #return Event.objects.filter(start_time='2017-06-15 13:30:00-05')
-        #use this line to hardcode two current events
-        #return Event.objects.filter(start_time='2017-11-30 11:00:00-06')
 
         '''
         Create the boundaries for discovering events (in progess) within the timeframe stipulated 
@@ -209,6 +204,10 @@ class LAMetroEvent(Event):
         in the past 6 hours.
 
         This method returns a list (with zero or more elements).
+
+        To hardcode current event(s) for testing, use these examples:
+        return Event.objects.filter(start_time='2017-06-15 13:30:00-05')
+        return Event.objects.filter(start_time='2017-11-30 11:00:00-06')
         '''
         five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
         six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
