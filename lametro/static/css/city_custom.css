@@ -250,6 +250,10 @@ div#toggleControls { margin-bottom: 1em; }
     .archive-link {
         font-size: 14px;
     }
+
+    .current-meeting-img {
+        max-width: 75%;
+    }
 }
 
 @media only screen and (max-width : 400px) {
@@ -258,7 +262,7 @@ div#toggleControls { margin-bottom: 1em; }
     }
 }
 
-@media (min-width: 767px) and (max-width: 991px) {
+@media (min-width: 767px) and (max-width: 1264px) {
     .navbar-collapse.collapse {
         display: none !important;
     }
