@@ -74,3 +74,6 @@ LOGGING = {
 
     }
 }
+
+# Set to False in production!
+SHOW_TEST_EVENTS = True
