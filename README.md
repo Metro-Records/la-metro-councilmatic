@@ -34,6 +34,19 @@ pip install -r requirements.txt
 
 Afterwards, whenever you want to use this virtual environment, run `workon la-metro`.
 
+**Special installation requirements**
+
+Metro runs a custom script that converts board-report attachments into plaintext. The script uses `textract` for conversions. Mac users can [follow the instructions given by `textract`](http://textract.readthedocs.io/en/stable/installation.html#osx).
+
+For Ubuntu users and on the server, the `textract` installation instructions require a little remediation. Follow these steps:
+
+(1) [Install all the dependencies](http://textract.readthedocs.io/en/stable/installation.html#ubuntu-debian).
+
+(2) `textract` fails when installing `pocketsphinx`. Happily, `textract` does not need this dependency for converting PDFs or word documents into plain text. [This issue offers a script that installs a "fake pocketsphinx"](https://github.com/deanmalmgren/textract/pull/178). Do as the issue instructs.
+
+(3) You're ready! Inside your virtualenv execute: `pip install textract==1.6.1`.
+
+
 **Create your settings file**
 
 ```bash
