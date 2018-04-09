@@ -1,4 +1,4 @@
 # /etc/cron.d/lametro-staging-crontasks
 APPDIR=/home/datamade/lametro-staging
 PYTHONDIR=/home/datamade/.virtualenvs/lametro-staging/bin/python
-0 8 * * * datamade cd $APPDIR && $PYTHONDIR manage.py import_data >> /var/log/councilmatic/lametro-staging-importdata.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 --age=24 >> /var/log/councilmatic/lametro-staging-updateindex.log && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-staging-integrity.log
+0 8 * * * datamade cd $APPDIR && $PYTHONDIR manage.py import_data >> /var/log/councilmatic/lametro-staging-importdata.log 2>&1 && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-staging-convertattachments.log && $PYTHONDIR manage.py update_index --batch-size=100 --age=24 >> /var/log/councilmatic/lametro-staging-updateindex.log && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-staging-integrity.log
