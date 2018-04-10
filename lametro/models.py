@@ -185,7 +185,6 @@ class LAMetroEvent(Event):
     def upcoming_board_meeting(cls):
         exclude = {
             'status': 'cancelled',
-            'name__endswith': '(SAP)',
         }
 
         if not settings.SHOW_TEST_EVENTS:
@@ -215,7 +214,7 @@ class LAMetroEvent(Event):
         five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
         six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
         found_events = cls.objects.filter(start_time__lte=five_minutes_from_now, start_time__gte=six_hours_ago)\
-                                  .exclude(status='cancelled', name__endswith='(SAP)')\
+                                  .exclude(status='cancelled')\
                                   .order_by('start_time')
 
         if not settings.SHOW_TEST_EVENTS:
@@ -229,13 +228,13 @@ class LAMetroEvent(Event):
     def upcoming_committee_meetings(cls):
         meetings = cls.objects.filter(start_time__gt=timezone.now())\
                   .filter(start_time__lt=(timezone.now() + relativedelta(months=1)))\
-                  .exclude(name__icontains='Board Meeting', name__endswith='(SAP)')\
+                  .exclude(name__icontains='Board Meeting')\
                   .order_by('start_time').all()
 
         if not meetings:
             meetings = cls.objects.filter(start_time__gt=timezone.now())\
                   .filter(start_time__lt=(timezone.now() + relativedelta(months=2)))\
-                  .exclude(name__icontains='Board Meeting', name__endswith='(SAP)')\
+                  .exclude(name__icontains='Board Meeting')\
                   .order_by('start_time').all()
 
         if not settings.SHOW_TEST_EVENTS:

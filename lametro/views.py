@@ -271,12 +271,6 @@ class LAMetroEventsView(EventsView):
     template_name = 'lametro/events.html'
 
     def get_context_data(self, **kwargs):
-        '''
-        To add Spanish audio, LA Metro creates a duplicate event that's exact
-        in all ways, except for a "(SAP)" suffix in the event name. Remember
-        to filter these duplicate events from results. We'll attach the audio
-        elsewhere.
-        '''
         context = super(LAMetroEventsView, self).get_context_data(**kwargs)
 
         # Did the user set date boundaries?
@@ -293,7 +287,6 @@ class LAMetroEventsView(EventsView):
 
             select_events = Event.objects.filter(start_time__gt=start_date_time)\
                 .filter(start_time__lt=end_date_time)\
-                .exclude(name__endswith='(SAP)')\
                 .order_by('start_time')
 
             if not settings.SHOW_TEST_EVENTS:
@@ -309,8 +302,7 @@ class LAMetroEventsView(EventsView):
 
         # If all meetings
         elif self.request.GET.get('show'):
-            all_events = Event.objects.exclude(name__endswith='(SAP)')\
-                .order_by('-start_time')
+            all_events = Event.objects.order_by('-start_time')
 
             if not settings.SHOW_TEST_EVENTS:
                 all_events = all_events.exclude(event_location='TEST')
@@ -326,7 +318,6 @@ class LAMetroEventsView(EventsView):
         else:
             # Upcoming events
             future_events = Event.objects.filter(start_time__gt=timezone.now())\
-                .exclude(name__endswith='(SAP)')\
                 .order_by('start_time')
 
             if not settings.SHOW_TEST_EVENTS:
@@ -342,7 +333,6 @@ class LAMetroEventsView(EventsView):
 
             # Past events
             past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
-                .exclude(name__endswith='(SAP)')\
                 .order_by('-start_time')
 
             if not settings.SHOW_TEST_EVENTS:
