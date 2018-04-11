@@ -89,3 +89,5 @@ CITY_VOCAB = {
     'COUNCIL_MEMBERS': 'Board of Directors',      # e.g. 'Council Members'
     'EVENTS': 'Meetings',               # label for the events listing, e.g. 'Events'
 }
+
+SHOW_TEST_EVENTS = True

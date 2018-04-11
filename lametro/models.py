@@ -183,10 +183,17 @@ class LAMetroEvent(Event):
 
     @classmethod
     def upcoming_board_meeting(cls):
-        return cls.objects.filter(start_time__gt=datetime.now(app_timezone))\
-                  .filter(name__icontains="Board Meeting")\
-                  .exclude(status='cancelled')\
-                  .order_by('start_time').first()
+        exclude = {
+            'status': 'cancelled',
+        }
+
+        if not settings.SHOW_TEST_EVENTS:
+            exclude['event_location'] = 'TEST'
+
+        return cls.objects.filter(start_time__gt=datetime.now(app_timezone), name__icontains='Board Meeting')\
+                          .exclude(**exclude)\
+                          .order_by('start_time')\
+                          .first()
 
 
     @classmethod
@@ -211,10 +218,12 @@ class LAMetroEvent(Event):
         '''
         five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
         six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
-        found_events = cls.objects.filter(start_time__lte=five_minutes_from_now)\
-                  .filter(start_time__gte=six_hours_ago)\
-                  .exclude(status='cancelled')\
-                  .order_by('start_time')
+        found_events = cls.objects.filter(start_time__lte=five_minutes_from_now, start_time__gte=six_hours_ago)\
+                                  .exclude(status='cancelled')\
+                                  .order_by('start_time')
+
+        if not settings.SHOW_TEST_EVENTS:
+            found_events = found_events.exclude(event_location='TEST')
 
         if found_events:
             return calculate_current_meetings(found_events, five_minutes_from_now)
@@ -233,5 +242,7 @@ class LAMetroEvent(Event):
                   .exclude(name__icontains='Board Meeting')\
                   .order_by('start_time').all()
 
+        if not settings.SHOW_TEST_EVENTS:
+            meetings = meetings.exclude(event_location='TEST')
 
         return meetings
