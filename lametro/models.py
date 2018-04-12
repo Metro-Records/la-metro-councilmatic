@@ -10,8 +10,6 @@ from django.contrib.auth.models import User
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, Action
 
-from .utils import calculate_current_meetings
-
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 class LAMetroBill(Bill):
@@ -225,6 +223,8 @@ class LAMetroEvent(Event):
         return LAMetroEvent.objects.filter(start_time='2017-06-15 13:30:00-05')
         return LAMetroEvent.objects.filter(start_time='2017-11-30 11:00:00-06')
         '''
+        from .utils import calculate_current_meetings  # Avoid circular import
+
         five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
         six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
         found_events = cls.objects.filter(start_time__lte=five_minutes_from_now, start_time__gte=six_hours_ago)\

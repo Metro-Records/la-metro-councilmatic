@@ -4,8 +4,8 @@ from uuid import uuid4
 
 from django.core.management import call_command
 
-from councilmatic_core.models import Event, EventDocument, Bill
-from lametro.models import LAMetroPerson
+from councilmatic_core.models import EventDocument, Bill
+from lametro.models import LAMetroPerson, LAMetroEvent
 
 
 def get_uid_chunk(uid=None):
@@ -58,7 +58,7 @@ def event(db):
 
             event_info.update(kwargs)
 
-            event = Event.objects.create(**event_info)
+            event = LAMetroEvent.objects.create(**event_info)
             event.save()
 
             return event

@@ -257,7 +257,7 @@ def handle_uploaded_agenda(agenda, event):
 
 
 def delete_submission(request, event_slug):
-    event = Event.objects.get(slug=event_slug)
+    event = LAMetroEvent.objects.get(slug=event_slug)
     event_doc = EventDocument.objects.filter(event_id=event.ocd_id, note__icontains='Manual upload')
 
     for e in event_doc:

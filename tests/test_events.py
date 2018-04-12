@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.core.urlresolvers import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from councilmatic_core.models import Event, EventDocument, Bill, RelatedBill
+from councilmatic_core.models import EventDocument, Bill, RelatedBill
 
 from lametro.models import LAMetroEvent
 from lametro.templatetags.lametro_extras import updates_made
@@ -167,7 +167,7 @@ def test_current_committee_meeting_first(event,
 
     five_minutes_from_now = now + timedelta(minutes=5)
     six_hours_ago = now - timedelta(hours=6)
-    found_events = Event.objects.filter(start_time__lte=five_minutes_from_now)\
+    found_events = LAMetroEvent.objects.filter(start_time__lte=five_minutes_from_now)\
               .filter(start_time__gte=six_hours_ago)\
               .exclude(status='cancelled')\
               .order_by('start_time')
