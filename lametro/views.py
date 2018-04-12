@@ -28,13 +28,18 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanen
 from django.shortcuts import render_to_response, redirect
 from django.core import management
 
-from councilmatic_core.views import IndexView, BillDetailView, CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
+from councilmatic_core.views import IndexView, BillDetailView, \
+    CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
+    PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
-from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, LAMetroEvent
+
+from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
+    LAMetroEvent, LAMetroOrganization
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
+
 
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
@@ -252,7 +257,7 @@ def handle_uploaded_agenda(agenda, event):
 
 
 def delete_submission(request, event_slug):
-    event = Event.objects.get(slug=event_slug)
+    event = LAMetroEvent.objects.get(slug=event_slug)
     event_doc = EventDocument.objects.filter(event_id=event.ocd_id, note__icontains='Manual upload')
 
     for e in event_doc:
@@ -285,12 +290,9 @@ class LAMetroEventsView(EventsView):
             start_date_time       = parser.parse(start_date_str)
             end_date_time         = parser.parse(end_date_str)
 
-            select_events = Event.objects.filter(start_time__gt=start_date_time)\
+            select_events = LAMetroEvent.objects.filter(start_time__gt=start_date_time)\
                 .filter(start_time__lt=end_date_time)\
                 .order_by('start_time')
-
-            if not settings.SHOW_TEST_EVENTS:
-                select_events = select_events.exclude(event_location='TEST')
 
             org_select_events = []
 
@@ -302,10 +304,7 @@ class LAMetroEventsView(EventsView):
 
         # If all meetings
         elif self.request.GET.get('show'):
-            all_events = Event.objects.order_by('-start_time')
-
-            if not settings.SHOW_TEST_EVENTS:
-                all_events = all_events.exclude(event_location='TEST')
+            all_events = LAMetroEvent.objects.order_by('-start_time')
 
             org_all_events = []
 
@@ -317,11 +316,8 @@ class LAMetroEventsView(EventsView):
         # If no...
         else:
             # Upcoming events
-            future_events = Event.objects.filter(start_time__gt=timezone.now())\
+            future_events = LAMetroEvent.objects.filter(start_time__gt=timezone.now())\
                 .order_by('start_time')
-
-            if not settings.SHOW_TEST_EVENTS:
-                future_events = future_events.exclude(event_location='TEST')
 
             org_future_events = []
 
@@ -332,11 +328,8 @@ class LAMetroEventsView(EventsView):
             context['future_events'] = org_future_events
 
             # Past events
-            past_events = Event.objects.filter(start_time__lt=datetime.now(app_timezone))\
+            past_events = LAMetroEvent.objects.filter(start_time__lt=datetime.now(app_timezone))\
                 .order_by('-start_time')
-
-            if not settings.SHOW_TEST_EVENTS:
-                past_events = past_events.exclude(event_location='TEST')
 
             org_past_events = []
 
@@ -524,6 +517,7 @@ class LACommitteesView(CommitteesView):
 
 class LACommitteeDetailView(CommitteeDetailView):
 
+    model = LAMetroOrganization
     template_name = 'lametro/committee.html'
 
     def get_context_data(self, **kwargs):

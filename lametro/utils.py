@@ -8,7 +8,9 @@ from lxml.etree import tostring
 from django.db.models.expressions import RawSQL
 from django.conf import settings
 
-from councilmatic_core.models import Event, EventParticipant, Organization
+from councilmatic_core.models import EventParticipant, Organization
+
+from lametro.models import LAMetroEvent
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -54,7 +56,7 @@ def calculate_current_meetings(found_events, five_minutes_from_now):
         # Check if previous event is still going on in Legistar.
         previous_meeting = found_events.filter(start_time__gte=time_ago).last().get_previous_by_start_time()
         if legistar_meeting_progress(previous_meeting):
-            return Event.objects.filter(ocd_id=previous_meeting.ocd_id)
+            return LAMetroEvent.objects.filter(ocd_id=previous_meeting.ocd_id)
 
         return found_events.filter(start_time__gte=time_ago)  
     elif earliest_start == latest_start:  
@@ -68,9 +70,9 @@ def calculate_current_meetings(found_events, five_minutes_from_now):
         for event in found_events:
             if legistar_meeting_progress(event):
                 # The template expects a queryset
-                return Event.objects.filter(ocd_id=event.ocd_id)
+                return LAMetroEvent.objects.filter(ocd_id=event.ocd_id)
 
-    return Event.objects.none()
+    return LAMetroEvent.objects.none()
 
 
 def legistar_meeting_progress(event):
