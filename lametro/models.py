@@ -176,22 +176,31 @@ class LAMetroPerson(Person):
             return []
 
 
+class LAMetroEventManager(models.Manager):
+    def get_queryset(self):
+        '''
+        If SHOW_TEST_EVENTS is False, omit them from the initial queryset.
+
+        NOTE: Be sure to use LAMetroEvent, rather than the base Event class,
+        when getting event querysets. If a test event slips through, it is
+        likely because we used the default Event to get the queryset.
+        '''
+        if not settings.SHOW_TEST_EVENTS:
+            return super().get_queryset().exclude(location_name='TEST')
+
+        return super().get_queryset()
+
+
 class LAMetroEvent(Event):
+    objects = LAMetroEventManager()
 
     class Meta:
         proxy = True
 
     @classmethod
     def upcoming_board_meeting(cls):
-        exclude = {
-            'status': 'cancelled',
-        }
-
-        if not settings.SHOW_TEST_EVENTS:
-            exclude['location_name'] = 'TEST'
-
         return cls.objects.filter(start_time__gt=datetime.now(app_timezone), name__icontains='Board Meeting')\
-                          .exclude(**exclude)\
+                          .exclude(status='cancelled')\
                           .order_by('start_time')\
                           .first()
 
@@ -213,8 +222,8 @@ class LAMetroEvent(Event):
         This method returns a list (with zero or more elements).
 
         To hardcode current event(s) for testing, use these examples:
-        return Event.objects.filter(start_time='2017-06-15 13:30:00-05')
-        return Event.objects.filter(start_time='2017-11-30 11:00:00-06')
+        return LAMetroEvent.objects.filter(start_time='2017-06-15 13:30:00-05')
+        return LAMetroEvent.objects.filter(start_time='2017-11-30 11:00:00-06')
         '''
         five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
         six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
@@ -222,27 +231,48 @@ class LAMetroEvent(Event):
                                   .exclude(status='cancelled')\
                                   .order_by('start_time')
 
-        if not settings.SHOW_TEST_EVENTS:
-            found_events = found_events.exclude(location_name='TEST')
-
         if found_events:
             return calculate_current_meetings(found_events, five_minutes_from_now)
 
 
     @classmethod
     def upcoming_committee_meetings(cls):
-        meetings = cls.objects.filter(start_time__gt=timezone.now())\
-                  .filter(start_time__lt=(timezone.now() + relativedelta(months=1)))\
-                  .exclude(name__icontains='Board Meeting')\
-                  .order_by('start_time').all()
+        one_month_from_now = timezone.now() + relativedelta(months=1)
+        meetings = cls.objects.filter(start_time__gt=timezone.now(), start_time__lt=one_month_from_now)\
+                              .exclude(name__icontains='Board Meeting')\
+                              .order_by('start_time').all()
 
         if not meetings:
-            meetings = cls.objects.filter(start_time__gt=timezone.now())\
-                  .filter(start_time__lt=(timezone.now() + relativedelta(months=2)))\
-                  .exclude(name__icontains='Board Meeting')\
-                  .order_by('start_time').all()
-
-        if not settings.SHOW_TEST_EVENTS:
-            meetings = meetings.exclude(location_name='TEST')
+            two_months_from_now = timezone.now() + relativedelta(months=2)
+            meetings = cls.objects.filter(start_time__gt=timezone.now(), start_time__lt=two_months_from_now)\
+                                  .exclude(name__icontains='Board Meeting')\
+                                  .order_by('start_time').all()
 
         return meetings
+
+
+class LAMetroOrganization(Organization):
+    '''
+    Overrides use the LAMetroEvent object, rather than the default Event
+    object, so test events are hidden appropriately.
+    '''
+    class Meta:
+        proxy = True
+
+    @property
+    def recent_events(self):
+        events = LAMetroEvent.objects.filter(participants__entity_type='organization', participants__entity_name=self.name)
+        events = events.order_by('-start_time').all()
+        return events
+
+    @property
+    def upcoming_events(self):
+        """
+        grabs events in the future
+        """
+        events = LAMetroEvent.objects\
+                             .filter(participants__entity_type='organization', participants__entity_name=self.name)\
+                             .filter(start_time__gt=datetime.now(app_timezone))\
+                             .order_by('start_time')\
+                             .all()
+        return events
