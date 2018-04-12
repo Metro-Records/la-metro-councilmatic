@@ -188,7 +188,7 @@ class LAMetroEvent(Event):
         }
 
         if not settings.SHOW_TEST_EVENTS:
-            exclude['event_location'] = 'TEST'
+            exclude['location_name'] = 'TEST'
 
         return cls.objects.filter(start_time__gt=datetime.now(app_timezone), name__icontains='Board Meeting')\
                           .exclude(**exclude)\
@@ -223,7 +223,7 @@ class LAMetroEvent(Event):
                                   .order_by('start_time')
 
         if not settings.SHOW_TEST_EVENTS:
-            found_events = found_events.exclude(event_location='TEST')
+            found_events = found_events.exclude(location_name='TEST')
 
         if found_events:
             return calculate_current_meetings(found_events, five_minutes_from_now)
@@ -243,6 +243,6 @@ class LAMetroEvent(Event):
                   .order_by('start_time').all()
 
         if not settings.SHOW_TEST_EVENTS:
-            meetings = meetings.exclude(event_location='TEST')
+            meetings = meetings.exclude(location_name='TEST')
 
         return meetings

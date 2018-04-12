@@ -290,7 +290,7 @@ class LAMetroEventsView(EventsView):
                 .order_by('start_time')
 
             if not settings.SHOW_TEST_EVENTS:
-                select_events = select_events.exclude(event_location='TEST')
+                select_events = select_events.exclude(location_name='TEST')
 
             org_select_events = []
 
@@ -305,7 +305,7 @@ class LAMetroEventsView(EventsView):
             all_events = Event.objects.order_by('-start_time')
 
             if not settings.SHOW_TEST_EVENTS:
-                all_events = all_events.exclude(event_location='TEST')
+                all_events = all_events.exclude(location_name='TEST')
 
             org_all_events = []
 
@@ -321,7 +321,7 @@ class LAMetroEventsView(EventsView):
                 .order_by('start_time')
 
             if not settings.SHOW_TEST_EVENTS:
-                future_events = future_events.exclude(event_location='TEST')
+                future_events = future_events.exclude(location_name='TEST')
 
             org_future_events = []
 
@@ -336,7 +336,7 @@ class LAMetroEventsView(EventsView):
                 .order_by('-start_time')
 
             if not settings.SHOW_TEST_EVENTS:
-                past_events = past_events.exclude(event_location='TEST')
+                past_events = past_events.exclude(location_name='TEST')
 
             org_past_events = []
 
