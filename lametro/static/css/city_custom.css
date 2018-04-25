@@ -24,6 +24,10 @@ h1, .h1 {
     font-size: 16px;
 }
 
+.nav>li>a {
+  padding: 19.5px 10px;
+}
+
 .site-intro-search { margin-bottom: 1em; }
 
 #section-photo {
@@ -262,7 +266,7 @@ div#toggleControls { margin-bottom: 1em; }
     }
 }
 
-@media (min-width: 767px) and (max-width: 1320px) {
+@media (min-width: 767px) and (max-width: 1180px) {
     .navbar-collapse.collapse {
         display: none !important;
     }

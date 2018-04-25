@@ -52,7 +52,7 @@
                         <a href="{% url 'lametro:about' %}">About</a>
                     </li>
                     <li>
-                        <a href='{% url 'lametro:council_members' %}'>Metro Board of Directors</a>
+                        <a href='{% url 'lametro:council_members' %}'>Board of Directors</a>
                     </li>
                     <li>
                         <a href='{% url 'committees' %}'>Committees</a>
@@ -64,10 +64,14 @@
                         <a href="{% url 'lametro:search' %}">Board Reports</a>
                     </li>
                     <li>
-                        <a href="http://search3.metro.net/search?access=p&output=xml_no_dtd&site=Board_Archives&ie=UTF-8&client=BoardArchive&proxystylesheet=BoardArchive&proxycustom=%3CHOME/%3E" target="_blank">Board Archive</a>
-                    </li>
-                    <li>
-                        <a href="http://search3.metro.net/search?output=xml_no_dtd&client=BoardBox&proxystylesheet=BoardBox&ie=UTF-8&site=BoardBox&access=p&proxycustom=" target="_blank">Board Box</a>
+                      <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                        Archive Search
+                        <span class="caret"></span>
+                      </a>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                          <li><a href="http://search3.metro.net/search?access=p&output=xml_no_dtd&site=Board_Archives&ie=UTF-8&client=BoardArchive&proxystylesheet=BoardArchive&proxycustom=%3CHOME/%3E" target="_blank">Board Reports</a></li>
+                          <li><a href="http://search3.metro.net/search?output=xml_no_dtd&client=BoardBox&proxystylesheet=BoardBox&ie=UTF-8&site=BoardBox&access=p&proxycustom=" target="_blank">Board Box</a></li>
+                        </ul>
                     </li>
                     {% nocache %}
                     <li>
