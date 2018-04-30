@@ -24,6 +24,10 @@ h1, .h1 {
     font-size: 16px;
 }
 
+.nav>li>a {
+  padding: 19.5px 10px;
+}
+
 .site-intro-search { margin-bottom: 1em; }
 
 #section-photo {
@@ -128,7 +132,7 @@ div#google_translate_element {
 
 .label-teal { background-color: #49A6AB; }
 
-.label-received, .label-approved, .label-adopted { 
+.label-received, .label-approved, .label-adopted {
     background-color: #1D9A43;
 }
 
@@ -181,10 +185,10 @@ div#toggleControls { margin-bottom: 1em; }
 
 #searchOn.well { padding: 12px; }
 
-#agendaModal div.modal-header { 
+#agendaModal div.modal-header {
     background-color: #f5f5f5;
-    border-top-right-radius: 6px; 
-    border-top-left-radius: 6px; 
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
 }
 
 /* Styles for calendar pop-up. */
@@ -215,13 +219,13 @@ div#toggleControls { margin-bottom: 1em; }
 
 #events-form > div.col-xs-8, #events-form > div.col-xs-2 { padding-right: 0; }
 
-.scrollable {    
+.scrollable {
     overflow: scroll;
     height: 700px;
 }
 
 .skinny-list {
-    width: 90%; 
+    width: 90%;
     display: inline-block;
 }
 
@@ -262,7 +266,7 @@ div#toggleControls { margin-bottom: 1em; }
     }
 }
 
-@media (min-width: 767px) and (max-width: 1264px) {
+@media (min-width: 767px) and (max-width: 1180px) {
     .navbar-collapse.collapse {
         display: none !important;
     }
