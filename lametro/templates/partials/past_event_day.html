@@ -33,12 +33,12 @@
     </div>
 
     <div class="col-xs-2">
-        {% if event.media_url %}
+        {% for media in event.media %}
         <p>
-            <a href="{{event.media_url}}" target="_blank">Listen</a>
+            <a href="{{ media.url }}" target="_blank">{{ media.label }}</a>
             </br>
         </p>
-        {% endif %}
+        {% endfor %}
     </div>
 
     {% if event.start_time|compare_time %}

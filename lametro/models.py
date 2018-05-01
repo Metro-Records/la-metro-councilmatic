@@ -8,7 +8,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-from councilmatic_core.models import Bill, Event, Post, Person, Organization, Action
+from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
+    Action, EventMedia
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -249,6 +250,23 @@ class LAMetroEvent(Event):
                                   .order_by('start_time').all()
 
         return meetings
+
+    @property
+    def media(self):
+        return LAMetroEventMedia.objects.filter(event_id=self.ocd_id)
+
+
+class LAMetroEventMedia(EventMedia):
+
+    class Meta:
+        proxy = True
+
+    @property
+    def label(self):
+        if self.note.endswith('(SAP)'):
+            return 'Escucha'
+        else:
+            return 'Listen'
 
 
 class LAMetroOrganization(Organization):

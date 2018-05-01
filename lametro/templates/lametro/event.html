@@ -13,9 +13,9 @@
             <h1>
                 {{event.name}}
 
-                {% if event.media_url %}
-                    <a class="btn btn-salmon" href="{{event.media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a>
-                {% endif %}
+                {% for media in event.media %}
+                    <a class="btn btn-salmon" href="{{ media.url }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> {{ media.label }}</a>
+                {% endfor %}
             </h1>
             <p>{{event.description}}</p>
             <p class="small text-muted">
