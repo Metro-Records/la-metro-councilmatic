@@ -8,6 +8,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+import requests
+
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
     Action, EventMedia
 
@@ -196,6 +198,11 @@ class LAMetroEvent(Event):
     class Meta:
         proxy = True
 
+    BASE_MEDIA_URL = 'http://metro.granicus.com/mediaplayer.php?'
+    GENERIC_ENGLISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=3'
+    GENERIC_SPANISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=2'
+
+
     @classmethod
     def upcoming_board_meeting(cls):
         return cls.objects.filter(start_time__gt=datetime.now(app_timezone), name__icontains='Board Meeting')\
@@ -208,14 +215,14 @@ class LAMetroEvent(Event):
     def current_meeting(cls):
 
         '''
-        Create the boundaries for discovering events (in progess) within the timeframe stipulated 
+        Create the boundaries for discovering events (in progess) within the timeframe stipulated
         by Metro. A meeting displays as current if:
         (1) "now" is five minutes or less before the designated start time;
         (2) the previous meeting has ended (determined by looking for "In progress" on Legistar).
 
-        The maximum recorded meeting duration is 5.38 hours, according to the spreadsheet provided by 
+        The maximum recorded meeting duration is 5.38 hours, according to the spreadsheet provided by
         Metro in issue #251.
-        So, to determine initial list of possible current events, we look for all events scheduled 
+        So, to determine initial list of possible current events, we look for all events scheduled
         in the past 6 hours.
 
         This method returns a list (with zero or more elements).
@@ -251,9 +258,50 @@ class LAMetroEvent(Event):
 
         return meetings
 
+
     @property
     def media(self):
         return LAMetroEventMedia.objects.filter(event_id=self.ocd_id)
+
+
+    @property
+    def bilingual(self):
+        return bool(self.extras.get('sap_guid'))
+
+
+    def _valid_or_generic(self, media_url, fallback=None):
+        '''
+        Return the given URL if it returns a 200 status code, else optional
+        generic fallback.
+        '''
+        response = requests.get(media_url)
+
+        if response.ok and 'The event you selected is not currently in progress' not in response.text:
+            return media_url
+        else:
+            return fallback
+
+
+    @property
+    def english_live_media_url(self):
+        guid = self.extras['guid']
+        english_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
+
+        return self._valid_or_generic(english_url,
+                                      fallback=self.GENERIC_ENGLISH_MEDIA_URL)
+
+
+    @property
+    def spanish_live_media_url(self):
+        guid = self.extras.get('sap_guid')
+
+        if guid:
+            spanish_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
+            return self._valid_or_generic(spanish_url,
+                                          fallback=self.GENERIC_SPANISH_MEDIA_URL)
+
+        else:
+            return None
 
 
 class LAMetroEventMedia(EventMedia):
@@ -264,9 +312,9 @@ class LAMetroEventMedia(EventMedia):
     @property
     def label(self):
         if self.note.endswith('(SAP)'):
-            return 'Escucha'
+            return 'Ver en Español'
         else:
-            return 'Listen'
+            return 'Watch in English'
 
 
 class LAMetroOrganization(Organization):

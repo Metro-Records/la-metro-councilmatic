@@ -50,20 +50,7 @@ class LAMetroIndexView(IndexView):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
         extra['current_meeting'] = self.event_model.current_meeting()
-        # Get the custom-built Metro media player URL
-        # Use the generic link when multiple meetings happen concurrently
-        if extra['current_meeting']:
-            if len(extra['current_meeting']) == 1:
-                guid = extra['current_meeting'].first().guid
-                media_url = 'http://metro.granicus.com/mediaplayer.php?event_id={}'.format(guid)
-                response = requests.get(media_url)
-                if not response.ok:
-                    media_url = 'http://metro.granicus.com/MediaPlayer.php?camera_id=2'
-            else:
-                media_url = 'http://metro.granicus.com/MediaPlayer.php?camera_id=2'
 
-            extra['media_url'] = media_url
-            
         return extra
 
 class LABillDetail(BillDetailView):

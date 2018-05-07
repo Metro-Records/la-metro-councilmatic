@@ -32,7 +32,7 @@
         </p>
     </div>
 
-    <div class="col-xs-2">
+    <div class="col-xs-3">
         {% for media in event.media %}
         <p>
             <a href="{{ media.url }}" target="_blank">{{ media.label }}</a>
@@ -42,7 +42,7 @@
     </div>
 
     {% if event.start_time|compare_time %}
-    <div class="col-xs-2">
+    <div class="col-xs-1">
         {% if 'board meeting' in event.name|lower or 'la safe' in event.name|lower %}
         <p>
             <a href="https://www.metro.net/about/board/recap-actions/" target="_blank">Recap</a>

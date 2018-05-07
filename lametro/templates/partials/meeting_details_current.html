@@ -16,7 +16,7 @@
                             <p>
                                 {{ meeting.link_html | safe }}<br/>
                                 <span class="small text-muted">{{ meeting.description }}</span>
-                                {% if meeting.documents.all %}  
+                                {% if meeting.documents.all %}
                                     <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a><br>
                                 {% endif %}
                             </p>
@@ -27,7 +27,7 @@
                           <span class="small text-muted">{{ current_meeting.first.description }}</span>
                         </h4>
                     {% endif %}
-             
+
                     <!-- Meeting info -->
                     <p class="small text-muted">
                         <i class="fa fa-fw fa-calendar-o"></i> {{ current_meeting.first.start_time | date:"D n/d/Y"}}<br/>
@@ -36,21 +36,32 @@
                     </p>
 
                     <!-- Links to media url and PDF download -->
-                    {% if current_meeting|length > 1 %}
-                        <p><a class="btn btn-salmon" href="{{media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
-                    {% else %}
-                        <div class="row">
+                    <div class="row">
+                        {% if current_meeting|length > 1 %}
                             <div class="col-sm-12">
-                                <p><a class="btn btn-salmon" href="{{media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                                <p><a class="btn btn-salmon" href="{{ meeting.GENERIC_ENGLISH_MEDIA_URL }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Watch in English</a></p>
                             </div>
+                            {% if meeting.bilingual %}
+                                <div class="col-sm-12">
+                                    <p><a class="btn btn-salmon" href="{{ meeting.GENERIC_SPANISH_MEDIA_URL }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Ver en Español</a></p>
+                                </div>
+                            {% endif %}
+                        {% else %}
                             <div class="col-sm-12">
-                                {% if current_meeting.first.documents.all %}
-                                    <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{current_meeting.first.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
+                                <p><a class="btn btn-salmon" href="{{ meeting.english_live_media_url }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Watch in English</a></p>
+                            </div>
+                            {% if meeting.bilingual %}
+                                <div class="col-sm-12">
+                                    <p><a class="btn btn-salmon" href="{{ meeting.spanish_live_media_url }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Ver en Español</a></p>
+                                </div>
+                            {% endif %}
+                            <div class="col-sm-12">
+                                {% if meeting.first.documents.all %}
+                                    <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{ meeting.first.documents.all|find_agenda_url }}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
                                 {% endif %}
                             </div>
-                        </div>
-                    {% endif %}                   
-
+                        {% endif %}
+                    </div>
                   </div>
                 </div>
                 </br>
