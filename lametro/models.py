@@ -294,6 +294,9 @@ class LAMetroEvent(Event, LiveMediaMixin):
         if found_events:
             return calculate_current_meetings(found_events, five_minutes_from_now)
 
+        else:
+            return cls.objects.none()
+
 
     @classmethod
     def upcoming_committee_meetings(cls):
