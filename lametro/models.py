@@ -8,7 +8,10 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-from councilmatic_core.models import Bill, Event, Post, Person, Organization, Action
+import requests
+
+from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
+    Action, EventMedia
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -189,11 +192,68 @@ class LAMetroEventManager(models.Manager):
         return super().get_queryset()
 
 
-class LAMetroEvent(Event):
+class LiveMediaMixin(object):
+    BASE_MEDIA_URL = 'http://metro.granicus.com/mediaplayer.php?'
+    GENERIC_ENGLISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=3'
+    GENERIC_SPANISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=2'
+
+
+    @property
+    def bilingual(self):
+        '''
+        Upstream, when an English-language event can be paired with a Spanish-
+        language event, the GUID of the Spanish-language event is added to the
+        extras dictionary, e.g., return True if the sap_guid is present, else
+        return False.
+        '''
+        return bool(self.extras.get('sap_guid'))
+
+
+    def _valid(self, media_url):
+        response = requests.get(media_url)
+
+        if response.ok and 'The event you selected is not currently in progress' not in response.text:
+            return True
+        else:
+            return False
+
+
+    @property
+    def english_live_media_url(self):
+        guid = self.extras['guid']
+        english_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
+
+        if self._valid(english_url):
+            return english_url
+        else:
+            return self.GENERIC_ENGLISH_MEDIA_URL
+
+
+    @property
+    def spanish_live_media_url(self):
+        '''
+        If there is not an associated Spanish event, there will not be
+        Spanish audio for the event, e.g., return None.
+        '''
+        if self.bilingual:
+            guid = self.extras['sap_guid']
+            spanish_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
+
+            if self._valid(spanish_url):
+                return spanish_url
+            else:
+                return self.GENERIC_SPANISH_MEDIA_URL
+
+        else:
+            return None
+
+
+class LAMetroEvent(Event, LiveMediaMixin):
     objects = LAMetroEventManager()
 
     class Meta:
         proxy = True
+
 
     @classmethod
     def upcoming_board_meeting(cls):
@@ -207,14 +267,14 @@ class LAMetroEvent(Event):
     def current_meeting(cls):
 
         '''
-        Create the boundaries for discovering events (in progess) within the timeframe stipulated 
+        Create the boundaries for discovering events (in progess) within the timeframe stipulated
         by Metro. A meeting displays as current if:
         (1) "now" is five minutes or less before the designated start time;
         (2) the previous meeting has ended (determined by looking for "In progress" on Legistar).
 
-        The maximum recorded meeting duration is 5.38 hours, according to the spreadsheet provided by 
+        The maximum recorded meeting duration is 5.38 hours, according to the spreadsheet provided by
         Metro in issue #251.
-        So, to determine initial list of possible current events, we look for all events scheduled 
+        So, to determine initial list of possible current events, we look for all events scheduled
         in the past 6 hours.
 
         This method returns a list (with zero or more elements).
@@ -249,6 +309,24 @@ class LAMetroEvent(Event):
                                   .order_by('start_time').all()
 
         return meetings
+
+
+    @property
+    def media(self):
+        return LAMetroEventMedia.objects.filter(event_id=self.ocd_id)
+
+
+class LAMetroEventMedia(EventMedia):
+
+    class Meta:
+        proxy = True
+
+    @property
+    def label(self):
+        if self.note.endswith('(SAP)'):
+            return 'Ver en Español'
+        else:
+            return 'Watch in English'
 
 
 class LAMetroOrganization(Organization):

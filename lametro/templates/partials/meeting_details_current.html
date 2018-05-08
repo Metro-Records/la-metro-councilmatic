@@ -11,12 +11,17 @@
                 <div class="row">
                   <div class="col-sm-12">
                     <!-- Meeting name(s) -->
+                    {% comment %}
+                    If there is more than one meeting, display the agenda
+                    download link with the corresponding meeting; otherwise,
+                    we'll show a download button, below.
+                    {% endcomment %}
                     {% if current_meeting|length > 1 %}
                         {% for meeting in current_meeting %}
                             <p>
                                 {{ meeting.link_html | safe }}<br/>
                                 <span class="small text-muted">{{ meeting.description }}</span>
-                                {% if meeting.documents.all %}  
+                                {% if meeting.documents.all %}
                                     <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a><br>
                                 {% endif %}
                             </p>
@@ -27,8 +32,13 @@
                           <span class="small text-muted">{{ current_meeting.first.description }}</span>
                         </h4>
                     {% endif %}
-             
+
                     <!-- Meeting info -->
+                    {% comment %}
+                    If there is more than one current meeting, they are
+                    all scheduled to begin at the same time, e.g., the start
+                    time of the first event will apply to all of them.
+                    {% endcomment %}
                     <p class="small text-muted">
                         <i class="fa fa-fw fa-calendar-o"></i> {{ current_meeting.first.start_time | date:"D n/d/Y"}}<br/>
                         <i class="fa fa-fw fa-clock-o"></i> {{ current_meeting.first.start_time | date:"g:i a"}}<br/>
@@ -36,24 +46,41 @@
                     </p>
 
                     <!-- Links to media url and PDF download -->
-                    {% if current_meeting|length > 1 %}
-                        <p><a class="btn btn-salmon" href="{{media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
-                    {% else %}
-                        <div class="row">
+                    {% comment %}
+                    Display the generic URLs if there is more than one
+                    scheduled meeting. Otherwise, display the event-specific
+                    URL. If any of the scheduled meetings has Spanish audio,
+                    also display the Spanish URL.
+                    {% endcomment %}
+                    <div class="row">
+                        {% if current_meeting|length > 1 %}
                             <div class="col-sm-12">
-                                <p><a class="btn btn-salmon" href="{{media_url}}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</a></p>
+                                <p><a class="btn btn-salmon" href="{{ current_meeting.first.GENERIC_ENGLISH_MEDIA_URL }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Watch in English</a></p>
                             </div>
+                            {% if bilingual %}
+                                <div class="col-sm-12">
+                                    <p><a class="btn btn-salmon" href="{{ current_meeting.first.GENERIC_SPANISH_MEDIA_URL }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Ver en Español</a></p>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="col-sm-12">
+                                <p><a class="btn btn-salmon" href="{{ current_meeting.first.english_live_media_url }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Watch in English</a></p>
+                            </div>
+                            {% if bilingual %}
+                                <div class="col-sm-12">
+                                    <p><a class="btn btn-salmon" href="{{ current_meeting.first.spanish_live_media_url }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> Ver en Español</a></p>
+                                </div>
+                            {% endif %}
                             <div class="col-sm-12">
                                 {% if current_meeting.first.documents.all %}
-                                    <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{current_meeting.first.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
+                                    <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{ current_meeting.first.documents.all|find_agenda_url }}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
                                 {% endif %}
                             </div>
-                        </div>
-                    {% endif %}                   
-
+                        {% endif %}
+                    </div>
                   </div>
                 </div>
-                </br>
+                <br />
             </div>
         </div>
     </div>

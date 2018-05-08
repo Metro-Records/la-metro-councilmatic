@@ -38,9 +38,7 @@
                             <span class="non-mobile-only"><i class="fa fa-bell" aria-hidden="true"></i></span>
                             Current Meeting
                         </h2>
-                        {% with meeting=current_meeting %}
-                            {% include "partials/meeting_details_current.html" %}
-                        {% endwith %}
+                        {% include "partials/meeting_details_current.html" %}
                     </div>
                     <div class='col-sm-5'>
                         {% include "partials/index_metro_description.html" %}
