@@ -326,7 +326,11 @@ class LAMetroEventMedia(EventMedia):
 
     @property
     def label(self):
-        if self.note.endswith('(SAP)'):
+        '''
+        EventMedia imported prior to django-councilmatic 0.10.0 may not have
+        an associated note.
+        '''
+        if self.note and self.note.endswith('(SAP)'):
             return 'Ver en Español'
         else:
             return 'Watch in English'
