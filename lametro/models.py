@@ -192,15 +192,66 @@ class LAMetroEventManager(models.Manager):
         return super().get_queryset()
 
 
-class LAMetroEvent(Event):
+class LiveMediaMixin(object):
+    BASE_MEDIA_URL = 'http://metro.granicus.com/mediaplayer.php?'
+    GENERIC_ENGLISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=3'
+    GENERIC_SPANISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=2'
+
+
+    @property
+    def bilingual(self):
+        '''
+        Upstream, when an English-language event can be paired with a Spanish-
+        language event, the GUID of the Spanish-language event is added to the
+        extras dictionary, e.g., return True if the sap_guid is present, else
+        return False.
+        '''
+        return bool(self.extras.get('sap_guid'))
+
+
+    def _valid_or_generic(self, media_url, fallback):
+        '''
+        Return the given URL if it returns a 200 status code, else return
+        generic fallback.
+        '''
+        response = requests.get(media_url)
+
+        if response.ok and 'The event you selected is not currently in progress' not in response.text:
+            return media_url
+        else:
+            return fallback
+
+
+    @property
+    def english_live_media_url(self):
+        guid = self.extras['guid']
+        english_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
+
+        return self._valid_or_generic(english_url,
+                                      fallback=self.GENERIC_ENGLISH_MEDIA_URL)
+
+
+    @property
+    def spanish_live_media_url(self):
+        '''
+        If there is not an associated Spanish event, there will not be
+        Spanish audio for the event, e.g., return None.
+        '''
+        if self.bilingual:
+            guid = self.extras['sap_guid']
+            spanish_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
+            return self._valid_or_generic(spanish_url,
+                                          fallback=self.GENERIC_SPANISH_MEDIA_URL)
+
+        else:
+            return None
+
+
+class LAMetroEvent(Event, LiveMediaMixin):
     objects = LAMetroEventManager()
 
     class Meta:
         proxy = True
-
-    BASE_MEDIA_URL = 'http://metro.granicus.com/mediaplayer.php?'
-    GENERIC_ENGLISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=3'
-    GENERIC_SPANISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=2'
 
 
     @classmethod
@@ -262,46 +313,6 @@ class LAMetroEvent(Event):
     @property
     def media(self):
         return LAMetroEventMedia.objects.filter(event_id=self.ocd_id)
-
-
-    @property
-    def bilingual(self):
-        return bool(self.extras.get('sap_guid'))
-
-
-    def _valid_or_generic(self, media_url, fallback=None):
-        '''
-        Return the given URL if it returns a 200 status code, else optional
-        generic fallback.
-        '''
-        response = requests.get(media_url)
-
-        if response.ok and 'The event you selected is not currently in progress' not in response.text:
-            return media_url
-        else:
-            return fallback
-
-
-    @property
-    def english_live_media_url(self):
-        guid = self.extras['guid']
-        english_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
-
-        return self._valid_or_generic(english_url,
-                                      fallback=self.GENERIC_ENGLISH_MEDIA_URL)
-
-
-    @property
-    def spanish_live_media_url(self):
-        guid = self.extras.get('sap_guid')
-
-        if guid:
-            spanish_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
-            return self._valid_or_generic(spanish_url,
-                                          fallback=self.GENERIC_SPANISH_MEDIA_URL)
-
-        else:
-            return None
 
 
 class LAMetroEventMedia(EventMedia):
