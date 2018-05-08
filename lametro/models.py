@@ -209,17 +209,13 @@ class LiveMediaMixin(object):
         return bool(self.extras.get('sap_guid'))
 
 
-    def _valid_or_generic(self, media_url, fallback):
-        '''
-        Return the given URL if it returns a 200 status code, else return
-        generic fallback.
-        '''
+    def _valid(self, media_url):
         response = requests.get(media_url)
 
         if response.ok and 'The event you selected is not currently in progress' not in response.text:
-            return media_url
+            return True
         else:
-            return fallback
+            return False
 
 
     @property
@@ -227,8 +223,10 @@ class LiveMediaMixin(object):
         guid = self.extras['guid']
         english_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
 
-        return self._valid_or_generic(english_url,
-                                      fallback=self.GENERIC_ENGLISH_MEDIA_URL)
+        if self._valid(english_url):
+            return english_url
+        else:
+            return self.GENERIC_ENGLISH_MEDIA_URL
 
 
     @property
@@ -240,8 +238,11 @@ class LiveMediaMixin(object):
         if self.bilingual:
             guid = self.extras['sap_guid']
             spanish_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
-            return self._valid_or_generic(spanish_url,
-                                          fallback=self.GENERIC_SPANISH_MEDIA_URL)
+
+            if self._valid(spanish_url):
+                return spanish_url
+            else:
+                return self.GENERIC_SPANISH_MEDIA_URL
 
         else:
             return None
