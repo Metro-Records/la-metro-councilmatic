@@ -43,33 +43,57 @@ def parse_subject(text):
         return text
 
 
-def calculate_current_meetings(found_events, five_minutes_from_now):
-    # Metro provided a spreadsheet of average meeting times. The minimum average time a meeting lasts is 52 minutes: let's round down to 50 and add the 5-minute buffer, i.e., an event will appear, regardless of Legistar, for 55 minutes past its start time. 
-    time_ago = five_minutes_from_now - timedelta(minutes=50)
-    # Custom order: show the board meeting first, when there is one.
-    # '.annotate' adds a field called 'val', which contains a boolean – we order in reverse, since false comes before true.
-    found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',))).order_by('-val')
-    earliest_start = found_events.earliest('start_time').start_time 
-    latest_start = found_events.latest('start_time').start_time 
+def calculate_current_meetings(found_events, now=datetime.now(app_timezone)):
+    '''
+    Accept a queryset of events that started in the last six hours, or start
+    in the next five minutes, and determine which is in progress, by checking
+    Legistar for an "In Progress" indicator.
 
-    if found_events.filter(start_time__gte=time_ago):
-        # Check if previous event is still going on in Legistar.
-        previous_meeting = found_events.filter(start_time__gte=time_ago).last().get_previous_by_start_time()
+    If there are meetings scheduled concurrently, and one is a board meeting,
+    show the board meeting first.
+
+    Based on a spreadsheet of average meeting times from Metro, we assume
+    meetings last at least 55 minutes. If any found events started less than
+    55 minutes ago, display them as current if the previous meeting has
+    ended. Otherwise, check Legistar for the "In Progress" indicator.
+
+    This method should always return a queryset.
+    '''
+    fifty_five_minutes_ago = now - timedelta(minutes=55)
+
+    # '.annotate' adds a field called 'val', which contains a boolean – we order
+    # in reverse, since False comes before True, to show board meetings first.
+    found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',)))\
+                               .order_by('-val')
+
+    earliest_start = found_events.earliest('start_time').start_time
+    latest_start = found_events.latest('start_time').start_time
+
+    if found_events.filter(start_time__gte=fifty_five_minutes_ago):
+        previous_meeting = found_events.filter(start_time__gte=fifty_five_minutes_ago)\
+                                       .last()\
+                                       .get_previous_by_start_time()
+
         if legistar_meeting_progress(previous_meeting):
             return LAMetroEvent.objects.filter(ocd_id=previous_meeting.ocd_id)
 
-        return found_events.filter(start_time__gte=time_ago)  
-    elif earliest_start == latest_start:  
-        # The IF statement handles the below cases:
-        # (1) found_events includes just one event object. Example: the first committee meeting of the day - 9:00 am on 01/18/2018
-        # (2) found_events includes multiple events that all happen at the same time (though in reality, they occur one-after-the-other). Example: the events at 9:00 am on 11/30/2017
+        return found_events.filter(start_time__gte=fifty_five_minutes_ago)
+
+    elif earliest_start == latest_start:
+        # There is one event object, or there are multiple events scheduled to
+        # happen at the same time.
+        #
+        # n.b., In reality, concurrently scheduled events happen one after the
+        # other, but we want the current meeting display to line up with the
+        # scheduled events (i.e., if it's 9:15, show all of the events slated
+        # for 9, even if only one is technically in progress).
         for event in found_events:
             if legistar_meeting_progress(event):
                 return found_events
-    else: 
+
+    else:
         for event in found_events:
             if legistar_meeting_progress(event):
-                # The template expects a queryset
                 return LAMetroEvent.objects.filter(ocd_id=event.ocd_id)
 
     return LAMetroEvent.objects.none()

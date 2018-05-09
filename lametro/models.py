@@ -265,17 +265,22 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
     @classmethod
     def current_meeting(cls):
-
         '''
-        Create the boundaries for discovering events (in progess) within the timeframe stipulated
-        by Metro. A meeting displays as current if:
-        (1) "now" is five minutes or less before the designated start time;
-        (2) the previous meeting has ended (determined by looking for "In progress" on Legistar).
+        Discover and return events in progress.
 
-        The maximum recorded meeting duration is 5.38 hours, according to the spreadsheet provided by
-        Metro in issue #251.
-        So, to determine initial list of possible current events, we look for all events scheduled
+        The maximum recorded meeting duration is 5.38 hours, according to the
+        spreadsheet provided by Metro in issue #251. So, to determine initial
+        list of possible current events, we look for all events scheduled
         in the past 6 hours.
+
+        A meeting displays as "current" if:
+
+        (1) it started in the last six hours, or it starts in the next five
+            minutes (determined by this method); and
+        (2) it started less than 55 minutes ago, and the previous meeting has
+            ended (determined by `calculate_current_meetings`); or
+        (3) Legistar indicates it is in progress (detemined by `calculate_
+            current_meetings`).
 
         This method returns a list (with zero or more elements).
 
@@ -287,12 +292,12 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
         five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
         six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
-        found_events = cls.objects.filter(start_time__lte=five_minutes_from_now, start_time__gte=six_hours_ago)\
+        found_events = cls.objects.filter(start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now)\
                                   .exclude(status='cancelled')\
                                   .order_by('start_time')
 
         if found_events:
-            return calculate_current_meetings(found_events, five_minutes_from_now)
+            return calculate_current_meetings(found_events)
 
         else:
             return cls.objects.none()
