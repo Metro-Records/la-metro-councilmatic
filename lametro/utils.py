@@ -57,9 +57,6 @@ def calculate_current_meetings(found_events, now=datetime.now(app_timezone)):
     55 minutes ago, display them as current if the previous meeting has
     ended. Otherwise, check Legistar for the "In Progress" indicator.
 
-    n.b., If all found events are scheduled to start at the same time, in
-    reality they occcur one after the other.
-
     This method should always return a queryset.
     '''
     fifty_five_minutes_ago = now - timedelta(minutes=55)
@@ -68,6 +65,9 @@ def calculate_current_meetings(found_events, now=datetime.now(app_timezone)):
     # in reverse, since False comes before True, to show board meetings first.
     found_events = found_events.annotate(val=RawSQL("name like %s", ('%Board Meeting%',)))\
                                .order_by('-val')
+
+    earliest_start = found_events.earliest('start_time').start_time
+    latest_start = found_events.latest('start_time').start_time
 
     if found_events.filter(start_time__gte=fifty_five_minutes_ago):
         previous_meeting = found_events.filter(start_time__gte=fifty_five_minutes_ago)\
@@ -79,10 +79,17 @@ def calculate_current_meetings(found_events, now=datetime.now(app_timezone)):
 
         return found_events.filter(start_time__gte=fifty_five_minutes_ago)
 
-    elif found_events.count() == 1:
-        event, = found_events
-        if legistar_meeting_progress(event):
-            return found_events  # Return queryset
+    elif earliest_start == latest_start:
+        # There is one event object, or there are multiple events scheduled to
+        # happen at the same time.
+        #
+        # n.b., In reality, concurrently scheduled events happen one after the
+        # other, but we want the current meeting display to line up with the
+        # scheduled events (i.e., if it's 9:15, show all of the events slated
+        # for 9, even if only one is technically in progress).
+        for event in found_events:
+            if legistar_meeting_progress(event):
+                return found_events
 
     else:
         for event in found_events:
