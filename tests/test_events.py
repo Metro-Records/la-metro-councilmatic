@@ -85,8 +85,8 @@ def test_updates_made_false(event, event_document):
     (datetime(2018,1,18,9,54), False, 1, 1, 'System Safety, Security and Operations Committee'),
     (datetime(2018,1,18,10,1), True, 1, 1, 'System Safety, Security and Operations Committee'),
     (datetime(2018,1,18,10,1), False, 1, 0, 'System Safety, Security and Operations Committee'),
-    (datetime(2018,1,18,10,10), True, 2, 1, 'System Safety, Security and Operations Committee'),
     (datetime(2018,1,18,10,10), False, 2, 1, 'Construction Committee'),
+    (datetime(2018,1,18,10,10), True, 2, 1, 'System Safety, Security and Operations Committee'),
     (datetime(2018,1,18,11,9), False, 2, 1, 'Construction Committee'),
     (datetime(2017,11,30,8,55), False, 2, 2, 'Regular Board Meeting'),
     (datetime(2017,11,30,9,54), False, 2, 2, 'Regular Board Meeting'),
@@ -114,7 +114,7 @@ def test_current_committee_meeting_first(event,
     (4) Set the time to 10:01 am: the event should NOT continue, because
     Legistar does not list it as "In progress."
 
-    This test considers five cases to determine if the 'Construction Committee'
+    This test considers three cases to determine if the 'Construction Committee'
     meeting should appear as current:
 
     (1) Set the time to 10:10 am (i.e., five minutes before a 10:15 event, when
@@ -125,10 +125,6 @@ def test_current_committee_meeting_first(event,
     ('System Safety') has NOT ended.
     (3) Set the time to 11:09 am: the meeting should continue, regardless of
     Legistar.
-    (4) Set the time to 11:10 am: the meeting should continue, because Legistar
-    lists it as "In progress."
-    (5) Set the time to 11:10 am: the meeting should NOT continue, because
-    Legistar does not list it as "In progress."
 
     This consider cases to determine if a Board Meeting and Crenshaw Project
     meeting should appear as concurrent, with the Board Meeting first in the
