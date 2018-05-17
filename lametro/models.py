@@ -266,38 +266,54 @@ class LAMetroEvent(Event, LiveMediaMixin):
     @classmethod
     def current_meeting(cls):
         '''
-        Discover and return events in progress.
+        Granicus provides a running events endpoint that returns an array of
+        GUIDs for streaming events. Metro events occur one at a time+, but two
+        GUIDs appear when an event is live: one for the English audio, and one
+        for the Spanish audio.
 
-        The maximum recorded meeting duration is 5.38 hours, according to the
-        spreadsheet provided by Metro in issue #251. So, to determine initial
-        list of possible current events, we look for all events scheduled
-        in the past 6 hours.
+        If there is a meeting scheduled to begin in the last six hours* or in
+        the next five minutes, hit the running events endpoint and return the
+        live meeting. If there are no running events, return events scheduled
+        to begin in the last 20 minutes (to account for late starts) or the next
+        five minutes (to show meetings as current, five minutes ahead of time).
 
-        A meeting displays as "current" if:
+        Otherwise, return an empty queryset.
 
-        (1) it started in the last six hours, or it starts in the next five
-            minutes (determined by this method); and
-        (2) it started less than 55 minutes ago, and the previous meeting has
-            ended (determined by `calculate_current_meetings`); or
-        (3) Legistar indicates it is in progress (detemined by `calculate_
-            current_meetings`).
+        + - Metro meetings scheduled to occur at the same time, actually occur
+        one after the other.
 
-        This method returns a list (with zero or more elements).
-
-        To hardcode current event(s) for testing, use these examples:
-        return LAMetroEvent.objects.filter(start_time='2017-06-15 13:30:00-05')
-        return LAMetroEvent.objects.filter(start_time='2017-11-30 11:00:00-06')
+        * - We check the last six hours because the maximum recorded
+        meeting time (see issue #251) is 5.38 hours.
         '''
-        from .utils import calculate_current_meetings  # Avoid circular import
-
         five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
         six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
-        found_events = cls.objects.filter(start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now)\
-                                  .exclude(status='cancelled')\
-                                  .order_by('start_time')
 
-        if found_events:
-            return calculate_current_meetings(found_events)
+        scheduled_meetings = cls.objects.filter(start_time__gte=six_hours_ago,
+                                                start_time__lte=five_minutes_from_now)\
+                                        .exclude(status='cancelled')\
+                                        .order_by('start_time')
+
+        if scheduled_meetings:
+            running_events = requests.get('http://metro.granicus.com/running_events.php')
+
+            for guid in running_events.json():
+                # We get back two GUIDs, but we won't know which is the English
+                # audio GUID stored in the 'guid' field of the extras dict. Thus
+                # we iterate.
+                event = cls.objects.filter(extras__guid=guid.upper())
+
+                if event:
+                    return event
+
+            twenty_minutes_ago = datetime.now(app_timezone) - timedelta(minutes=20)
+
+            # '.annotate' adds boolean field, 'is_board_meeting'. We want to
+            # show board meetings first, so order in reverse, since False (0)
+            # comes before True (1).
+            return scheduled_meetings.filter(start_time__gte=twenty_minutes_ago,
+                                             start_time__lte=five_minutes_from_now)\
+                                     .annotate(is_board_meeting=RawSQL("name like 'Board Meeting'"))\
+                                     .order_by('-is_board_meeting')
 
         else:
             return cls.objects.none()
