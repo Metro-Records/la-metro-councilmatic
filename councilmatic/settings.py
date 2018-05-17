@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'lametro',
     'councilmatic_core',
     'adv_cache_tag',
+    'debug_toolbar',
 )
 
 try:
@@ -63,6 +64,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
