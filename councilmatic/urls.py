@@ -43,6 +43,8 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-  urlpatterns += [
-    url(r'^static/(?P<path>.*)/$', staticviews.serve),
-  ]
+    import debug_toolbar
+    urlpatterns += [
+      url(r'^static/(?P<path>.*)/$', staticviews.serve),
+      url(r'^__debug__/', include(debug_toolbar.urls)),
+    ]

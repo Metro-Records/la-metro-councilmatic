@@ -1,5 +1,6 @@
 psycopg2==2.7.1
 django-councilmatic==0.10.2
+django-debug-toolbar==1.9.1
 raven==5.30.0
 gunicorn==19.6.0
 PyPDF2==1.26.0
