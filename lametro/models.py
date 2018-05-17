@@ -272,10 +272,11 @@ class LAMetroEvent(Event, LiveMediaMixin):
         for the Spanish audio.
 
         If there is a meeting scheduled to begin in the last six hours* or in
-        the next five minutes, hit the running events endpoint and return the
-        live meeting. If there are no running events, return events scheduled
-        to begin in the last 20 minutes (to account for late starts) or the next
-        five minutes (to show meetings as current, five minutes ahead of time).
+        the next five minutes, hit the running events endpoint. If there is a
+        running event, return the corresponding meeting. If there are no running
+        events, return events scheduled to begin in the last 20 minutes (to
+        account for late starts) or the next five minutes (to show meetings as
+        current, five minutes ahead of time).
 
         Otherwise, return an empty queryset.
 
@@ -307,7 +308,7 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
             twenty_minutes_ago = datetime.now(app_timezone) - timedelta(minutes=20)
 
-            # '.annotate' adds boolean field, 'is_board_meeting'. We want to
+            # '.annotate' adds a boolean field, 'is_board_meeting'. We want to
             # show board meetings first, so order in reverse, since False (0)
             # comes before True (1).
             return scheduled_meetings.filter(start_time__gte=twenty_minutes_ago,
