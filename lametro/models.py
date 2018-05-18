@@ -338,13 +338,9 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
         If there is a running event, return the corresponding meeting.
 
-        If there are no running events, return meetings scheduled to begin:
-
-        - in the last 20 minutes, because meetings "regularly" start later than
-          their scheduled start time, e.g., they will not show up as streaming,
-          but we want to return them as current in the interim; or
-        - in the next five minutes, to return meetings as current five minutes
-          before their scheduled start time.
+        If there are no running events, return meetings scheduled to begin in
+        the last 20 minutes (to account for late starts) or in the next five
+        minutes (to show meetings as current, five minutes ahead of time).
 
         Otherwise, return an empty queryset.
         '''
@@ -354,19 +350,32 @@ class LAMetroEvent(Event, LiveMediaMixin):
             streaming_meeting = cls._streaming_meeting()
 
             if streaming_meeting:
-                return streaming_meeting
+                current_meetings = streaming_meeting
 
-            twenty_minutes_ago = cls._time_ago(minutes=20)
+            else:
+                # Sometimes, streams start later than a meeting's start time.
+                # Check for meetings scheduled to begin in the last 20 minutes
+                # so they are returned as current in the event that the stream
+                # does not start on time.
+                #
+                # Note that 'scheduled_meetings' already contains meetings
+                # scheduled to start in the last six hours or in the next five
+                # minutes, so we just need to add the 20-minute lower bound to
+                # return meetings scheduled in the last 20 minutes or in the
+                # next five minutes.
+                twenty_minutes_ago = cls._time_ago(minutes=20)
 
-            # '.annotate' adds a boolean field, 'is_board_meeting'. We want to
-            # show board meetings first, so order in reverse, since False (0)
-            # comes before True (1).
-            return scheduled_meetings.filter(start_time__gte=twenty_minutes_ago)\
-                                     .annotate(is_board_meeting=RawSQL("name like %s", ('%Board Meeting%',)))\
-                                     .order_by('-is_board_meeting')
+                # '.annotate' adds a boolean field, 'is_board_meeting'. We want
+                # to show board meetings first, so order in reverse, since False
+                # (0) comes before True (1).
+                current_meetings = scheduled_meetings.filter(start_time__gte=twenty_minutes_ago)\
+                                                     .annotate(is_board_meeting=RawSQL("name like %s", ('%Board Meeting%',)))\
+                                                     .order_by('-is_board_meeting')
 
         else:
-            return cls.objects.none()
+            current_meetings = cls.objects.none()
+
+        return current_meetings
 
 
     @classmethod
