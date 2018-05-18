@@ -317,6 +317,11 @@ class LAMetroEvent(Event, LiveMediaMixin):
             # We get back two GUIDs, but we won't know which is the English
             # audio GUID stored in the 'guid' field of the extras dict. Thus,
             # we iterate.
+            #
+            # Note that our stored GUIDs are all uppercase, because they come
+            # that way from the Legistar API. The running events endpoint
+            # returns all-lowercase GUIDs, so we need to uppercase them for
+            # comparison.
             meeting = cls.objects.filter(extras__guid=guid.upper())
 
             if meeting:
@@ -329,11 +334,17 @@ class LAMetroEvent(Event, LiveMediaMixin):
     def current_meeting(cls):
         '''
         If there is a meeting scheduled to begin in the last six hours or in
-        the next five minutes, hit the running events endpoint. If there is a
-        running event, return the corresponding meeting. If there are no running
-        events, return meetings scheduled to begin in the last 20 minutes (to
-        account for late starts) or the next five minutes (to show meetings as
-        current, five minutes ahead of time).
+        the next five minutes, hit the running events endpoint.
+
+        If there is a running event, return the corresponding meeting.
+
+        If there are no running events, return meetings scheduled to begin:
+
+        - in the last 20 minutes, because meetings "regularly" start later than
+          their scheduled start time, e.g., they will not show up as streaming,
+          but we want to return them as current in the interim; or
+        - in the next five minutes, to return meetings as current five minutes
+          before their scheduled start time.
 
         Otherwise, return an empty queryset.
         '''
