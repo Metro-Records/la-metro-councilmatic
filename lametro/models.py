@@ -5,6 +5,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.db import models
+from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from django.contrib.auth.models import User
 
@@ -263,57 +264,94 @@ class LAMetroEvent(Event, LiveMediaMixin):
                           .first()
 
 
+    @staticmethod
+    def _time_ago(**kwargs):
+        '''
+        Convenience method for returning localized, negative timedeltas.
+        '''
+        return datetime.now(app_timezone) - timedelta(**kwargs)
+
+
+    @staticmethod
+    def _time_from_now(**kwargs):
+        '''
+        Convenience method for returning localized, positive timedeltas.
+        '''
+        return datetime.now(app_timezone) + timedelta(**kwargs)
+
+
     @classmethod
-    def current_meeting(cls):
+    def _potentially_current_meetings(cls):
+        '''
+        Return meetings that could be "current" – that is, meetings that are
+        scheduled to start in the last six hours, or in the next five minutes.
+
+        Fun fact: The longest Metro meeting on record is 5.38 hours long (see
+        issue #251). Hence, we check for meetings scheduled to begin up to six
+        hours ago.
+
+        Used to determine whether to check Granicus for streaming meetings.
+        '''
+        six_hours_ago = cls._time_ago(hours=6)
+        five_minutes_from_now = cls._time_from_now(minutes=5)
+
+        return cls.objects.filter(start_time__gte=six_hours_ago,
+                                  start_time__lte=five_minutes_from_now)\
+                           .exclude(status='cancelled')
+
+
+    @classmethod
+    def _streaming_meeting(cls):
         '''
         Granicus provides a running events endpoint that returns an array of
-        GUIDs for streaming events. Metro events occur one at a time+, but two
+        GUIDs for streaming meetings. Metro events occur one at a time, but two
         GUIDs appear when an event is live: one for the English audio, and one
         for the Spanish audio.
 
-        If there is a meeting scheduled to begin in the last six hours* or in
+        Hit the endpoint, and return the corresponding event, or an empty
+        queryset.
+        '''
+        running_events = requests.get('http://metro.granicus.com/running_events.php')
+
+        for guid in running_events.json():
+            # We get back two GUIDs, but we won't know which is the English
+            # audio GUID stored in the 'guid' field of the extras dict. Thus,
+            # we iterate.
+            meeting = cls.objects.filter(extras__guid=guid.upper())
+
+            if meeting:
+                return meeting
+
+        return cls.objects.none()
+
+
+    @classmethod
+    def current_meeting(cls):
+        '''
+        If there is a meeting scheduled to begin in the last six hours or in
         the next five minutes, hit the running events endpoint. If there is a
         running event, return the corresponding meeting. If there are no running
-        events, return events scheduled to begin in the last 20 minutes (to
+        events, return meetings scheduled to begin in the last 20 minutes (to
         account for late starts) or the next five minutes (to show meetings as
         current, five minutes ahead of time).
 
         Otherwise, return an empty queryset.
-
-        + - Metro meetings scheduled to occur at the same time, actually occur
-        one after the other.
-
-        * - We check the last six hours because the maximum recorded
-        meeting time (see issue #251) is 5.38 hours.
         '''
-        five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
-        six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
-
-        scheduled_meetings = cls.objects.filter(start_time__gte=six_hours_ago,
-                                                start_time__lte=five_minutes_from_now)\
-                                        .exclude(status='cancelled')\
-                                        .order_by('start_time')
+        scheduled_meetings = cls._potentially_current_meetings()
 
         if scheduled_meetings:
-            running_events = requests.get('http://metro.granicus.com/running_events.php')
+            streaming_meeting = cls._streaming_meeting()
 
-            for guid in running_events.json():
-                # We get back two GUIDs, but we won't know which is the English
-                # audio GUID stored in the 'guid' field of the extras dict. Thus
-                # we iterate.
-                event = cls.objects.filter(extras__guid=guid.upper())
+            if streaming_meeting:
+                return streaming_meeting
 
-                if event:
-                    return event
-
-            twenty_minutes_ago = datetime.now(app_timezone) - timedelta(minutes=20)
+            twenty_minutes_ago = cls._time_ago(minutes=20)
 
             # '.annotate' adds a boolean field, 'is_board_meeting'. We want to
             # show board meetings first, so order in reverse, since False (0)
             # comes before True (1).
-            return scheduled_meetings.filter(start_time__gte=twenty_minutes_ago,
-                                             start_time__lte=five_minutes_from_now)\
-                                     .annotate(is_board_meeting=RawSQL("name like 'Board Meeting'"))\
+            return scheduled_meetings.filter(start_time__gte=twenty_minutes_ago)\
+                                     .annotate(is_board_meeting=RawSQL("name like %s", ('%Board Meeting%',)))\
                                      .order_by('-is_board_meeting')
 
         else:

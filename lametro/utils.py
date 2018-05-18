@@ -5,7 +5,6 @@ import requests
 import lxml.html
 from lxml.etree import tostring
 
-from django.db.models.expressions import RawSQL
 from django.conf import settings
 
 from councilmatic_core.models import EventParticipant, Organization
