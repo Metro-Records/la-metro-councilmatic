@@ -308,7 +308,7 @@ class LAMetroEvent(Event, LiveMediaMixin):
         GUIDs appear when an event is live: one for the English audio, and one
         for the Spanish audio.
 
-        Hit the endpoint, and return the corresponding event, or an empty
+        Hit the endpoint, and return the corresponding meeting, or an empty
         queryset.
         '''
         running_events = requests.get('http://metro.granicus.com/running_events.php')
