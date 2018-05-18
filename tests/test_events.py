@@ -4,13 +4,14 @@ from datetime import datetime, timedelta
 
 from django.core.urlresolvers import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
+import requests
 
 from councilmatic_core.models import EventDocument, Bill, RelatedBill
 
 from lametro.models import LAMetroEvent
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
-from lametro.utils import calculate_current_meetings
+
 
 # This collection of tests checks the functionality of Event-specific views, helper functions, and relations.
 def test_agenda_creation(event, event_document):
@@ -80,124 +81,113 @@ def test_updates_made_false(event, event_document):
     assert updates_made(event.ocd_id) == False
 
 
-@pytest.mark.parametrize('now,progress_value,num_found,num_current,first_event_name', [
-    (datetime(2018,1,18,8,55), False, 1, 1, 'System Safety, Security and Operations Committee'),
-    (datetime(2018,1,18,9,54), False, 1, 1, 'System Safety, Security and Operations Committee'),
-    (datetime(2018,1,18,10,1), True, 1, 1, 'System Safety, Security and Operations Committee'),
-    (datetime(2018,1,18,10,1), False, 1, 0, 'System Safety, Security and Operations Committee'),
-    (datetime(2018,1,18,10,10), False, 2, 1, 'Construction Committee'),
-    (datetime(2018,1,18,10,10), True, 2, 1, 'System Safety, Security and Operations Committee'),
-    (datetime(2018,1,18,11,9), False, 2, 1, 'Construction Committee'),
-    (datetime(2017,11,30,8,55), False, 2, 2, 'Regular Board Meeting'),
-    (datetime(2017,11,30,9,54), False, 2, 2, 'Regular Board Meeting'),
-])
-def test_current_committee_meeting_first(event,
-                                         mocker,
-                                         now,
-                                         progress_value,
-                                         num_found,
-                                         num_current,
-                                         first_event_name):
+@pytest.fixture
+def concurrent_current_meetings(event):
     '''
-    This test ensures that the `calculate_current_meetings` function returns the
-    first committee event, in a succession of events.
-
-    This test considers four cases to determine if the 'System Safety, Security
-    and Operations Committee' should appear as current:
-
-    (1) Set the time to 8:55 am (i.e., five minutes before a 9:00 event, when
-    the event should first appear).
-    (2) Set the time to 9:54 am: the event should continue, regardless of
-    Legistar.
-    (3) Set the time to 10:01 am: the event should continue, because Legistar
-    lists it as "In progress."
-    (4) Set the time to 10:01 am: the event should NOT continue, because
-    Legistar does not list it as "In progress."
-
-    This test considers three cases to determine if the 'Construction Committee'
-    meeting should appear as current:
-
-    (1) Set the time to 10:10 am (i.e., five minutes before a 10:15 event, when
-    the event should first appear). Assume that the previous event ('System
-    Safety') has ended.
-    (2) Set the time to 10:10 am (i.e., five minutes before a 10:15 event, when
-    the event should first appear) - however, assume that the previous event
-    ('System Safety') has NOT ended.
-    (3) Set the time to 11:09 am: the meeting should continue, regardless of
-    Legistar.
-
-    This consider cases to determine if a Board Meeting and Crenshaw Project
-    meeting should appear as concurrent, with the Board Meeting first in the
-    queryset:
-
-    (1) Set the time to 8:55 am (i.e., five minutes before a 9:00 event, when
-    the event should first appear).
-    (2) Set the time to 9:54 am: the events should continue regardless of
-    Legistar.
+    Two meetings scheduled to begin in the next five minutes.
     '''
-    planning_meeting_info = {
-        'ocd_id': 'ocd-event/4cb9995c-c42f-4eb9-a8b4-f8e135045661',
-        'name': 'Planning and Programming Committee',
-        'start_time': '2018-01-17 2:00:00',
-        'slug': 'planning-and-programming-committee-f8e135045661'
-    }
-    event.build(**planning_meeting_info)
-
-    safety_meeting_info = {
-        'ocd_id': 'ocd-event/5e84e91d-279c-4c83-a463-4a0e05784b62',
-        'name': 'System Safety, Security and Operations Committee',
-        'start_time': '2018-01-18 9:00:00',
-    }
-    event.build(**safety_meeting_info)
-
-    construction_meeting_info = {
-        'ocd_id': 'ocd-event/0e793ec8-5091-4099-a115-0560d127d6f9',
-        'name': 'Construction Committee',
-        'start_time': '2018-01-18 10:15:00',
-        'slug': 'construction-committee-0560d127d6f9'
-    }
-    event.build(**construction_meeting_info)
-
-    ad_hoc_meeting_info = {
-        'ocd_id': 'ocd-event/b9b16626-55ef-41fd-bbdb-bf5f259d416b',
-        'name': 'Ad-Hoc Customer Experience Committee',
-        'start_time': '2017-11-16 1:00:00',
-        'slug': 'ad-hoc-customer-experience-committee-bf5f259d416b'
-    }
-    event.build(**ad_hoc_meeting_info)
-
     board_meeting_info = {
         'ocd_id': 'ocd-event/ef33b22d-b166-458f-b254-b81f656ffc09',
         'name': 'Regular Board Meeting',
-        'start_time': '2017-11-30 9:00:00',
-        'slug': 'regular-board-meeting-b81f656ffc09'
+        'start_time': LAMetroEvent._time_from_now(minutes=3),
     }
-    event.build(**board_meeting_info)
+    board_meeting = event.build(**board_meeting_info)
 
+    construction_meeting_info = {
+        'ocd_id': 'ocd-event/FEC6A621-F5C7-4A88-B2FB-5F6E14FE0E35',
+        'name': 'Construction Committee',
+        'start_time': LAMetroEvent._time_from_now(minutes=3),
+    }
+    construction_meeting = event.build(**construction_meeting_info)
+
+    return board_meeting, construction_meeting
+
+
+def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
+    '''
+    Test that if an event is streaming, it alone is returned as current.
+    '''
+    dummy_guid = 'a super special guid'
+
+    # Add dummy GUID to one of our events.
+    live_meeting, _ = concurrent_current_meetings
+    live_meeting.extras = {'guid': dummy_guid.upper()}  # GUIDs in the Legistar API are all caps.
+    live_meeting.save()
+
+    # Patch running events endpoint to return our dummy GUID.
+    mock_response = mocker.MagicMock(spec=requests.Response)
+    mock_response.json.return_value = [dummy_guid]  # GUIDs in running events endpoint are all lowercase.
+
+    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+
+    current_meetings = LAMetroEvent.current_meeting()
+
+    # Assert that we returned the streaming meeting.
+    assert current_meetings.get() == live_meeting
+
+
+def test_current_meeting_no_streaming_event(concurrent_current_meetings,
+                                            mocker):
+    '''
+    Test that if an event is not streaming, and there are concurrently
+    scheduled events, both events are returned as current.
+    '''
+    # Patch running events endpoint to return no running events.
+    mock_response = mocker.MagicMock(spec=requests.Response)
+    mock_response.json.return_value = []
+
+    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+
+    current_meetings = LAMetroEvent.current_meeting()
+
+    # Test that the board meeting is returned first.
+    assert current_meetings.first().name == 'Regular Board Meeting'
+
+    # Test that both meetings are returned.
+    assert all(m in current_meetings for m in concurrent_current_meetings)
+
+
+@pytest.mark.dev
+def test_current_meeting_no_streaming_event_late_start(event, mocker):
+    '''
+    Test that if an meeting is scheduled but not yet streaming, it is returned
+    as current up to 20 minutes past its scheduled start.
+    '''
+    # Build an event scheduled to start 15 minutes ago.
     crenshaw_meeting_info = {
         'ocd_id': 'ocd-event/3c93e81f-f1a9-42ce-97fe-30c77a4a6740',
         'name': 'Crenshaw Project Corporation',
-        'start_time': '2017-11-30 9:00:00',
-        'slug': 'crenshaw-project-corporation-30c77a4a6740'
+        'start_time': LAMetroEvent._time_ago(minutes=15),
     }
-    event.build(**crenshaw_meeting_info)
+    late_current_meeting = event.build(**crenshaw_meeting_info)
 
-    five_minutes_from_now = now + timedelta(minutes=5)
-    six_hours_ago = now - timedelta(hours=6)
-    found_events = LAMetroEvent.objects.filter(start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now)\
-                                       .exclude(status='cancelled')\
-                                       .order_by('start_time')
+    # Patch running events endpoint to return no running events.
+    mock_response = mocker.MagicMock(spec=requests.Response)
+    mock_response.json.return_value = []
 
-    assert len(found_events) == num_found
+    mocker.patch('lametro.models.requests.get', return_value=mock_response)
 
-    # Mock this helper function to return True or False, when checking progress
-    # of the previous meeting (which otherwise requires hitting Legistar).
-    mocker.patch('lametro.utils.legistar_meeting_progress',
-                 return_value=progress_value)
+    current_meetings = LAMetroEvent.current_meeting()
 
-    current_meeting = calculate_current_meetings(found_events, now=now)
+    # Assert that we returned the late meeting.
+    assert current_meetings.get() == late_current_meeting
 
-    assert len(current_meeting) == num_current
 
-    if current_meeting.first():
-        assert current_meeting.first().name == first_event_name
+def test_current_meeting_no_potentially_current(event):
+    '''
+    Test that if there are no potentially current meetings (scheduled to
+    start in the last six hours, or in the next five minutes), no meetings
+    are returned as current.
+    '''
+    # Build an event outside of the "potentially current" timeframe.
+    safety_meeting_info = {
+        'ocd_id': 'ocd-event/5e84e91d-279c-4c83-a463-4a0e05784b62',
+        'name': 'System Safety, Security and Operations Committee',
+        'start_time': LAMetroEvent._time_from_now(hours=12),
+    }
+    event.build(**safety_meeting_info)
+
+    current_meetings = LAMetroEvent.current_meeting()
+
+    # Assert we did not return any current meetings.
+    assert not current_meetings

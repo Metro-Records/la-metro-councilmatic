@@ -5,6 +5,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 from django.db import models
+from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from django.contrib.auth.models import User
 
@@ -263,44 +264,118 @@ class LAMetroEvent(Event, LiveMediaMixin):
                           .first()
 
 
+    @staticmethod
+    def _time_ago(**kwargs):
+        '''
+        Convenience method for returning localized, negative timedeltas.
+        '''
+        return datetime.now(app_timezone) - timedelta(**kwargs)
+
+
+    @staticmethod
+    def _time_from_now(**kwargs):
+        '''
+        Convenience method for returning localized, positive timedeltas.
+        '''
+        return datetime.now(app_timezone) + timedelta(**kwargs)
+
+
+    @classmethod
+    def _potentially_current_meetings(cls):
+        '''
+        Return meetings that could be "current" – that is, meetings that are
+        scheduled to start in the last six hours, or in the next five minutes.
+
+        Fun fact: The longest Metro meeting on record is 5.38 hours long (see
+        issue #251). Hence, we check for meetings scheduled to begin up to six
+        hours ago.
+
+        Used to determine whether to check Granicus for streaming meetings.
+        '''
+        six_hours_ago = cls._time_ago(hours=6)
+        five_minutes_from_now = cls._time_from_now(minutes=5)
+
+        return cls.objects.filter(start_time__gte=six_hours_ago,
+                                  start_time__lte=five_minutes_from_now)\
+                           .exclude(status='cancelled')
+
+
+    @classmethod
+    def _streaming_meeting(cls):
+        '''
+        Granicus provides a running events endpoint that returns an array of
+        GUIDs for streaming meetings. Metro events occur one at a time, but two
+        GUIDs appear when an event is live: one for the English audio, and one
+        for the Spanish audio.
+
+        Hit the endpoint, and return the corresponding meeting, or an empty
+        queryset.
+        '''
+        running_events = requests.get('http://metro.granicus.com/running_events.php')
+
+        for guid in running_events.json():
+            # We get back two GUIDs, but we won't know which is the English
+            # audio GUID stored in the 'guid' field of the extras dict. Thus,
+            # we iterate.
+            #
+            # Note that our stored GUIDs are all uppercase, because they come
+            # that way from the Legistar API. The running events endpoint
+            # returns all-lowercase GUIDs, so we need to uppercase them for
+            # comparison.
+            meeting = cls.objects.filter(extras__guid=guid.upper())
+
+            if meeting:
+                return meeting
+
+        return cls.objects.none()
+
+
     @classmethod
     def current_meeting(cls):
         '''
-        Discover and return events in progress.
+        If there is a meeting scheduled to begin in the last six hours or in
+        the next five minutes, hit the running events endpoint.
 
-        The maximum recorded meeting duration is 5.38 hours, according to the
-        spreadsheet provided by Metro in issue #251. So, to determine initial
-        list of possible current events, we look for all events scheduled
-        in the past 6 hours.
+        If there is a running event, return the corresponding meeting.
 
-        A meeting displays as "current" if:
+        If there are no running events, return meetings scheduled to begin in
+        the last 20 minutes (to account for late starts) or in the next five
+        minutes (to show meetings as current, five minutes ahead of time).
 
-        (1) it started in the last six hours, or it starts in the next five
-            minutes (determined by this method); and
-        (2) it started less than 55 minutes ago, and the previous meeting has
-            ended (determined by `calculate_current_meetings`); or
-        (3) Legistar indicates it is in progress (detemined by `calculate_
-            current_meetings`).
-
-        This method returns a list (with zero or more elements).
-
-        To hardcode current event(s) for testing, use these examples:
-        return LAMetroEvent.objects.filter(start_time='2017-06-15 13:30:00-05')
-        return LAMetroEvent.objects.filter(start_time='2017-11-30 11:00:00-06')
+        Otherwise, return an empty queryset.
         '''
-        from .utils import calculate_current_meetings  # Avoid circular import
+        scheduled_meetings = cls._potentially_current_meetings()
 
-        five_minutes_from_now = datetime.now(app_timezone) + timedelta(minutes=5)
-        six_hours_ago = datetime.now(app_timezone) - timedelta(hours=6)
-        found_events = cls.objects.filter(start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now)\
-                                  .exclude(status='cancelled')\
-                                  .order_by('start_time')
+        if scheduled_meetings:
+            streaming_meeting = cls._streaming_meeting()
 
-        if found_events:
-            return calculate_current_meetings(found_events)
+            if streaming_meeting:
+                current_meetings = streaming_meeting
+
+            else:
+                # Sometimes, streams start later than a meeting's start time.
+                # Check for meetings scheduled to begin in the last 20 minutes
+                # so they are returned as current in the event that the stream
+                # does not start on time.
+                #
+                # Note that 'scheduled_meetings' already contains meetings
+                # scheduled to start in the last six hours or in the next five
+                # minutes, so we just need to add the 20-minute lower bound to
+                # return meetings scheduled in the last 20 minutes or in the
+                # next five minutes.
+                twenty_minutes_ago = cls._time_ago(minutes=20)
+
+                # '.annotate' adds a boolean field, 'is_board_meeting'. We want
+                # to show board meetings first, so order in reverse, since False
+                # (0) comes before True (1).
+                current_meetings = scheduled_meetings.filter(start_time__gte=twenty_minutes_ago)\
+                                                     .annotate(is_board_meeting=RawSQL("name like %s", ('%Board Meeting%',)))\
+                                                     .order_by('-is_board_meeting')
 
         else:
-            return cls.objects.none()
+            current_meetings = cls.objects.none()
+
+        return current_meetings
 
 
     @classmethod

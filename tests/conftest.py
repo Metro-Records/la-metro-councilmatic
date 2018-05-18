@@ -53,7 +53,8 @@ def event(db):
                 'ocd_updated_at': '2017-05-27 11:10:46.574-05',
                 'name': 'System Safety, Security and Operations Committee',
                 'start_time': '2017-05-18 12:15:00-05',
-                'updated_at': '2017-05-17 11:06:47.1853'
+                'updated_at': '2017-05-17 11:06:47.1853',
+                'slug': uuid4(),
             }
 
             event_info.update(kwargs)
