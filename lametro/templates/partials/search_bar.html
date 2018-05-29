@@ -1,0 +1,16 @@
+  <input name="q" type="text" class="input-lg form-control" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}" value="{{ formatted_q }}">
+  <div class="input-group-btn">
+      <button type="submit" class="btn btn-lg btn-primary">
+          <i class="fa fa-fw fa-search"></i>
+      </button>
+  </div>
+</div> <!-- end input-group -->
+
+<div class="btn-group" data-toggle="buttons">
+    <label class="btn btn-primary{% if 'search-all' in request.GET %} active{% endif %}">
+        <input type="radio" autocomplete="off" name="search-all"{% if 'search-all' in request.GET %} checked{% endif %}> Search reports and attachments
+    </label>
+    <label class="btn btn-primary {% if 'search-reports' in request.GET %} active{% endif %}">
+        <input type="radio" name="search-reports" autocomplete="off" {% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
+    </label>
+</div>

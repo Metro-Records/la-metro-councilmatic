@@ -110,6 +110,20 @@
 
     {% block extra_js %}{% endblock %}
 
+    <script type="text/javascript">
+        $('label.btn').click(function toggleRadio(e) {
+            // Toggle "active" appearance first, so filtering on active works.
+            $(this).button('toggle');
+
+            var selected_input = $(this).children('input')[0];
+            $(selected_input).attr('checked', true);
+
+            var unselected_input = $('label.btn').not('.active')
+                                                 .children('input')[0];
+            $(unselected_input).removeAttr('checked');
+        });
+    </script>
+
     <script>
         var analyticsTrackingCode = '{{ANALYTICS_TRACKING_CODE}}';
     </script>
