@@ -6,9 +6,15 @@
   </div>
 </div> <!-- end input-group -->
 
+{% comment %}
+Make search-all if search-reports is not a query param, rather than
+if search-all is, so it is active by default, i.e., if someone comes to
+the search page with neither search-reports nor search-all in the query
+string.
+{% endcomment %}
 <div class="btn-group" data-toggle="buttons">
-    <label class="btn btn-primary{% if 'search-all' in request.GET %} active{% endif %}">
-        <input type="radio" autocomplete="off" name="search-all"{% if 'search-all' in request.GET %} checked{% endif %}> Search reports and attachments
+    <label class="btn btn-primary{% if 'search-reports' not in request.GET %} active{% endif %}">
+        <input type="radio" autocomplete="off" name="search-all"{% if 'search-reports' not in request.GET %} checked{% endif %}> Search reports and attachments
     </label>
     <label class="btn btn-primary {% if 'search-reports' in request.GET %} active{% endif %}">
         <input type="radio" name="search-reports" autocomplete="off" {% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
