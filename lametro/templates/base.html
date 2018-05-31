@@ -111,8 +111,9 @@
     {% block extra_js %}{% endblock %}
 
     <script type="text/javascript">
-        $('label.btn').click(function toggleRadio(e) {
+        $('label.btn.btn-search-option').click(function toggleRadio(e) {
             // Toggle "active" appearance first, so filtering on active works.
+            // .button docs: https://getbootstrap.com/docs/3.3/javascript/#buttons
             $(this).button('toggle');
 
             var selected_input = $(this).children('input')[0];
