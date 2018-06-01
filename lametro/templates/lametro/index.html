@@ -13,14 +13,22 @@
                 </p>
                 <form class="search form-search=" action="/search/" method="GET">
                     <div class="input-group site-intro-search">
-                        <input name="q" type="text" class="input-lg form-control" placeholder="{{SEARCH_PLACEHOLDER_TEXT}}">
+                        <input name="q" type="text" class="input-lg form-control" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}">
                         <div class='input-group-btn'>
                             <button type="submit" class="btn btn-lg btn-primary">
                                 <i class='fa fa-fw fa-search'></i>
                             </button>
                         </div>
                     </div>
-                </form>
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-primary btn-search-option active">
+                            <input type="radio" autocomplete="off" name="search-all" checked> Search reports and attachments
+                        </label>
+                        <label class="btn btn-primary btn-search-option">
+                            <input type="radio" name="search-reports" autocomplete="off"> Search reports only
+                        </label>
+                    </div>
+                </form><br />
                 <p class="archive-link"><a href="http://search3.metro.net/search?access=p&output=xml_no_dtd&site=Board_Archives&ie=UTF-8&client=BoardArchive&proxystylesheet=BoardArchive&proxycustom=%3CHOME/%3E" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i> Search the Metro Board Archive (1952-2015)</a></p>
             </div>
         </div>
@@ -128,6 +136,5 @@
             collapseActivity();
             return false;
         });
-
     </script>
 {% endblock %}
