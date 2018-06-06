@@ -13,6 +13,7 @@ from collections import namedtuple
 import json as simplejson
 import os
 
+from haystack.inputs import Raw
 from haystack.query import SearchQuerySet
 
 from django.db import transaction, connection, connections
@@ -703,7 +704,8 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
 
         if self.search_corpus == 'all':
-            sqs = sqs.filter_or(attachment_text=self.cleaned_data['q'])
+            # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
+            sqs = sqs.filter_or(attachment_text=Raw(self.cleaned_data['q']))
 
         return sqs
 
