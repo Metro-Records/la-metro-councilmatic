@@ -16,6 +16,8 @@
         {% if query %}
             <p class="search-result">
               {{ r.highlighted.text.0|safe  }}
+              <!-- TO-DO: Show both with ellipsis, perhaps? -->
+              {{ r.highlighted.attachment_text.0|safe }}
             </p>
         {% else %}
             <p>

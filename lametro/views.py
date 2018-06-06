@@ -726,7 +726,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                               .facet('inferred_status')\
                               .facet('topics')\
                               .facet('legislative_session', sort='index')\
-                              .highlight()
+                              .highlight(**{'hl.fl': 'text,attachment_text'})
 
         data = None
         kwargs = {
