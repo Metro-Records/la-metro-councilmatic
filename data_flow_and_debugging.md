@@ -63,6 +63,4 @@ If you are seeing ScraperError, then you are in luck and probably have a good cl
 
 If the scraper is running fine, then you have a bug that's likely going to be harder to find.
 
-This may be due to an unanticipated defenct in the API or a bug in our scraper
-
 
