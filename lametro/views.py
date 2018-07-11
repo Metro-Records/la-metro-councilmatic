@@ -14,6 +14,7 @@ import json as simplejson
 import os
 
 from haystack.query import SearchQuerySet
+
 from django.db import transaction, connection, connections
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -30,7 +31,8 @@ from django.core import management
 
 from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
-    PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
+    PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView, \
+    CouncilmaticSearchForm
 from councilmatic_core.models import *
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
@@ -690,29 +692,44 @@ class LAPersonDetailView(PersonDetailView):
         return context
 
 
-class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
+class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
+    def __init__(self, *args, **kwargs):
+        if kwargs.get('search_corpus'):
+            self.search_corpus = kwargs.pop('search_corpus')
 
-    def build_form(self, form_kwargs=None):
+        super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
+
+    def search(self):
+        sqs = super(LAMetroCouncilmaticSearchForm, self).search()
+
+        if self.search_corpus == 'all':
+            sqs = sqs.filter_or(attachment_text=self.cleaned_data['q'])
+
+        return sqs
+
+
+class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
+    def __init__(self, *args, **kwargs):
+        kwargs['form_class'] = LAMetroCouncilmaticSearchForm
+        super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
+
+    def build_form(self, form_kwargs={}):
         form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
 
-        # For faceted search functionality.
-        if form_kwargs is None:
-            form_kwargs = {}
-
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
+        form_kwargs['search_corpus'] = 'all' if self.request.GET.get('search-all') else 'bills'
 
-        # For remaining search functionality.
+        sqs = SearchQuerySet().facet('bill_type', sort='index')\
+                              .facet('sponsorships', sort='index')\
+                              .facet('inferred_status')\
+                              .facet('topics')\
+                              .facet('legislative_session', sort='index')\
+                              .highlight()
+
         data = None
         kwargs = {
             'load_all': self.load_all,
         }
-
-        sqs = SearchQuerySet().facet('bill_type', sort='index')\
-                      .facet('sponsorships', sort='index')\
-                      .facet('inferred_status')\
-                      .facet('topics')\
-                      .facet('legislative_session', sort='index')\
-                      .highlight()\
 
         if form_kwargs:
             kwargs.update(form_kwargs)

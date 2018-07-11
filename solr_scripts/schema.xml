@@ -16,8 +16,6 @@
  limitations under the License.
 -->
 
-<!-- Customized by DataMade -->
-
 <schema name="default" version="1.5">
   <types>
     <fieldtype name="string"  class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
@@ -79,9 +77,7 @@
         <filter class="solr.EnglishPossessiveFilterFactory"/>
         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
         <filter class="solr.EnglishMinimalStemFilterFactory"/>
-        <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
-          <filter class="solr.PorterStemFilterFactory"/>
-        -->
+        <!-- <filter class="solr.PorterStemFilterFactory"/> -->
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.StandardTokenizerFactory"/>
@@ -95,9 +91,7 @@
         <filter class="solr.EnglishPossessiveFilterFactory"/>
         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
         <filter class="solr.EnglishMinimalStemFilterFactory"/>
-        <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
-          <filter class="solr.PorterStemFilterFactory"/>
-        -->
+        <!-- <filter class="solr.PorterStemFilterFactory"/> -->
       </analyzer>
     </fieldType>
 
@@ -153,57 +147,59 @@
     <dynamicField name="*_coordinate"  type="tdouble" indexed="true"  stored="false"/>
 
 
-    <field name="sponsorships_exact" type="string" indexed="true" stored="true" multiValued="true" />
-
-    <field name="ocd_id" type="string" indexed="false" stored="true" multiValued="false" />
-
-    <field name="inferred_status_exact" type="string" indexed="true" stored="true" multiValued="false" />
-
-    <field name="actions" type="text_en" indexed="true" stored="true" multiValued="true" />
-
-    <field name="abstract" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="slug" type="string" indexed="false" stored="true" multiValued="false" />
-
-    <field name="controlling_body_exact" type="string" indexed="true" stored="true" multiValued="true" />
-
-    <field name="bill_type_exact" type="string" indexed="true" stored="true" multiValued="false" />
-
-    <field name="text" type="text_en" indexed="true" stored="true" multiValued="false" />
-
     <field name="last_action_date" type="date" indexed="true" stored="true" multiValued="false" />
-
-    <field name="source_note" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="bill_type" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="ocr_full_text" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="source_url" type="string" indexed="false" stored="true" multiValued="false" />
-
-    <field name="sponsorships" type="text_en" indexed="true" stored="true" multiValued="true" />
-
-    <field name="friendly_name" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="sort_name" type="string" indexed="true" stored="true" multiValued="false" />
-
-    <field name="identifier" type="string" indexed="true" stored="true" multiValued="false" />
-
-    <field name="inferred_status" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="legislative_session" type="text_en" indexed="true" stored="true" multiValued="false" />
 
     <field name="controlling_body" type="text_en" indexed="true" stored="true" multiValued="true" />
 
-    <field name="description" type="text_en" indexed="true" stored="true" multiValued="false" />
+    <field name="text" type="text_en" indexed="true" stored="true" multiValued="false" />
 
-    <field name="legislative_session_exact" type="string" indexed="true" stored="true" multiValued="false" />
+    <field name="legislative_session" type="text_en" indexed="true" stored="true" multiValued="false" />
 
-    <field name="topics_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="slug" type="string" indexed="false" stored="true" multiValued="false" />
+
+    <field name="inferred_status" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="bill_type_exact" type="string" indexed="true" stored="true" multiValued="false" />
 
     <field name="topics" type="text_en" indexed="true" stored="true" multiValued="true" />
 
+    <field name="sponsorships" type="text_en" indexed="true" stored="true" multiValued="true" />
+
+    <field name="topics_exact" type="string" indexed="true" stored="true" multiValued="true" />
+
+    <field name="description" type="text_en" indexed="true" stored="true" multiValued="false" />
+
     <field name="full_text" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="ocd_id" type="string" indexed="false" stored="true" multiValued="false" />
+
+    <field name="bill_type" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="legislative_session_exact" type="string" indexed="true" stored="true" multiValued="false" />
+
+    <field name="friendly_name" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="sort_name" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="ocr_full_text" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="abstract" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="source_note" type="text_en" indexed="true" stored="true" multiValued="false" />
+
+    <field name="controlling_body_exact" type="string" indexed="true" stored="true" multiValued="true" />
+
+    <field name="actions" type="text_en" indexed="true" stored="true" multiValued="true" />
+
+    <field name="sponsorships_exact" type="string" indexed="true" stored="true" multiValued="true" />
+
+    <field name="inferred_status_exact" type="string" indexed="true" stored="true" multiValued="false" />
+
+    <field name="attachment_text" type="text_en" indexed="true" stored="false" multiValued="false" />
+
+    <field name="source_url" type="string" indexed="false" stored="true" multiValued="false" />
+
+    <field name="identifier" type="text_en" indexed="true" stored="true" multiValued="false" />
 
   </fields>
 
@@ -217,4 +213,3 @@
   <solrQueryParser defaultOperator="AND"/>
   <similarity class="solr.BM25SimilarityFactory"/>
 </schema>
-
