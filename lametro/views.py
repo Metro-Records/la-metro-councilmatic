@@ -736,16 +736,14 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                     if 'title' in el:
                         try:
                             dataDict['descending']
-                            # kwargs['searchqueryset'] = sqs.order_by('-identifier')
                             kwargs['searchqueryset'] = sqs.order_by('-sort_name')
                         except:
-                            # kwargs['searchqueryset'] = sqs.order_by('identifier')
                             kwargs['searchqueryset'] = sqs.order_by('sort_name')
                     if 'relevance' in el:
                         kwargs['searchqueryset'] = sqs
 
             except:
-                kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
+                kwargs['searchqueryset'] = sqs
 
         return self.form_class(data, **kwargs)
 
