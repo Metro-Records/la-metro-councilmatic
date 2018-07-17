@@ -66,7 +66,7 @@ def full_text_doc_url(url):
 def appointment_label(label):
     full_label = label.replace("Appointee of", "Appointee of the")
     label_parts = full_label.split(', ')
-    if len(label_parts) > 1:
+    if len(label_parts) > 1 and 'Caltrans District 7 Director' not in full_label:
         if 'sector' in full_label:
             appointment_label = ', nominated by the '.join(label_parts).replace('sector', 'Subcommittee')
         else:
