@@ -62,6 +62,13 @@ def full_text_doc_url(url):
     return urllib.parse.urlencode(pic_query)
 
 
+'''
+This filter converts the post title 
+(e.g., "Appointee of Los Angeles County City Selection Committee, Southeast Long Beach sector") 
+into a readable format. 
+Some posts do not require modification, e.g., "Caltrans District 7 Director, Appointee of Governor of California."
+A full list of posts resides in the scraper: https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/people.py
+'''
 @register.filter
 def appointment_label(label):
     full_label = label.replace("Appointee of", "Appointee of the")
