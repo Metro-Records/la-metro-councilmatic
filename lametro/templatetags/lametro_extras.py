@@ -63,9 +63,8 @@ def full_text_doc_url(url):
 
 
 '''
-This filter converts the post title 
-(e.g., "Appointee of Los Angeles County City Selection Committee, Southeast Long Beach sector") 
-into a readable format. 
+This filter converts the post title into a prose-style format with nomination info,
+(e.g., "Appointee of Los Angeles County City Selection Committee, Southeast Long Beach sector" into "Appointee of [Committee], nominated by the [Subcommittee]") 
 Some posts do not require modification, e.g., "Caltrans District 7 Director, Appointee of Governor of California."
 A full list of posts resides in the scraper: https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/people.py
 '''
