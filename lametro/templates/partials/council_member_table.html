@@ -31,7 +31,7 @@
                             {{ membership.role | clean_role }}<br>
 
                             <span class="small">{{ membership.label|clean_label | format_label | safe }}</span><br>
-                            {% if "District" in membership.label|clean_label %}
+                            {% if "District" in membership.label|clean_label and "Caltrans District" not in membership.label|clean_label %}
                                 <span class="badge district-badge">District appointee</span>
                             {% elif "sector" in membership.label|clean_label %}
                                 <span class="badge sector-badge">Sector appointee</span>

@@ -62,11 +62,17 @@ def full_text_doc_url(url):
     return urllib.parse.urlencode(pic_query)
 
 
+'''
+This filter converts the post title into a prose-style format with nomination info,
+(e.g., "Appointee of Los Angeles County City Selection Committee, Southeast Long Beach sector" into "Appointee of [Committee], nominated by the [Subcommittee]") 
+Some posts do not require modification, e.g., "Caltrans District 7 Director, Appointee of Governor of California."
+A full list of posts resides in the scraper: https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/people.py
+'''
 @register.filter
 def appointment_label(label):
     full_label = label.replace("Appointee of", "Appointee of the")
     label_parts = full_label.split(', ')
-    if len(label_parts) > 1:
+    if len(label_parts) > 1 and 'Caltrans District 7 Director' not in full_label:
         if 'sector' in full_label:
             appointment_label = ', nominated by the '.join(label_parts).replace('sector', 'Subcommittee')
         else:
