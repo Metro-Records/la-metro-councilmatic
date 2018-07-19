@@ -6,10 +6,10 @@
             <p class="small">
                 {% if event.status == 'cancelled' %}
                 <span class="non-mobile-only">
-                    <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time| date:"g:i a"}}</strike> <span class="label label-stale">Cancelled</span> <br/>
+                    <strike><i class="fa fa-fw fa-clock-o"></i> {{event.start_time| date:"g:i a"}}</strike><br/>
                 </span>
                 <span class="mobile-only">
-                    <strike>{{event.start_time| date:"g:i a"}}</strike> <span class="label label-stale">Cancelled</span><br/>
+                    <strike>{{event.start_time| date:"g:i a"}}</strike><br/>
                 </span>
                 {% else %}
                 <span class="non-mobile-only">
@@ -24,15 +24,11 @@
         <div class="col-xs-9">
             <p>
                 {% if event.status == 'cancelled' %}
-                    {{event.name}
-
-                    {% if event.ocd_id|updates_made %}
-                        <span class='label label-info label-teal'>Updated</span>
-                    {% endif %}
+                    <strike>{{event.name}}</strike> 
+                    <span class="label label-stale">Cancelled</span>
                     <br/>
                 {% else %}
-                    {{event.name}
-
+                    {{event.name}}
                     {% if event.ocd_id|updates_made %}
                         <span class='label label-info label-teal'>Updated</span>
                     {% endif %}

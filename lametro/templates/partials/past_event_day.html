@@ -10,10 +10,10 @@
         <p class="small">
             {% if event.status == 'cancelled' %}
             <span class="non-mobile-only">
-                <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time| date:"g:i a"}}</strike> <span class="label label-stale">Cancelled</span> <br/>
+                <strike><i class="fa fa-fw fa-clock-o"></i> {{event.start_time| date:"g:i a"}}</strike><br/>
             </span>
             <span class="mobile-only">
-                <strike>{{event.start_time| date:"g:i a"}}</strike> <span class="label label-stale">Cancelled</span><br/>
+                <strike>{{event.start_time| date:"g:i a"}}</strike><br/>
             </span>
             {% else %}
             <span class="non-mobile-only">
@@ -26,9 +26,14 @@
         </p>
     </div>
     <div class="col-xs-4">
-        <p>
-            <a href="{{event.event_page_url}}">{{event.name}}</a><br/>
-            <span class="small text-muted">{{event.description}}</span>
+        <p> 
+            {% if event.status == 'cancelled' %}
+                    <strike><a href="{{event.event_page_url}}">{{event.name}}</a></strike> 
+                    <span class="label label-stale">Cancelled</span>
+            {% else %}
+                <a href="{{event.event_page_url}}">{{event.name}}</a>
+            {% endif %}
+            <br/>
         </p>
     </div>
 
