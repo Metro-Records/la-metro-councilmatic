@@ -23,13 +23,21 @@
         </div>
         <div class="col-xs-9">
             <p>
-                {{event.name}}
+                {% if event.status == 'cancelled' %}
+                    {{event.name}
 
-                {% if event.ocd_id|updates_made %}
-                    <span class='label label-info label-teal'>Updated</span>
+                    {% if event.ocd_id|updates_made %}
+                        <span class='label label-info label-teal'>Updated</span>
+                    {% endif %}
+                    <br/>
+                {% else %}
+                    {{event.name}
+
+                    {% if event.ocd_id|updates_made %}
+                        <span class='label label-info label-teal'>Updated</span>
+                    {% endif %}
+                    <br/>
                 {% endif %}
-                <br/>
-                <span class="small text-muted">{{event.description}}</span>
             </p>
         </div>
     </div>
