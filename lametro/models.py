@@ -383,14 +383,12 @@ class LAMetroEvent(Event, LiveMediaMixin):
         one_month_from_now = timezone.now() + relativedelta(months=1)
         meetings = cls.objects.filter(start_time__gt=timezone.now(), start_time__lt=one_month_from_now)\
                               .exclude(name__icontains='Board Meeting')\
-                              .exclude(status='cancelled')\
                               .order_by('start_time').all()
 
         if not meetings:
             two_months_from_now = timezone.now() + relativedelta(months=2)
             meetings = cls.objects.filter(start_time__gt=timezone.now(), start_time__lt=two_months_from_now)\
                                   .exclude(name__icontains='Board Meeting')\
-                                  .exclude(status='cancelled')\
                                   .order_by('start_time').all()
 
         return meetings
