@@ -156,8 +156,8 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
         'desc': 'Metro’s Government Relations staff seeks Board of Director approval prior to taking a position of “support”, “oppose”, or “work with author” on significant State and Federal legislation.',
     },
     {
-        'name': 'Ordinance',
-        'search_term': 'ordinance',
+        'name': 'Ordinance / Administrative Code',
+        'search_term': 'ordinance / administrative code',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'Metro as an entity created by the State of California for Los Angeles County has the legal authority to adopt ordinances. Its adopted ordinances are collectively referred to as the Metro Administrative Code. Metro ordinances are enacted pursuant to the ordinance adopting authority granted to the Southern California Rapid Transit District by Public Utilities Code Sections 30273 et seq., and to the Los Angeles Comment [SAR1]: Capitalize Board Report Comment [SAR2]: Items included here are only those where text is edited. All existing types of Board Reports should still be included as is. County Transportation Commission by Public Utilities Code Sections 130103 and 130105. Ordinances include, among others: <br><br>a.) Metro’s Retail Transactions and Use Taxes (Sales Taxes) <br>b.) Transit Court <br>c.) Codes of Conduct <br>d.) Settlement of Claims <br>e.) Public Hearings <br>f.) Contracting <br>g.) Tolls and Enforcement of Toll Violations <br>h.) Parking',
