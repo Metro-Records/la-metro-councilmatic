@@ -39,4 +39,4 @@ def format_full_text(full_text):
 
 def parse_subject(text):
     if ('[PROJECT OR SERVICE NAME]' not in text) and ('[DESCRIPTION]' not in text) and ('[CONTRACT NUMBER]' not in text):
-        return text
+        return text.strip()
