@@ -55,8 +55,6 @@ def find_last_action_date(bill_ocd_id):
     else:
         events = Event.objects.filter(agenda_items__bill_id=bill_ocd_id)
         if events:
-            print(events)
             last_action_date = events.latest('start_time').start_time
-            print(last_action_date)
 
     return last_action_date
