@@ -14,6 +14,8 @@ import requests
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
     Action, EventMedia
 
+from lametro.utils import find_last_action_date
+
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 class LAMetroBill(Bill):
@@ -63,23 +65,14 @@ class LAMetroBill(Bill):
     # LA METRO CUSTOMIZATION
     @property
     def attachments(self):
-
         return self.documents.all()
 
     @property
     def controlling_body(self):
-
         return self.from_organization
 
     def get_last_action_date(self):
-        actions = Action.objects.filter(_bill_id=self.ocd_id)
-
-        try:
-          action = actions.reverse()[0].date
-        except:
-          action = ''
-
-        return action
+        return find_last_action_date(self.ocd_id)
 
     @property
     def topics(self):

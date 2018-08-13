@@ -11,7 +11,11 @@
             <br/>
             <p><a href='/events/'><i class="fa fa-angle-double-left" aria-hidden="true"></i> Back to {{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></p>
             <h1>
-                {{event.name}}
+                {% if event.status == 'cancelled' %}
+                    <strike>{{event.name}}</strike> <small><span class="label label-stale">Cancelled</span></small>
+                {% else %}
+                    {{event.name}}
+                {% endif%}
 
                 {% for media in event.media %}
                     <a class="btn btn-salmon" href="{{ media.url }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> {{ media.label }}</a>
@@ -20,9 +24,10 @@
             <p>{{event.description}}</p>
             <p class="small text-muted">
                 {% if event.status == 'cancelled' %}
-                    <i class="fa fa-fw fa-calendar-o"></i> <strike>{{event.start_time | date:"D n/d/Y"}}</strike><br/>
-                    <i class="fa fa-fw fa-clock-o"></i> <strike>{{event.start_time | date:"g:i a"}}</strike> <br/>
-                    <span class="label label-stale">Cancelled</span>
+                    <strike>
+                    <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
+                    <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
+                    </strike>
                 {% else %}
                     <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
                     <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
