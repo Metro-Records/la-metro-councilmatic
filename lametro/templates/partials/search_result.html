@@ -19,8 +19,8 @@
                 {% if r.highlighted.text.0 %}
                     {{ r.highlighted.text.0|safe }}
                 {% else %}
-                    {% get_attachment_text r.ocd_id as attachment_text %}
-                    {% highlight attachment_text with query %}
+                    {% get_highlighted_attachment_text r.ocd_id as highlighted_text %}
+                    {{ highlighted_text|safe}}
                 {% endif %}
             </p>
         {% else %}
