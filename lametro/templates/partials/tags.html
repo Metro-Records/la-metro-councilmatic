@@ -22,7 +22,10 @@
         <i class="fa fa-fw fa-tag"></i>
         {% for tag in result.object.topics %}
             <span class="badge badge-muted pseudo-topic-tag">
-                <a href='/search/?q={{request.GET.q}}&selected_facets=topics_exact%3A{{ tag }}'>{{tag}}</a>
+                {% with "topics_exact:"|add:tag as tag_facet %}
+                    {{tag_facet}}
+                    <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag}}</a>
+                {% endwith %}
             </span>&nbsp;
         {% endfor %}
         <br/>
@@ -30,7 +33,7 @@
         <i class="fa fa-fw fa-tag"></i>
         {% for tag in result.object.pseudo_topics %}
             <span class="badge badge-muted pseudo-topic-tag">
-                <a href='/search/?q={{request.GET.q}}&selected_facets=sponsorships_exact%3A{{ tag }}'>{{ tag | committee_topic_only }}</a>
+                <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{ tag | committee_topic_only }}</a>
             </span>&nbsp;
         {% endfor %}
         <br/>
