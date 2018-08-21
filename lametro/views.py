@@ -718,8 +718,6 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
     def build_form(self, form_kwargs={}):
         form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
 
-        
-
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
         form_kwargs['search_corpus'] = 'all' if self.request.GET.get('search-all') else 'bills'
 
