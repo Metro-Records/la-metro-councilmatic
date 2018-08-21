@@ -21,20 +21,21 @@
     {% if result.object.topics %}
         <i class="fa fa-fw fa-tag"></i>
         {% for tag in result.object.topics %}
+            {% with "topics_exact:"|add:tag as tag_facet %}
             <span class="badge badge-muted pseudo-topic-tag">
-                {% with "topics_exact:"|add:tag as tag_facet %}
-                    {{tag_facet}}
-                    <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag}}</a>
-                {% endwith %}
+                <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag}}</a>
             </span>&nbsp;
+            {% endwith %}
         {% endfor %}
         <br/>
     {% elif result.object.pseudo_topics %}
         <i class="fa fa-fw fa-tag"></i>
         {% for tag in result.object.pseudo_topics %}
+            {% with "sponsorships_exact:"|add:tag as tag_facet %}
             <span class="badge badge-muted pseudo-topic-tag">
                 <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{ tag | committee_topic_only }}</a>
             </span>&nbsp;
+            {% endwith %}
         {% endfor %}
         <br/>
     {% endif %}
