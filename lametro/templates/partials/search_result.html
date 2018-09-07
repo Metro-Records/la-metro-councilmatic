@@ -1,5 +1,6 @@
 {% load extras %}
 {% load lametro_extras %}
+{% load highlight %}
 
 <p>
     <a class="small" href="{% url 'lametro:bill_detail' r.object.slug %}">
@@ -15,7 +16,12 @@
     <div class="col-xs-11">
         {% if query %}
             <p class="search-result">
-              {{ r.highlighted.text.0|safe  }}
+                {% if r.highlighted.text.0 %}
+                    {{ r.highlighted.text.0|safe }}
+                {% else %}
+                    {% get_highlighted_attachment_text r.ocd_id as highlighted_text %}
+                    {{ highlighted_text|safe}}
+                {% endif %}
             </p>
         {% else %}
             <p>

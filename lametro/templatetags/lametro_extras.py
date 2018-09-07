@@ -10,7 +10,8 @@ import urllib
 
 from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic_core.models import Person, EventDocument
+from councilmatic_core.models import Person, EventDocument, Bill
+from councilmatic_core.utils import ExactHighlighter
 
 from lametro.models import LAMetroEvent
 from lametro.utils import format_full_text, parse_subject
@@ -191,3 +192,12 @@ def find_agenda_url(all_documents):
     valid_urls += pdf_url
 
     return valid_urls[0]
+
+@register.simple_tag(takes_context=True)
+def get_highlighted_attachment_text(context, ocd_id):
+    bill = Bill.objects.get(ocd_id=ocd_id)
+    attachment_text = ' '.join(d.full_text for d in bill.documents.all() if d.full_text)
+
+    highlight = ExactHighlighter(context['query'])
+    
+    return highlight.highlight(attachment_text)
