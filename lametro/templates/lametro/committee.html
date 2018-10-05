@@ -132,7 +132,7 @@
                                 </td>
                                 <td>
                                     {% if member.label %}
-                                        {{ member.label.0 | format_string | clean_label | format_label | safe }}
+                                        {{ extras | clean_membership_extras }} {{ member.label.0 | format_string | clean_label | format_label | safe }}
                                     {% else %}
                                         None
                                     {% endif %}
@@ -166,7 +166,7 @@
                                 </td>
                                 <td>
                                     {% if member.label %}
-                                        {{ member.label.0 | format_string | clean_label | format_label | safe }}
+                                        {{ member.extras | clean_membership_extras }} {{ member.label.0 | format_string | clean_label | format_label | safe }}
                                     {% else %}
                                         None
                                     {% endif %}

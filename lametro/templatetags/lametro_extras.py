@@ -84,6 +84,13 @@ def appointment_label(label):
     return appointment_label
 
 @register.filter
+def clean_membership_extras(extras):
+    if extras.get('acting'):
+        return 'Acting'
+    else:
+        return ''
+
+@register.filter
 def clean_role(role_list):
     if len(role_list) > 1:
         try:

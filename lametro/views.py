@@ -524,6 +524,7 @@ class LACommitteeDetailView(CommitteeDetailView):
             sql = ('''
               SELECT
                 p.name, p.slug, p.ocd_id,
+                m.extras,
                 array_agg(m.role) as committee_role,
                 array_agg(mm.label::VARCHAR)
                 FILTER (WHERE mm.label is not Null) as label,
@@ -545,7 +546,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
               GROUP BY
-                p.name, p.slug, p.ocd_id
+                p.name, p.slug, p.ocd_id, m.extras
               ORDER BY last_name
             ''')
 
@@ -577,6 +578,7 @@ class LACommitteeDetailView(CommitteeDetailView):
             sql = ('''
               SELECT
                 p.name, p.slug, p.ocd_id,
+                m.extras,
                 array_agg(m.role) as committee_role,
                 array_agg(mm.label::VARCHAR)
                 FILTER (WHERE mm.label is not Null) as label,
@@ -598,7 +600,7 @@ class LACommitteeDetailView(CommitteeDetailView):
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
               GROUP BY
-                p.name, p.slug, p.ocd_id
+                p.name, p.slug, p.ocd_id, m.extras
               ORDER BY last_name
             ''')
 
@@ -671,6 +673,7 @@ class LAPersonDetailView(PersonDetailView):
             title = m.role
             if m.post:
                 qualifying_post = m.post.label
+                # TODO: Append extras field, if it exists.
 
         else:
             title = 'Former %s' % m.role
