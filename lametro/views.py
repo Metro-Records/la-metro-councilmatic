@@ -413,6 +413,7 @@ class LABoardMembersView(CouncilMembersView):
 
             sql = '''
             SELECT p.ocd_id, p.name, array_agg(pt.label) as label,
+                m.extras,
                 array_agg(m.role) as role,
                 split_part(p.name, ' ', 2) AS last_name
             FROM councilmatic_core_membership as m
@@ -423,7 +424,7 @@ class LABoardMembersView(CouncilMembersView):
             WHERE m.organization_id='ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
             AND m.end_date >= '{0}'
             AND m.person_id <> 'ocd-person/912c8ddf-8d04-4f7f-847d-2daf84e096e2'
-            GROUP BY p.ocd_id, p.name
+            GROUP BY p.ocd_id, p.name, m.extras
             ORDER BY last_name
             '''.format(today)
 
@@ -673,7 +674,8 @@ class LAPersonDetailView(PersonDetailView):
             title = m.role
             if m.post:
                 qualifying_post = m.post.label
-                # TODO: Append extras field, if it exists.
+                if m.extras.get('acting'):
+                    qualifying_post = 'Acting' + ' ' + qualifying_post
 
         else:
             title = 'Former %s' % m.role
