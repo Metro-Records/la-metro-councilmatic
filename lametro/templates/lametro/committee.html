@@ -185,7 +185,22 @@
                 </tbody>
             </table>
 
+            {% if ceo %}
+            <br>
+            <h4><i class="fa fa-user"></i> Chief Executive Officer</h4>
+            <div class='row ceo-row'>
+                <div class='col-md-12'>
+                    <br>
+                    <p><a href="{% url 'lametro:person' ceo.slug %}">{{ ceo.name }}</a>, CEO</p>
+                </div>
+            </div>
+            
+            {% endif %}
         </div>
+
+        <div class="col-sm-4">
+        </div>
+
     </div>
 
 {% endblock %}
