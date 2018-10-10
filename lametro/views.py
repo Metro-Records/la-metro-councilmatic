@@ -21,7 +21,6 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
-from django.db import connection
 from django.db.models.functions import Lower
 from django.db.models import Max, Min
 from django.utils import timezone
@@ -489,6 +488,7 @@ class LACommitteesView(CommitteesView):
               ON p.ocd_id=m.person_id
               WHERE o.classification='committee'
               AND m.end_date::date > NOW()::date
+              AND m.role != 'Chief Executive Officer'
               ORDER BY o.ocd_id, m.person_id, m.end_date;
                 ''')
 
@@ -546,6 +546,7 @@ class LACommitteeDetailView(CommitteeDetailView):
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
+              AND m.role != 'Chief Executive Officer'
               GROUP BY
                 p.name, p.slug, p.ocd_id, m.extras
               ORDER BY last_name
@@ -600,6 +601,7 @@ class LACommitteeDetailView(CommitteeDetailView):
                 ON m.person_id = p.ocd_id
               WHERE m.organization_id = %s
               AND m.end_date::date > NOW()::date
+              AND m.role != 'Chief Executive Officer'
               GROUP BY
                 p.name, p.slug, p.ocd_id, m.extras
               ORDER BY last_name
@@ -627,6 +629,8 @@ class LACommitteeDetailView(CommitteeDetailView):
             membership_objects = sorted(objects_list, key=lambda x: x[5])
 
             context['ad_hoc_list'] = objects_list
+
+            context['ceo'] = Person.objects.get(memberships__role='Chief Executive Officer',                                memberships___organization=committee.ocd_id)
 
         return context
 
@@ -689,8 +693,31 @@ class LAPersonDetailView(PersonDetailView):
         else:
             context['sponsored_legislation'] = []
 
-        committees_lst = [action._organization.name for action in person.committee_sponsorships]
-        context['committees_lst'] = list(set(committees_lst))
+        with connection.cursor() as cursor:
+
+            sql = ('''
+                SELECT o.name as organization, o.slug as org_slug, m.role
+                FROM councilmatic_core_membership AS m
+                JOIN councilmatic_core_organization AS o
+                ON o.ocd_id = m.organization_id
+                WHERE m.person_id = %s
+                AND m.end_date::date > NOW()::date
+                AND m.organization_id != %s
+                ORDER BY
+                    CASE
+                        WHEN m.role='Chair' THEN 0
+                        WHEN m.role='Vice Chair' THEN 1
+                        WHEN m.role='Member' THEN 2
+                    END
+                ''')
+
+            cursor.execute(sql, [person.ocd_id, settings.OCD_CITY_COUNCIL_ID])
+
+            columns = [c[0] for c in cursor.description]
+            
+            results_tuple = namedtuple('Member', columns)
+            memberships_list = [results_tuple(*r) for r in cursor]
+            context['memberships_list'] = memberships_list
 
         if person.slug in MEMBER_BIOS:
             context['member_bio'] = MEMBER_BIOS[person.slug]

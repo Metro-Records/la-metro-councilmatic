@@ -14,7 +14,7 @@
 {% block content %}
 
     <div class="row-fluid">
-        <div class="col=sm=12">
+        <div class="col-sm-12">
             <br/>
             <h1>
                 <span>{{ person.name }}</span>
@@ -26,10 +26,17 @@
             </h1>
         </div>
     </div>
+
+    {% comment %}
+        The Metro CEO does not sponsor reports or serve as a committee member.
+        His/her/their detail view provides a bio, in lieu of the 'Sponsorhsips' and 'Committees' lists.
+    {% endcomment %}
+    {% if qualifying_post == 'Chief Executive Officer' %}
+        {% include 'partials/person_ceo.html' %}
+    {% else %}
     <div class="row-fluid">
         <div class="col-sm-4 non-mobile-only">
             <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail img-padded' id="person-detail-headshot" />
-
             <p class="small">
                 {% if qualifying_post %}
                     <i class='fa fa-fw fa-briefcase'></i>
@@ -37,29 +44,13 @@
                 {% endif %}
             </p>
             <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
-            <p class="small">
-                {% if person.email %}
-                    <i class='fa fa-fw fa-envelope-o'></i>
-                    <a href="mailto:{{person.email}}">{{person.email | strip_mailto}}</a>
-                {% endif %}
-            </p>
-            <p class="small">
-                {% if person.website_url %}
-                    <i class='fa fa-fw fa-user'></i>
-                    <a href="{{person.website_url}}" target="_blank">Website</a>
-                {% endif %}
-            </p>
-
+            
             <hr />
 
             {% if member_bio %}
                 <h4>About {{ person.name }}</h4>
                 <p class="small">{{ member_bio | safe }}</p>
             {% endif %}
-
-            <!-- <p class='small'>
-                <a href='{{person.source_url}}' target="_blank"><i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website</a>
-            </p> -->
 
             {% if map_geojson %}
                 <hr />
@@ -88,25 +79,11 @@
                     <p class="small">
                         {% if qualifying_post %}
                             <i class='fa fa-fw fa-briefcase'></i>
-                            {{ qualifying_post }}
-                        {% endif %}
-                    </p>
-                    <p class="small">
-                        {% if person.email %}
-                            <i class='fa fa-fw fa-envelope-o'></i>
-                            <a href="mailto:{{person.email}}">{{person.email | strip_mailto}}</a>
-                        {% endif %}
-                    </p>
-                    <p class="small">
-                        {% if person.website_url %}
-                            <i class='fa fa-fw fa-user'></i>
-                            <a href="{{person.website_url}}">Website</a>
+                            {{ qualifying_post | appointment_label }}
                         {% endif %}
                     </p>
 
-                    <p class='small'>
-                        <a href='{{person.source_url}}' target="_blank"><i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website</a>
-                    </p>
+                    <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
                 </div>
             </div>
 
@@ -157,7 +134,7 @@
 
             {% if request.GET.view == 'committees' %}
                 <h3>Committees</h3>
-                {% if person.chair_role_memberships or person.member_role_memberships %}
+                {% if memberships_list %}
                 <div class="table-responsive">
                     <table class='table table-responsive'>
                         <thead>
@@ -167,18 +144,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for membership in person.chair_role_memberships %}
+                            {% for membership in memberships_list %}
                                 <tr>
                                     <td>
-                                        {{membership.organization.link_html|safe}}
-                                    </td>
-                                    <td>{{membership.role}}</td>
-                                </tr>
-                            {% endfor %}
-                            {% for membership in person.member_role_memberships %}
-                                <tr>
-                                    <td>
-                                        {{membership.organization.link_html|safe}}
+                                        <a href="{% url 'lametro:committee' membership.org_slug %}">{{membership.organization}}</a>
                                     </td>
                                     <td>{{membership.role}}</td>
                                 </tr>
@@ -188,9 +157,9 @@
                 </div>
                 {% endif %}
             {% endif %}
-
         </div>
     </div>
+    {% endif %}
 
     <script type="application/ld+json">
         {

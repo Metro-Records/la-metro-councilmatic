@@ -1,0 +1,24 @@
+{% load extras %}
+{% load lametro_extras %}
+
+<div class="row-fluid">
+    <div class="col-sm-4">
+        <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail img-padded' id="person-detail-headshot" />
+        <p class="small">
+            {% if qualifying_post %}
+                <i class='fa fa-fw fa-briefcase'></i>
+                {{ qualifying_post | appointment_label }}
+            {% endif %}
+        </p>
+        {% if person.headshot_source %}
+            <hr />
+            <p class='small'>
+                <i class='fa fa-fw fa-camera'></i> Credit: {{person.headshot_source}}
+            </p>
+        {% endif %}
+    </div>
+    <div class='col-sm-6'>
+        <h3>About {{ ceo.name }}</h3>
+        <p>{{ member_bio | safe }}</p>
+    </div>
+</div>

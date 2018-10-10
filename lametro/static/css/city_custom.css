@@ -124,6 +124,9 @@ div#google_translate_element {
 
 .login { margin-top: 2em; }
 
+#ceo-table { border-top: 2px solid #dddddd; }
+
+#ceo-table td { vertical-align: middle; }
 
 /* Labels for statues */
 .label {
