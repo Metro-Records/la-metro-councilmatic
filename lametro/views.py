@@ -712,7 +712,7 @@ class LAPersonDetailView(PersonDetailView):
                 ''')
 
             cursor.execute(sql, [person.ocd_id, settings.OCD_CITY_COUNCIL_ID])
-            
+
             columns = [c[0] for c in cursor.description]
             
             results_tuple = namedtuple('Member', columns)

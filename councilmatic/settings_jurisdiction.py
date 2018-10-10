@@ -281,6 +281,7 @@ MANUAL_HEADSHOTS = {
     'janice-hahn-4682bb5db3dd': {'source': '', 'image': 'manual-headshots/janice-hahn.jpg' },
     'robert-garcia-3d501fbcf51c': {'source': '', 'image': 'manual-headshots/robert-garcia.jpg' },
     'shirley-choate-03b7445fec78': {'source': '', 'image': 'manual-headshots/shirley-choate.jpg' },
+    'phil-washington-2daf84e096e2': {'source': '', 'image': 'manual-headshots/phil-washington.jpg'},
 }
 
 MEMBER_BIOS = {
