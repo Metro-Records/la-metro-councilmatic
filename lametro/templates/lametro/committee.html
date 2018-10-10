@@ -158,25 +158,13 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {% if member.label %}
-                                        <a href="{% url 'lametro:person' member.slug %}">{{ member.name }}</a>
-                                    {% else %}
-                                        {{ member.name }}
-                                    {% endif %}
+                                    <a href="{% url 'lametro:person' member.slug %}">{{ member.name }}</a>
                                 </td>
                                 <td>
-                                    {% if member.label %}
-                                        {{ member.extras | clean_membership_extras }} {{ member.label.0 | format_string | clean_label | format_label | safe }}
-                                    {% else %}
-                                        None
-                                    {% endif %}
+                                    {{ member.extras | clean_membership_extras }} {{ member.label.0 | format_string | clean_label | format_label | safe }}
                                 </td>
                                 <td>
-                                    {% if member.committee_role %}
-                                        {{ member.committee_role | clean_role }}
-                                    {% else %}
-                                        None
-                                    {% endif %}
+                                    {{ member.committee_role | clean_role }}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -188,19 +176,21 @@
             {% if ceo %}
             <br>
             <h4><i class="fa fa-user"></i> Chief Executive Officer</h4>
-            <div class='row ceo-row'>
-                <div class='col-md-12'>
-                    <br>
-                    <p><a href="{% url 'lametro:person' ceo.slug %}">{{ ceo.name }}</a>, CEO</p>
-                </div>
-            </div>
-            
+            <table class='table' id='ceo-table'>
+                <tbody>
+                    <tr>
+                        <td width="12%">
+                            <div class="thumbnail-square">
+                                <img src='{{ ceo.ocd_id | call_headshot_url }}' alt='{{ceo.name}}' title='{{ceo.name}}' class='img-responsive img-thumbnail' />
+                            </div>
+                        </td>
+                        <td width="22%"><a href="{% url 'lametro:person' ceo.slug %}">{{ ceo.name }}</a></td>
+                        <td>Chief Executive Officer</td>
+                    </tr>
+                </tbody>
+            </table>
             {% endif %}
         </div>
-
-        <div class="col-sm-4">
-        </div>
-
     </div>
 
 {% endblock %}
