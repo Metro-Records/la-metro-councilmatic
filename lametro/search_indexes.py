@@ -10,6 +10,7 @@ from lametro.utils import format_full_text, parse_subject, find_last_action_date
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
     topics = indexes.MultiValueField(faceted=True)
     attachment_text = indexes.CharField()
+    viewable = indexes.BooleanField()
 
     def get_model(self):
         return LAMetroBill
@@ -40,3 +41,6 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
     def prepare_attachment_text(self, obj):
         return ' '.join(d.full_text for d in obj.documents.all() if d.full_text)
+
+    def prepare_viewable(self, obj):
+        return obj.is_viewable

@@ -78,6 +78,30 @@ class LAMetroBill(Bill):
     def topics(self):
         return [s.subject for s in self.subjects.all()]
 
+    @property 
+    def is_viewable(self):
+        '''
+        Sometimes, a Bill may be imported to Councilmatic, though it should not be visible to the public.
+        This issue summarize why that might happen: https://github.com/datamade/la-metro-councilmatic/issues/345#issuecomment-421184826
+        Metro staff devised three checks for knowing when to hide or show a report:
+
+        (1) Is the view restricted, i.e., is `MatterRestrictViewViaWeb` set to True in the Legistar API? Then, hide it.
+
+        (2) Does the Bill have a classification of "Board Box"? Then, show it.
+
+        (3) Is the Bill on a published agenda? Then, show it.
+        '''
+        if self.restrict_view:
+            return False
+
+        if self.local_classification == "Board Box":
+            return True
+
+        # if published on an agenda
+        # return True
+
+        return True
+
 class LAMetroPost(Post):
 
     class Meta:
