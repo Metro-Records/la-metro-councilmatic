@@ -85,22 +85,21 @@ class LAMetroBill(Bill):
         This issue summarize why that might happen: https://github.com/datamade/la-metro-councilmatic/issues/345#issuecomment-421184826
         Metro staff devised three checks for knowing when to hide or show a report:
 
-        (1) Is the view restricted, i.e., is `MatterRestrictViewViaWeb` set to True in the Legistar API? Then, hide it.
+        (1) Is the view restricted, i.e., is `MatterRestrictViewViaWeb` set to True in the Legistar API? We skip these bills further upstream. https://github.com/opencivicdata/scrapers-us-municipal/pull/251
 
         (2) Does the Bill have a classification of "Board Box"? Then, show it.
 
-        (3) Is the Bill on a published agenda? Then, show it.
+        (3) Is the Bill on a published agenda, i.e., an event with the status of "passed" or "cancelled"? Then, show it.
         '''
-        if self.restrict_view:
-            return False
-
-        if self.local_classification == "Board Box":
+        if self.bill_type == "Board Box":
             return True
 
-        # if published on an agenda
-        # return True
+        events_with_bill = Event.objects.filter(agenda_items__bill_id=self.ocd_id)
+        passed_events = [event for event in events_with_bill if (event.status == 'passed' or event.status == 'cancelled')]
+        if passed_events:
+            return True
 
-        return True
+        return False
 
 class LAMetroPost(Post):
 
