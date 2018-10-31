@@ -139,7 +139,7 @@
                                 </td>
                                 <td>
                                     {% if member.committee_role %}
-                                        {{ member.committee_role | clean_role }}
+                                        {{ member.committee_role }}
                                     {% else %}
                                         None
                                     {% endif %}
@@ -164,7 +164,7 @@
                                     {{ member.extras | clean_membership_extras }} {{ member.label.0 | format_string | clean_label | format_label | safe }}
                                 </td>
                                 <td>
-                                    {{ member.committee_role | clean_role }}
+                                    {{ member.role }}
                                 </td>
                             </tr>
                         {% endfor %}
