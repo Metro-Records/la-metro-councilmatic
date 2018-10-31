@@ -9,7 +9,7 @@ def test_organization_url(client, metro_organization):
     This test checks that the committee detail view returns a successful response. 
     '''
     organization = metro_organization.build()
-    url = reverse('committee_detail', kwargs={'slug': organization.slug})
+    url = reverse('lametro:committee', kwargs={'slug': organization.slug})
     response = client.get(url)
 
     assert response.status_code == 200
