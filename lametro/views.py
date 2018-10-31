@@ -522,7 +522,7 @@ class LACommitteeDetailView(CommitteeDetailView):
             context['committee_description'] = description
 
         with connection.cursor() as cursor:
-            sql = ('''
+            base_sql = '''
               SELECT
                 m.role,
                 p.name, p.slug, p.ocd_id,
@@ -549,57 +549,29 @@ class LACommitteeDetailView(CommitteeDetailView):
               AND m.role != 'Chief Executive Officer'
               GROUP BY
                 m.role, p.name, p.slug, p.ocd_id, m.extras
-              ORDER BY
-                    CASE
-                        WHEN m.role='Chair' THEN 0
-                        WHEN m.role='Vice Chair' THEN 1
-                        WHEN m.role='Member' THEN 2
-                    END
-            ''')
+              {order_by}
+            '''
+            committee_sql = base_sql.format(order_by="ORDER BY CASE " +
+                                           "WHEN m.role='Chair' THEN 0 " +
+                                           "WHEN m.role='Vice Chair' THEN 1 " +
+                                           "WHEN m.role='Member' THEN 2" +
+                                           "END")
 
-            cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
+            cursor.execute(committee_sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
             columns = [c[0] for c in cursor.description]
             results_tuple = namedtuple('Member', columns)
             objects_list = [results_tuple(*r) for r in cursor]
 
             context['membership_objects'] = objects_list
 
-            sql = ('''
-              SELECT
-                m.role,
-                p.name, p.slug, p.ocd_id,
-                m.extras,
-                array_agg(mm.label::VARCHAR)
-                FILTER (WHERE mm.label is not Null) as label,
-                split_part(p.name, ' ', 2) AS last_name
-              FROM councilmatic_core_membership AS m
-              LEFT JOIN (
-                SELECT
-                  person_id,
-                  array_agg(DISTINCT pt.label) as label
-                FROM councilmatic_core_membership AS m
-                JOIN councilmatic_core_post AS pt
-                  ON m.post_id=pt.ocd_id
-                WHERE m.organization_id = %s
-                GROUP BY person_id
-              ) AS mm
-                USING(person_id)
-              JOIN councilmatic_core_person AS p
-                ON m.person_id = p.ocd_id
-              WHERE m.organization_id = %s
-              AND m.end_date::date > NOW()::date
-              AND m.role != 'Chief Executive Officer'
-              GROUP BY
-                m.role, p.name, p.slug, p.ocd_id, m.extras
-              ORDER BY
-                CASE
-                    WHEN m.role='Chair' THEN 0
-                    WHEN m.role='Vice Chair' THEN 1
-                    WHEN m.role='Member' THEN 2
-                END
-            ''')
+            ad_hoc_committee_sql = base_sql.format(order_by="ORDER BY CASE " +
+                                           "WHEN m.role='Chair' THEN 0 " +
+                                           "WHEN m.role='1st Vice Chair' THEN 1 " +
+                                           "WHEN m.role='2nd Vice Chair' THEN 2 "
+                                           "WHEN m.role='Member' THEN 3" +
+                                           "END")
 
-            cursor.execute(sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
+            cursor.execute(ad_hoc_committee_sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
 
             columns = [c[0] for c in cursor.description]
             results_tuple = namedtuple('Member', columns)
@@ -607,9 +579,13 @@ class LACommitteeDetailView(CommitteeDetailView):
 
             context['ad_hoc_list'] = objects_list
 
-            context['ceo'] = Person.objects.get(memberships__role='Chief Executive Officer',                                memberships___organization=committee.ocd_id)
+            context['ceo'] = Person.objects.filter(memberships__role='Chief Executive Officer',                                   memberships___organization=committee.ocd_id).first()
 
         return context
+
+    
+
+
 
 class LAPersonDetailView(PersonDetailView):
 
