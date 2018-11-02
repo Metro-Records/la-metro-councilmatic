@@ -583,9 +583,6 @@ class LACommitteeDetailView(CommitteeDetailView):
 
         return context
 
-    
-
-
 
 class LAPersonDetailView(PersonDetailView):
 

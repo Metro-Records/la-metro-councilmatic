@@ -157,44 +157,9 @@ class LAMetroPerson(Person):
             cursor.execute(query)
             bill_ids = [bill_tup[0] for bill_tup in cursor.fetchall()]
 
-            bills = Bill.objects.filter(ocd_id__in=bill_ids)
+            bills = LAMetroBill.objects.filter(ocd_id__in=bill_ids)
 
         return bills
-
-
-        # Omit Board of Directors to avoid 
-        # memberships = self.memberships.all().filter( _organization__classification='committee').distinct('_organization')
-
-        # organization_ids = [o._organization_id for o in m]
-
-        # actions = Action.objects.filter(date__gte=m.start_date, _organization__in=organization_ids)
-
-        # if memberships:
-        #     for m in memberships:
-        #         org = Organization.objects.get(ocd_id=m.organization.ocd_id) 
-
-        #         import pdb
-        #         pdb.set_trace()
-
-        #         org.actions.filter(date__gte=m.start_date)
-
-        #         actions = Action.objects.filter(date__gte=m.start_date, _organization__in=)
-
-
-
-
-        # if m:
-        #     oids = [o._organization_id for o in m]
-
-        #     leg = []
-        #     for id_ in oids:
-        #         try:
-        #             committee = Organization.objects.filter(ocd_id=id_)[0]
-        #             leg += committee.recent_activity
-        #         except IndexError: # handle errant oid in my db; pls resolve
-        #             pass
-        #     return leg
-        # return None
         
 
 class LAMetroEventManager(models.Manager):
