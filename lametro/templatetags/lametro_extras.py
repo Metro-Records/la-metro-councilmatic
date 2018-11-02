@@ -71,17 +71,22 @@ A full list of posts resides in the scraper: https://github.com/opencivicdata/sc
 '''
 @register.filter
 def appointment_label(label):
+    # The District 7 Director does not require modification.
+    # The scraper imports it as it should be: https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/__init__.py
+    if 'District 7 Director' in label:
+        return label
+
     full_label = label.replace("Appointee of", "Appointee of the")
     label_parts = full_label.split(', ')
-    if len(label_parts) > 1 and 'Caltrans District 7 Director' not in full_label:
-        if 'sector' in full_label:
-            appointment_label = ', nominated by the '.join(label_parts).replace('sector', 'Subcommittee')
-        else:
-            appointment_label = ', nominated by the '.join(label_parts) + ' Subcommittee'
-    else:
-        appointment_label = full_label
 
-    return appointment_label
+    if len(label_parts) < 1:
+        return full_label
+    
+    if 'sector' in full_label:
+        return ', nominated by the '.join(label_parts).replace('sector', 'Subcommittee')
+    else:
+        return ', nominated by the '.join(label_parts) + ' Subcommittee'
+    
 
 @register.filter
 def clean_membership_extras(extras):
