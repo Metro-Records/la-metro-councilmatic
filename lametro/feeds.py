@@ -25,9 +25,7 @@ class LAMetroPersonDetailFeed(PersonDetailFeed):
         person.committee_sponsorships
 
         if person.committee_sponsorships:
-            recent_sponsored_bills = [
-                s.bill for s in sorted(person.committee_sponsorships, key=lambda obj: obj.date, reverse=True)[:10]
-            ]
+            recent_sponsored_bills = person.committee_sponsorships
         else:
             recent_sponsored_bills = []
 

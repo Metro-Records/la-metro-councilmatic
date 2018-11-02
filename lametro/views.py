@@ -640,9 +640,7 @@ class LAPersonDetailView(PersonDetailView):
         context['qualifying_post'] = qualifying_post
 
         if person.committee_sponsorships:
-            context['sponsored_legislation'] = [
-                s.bill for s in sorted(person.committee_sponsorships, key=lambda obj: obj.date, reverse=True)[:10]
-            ]
+            context['sponsored_legislation'] = person.committee_sponsorships
         else:
             context['sponsored_legislation'] = []
 
