@@ -282,6 +282,7 @@ MANUAL_HEADSHOTS = {
     'robert-garcia-3d501fbcf51c': {'source': '', 'image': 'manual-headshots/robert-garcia.jpg' },
     'shirley-choate-03b7445fec78': {'source': '', 'image': 'manual-headshots/shirley-choate.jpg' },
     'phil-washington-2daf84e096e2': {'source': '', 'image': 'manual-headshots/phil-washington.jpg'},
+    'john-bulinski-184f9b0a3cc7': {'source': '', 'image': 'manual-headshots/john-bulinski.jpg'},
 }
 
 MEMBER_BIOS = {
