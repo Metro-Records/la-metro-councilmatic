@@ -141,11 +141,11 @@ class LAMetroPerson(Person):
             SELECT bill_id 
             FROM councilmatic_core_bill as bill
             JOIN councilmatic_core_action as action
-            ON bill.ocd_id=action.bill_id
+            ON bill.ocd_id = action.bill_id
             JOIN councilmatic_core_organization as org
-            ON org.ocd_id=action.organization_id 
+            ON org.ocd_id = action.organization_id 
             JOIN councilmatic_core_membership as membership 
-            ON org.ocd_id=membership.organization_id
+            ON org.ocd_id = membership.organization_id
             WHERE membership.person_id='{person}'
             AND action.date >= membership.start_date
             AND org.classification = 'committee'
