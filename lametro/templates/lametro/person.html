@@ -116,19 +116,23 @@
                 <h3>
                     Sponsored Board Actions
                 </h3>
+                {% if sponsored_legislation %}
                 <p>Most recent actions sponsored by committees to which {{person.name}} belongs.</p><br/>
 
-                {% for legislation in sponsored_legislation %}
-                    {% include "partials/legislation_item.html" %}
-                {% endfor %}
+                    {% for legislation in sponsored_legislation %}
+                        {% include "partials/legislation_item.html" %}
+                    {% endfor %}
 
-                <hr />
-                <p class="non-mobile-only">
-                    <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more about committees to which {{person.name}} belongs and view all actions they sponsor.<i class='fa fa-fw fa-chevron-right'></i></a>
-                </p>
-                <p class="mobile-only">
-                    <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more<i class='fa fa-fw fa-chevron-right'></i></a>
-                </p>
+                    <hr />
+                    <p class="non-mobile-only">
+                        <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more about committees to which {{person.name}} belongs and view all actions they sponsor.<i class='fa fa-fw fa-chevron-right'></i></a>
+                    </p>
+                    <p class="mobile-only">
+                        <a class='btn btn-primary' href="{% url 'lametro:person' person.slug %}?view=committees">Learn more<i class='fa fa-fw fa-chevron-right'></i></a>
+                    </p>
+                {% else %}
+                    <p>The committees to which {{person.name}} belongs has not sponsored actions during {{person.name}}'s membership.</p>
+                {% endif %}
 
             {% endif %}
 
