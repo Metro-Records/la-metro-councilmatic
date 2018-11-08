@@ -22,7 +22,11 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return [action.organization for action in actions]
 
     def prepare_last_action_date(self, obj):
-        return find_last_action_date(obj.ocd_id)
+        # Solr seems to be fussy about the time format, and we do not need the time, just the date stamp.
+        # https://lucene.apache.org/solr/guide/7_5/working-with-dates.html#date-formatting
+        last_action_date = find_last_action_date(obj.ocd_id)
+        if last_action_date:
+            return last_action_date.date()
 
     def prepare_sort_name(self, obj):
         full_text = obj.ocr_full_text
