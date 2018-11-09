@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Make project directory if it doesn't exist. This is mainly to ensure that these scripts work on a bare server
+set -euo pipefail
 
 rm -Rf /home/datamade/la-metro-councilmatic
 mkdir -p /home/datamade/la-metro-councilmatic
