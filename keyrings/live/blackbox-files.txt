@@ -2,6 +2,7 @@ configs/lametro-staging.conf.nginx
 configs/lametro-staging.conf.supervisor
 configs/lametro.conf.nginx
 configs/lametro.conf.supervisor
+configs/settings_deployment.production.py
 configs/settings_deployment_staging.py
 scripts/after_install.sh
 scripts/app_start.sh
