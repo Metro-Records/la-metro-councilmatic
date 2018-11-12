@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+  solr:
+    image: solr:7.5
+    container_name: bga-payroll-solr
+    volumes:
+      - ./solr_configs:/la-metro-councilmatic_configs
+      - data:/opt/solr/server/solr/mycores
+    command: sh -c 'solr-create -c bga -d /la-metro-councilmatic_configs'
+    ports:
+      - '127.0.0.1:8986:8983'
+    environment:
+      SOLR_LOG_LEVEL: ERROR
+    restart: on-failure
+volumes:
+  data:

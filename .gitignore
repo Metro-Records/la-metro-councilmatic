@@ -21,8 +21,6 @@ downloads
 /scripts/app_start.sh
 /scripts/app_stop.sh
 /scripts/validate_service.sh
-/configs/settings_deployment_staging.py
-/configs/settings_deployment_production.py
 
 merged_pdfs/*
 debug.log
@@ -33,3 +31,5 @@ debug.log
 /configs/lametro-staging.conf.supervisor
 /configs/lametro.conf.supervisor
 /scripts/after_install.sh
+/configs/settings_deployment.production.py
+/configs/settings_deployment.staging.py
