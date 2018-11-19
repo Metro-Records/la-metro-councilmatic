@@ -1,12 +1,24 @@
 version: '3.3'
 services:
-  solr:
+  solr-production:
     image: solr:7.5
-    container_name: bga-payroll-solr
+    container_name: lametro-production-solr
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
       - data:/opt/solr/server/solr/mycores
-    command: sh -c 'solr-create -c bga -d /la-metro-councilmatic_configs'
+    command: sh -c 'solr-create -c lametro -d /la-metro-councilmatic_configs'
+    ports:
+      - '127.0.0.1:8985:8983'
+    environment:
+      SOLR_LOG_LEVEL: ERROR
+    restart: on-failure
+  solr-staging:
+    image: solr:7.5
+    container_name: lametro-staging-solr
+    volumes:
+      - ./solr_configs:/la-metro-councilmatic_configs
+      - data:/opt/solr/server/solr/mycores
+    command: sh -c 'solr-create -c lametro-staging -d /la-metro-councilmatic_configs'
     ports:
       - '127.0.0.1:8986:8983'
     environment:
