@@ -78,6 +78,34 @@ class LAMetroBill(Bill):
     def topics(self):
         return [s.subject for s in self.subjects.all()]
 
+    @property 
+    def is_viewable(self):
+        '''
+        Sometimes, a Bill may be imported to Councilmatic, though it should not be visible to the public.
+        This issue summarizes why that might happen: https://github.com/datamade/la-metro-councilmatic/issues/345#issuecomment-421184826
+        Metro staff devised three checks for knowing when to hide or show a report:
+
+        (1) Is the view restricted, i.e., is `MatterRestrictViewViaWeb` set to True in the Legistar API? We skip these bills further upstream. https://github.com/opencivicdata/scrapers-us-municipal/pull/251
+
+        (2) Does the Bill have a classification of "Board Box"? Then, show it.
+
+        (3) Is the Bill on a published agenda, i.e., an event with the status of "passed" or "cancelled"? Then, show it.
+
+        This property coms into play when filtering the SearchQuerySet object in  LAMetroCouncilmaticSearchForm (views.py).
+        Note: we filter the sqs object, rather than remove "hidden" bills from the Solr index.
+        This strategy minimizes complexity (e.g., attempting to implement an LAMetroBillManager), 
+        and this strategy avoids making adjustments to the `data_integrity` script (https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/data_integrity.py)
+        '''
+        if self.bill_type == "Board Box":
+            return True
+
+        events_with_bill = Event.objects.filter(agenda_items__bill_id=self.ocd_id)
+        passed_events = [event for event in events_with_bill if (event.status == 'passed' or event.status == 'cancelled')]
+        if passed_events:
+            return True
+
+        return False
+
 class LAMetroPost(Post):
 
     class Meta:
