@@ -1,12 +1,13 @@
-import datetime
+from datetime import datetime
+from datetime import timedelta 
 import pytest
 from uuid import uuid4
+from random import randrange
 
 from django.core.management import call_command
 
-from councilmatic_core.models import EventDocument, Bill, EventAgendaItem
-from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill
-
+from councilmatic_core.models import EventDocument, Bill, EventAgendaItem, Membership
+from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, LAMetroOrganization
 
 def get_uid_chunk(uid=None):
     '''
@@ -129,3 +130,48 @@ def metro_person(db):
             return person
 
     return LAMetroPersonFactory()
+
+@pytest.fixture
+@pytest.mark.django_db
+def metro_organization(db):
+    class LAMetroOrganizationFactory():
+        def build(self, **kwargs):
+            uid = str(uuid4())
+
+            organization_info = {
+                'ocd_id': 'ocd-organization/' + uid,
+                'name': 'Planning and Programming Committee',
+                'slug': 'planning-and-programming-committee-' + get_uid_chunk(uid),
+            }
+
+            organization_info.update(kwargs)
+
+            organization = LAMetroOrganization.objects.create(**organization_info)
+
+            return organization
+
+    return LAMetroOrganizationFactory()
+
+@pytest.fixture
+@pytest.mark.django_db
+def membership(db, metro_organization, metro_person):
+    class MembershipFactory():
+        def build(self, **kwargs):
+            related_org = metro_organization.build()
+            related_person =metro_person.build()
+
+            membership_info = {
+                'id': randrange(10000),
+                '_organization': related_org,
+                '_person': related_person,
+                'end_date': datetime.now() + timedelta(days=1) 
+            }
+
+            membership_info.update(kwargs)
+
+            membership = Membership.objects.create(**membership_info)
+            membership.save()
+
+            return membership
+
+    return MembershipFactory()

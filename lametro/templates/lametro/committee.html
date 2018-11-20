@@ -23,11 +23,12 @@
     </div>
 
     <div class="row-fluid">
+        {% if committee.recent_activity %}
+        <!-- Recent activity -->
         <div class="col-sm-7">
             <h4><i class='fa fa-fw fa-list-ul'></i> Recent Activity
                 <a href="actions/rss/" title="RSS feed for Recent Activity by {{committee.name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
             </h4>
-            {% if committee.recent_activity %}
             <div class="table-responsive">
                 <table class='table' id='committee-actions'>
                     <thead>
@@ -70,12 +71,14 @@
                     </tbody>
                 </table>
             </div>
-            {% else %}
-                <p>No recent activity</p>
-            {% endif %}
-
         </div>
+
+        <!-- Recent events -->
         <div class="col-sm-5">
+        {% else %}
+        <!-- If no committee activity, remove `committee-actions` table entirely, and expand the recent events column to 100%.  -->
+        <div class="col-sm-12">
+        {% endif %}
             {% if committee.recent_events %}
 
                 <h4>
@@ -104,7 +107,7 @@
     <div class="row-fluid">
         <div class="col-sm-8">
 
-            <h4><i class='fa fa-fw fa-group'></i> Committee Members {% if membership_objects %}({{ membership_objects|length }}){% else %}({{ ad_hoc_list|length }}){% endif %}</h4>
+            <h4><i class='fa fa-fw fa-group'></i> Committee Members</h4>
             <table class='table' id='council-members'>
                 <thead>
                     <tr>
@@ -139,7 +142,7 @@
                                 </td>
                                 <td>
                                     {% if member.committee_role %}
-                                        {{ member.committee_role | clean_role }}
+                                        {{ member.committee_role }}
                                     {% else %}
                                         None
                                     {% endif %}
@@ -164,7 +167,7 @@
                                     {{ member.extras | clean_membership_extras }} {{ member.label.0 | format_string | clean_label | format_label | safe }}
                                 </td>
                                 <td>
-                                    {{ member.committee_role | clean_role }}
+                                    {{ member.role }}
                                 </td>
                             </tr>
                         {% endfor %}

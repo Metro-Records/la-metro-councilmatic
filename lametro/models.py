@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
-from django.db import models
+from django.db import models, connection
 from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -160,29 +160,34 @@ class LAMetroPerson(Person):
     @property
     def committee_sponsorships(self):
         '''
-        should we omit 'board of directors' as a committee?
-        they are primary sponsor of a lot of activity, so the first
-        10 items in this feed looks p much the same for every member
-        and is thus not that useful, whereas committee-specific
-        feeds are a bit more distinctive (altho committees seem
-        to sponsor much less legislation... with the most recent
-        being from february - do they only meet at certain times?)
+        This property returns a list of ten bills, which have recent actions 
+        from the organizations that the person has memberships in.
+
+        Organizations do not include the Board of Directors.
         '''
+        query = '''
+            SELECT bill_id 
+            FROM councilmatic_core_bill as bill
+            JOIN councilmatic_core_action as action
+            ON bill.ocd_id = action.bill_id
+            JOIN councilmatic_core_organization as org
+            ON org.ocd_id = action.organization_id 
+            JOIN councilmatic_core_membership as membership 
+            ON org.ocd_id = membership.organization_id
+            WHERE membership.person_id='{person}'
+            AND action.date >= membership.start_date
+            AND org.classification = 'committee'
+            ORDER BY action.date DESC
+            LIMIT 10
+        '''.format(person=self.ocd_id)
 
-        m = self.memberships.all().filter( _organization__classification='committee').distinct('_organization')
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            bill_ids = [bill_tup[0] for bill_tup in cursor.fetchall()]
 
-        if m:
-            oids = [o._organization_id for o in m]
+            bills = LAMetroBill.objects.filter(ocd_id__in=bill_ids)
 
-            leg = []
-            for id_ in oids:
-                try:
-                    committee = Organization.objects.filter(ocd_id=id_)[0]
-                    leg += committee.recent_activity
-                except IndexError: # handle errant oid in my db; pls resolve
-                    pass
-            return leg
-        return None
+        return bills
         
 
 class LAMetroEventManager(models.Manager):
