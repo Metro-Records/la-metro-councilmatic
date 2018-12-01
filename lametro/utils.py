@@ -6,6 +6,7 @@ import lxml.html
 from lxml.etree import tostring
 
 from django.conf import settings
+from django.utils import timezone
 
 from councilmatic_core.models import EventParticipant, Organization, Event, Action
 
@@ -41,11 +42,14 @@ def parse_subject(text):
 
 def find_last_action_date(bill_ocd_id):
     '''
-    Several Metro bills do not have "histories." 
-    Discussed in this issue: 
+    Several Metro bills do not have "histories."
+    Discussed in this issue:
     https://github.com/datamade/la-metro-councilmatic/issues/340
 
-    If a bill does not have a history, then determine its `last_action_date` by looking for the most recent agenda that references the bill. 
+    If a bill does not have a history, then determine its `last_action_date` by
+    looking for the most recent agenda that references the bill. Consider only
+    events that have already occurred, so the last action date is not in the
+    future.
     '''
     actions = Action.objects.filter(_bill_id=bill_ocd_id)
     last_action_date = ''
@@ -53,7 +57,9 @@ def find_last_action_date(bill_ocd_id):
     if actions:
         last_action_date = actions.reverse()[0].date
     else:
-        events = Event.objects.filter(agenda_items__bill_id=bill_ocd_id)
+        events = Event.objects.filter(agenda_items__bill_id=bill_ocd_id,
+                                      start_time__lt=timezone.now())
+
         if events:
             last_action_date = events.latest('start_time').start_time
 
