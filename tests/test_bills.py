@@ -1,9 +1,14 @@
+from datetime import timedelta
+from uuid import uuid4
+
 import pytest
 
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
-from councilmatic_core.models import Bill, RelatedBill, Event
-from lametro.utils import format_full_text, parse_subject
+from councilmatic_core.models import Bill, RelatedBill, Event, EventAgendaItem
+from lametro.utils import format_full_text, parse_subject, find_last_action_date
+
 
 # This collection of tests checks the functionality of Bill-specific views, helper functions, and relations.
 def test_bill_url(client, bill):
@@ -89,5 +94,27 @@ def test_viewable_bill(bill,
 
     assert bill.is_viewable == assertion
 
+@pytest.mark.django_db
+def test_last_action_date_has_already_occurred(bill, event):
+    some_bill = bill.build()
 
+    two_weeks_ago = timezone.now() - timedelta(weeks=2)
+    two_weeks_from_now = timezone.now() + timedelta(weeks=2)
 
+    id_fmt = 'ocd-event/{}'
+
+    for t in (two_weeks_ago, two_weeks_from_now):
+        some_event = event.build(ocd_id=id_fmt.format(uuid4()), start_time=t)
+
+        EventAgendaItem.objects.create(bill_id=some_bill.ocd_id,
+                                       event_id=some_event.ocd_id,
+                                       order=1)
+
+    # Assert the bill occurs on both agendas.
+    assert Event.objects.filter(agenda_items__bill_id=some_bill.ocd_id)\
+                        .count() == 2
+
+    last_action_date = find_last_action_date(some_bill)
+
+    # Assert the last action matches the event that has already occurred.
+    assert last_action_date == two_weeks_ago
