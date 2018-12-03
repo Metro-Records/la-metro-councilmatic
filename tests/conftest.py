@@ -6,9 +6,8 @@ from random import randrange
 
 from django.core.management import call_command
 
-from councilmatic_core.models import EventDocument, Bill, Membership
-from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroOrganization
-
+from councilmatic_core.models import EventDocument, Bill, EventAgendaItem, Membership
+from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, LAMetroOrganization
 
 def get_uid_chunk(uid=None):
     '''
@@ -37,7 +36,7 @@ def bill(db):
 
             bill_info.update(kwargs)
 
-            bill = Bill.objects.create(**bill_info)
+            bill = LAMetroBill.objects.create(**bill_info)
             bill.save()
 
             return bill
@@ -67,6 +66,29 @@ def event(db):
             return event
 
     return EventFactory()
+
+@pytest.fixture
+@pytest.mark.django_db
+def event_agenda_item(db, event):
+    class EventAgendaItemFactory():
+        def build(self, **kwargs):
+            named_event = event.build()
+
+            event_agenda_item_info = {
+                'event_id': named_event.ocd_id,
+                'updated_at': '2017-05-27 11:10:46.574-05',
+                'order': 1,
+            }
+
+            event_agenda_item_info.update(kwargs)
+
+            event_agenda_item = EventAgendaItem.objects.create(**event_agenda_item_info)
+            event_agenda_item.save()
+
+            return event_agenda_item
+
+    return EventAgendaItemFactory()
+
 
 @pytest.fixture
 @pytest.mark.django_db

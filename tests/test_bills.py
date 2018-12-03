@@ -6,8 +6,9 @@ import pytest
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 
-from councilmatic_core.models import Bill, RelatedBill, EventAgendaItem, Event
+from councilmatic_core.models import Bill, RelatedBill, Event, EventAgendaItem
 from lametro.utils import format_full_text, parse_subject, find_last_action_date
+
 
 # This collection of tests checks the functionality of Bill-specific views, helper functions, and relations.
 def test_bill_url(client, bill):
@@ -62,6 +63,36 @@ def test_format_full_text(bill, text, subject):
     full_text = bill_with_text.ocr_full_text
 
     assert format_full_text(full_text) == subject
+
+@pytest.mark.parametrize('bill_type,event_status,assertion', [
+        ('Board Box', 'passed', True),
+        ('Resolution', 'passed', True),
+        ('Resolution', 'cancelled', True),
+        ('Resolution', 'confirmed', False),
+    ])
+def test_viewable_bill(bill, 
+                       event_agenda_item, 
+                       bill_type, 
+                       event_status, 
+                       assertion):
+    bill_info = {
+        'bill_type': bill_type,
+    }
+    bill = bill.build(**bill_info)
+    bill.refresh_from_db()
+
+    event_agenda_item_info = {
+        'bill_id': bill.ocd_id,
+    }
+    item = event_agenda_item.build(**event_agenda_item_info)
+    item.refresh_from_db()
+
+    event = Event.objects.get(ocd_id=item.event_id)
+    event.status = event_status
+    event.save()
+    event.refresh_from_db()
+
+    assert bill.is_viewable == assertion
 
 @pytest.mark.django_db
 def test_last_action_date_has_already_occurred(bill, event):
