@@ -108,14 +108,16 @@ python manage.py runserver
 
 Then, navigate to http://localhost:8000/.
 
-## Setup Solr Search
+## Solr Search
+
+**Get setup**
 
 LA Metro containerizes Solr with Docker. Be sure you have [Docker on your local machine](https://www.docker.com/get-started), and then, follow these steps.
 
 1. Peek inside the `docker-compose.yml` file. It has configurations for two solr containers: staging and production. Staging runs on port 8986, and production runs on port 8985. You can use either for local development. Simply specify it in `settings_deployment.py`.
 
 ```
-# councilmatic/settings_depmloyment.py
+# councilmatic/settings_deployment.py
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -138,9 +140,11 @@ docker-compose up solr-staging
 
 **Regenerate Solr schema**
 
-Did you make a change to the schema file that Solr uses to make its magic (`solr_configs/conf/schema.xml`)? Did you add a new field or adjust how solr indexes data? If so, you need to take a few steps.
+Did you make a change to the schema file that Solr uses to make its magic (`solr_configs/conf/schema.xml`)? Did you add a new field or adjust how solr indexes data? If so, you need to take a few steps – locally and on the server.
 
-First, destroy the solr container. This needs to happen locally and on `metro-councilmatic` server. 
+*Local development*
+
+First, remove the solr container.  
 
 ```
 # view all containers
@@ -149,21 +153,43 @@ docker ps -a
 # remove the solr container
 docker rm lametro-{{deployment}}-solr
 
-# build the container anew (locally only - CodeDeploy will handle this step)
+# build the container anew
 docker-compose up solr-{{deployment}}
 ```
 
-Then, move your new schema to `solr_scripts`.
+Then, rebuild your index.
+
+```
+python manage.py rebuild_index
+```
+
+Finally, prepare for deployment: move your new schema to `solr_scripts`.
 
 ```
 cp solr_configs/conf/schema.xml solr_scripts/schema.xml
 ```
 
-Finally, rebuild your index.
+*On the Sever*
+The Dockerized versions of Solr on the server need your attention, too. Follow these steps.
+
+1. Deploy the schema changes on the staging server. 
+2. Shell into the server, go to the `lametro-staging` repo, and remove and rebuild the Solr container.
 
 ```
-python manage.py rebuild_index
+docker rm lametro-staging-solr
+docker-compose up solr-staging
 ```
+
+3. Rebuild the index for the staging server: `python manage.py rebuild_index`.
+
+Did everything work as expected? Great - now onto the production site. 
+
+1. Contact the folks at Metro and let them know the search funcitonality and data import will be down for a short period.
+2. Turn off the crons (`lametro-crontasks`) - do this in a pull request.
+3. Deploy the schema changes to the production server.
+4. As above: shell into the server, go to the `lametro-` repo, and remove and rebuild the Solr container.
+5. Rebuild the index.
+6. Turn on the crons - again, do this in a pull request!
 
 ## A note on tests
 
