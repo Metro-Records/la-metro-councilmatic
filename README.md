@@ -188,9 +188,11 @@ Did everything work as expected? Great - now onto the production site.
 1. Contact the folks at Metro and let them know the search funcitonality and data import will be down for a short period.
 2. Turn off the crons (`lametro-crontasks`) - do this in a pull request.
 3. Deploy the schema changes to the production server.
-4. As above: shell into the server, go to the `lametro-` repo, and remove and rebuild the Solr container.
+4. As above: shell into the server, go to the `lametro` repo, and remove and rebuild the Solr container.
 5. Rebuild the index.
 6. Turn on the crons - again, do this in a pull request!
+
+Nice! The production server should have the newly edited schema and freshly built index, ready to search, filter, and facet. 
 
 ## A note on tests
 
