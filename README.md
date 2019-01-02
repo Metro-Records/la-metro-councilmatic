@@ -110,7 +110,7 @@ Then, navigate to http://localhost:8000/.
 
 ## Solr Search
 
-**Get setup**
+### Get setup
 
 LA Metro containerizes Solr with Docker. Be sure you have [Docker on your local machine](https://www.docker.com/get-started), and then, follow these steps.
 
@@ -138,11 +138,11 @@ docker-compose up solr-production
 docker-compose up solr-staging
 ```
 
-**Regenerate Solr schema**
+### Regenerate Solr schema
 
 Did you make a change to the schema file that Solr uses to make its magic (`solr_configs/conf/schema.xml`)? Did you add a new field or adjust how solr indexes data? If so, you need to take a few steps – locally and on the server.
 
-*Local development*
+**Local development**
 
 First, remove the solr container.  
 
@@ -169,7 +169,8 @@ Finally, prepare for deployment: move your new schema to `solr_scripts`.
 cp solr_configs/conf/schema.xml solr_scripts/schema.xml
 ```
 
-*On the Sever*
+**On the Sever**
+
 The Dockerized versions of Solr on the server need your attention, too. Follow these steps.
 
 1. Deploy the schema changes on the staging server. 
