@@ -108,67 +108,62 @@ python manage.py runserver
 
 Then, navigate to http://localhost:8000/.
 
-## Setup Search
+## Setup Solr Search
 
-**Install Open JDK or update Java**
+LA Metro containerizes Solr with Docker. Be sure you have [Docker on your local machine](https://www.docker.com/get-started), and then, follow these steps.
 
-On Ubuntu:
+1. Peek inside the `docker-compose.yml` file. It has configurations for two solr containers: staging and production. Staging runs on port 8986, and production runs on port 8985. You can use either for local development. Simply specify it in `settings_deployment.py`.
 
-``` bash
-$ sudo apt-get update
-$ sudo apt-get install openjdk-7-jre-headless
+```
+# councilmatic/settings_depmloyment.py
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        # specify the solr port!
+        'URL': 'http://127.0.0.1:8985/solr/lametro',
+    },
+}
 ```
 
-On OS X:
+2. Now, run docker! 
 
-1. Download latest Java SE Development Kit from
-[http://www.oracle.com/technetwork/java/javase/downloads/jdk10-downloads-4416644.html](http://www.oracle.com/technetwork/java/javase/downloads/jdk10-downloads-4416644.html)
-2. Follow normal install procedure
-
-**Download & setup Solr**
-
-``` bash
-wget http://archive.apache.org/dist/lucene/solr/4.10.4/solr-4.10.4.tgz
-tar -xvf solr-4.10.4.tgz
-sudo cp -R solr-4.10.4/example /opt/solr
-
-# Copy schema.xml for this app to solr directory
-sudo cp solr_scripts/schema.xml /opt/solr/solr/collection1/conf/schema.xml
 ```
+# for port 8985
+docker-compose up solr-production
 
-**Run Solr**
-```bash
-# Next, start the java application that runs solr
-# Do this in another terminal window & keep it running
-# If you see error output, somethings wrong
-cd /opt/solr
-sudo java -jar start.jar
-```
-
-**Index the database**
-```bash
-# Do this in the la-metro-councilmatic directory:
-python manage.py rebuild_index
+# for port 8986
+docker-compose up solr-staging
 ```
 
 **Regenerate Solr schema**
 
-While developing, if you need to make changes to the fields that are getting
-indexed or how they are getting indexed, you'll need to regenerate the
-schema.xml file that Solr uses to make its magic. Here's how that works:
+Did you make a change to the schema file that Solr uses to make its magic (`solr_configs/conf/schema.xml`)? Did you add a new field or adjust how solr indexes data? If so, you need to take a few steps.
+
+First, destroy the solr container. This needs to happen locally and on `metro-councilmatic` server. 
 
 ```
-python manage.py build_solr_schema > solr_scripts/schema.xml
-cp solr_scripts/schema.xml /opt/solr/solr/collection1/conf/schema.xml
+# view all containers
+docker ps -a
+
+# remove the solr container
+docker rm lametro-{{deployment}}-solr
+
+# build the container anew (locally only - CodeDeploy will handle this step)
+docker-compose up solr-{{deployment}}
 ```
 
-In order for Solr to use the new schema file, you'll need to restart it.
+Then, move your new schema to `solr_scripts`.
 
-**Using Solr for more than one Councilmatic on the same server**
+```
+cp solr_configs/conf/schema.xml solr_scripts/schema.xml
+```
 
-If you intend to run more than one instance of Councilmatic on the same server,
-you'll need to take a look at [this README](solr_scripts/README.md) to make sure you're
-configuring things properly.
+Finally, rebuild your index.
+
+```
+python manage.py rebuild_index
+```
 
 ## A note on tests
 
