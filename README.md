@@ -114,7 +114,7 @@ Then, navigate to http://localhost:8000/.
 
 LA Metro containerizes Solr with Docker. Be sure you have [Docker on your local machine](https://www.docker.com/get-started), and then, follow these steps.
 
-1. Peek inside the `docker-compose.yml` file. It has configurations for two solr containers: staging and production. Staging runs on port 8986, and production runs on port 8985. You can use either for local development. Simply specify it in `settings_deployment.py`.
+1. Peek inside the `docker-compose.yml` file. It has configurations for two solr containers: staging and production. Staging runs on port 8986, and production runs on port 8985. Use 8986 (lametro-staging) for local development. Specify it in `settings_deployment.py`.
 
 ```
 # councilmatic/settings_deployment.py
@@ -122,8 +122,7 @@ LA Metro containerizes Solr with Docker. Be sure you have [Docker on your local 
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        # specify the solr port!
-        'URL': 'http://127.0.0.1:8985/solr/lametro',
+        'URL': 'http://127.0.0.1:8986/solr/lametro-staging',
     },
 }
 ```
@@ -131,10 +130,6 @@ HAYSTACK_CONNECTIONS = {
 2. Now, run docker! 
 
 ```
-# for port 8985
-docker-compose up solr-production
-
-# for port 8986
 docker-compose up solr-staging
 ```
 
