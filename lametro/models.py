@@ -408,7 +408,7 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
     @property
     def media(self):
-        ## makes sure that 'Watch in English' appears first
+        '''Return related LAMetroEventMedia objects such that English audio appears first'''
         query_set = LAMetroEventMedia.objects.filter(event_id=self.ocd_id)
         query_set = sorted(query_set, key=lambda media: media.label, reverse=True)
         return query_set
