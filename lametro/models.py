@@ -78,7 +78,7 @@ class LAMetroBill(Bill):
     def topics(self):
         return [s.subject for s in self.subjects.all()]
 
-    @property 
+    @property
     def is_viewable(self):
         '''
         Sometimes, a Bill may be imported to Councilmatic, though it should not be visible to the public.
@@ -93,7 +93,7 @@ class LAMetroBill(Bill):
 
         This property coms into play when filtering the SearchQuerySet object in  LAMetroCouncilmaticSearchForm (views.py).
         Note: we filter the sqs object, rather than remove "hidden" bills from the Solr index.
-        This strategy minimizes complexity (e.g., attempting to implement an LAMetroBillManager), 
+        This strategy minimizes complexity (e.g., attempting to implement an LAMetroBillManager),
         and this strategy avoids making adjustments to the `data_integrity` script (https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/data_integrity.py)
         '''
         if self.bill_type == "Board Box":
@@ -160,19 +160,19 @@ class LAMetroPerson(Person):
     @property
     def committee_sponsorships(self):
         '''
-        This property returns a list of ten bills, which have recent actions 
+        This property returns a list of ten bills, which have recent actions
         from the organizations that the person has memberships in.
 
         Organizations do not include the Board of Directors.
         '''
         query = '''
-            SELECT bill_id 
+            SELECT bill_id
             FROM councilmatic_core_bill as bill
             JOIN councilmatic_core_action as action
             ON bill.ocd_id = action.bill_id
             JOIN councilmatic_core_organization as org
-            ON org.ocd_id = action.organization_id 
-            JOIN councilmatic_core_membership as membership 
+            ON org.ocd_id = action.organization_id
+            JOIN councilmatic_core_membership as membership
             ON org.ocd_id = membership.organization_id
             WHERE membership.person_id='{person}'
             AND action.date >= membership.start_date
@@ -188,7 +188,7 @@ class LAMetroPerson(Person):
             bills = LAMetroBill.objects.filter(ocd_id__in=bill_ids)
 
         return bills
-        
+
 
 class LAMetroEventManager(models.Manager):
     def get_queryset(self):
@@ -408,7 +408,10 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
     @property
     def media(self):
-        return LAMetroEventMedia.objects.filter(event_id=self.ocd_id)
+        '''Return related LAMetroEventMedia objects such that English audio appears first'''
+        query_set = LAMetroEventMedia.objects.filter(event_id=self.ocd_id)
+        query_set = sorted(query_set, key=lambda media: media.label, reverse=True)
+        return query_set
 
 
 class LAMetroEventMedia(EventMedia):
