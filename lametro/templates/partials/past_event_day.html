@@ -35,8 +35,7 @@
     </div>
 
     <div class="col-xs-3">
-      {# this filter reverses the order of the media labels, so that "Watch in English" is first by default #}
-        {% for media in event.media|dictsortreversed:'label' %}
+        {% for media in event.media %}
           <p>
             <a href="{{ media.url }}" target="_blank">{{ media.label }}</a>
             </br>
