@@ -83,7 +83,7 @@ class LABillDetail(BillDetailView):
         # Create list of related board reports, ordered by descending last_action_date.
         if context['legislation'].related_bills.all():
             all_related_bills = context['legislation'].related_bills.all().values('related_bill_identifier')
-            related_bills = [ bill for bill in LAMetroBill.objects.filter(identifier__in=all_related_bills) ]
+            related_bills = LAMetroBill.objects.filter(identifier__in=all_related_bills)
             context['related_bills'] = sorted(related_bills, key=lambda bill: bill.last_action_date, reverse=True)
 
 
