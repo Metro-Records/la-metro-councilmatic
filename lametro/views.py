@@ -4,7 +4,7 @@ from operator import attrgetter
 import itertools
 import urllib
 import json
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, MINYEAR
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
 import requests
