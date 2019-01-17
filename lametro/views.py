@@ -81,10 +81,12 @@ class LABillDetail(BillDetailView):
             context['packet_url'] = None
 
         # Create list of related board reports, ordered by descending last_action_date.
+        # Thanks https://stackoverflow.com/a/2179053 for how to handle null last_action_date
         if context['legislation'].related_bills.all():
             all_related_bills = context['legislation'].related_bills.all().values('related_bill_identifier')
             related_bills = LAMetroBill.objects.filter(identifier__in=all_related_bills)
-            context['related_bills'] = sorted(related_bills, key=lambda bill: bill.last_action_date, reverse=True)
+            minimum_date = datetime.date(datetime.MINYEAR, 1, 1)
+            context['related_bills'] = sorted(related_bills, key=lambda bill: bill.last_action_date or minimum_date, reverse=True)
 
 
         return context
