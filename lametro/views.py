@@ -4,7 +4,7 @@ from operator import attrgetter
 import itertools
 import urllib
 import json
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, MINYEAR
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
 import requests
@@ -80,9 +80,14 @@ class LABillDetail(BillDetailView):
         except:
             context['packet_url'] = None
 
-        # Create list of related board reports
+        # Create list of related board reports, ordered by descending last_action_date.
+        # Thanks https://stackoverflow.com/a/2179053 for how to handle null last_action_date
         if context['legislation'].related_bills.all():
-            context['related_bills'] = [LAMetroBill.objects.get(identifier=bill.related_bill_identifier) for bill in context['legislation'].related_bills.all()]
+            all_related_bills = context['legislation'].related_bills.all().values('related_bill_identifier')
+            related_bills = LAMetroBill.objects.filter(identifier__in=all_related_bills)
+            minimum_date = datetime(MINYEAR, 1, 1, tzinfo=app_timezone)
+            context['related_bills'] = sorted(related_bills, key=lambda bill: bill.last_action_date or minimum_date, reverse=True)
+
 
         return context
 
@@ -111,7 +116,7 @@ class LAMetroEventDetail(EventDetailView):
                 url=agenda_url, updated_at= timezone.now())
             document_obj.note = ('Event Document - Manual upload URL')
             document_obj.save()
-        
+
             return HttpResponseRedirect('/event/%s' % event_slug)
         elif pdf_form.is_valid() and 'pdf_form' in request.POST:
             agenda_pdf = request.FILES['agenda']
@@ -184,7 +189,7 @@ class LAMetroEventDetail(EventDetailView):
                 # Add packet slug
                 ocd_id = obj[1]
                 packet_slug = ocd_id.replace('/', '-')
-                
+
                 r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
                 if r.status_code == 200:
                     packet_url = MERGER_BASE_URL + '/document/' + packet_slug
@@ -215,7 +220,7 @@ class LAMetroEventDetail(EventDetailView):
                         context['document_timestamp'] = document.updated_at
                         '''
                         LA Metro Councilmatic uses the adv_cache library to partially cache templates: in the event view, we cache the entire template, except the iframe. (N.B. With this library, the views do not cached, unless explicitly wrapped in a django cache decorator.
-                        Nonetheless, several popular browsers (e.g., Chrome and Firefox) retrieve cached iframe images, regardless of the site's caching specifications. 
+                        Nonetheless, several popular browsers (e.g., Chrome and Firefox) retrieve cached iframe images, regardless of the site's caching specifications.
                         We use the agenda's "updated_at" timestamp to bust the iframe cache: we save it inside context and then assign it as the "name" of the iframe, preventing the browser from retrieving a cached iframe, when the timestamp changes.
                         '''
 
@@ -662,7 +667,7 @@ class LAPersonDetailView(PersonDetailView):
             cursor.execute(sql, [person.ocd_id, settings.OCD_CITY_COUNCIL_ID])
 
             columns = [c[0] for c in cursor.description]
-            
+
             results_tuple = namedtuple('Member', columns)
             memberships_list = [results_tuple(*r) for r in cursor]
             context['memberships_list'] = memberships_list
