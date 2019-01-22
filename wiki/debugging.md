@@ -59,7 +59,6 @@ As with the scraper, if the import seems to be running without error, then the b
 
 ### Recurring problems
 
-No mechanism for dealing with deleted source data: For example, sometimes metro staff has not edited an event, but deleted an event and created a new one. We do not have reliable way to tell when an items has been deleted from a downstream system so this creates duplicate events.
+Currently, the scrapers and Councilmatic do not have a mechanism for dealing with deleted source data. Metro staff sometimes creates data in error and deletes it from Legistar, but not before the scrapers scrape it: as a result, duplicate data appears in Councilmatic. Follow [this Gist](https://gist.github.com/reginafcompton/2cb4d690c0253a22305929a334753959) to learn about how to safely delete data from the OCD API and Councilmatic.
 
-
-"last updated" flags not behaving as the scrapers expect: Problems in the data not appearing in the API. In addition to the API not containing every element, the "last updated" flags are not always updated when an item is updated. We have high freqency scrapers that try to only captures recently changed events, and then a nightly scraper that scrapes everything. 
+The "last updated" flags do not consistently behave as the scrapers expect, i.e., Metro staff change data in Legistar, but the "last updated" timestamp(s) do not change. This ongoing problem has been the source of [many](https://github.com/datamade/la-metro-councilmatic/issues/328), [many](https://github.com/opencivicdata/scrapers-us-municipal/issues/239) [issues](https://github.com/opencivicdata/scrapers-us-municipal/issues/256). In part, we mitigated this problem by increasing the scrape frequency for all events and all bills, on Friday, when Metro adds new data to the Legistar system. 
