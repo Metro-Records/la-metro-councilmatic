@@ -1,13 +1,4 @@
-# A developer's guide to the Metro galaxy
-
-"I’m sorry, but if you can’t be bothered to take an interest in local affairs, that’s your own lookout. Energize the demolition beams."
-
-## Overview
-
-[charts] [summary with words]
-
-
-## Debugging data smells
+## Debugging data issues
 
 Many issues can arise in the Metro galaxy, from the shallowest part of the frontend to the deepest end of the backend. Tackling data inaccuracies requires a strategic approach. This guide traces an easeful, step-by-step process for efficient debugging. 
 
@@ -17,7 +8,7 @@ DON'T PANIC.
 
 [point to the charts in the overview that describe the data pipeline]
 
-Data travels along a complicated path to arrive in Metro Councilmatic. Breakdown in the data pipeline can happen at four different points. 
+Data travels along a complicated path to arrive in Metro Councilmatic. A disruption in the data pipeline can happen at four different points. 
 
 1. Legistar - the Legistar API or web interface did not provide accurate data 
 2. OpenCivicData API - the DataMade scrapers did not properly port data to the API 
@@ -40,18 +31,31 @@ It does not. Even better – contact Metro staff and let them know that the data
 
 It does! Great move onto the next step.
 
-It does not. The scrapers likely have a bug. Tracking down the exact nature of the bug may require some effort: fortunately, the scraper logs provide a good starting point. Shell into the server (`ssh ubuntu@ocd.datamade.us`), and tail the metro log (e.g. `tail -100 /tmp/lametro.log`). Hopefully, the log offers some clues. An OperationalError indicates that something went awry with the database (e.g., not enough diskspace), and a ScraperError indicates a particular issue with the one of the scraper repos.
+It does not. The scrapers likely have a bug. Tracking down the exact nature of the bug may require some effort: fortunately, the scraper logs provide a good starting point. Shell into the server, and tail the metro log: 
+
+```bash
+ssh ubuntu@ocd.datamade.us
+
+tail -100 /tmp/lametro.log
+```
+
+Hopefully, the log offers some clues. An OperationalError indicates that something went awry with the database (e.g., not enough diskspace), and a ScraperError indicates a particular issue with the one of the scraper repos.
 
 If the scraper seems to be running without error, then the bug may be harder to find. A good first question: what are the most recent changes in the scraper codebase? could this have caused unusual behavior?
 
-**Step 5. Look at Councilmatic database.** Shell inside the `metro-councilmatic` server (`ssh ubuntu@lametro.datamade.us`). Query the database, and look for data inaccuracies. You can do this via postgres or the Django shell: it's depends on the nature of the data problem, and your personal preferences. Is the data in the database?
+**Step 5. Look at the Councilmatic database.** Shell inside the `metro-councilmatic` server (`ssh ubuntu@lametro.datamade.us`). Query the database, and look for data inaccuracies. You can do this via postgres (database: `lametro`) or the Django shell: it's depends on the nature of the data problem, and your personal preferences. Is the data in the database?
 
 It is! Great, move on to the next step.
 
-It is not. The `import_data` command did not behave as expected. [more here]
+It is not. The `import_data` command did not behave as expected. Tail the import logs, and look for clues. A common import error is the IntegrityError, which may alert you to missing or duplicate data: read the error carefully, and investigate the `ocd_id` that raised the error. 
 
-**Step 6. Investigate the display logic.** [more here]
+```bash
+tail -100 /var/log/councilmatic/lametro-importdata.log
+```  
 
+As with the scraper, if the import seems to be running without error, then the bug may be harder to find. A good first question: what are the most recent changes in the `django-councilmatic` codebase (the import script, but also the data modeling)? could this have caused unusual behavior?
+
+**Step 6. Investigate the display logic.** You successfully confirmed that the data landed, without failure, in the Metro Councilmatic database! The bug resides somewhere in `la-metro-councilmatic` or the parent app, `django-councilmatic`. You can work through this by, first, examining the output of the view code, and then, inspecting how the templates deal with the data. Again, be sure to ask: what are the most recent changes, and could they have affected the health of the code?
 
 ### Recurring problems
 
@@ -59,19 +63,3 @@ No mechanism for dealing with deleted source data: For example, sometimes metro 
 
 
 "last updated" flags not behaving as the scrapers expect: Problems in the data not appearing in the API. In addition to the API not containing every element, the "last updated" flags are not always updated when an item is updated. We have high freqency scrapers that try to only captures recently changed events, and then a nightly scraper that scrapes everything. 
-
-
-## Deployment
-
-[describe where things are deployed; what they are called]
-
-### Practices
-
-Do not deploy during meetings or on Friday.
-
-### Solr
-
-Link to the README. Plus, other information?
-
-
-
