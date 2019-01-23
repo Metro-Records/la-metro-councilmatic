@@ -1,8 +1,10 @@
 # Debugging data issues
 
+DON'T PANIC. 
+
 Many issues can arise in the Metro galaxy, from the shallowest part of the frontend to the deepest end of the backend. Tackling data inaccuracies requires a strategic approach. This guide traces an easeful, step-by-step process for efficient debugging. 
 
-DON'T PANIC. 
+If the bug-in-question feels like a familiar one, then read below about [recurring problems](#recurring-problems).
 
 ## Identifying the point of failure
 
@@ -10,7 +12,7 @@ DON'T PANIC.
 
 Data travels along a complicated path to arrive in Metro Councilmatic. A disruption in the data pipeline can happen at four different points. 
 
-1. Legistar - the Legistar API or web interface did not provide accurate data 
+1. Legistar - the Legistar API or web interface displays inaccuracies, likely because Metro staff did not enter correct data 
 2. OpenCivicData API - the DataMade scrapers did not properly port data to the API 
 3. Metro Postgresql database – `import_data` did not properly port data to the Metro database (N.B., historically, the Councilmatic import_data command has been a source of myriad bugs.) 
 4. the front end - the site display logic does not correctly show the data 
@@ -49,7 +51,15 @@ tail -100 /tmp/lametro.log
 
 Hopefully, the log offers some clues. An OperationalError indicates that something went awry with the database (e.g., not enough diskspace), and a ScraperError indicates a particular issue with the one of the scraper repos.
 
-If the scraper seems to be running without error, then the bug may be harder to find. A good first question: what are the most recent changes in the scraper codebase? could this have caused unusual behavior?
+If the scraper seems to be running without error, then the bug may be harder to find. A good first question: what are the most recent changes in the scraper codebase? could this have caused unusual behavior? 
+
+The scrapers work through the cooperation of several repos, and the bug fix may require investigating one or more of these repos. [`datamade/scrapers-us-municipal/tree/master/lametro`](https://github.com/datamade/scrapers-us-municipal/tree/master/lametro) contains Metro-specific code for the Bill, Event, and People scrapers. The Metro scrapers inherit from the LegistarScraper and LegistarAPIScraper defined in [`opencivicdata/python-legistar-scraper/tree/master/legistar`](https://github.com/opencivicdata/python-legistar-scraper/tree/master/legistar). All scrapers depend on [the Pupa framework](https://github.com/opencivicdata/pupa) for scraping and importing data using the OCD standard. Most likely, the bug resides in the Metro or python-legistar scrapers, but in excpetional cases, the bug may originate in Pupa.
+
+Finally, you might consider the health of the OCD API hosted by DataMade. [`api.opencivicdata.org`](https://github.com/datamade/api.opencivicdata.org) is a Django project that makes the scraped data available online. It's highly unlikely that the bug lives here, unless the repo or one of its dependencies presents recent, impactful changes. 
+
+[Visit the Metro galaxy overview](overview.md) for detailed charts and descriptions of this network of repos. 
+
+If you need to manually trigger a scrape, then read about the process in the [Commands to know](commands.md) section.
 
 ### Step 5. Look at the Councilmatic database.
 
@@ -64,6 +74,8 @@ tail -100 /var/log/councilmatic/lametro-importdata.log
 ```  
 
 As with the scraper, if the import seems to be running without error, then the bug may be harder to find. A good first question: what are the most recent changes in the `django-councilmatic` codebase (the import script, but also the data modeling)? could this have caused unusual behavior?
+
+If you need to manually trigger an import, then read about the process in the [Commands to know](commands.md) section.
 
 ### Step 6. Investigate the display logic.
 

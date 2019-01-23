@@ -6,6 +6,7 @@ This guide provides information about the Metro data pipeline, debugging, and ot
 
 - [Overview](overview.md)
 - [Debugging data issues](debugging.md)
+- [Commands to know](commands.md)
 - [Deployment paterns and practices](deployment.md)
 
 ### Authors
