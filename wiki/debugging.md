@@ -21,23 +21,33 @@ Fixing a bug begins with identifying at which point the pipeline failed. The fol
 
 ### Step 1. Find the `ocd_id` of the Bill, Event, Person, or Committee with the data issues. 
 
-Every detail page logs the `ocd_id` to the console (or in the source view). For example, open the console for this event: https://boardagendas.metro.net/event/regaular-board-meeting-db0f63e245f2/. You should see its id: ocd-event/d29f59be-6f5b-41ad-958f-db0f63e245f2
+Every detail page logs the `ocd_id` to the console (or in the source view). Let's walk through an example. Visit the page for the [November 2018 Finance, Budget and Audit Commitee meeting](https://boardagendas.metro.net/event/finance-budget-and-audit-committee-8bffd562963b/), and open the console. You should see its OCD ID.
+
+![Open the Console](https://github.com/datamade/la-metro-councilmatic/tree/master/lametro/static/images/wiki/open_console.png)
 
 ### Step 2. Visit the OCD API.
 
-Append the ID to `https://ocd.datamade.us/`. For example, the above referenced event lives at: https://ocd.datamade.us/ocd-event/d29f59be-6f5b-41ad-958f-db0f63e245f2/
+Copy the OCD ID, and append it to `https://ocd.datamade.us/`. For example, the above referenced event lives at:
+
+```
+https://ocd.datamade.us/ocd-event/4b2ebe06-6e17-4602-846a-8bffd562963b
+```
 
 ### Step 3. Find the source URLs.
 
-The OCD API provides links to the Legistar API and web interface (look for the `source_url`). Open these, and check that the data in Legistar appears as expected.
+The OCD API provides links to the Legistar API and web interface. For example, the above mentioned event has source urls listed like so: 
+
+![Source URLs](https://github.com/datamade/la-metro-councilmatic/tree/master/lametro/static/images/wiki/source_url.png)
+
+Events scrape the Spanish language source (i.e., "api (spa)"), as well. In initial debugging, focus on the "api" and "web" sources – by visiting these links and checking that the data in Legistar appears as expected. Does it?
 
 It does! Great, move onto the next step.
 
-It does not. Even better – contact Metro staff and let them know that the data discrepancy occurs in Legistar. Stop here.
+It does not. Even better – contact Metro staff, and let them know that the data discrepancy occurs in Legistar. STOP HERE.
 
 ### Step 4. Go back to the OCD API. 
 
-Does the data appear as expected in the OCD API  (e.g., https://ocd.datamade.us/ocd-event/d29f59be-6f5b-41ad-958f-db0f63e245f2/)?
+Does the data appear as expected in the OCD API (e.g., https://ocd.datamade.us/ocd-event/4b2ebe06-6e17-4602-846a-8bffd562963b)?
 
 It does! Great move onto the next step.
 
