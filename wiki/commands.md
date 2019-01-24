@@ -97,33 +97,33 @@ python manage.py import_data --update_since='1900-01-01'
 
 ## Other commands
 
-Did you manually run `import_data`? If so, you need to execute a few additional commands that aid in preparing the data for Councilmatic.
+Metro Councilmatic runs additional processes on the data, after it gets imported to the database. The commands below address the sundry data needs of the Metro system.
+
+**Refresh the Property Image Cache.** Metro caches PDFs of board reports and event agendas. [This can raise issues.](https://github.com/datamade/la-metro-councilmatic/issues/347) The [`refresh_pic` management command](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/refresh_pic.py) refreshes the document cache (an S3 bucket) by deleting potentially out-of-date versions of board reports and agendas. 
 
 ```bash
-# a management command in django-councilmatic that refreshes the S3 Bucket document cache
-# https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/refresh_pic.py
 python manage.py refresh_pic
 ```
 
+**Create PDF packets.** Metro Councilmatic has composite versions of the Event agendas (the event and all related board reports) and board reports (the report and its attachments). [A separate app assists in creating these PDF packets](https://github.com/datamade/metro-pdf-merger), and the [`compile_pdfs` command](https://github.com/datamade/la-metro-councilmatic/blob/master/lametro/management/commands/compile_pdfs.py) communicate with this app by telling it which packets to create.
+
 ```bash 
-# a management command that sends requests to the `metro-pdf-merger` with data about which reports to merge
 # documented in the `metro-pdf-merger` README: https://github.com/datamade/metro-pdf-merger#get-started
 python manage.py compile_pdfs
 
 python manage.py compile_pdfs --all_documents
 ```
 
+**Convert report attachments into plain text.** Metro Councilmatic allows users to query board reports via attachment text. The attachments must appear as plain text in the database: [`convert_attachment_text`](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/convert_attachment_text.py) helps accomplish this.
 ```bash
-# a management command django-councilmatic that converts bill attachment into plain text (to enables searching for bills via attachments)
-# https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/convert_attachment_text.py
 python manage.py convert_attachment_text
 
 # update all documents
 python manage.py convert_attachment_text --update_all
 ```
 
+**Rebuild or update the Solr search index.** Haystack comes with a utility command for rebuilding and updating the search index. [Learn more in the Haystack docs.](https://django-haystack.readthedocs.io/en/master/management_commands.html)
 ```bash
-# a Haystack command for updating or rebuilding the Solr index
 # ideally, rebuild should be run with a small batch-size to avoid memory consumption issues
 python manage.py rebuild_index --batch-size=200
 

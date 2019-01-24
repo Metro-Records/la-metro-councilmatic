@@ -19,7 +19,7 @@ Data travels along a complicated path to arrive in Metro Councilmatic. A disrupt
 
 Fixing a bug begins with identifying at which point the pipeline failed. The following steps outline how to do this.
 
-### Step 1. Find the `ocd_id` of the Bill, Event, Person, or Committee with the data issues. 
+### Step 1. Find the `ocd_id` of the Bill (known as a "Board Report" in Metro), Event, Person, or Committee with the data issues. 
 
 Every detail page logs the `ocd_id` to the console (or in the source view). Let's walk through an example. Visit the page for the [November 2018 Finance, Budget and Audit Commitee meeting](https://boardagendas.metro.net/event/finance-budget-and-audit-committee-8bffd562963b/), and open the console. You should see its OCD ID.
 
