@@ -4,14 +4,14 @@ The LA metro galaxy comes with several CLI commands and their various options. T
 
 ## Scraping data from Legistar
 
-Running the scrapers can be simple or fairly involved, given the number of options available. You can run full scrapes or "windowed" scrapes; you can run scrapes at faster or slower rates; you can run scrapes for all data or just bills, events, or people (oh, my). 
+Running the scrapers can be simple or fairly involved. You can run full scrapes or "windowed" scrapes; you can run scrapes at faster or slower rates; you can run scrapes for all data or just bills, events, or people (oh, my). 
 
 **Note!** The Metro scrapers on the server run at different intervals, depending on the day. [The crontask file includes the details](https://github.com/datamade/scrapers-us-municipal/blob/master/scripts/scrapers-us-municipal-crontask#L12), but roughly, the scrapers: 
 * run a full scrape every night
-* scrape recently updated events and bills four times per hour Saturday through Friday morning
+* scrape recently updated events and bills, four times per hour, Saturday through Friday morning
 * scrape all bills and events twice per hour on Friday evenings  
 
-Sometimes, you may need to kick off a manual scrape on the server to assist with debugging ventures. If so, then consider the below commands. (N.B. Depending on the volume of the scrape, e.g., a scrape for all bills, you should consider turning off the crons before executing these commands on the server.)
+Sometimes, you may need to run a scrape on the server to assist with debugging ventures. If so, then consider the below commands. (N.B. Depending on the volume of the scrape, e.g., a scrape for all bills, you should consider turning off the crons before executing these commands on the server.)
 
 First, get situated on the server.
 
@@ -105,7 +105,7 @@ Metro Councilmatic runs additional processes on the data, after it gets imported
 python manage.py refresh_pic
 ```
 
-**Create PDF packets.** Metro Councilmatic has composite versions of the Event agendas (the event and all related board reports) and board reports (the report and its attachments). [A separate app assists in creating these PDF packets](https://github.com/datamade/metro-pdf-merger), and the [`compile_pdfs` command](https://github.com/datamade/la-metro-councilmatic/blob/master/lametro/management/commands/compile_pdfs.py) communicate with this app by telling it which packets to create.
+**Create PDF packets.** Metro Councilmatic has composite versions of the Event agendas (the event and all related board reports) and board reports (the report and its attachments). [A separate app assists in creating these PDF packets](https://github.com/datamade/metro-pdf-merger), and the [`compile_pdfs` command](https://github.com/datamade/la-metro-councilmatic/blob/master/lametro/management/commands/compile_pdfs.py) communicates with this app by telling it which packets to create.
 
 ```bash 
 # documented in the `metro-pdf-merger` README: https://github.com/datamade/metro-pdf-merger#get-started
@@ -125,6 +125,7 @@ python manage.py convert_attachment_text --update_all
 **Rebuild or update the Solr search index.** Haystack comes with a utility command for rebuilding and updating the search index. [Learn more in the Haystack docs.](https://django-haystack.readthedocs.io/en/master/management_commands.html)
 ```bash
 # ideally, rebuild should be run with a small batch-size to avoid memory consumption issues
+# https://github.com/datamade/devops/issues/42
 python manage.py rebuild_index --batch-size=200
 
 # update can be run with an age argument, which instructs Solr to consider bills updated so many hours ago
