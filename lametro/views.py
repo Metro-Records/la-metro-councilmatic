@@ -157,7 +157,7 @@ class LAMetroEventDetail(EventDetailView):
                     b.ocd_id,
                     b.slug,
                     b.ocr_full_text,
-                    b.description,
+                    i.description,
                     d_bill.url,
                     i.order,
                     i.notes
