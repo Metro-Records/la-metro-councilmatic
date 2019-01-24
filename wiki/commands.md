@@ -4,13 +4,16 @@ The LA metro galaxy comes with several CLI commands and their various options. T
 
 ## Scraping data from Legistar
 
-Running the scrapers can be simple or fairly involved, given the number of options available. You can run full scrapes or "windowed" scrapes, you can run scrapes at faster or slower rates, or you can run scrapes for all data or just bills, events, or people. 
+Running the scrapers can be simple or fairly involved, given the number of options available. You can run full scrapes or "windowed" scrapes; you can run scrapes at faster or slower rates; you can run scrapes for all data or just bills, events, or people (oh, my). 
 
-Note! The Metro scrapers on the server run at different intervals, depending on the day: roughly, the scrapers run a full scrape every night, scrape recently updated events and bills four times per hour Saturday through Thursday, and scrape all bills and events twice per hour on Fridays. [The crontask file includes the details.](https://github.com/datamade/scrapers-us-municipal/blob/master/scripts/scrapers-us-municipal-crontask#L12) 
+**Note!** The Metro scrapers on the server run at different intervals, depending on the day. [The crontask file includes the details](https://github.com/datamade/scrapers-us-municipal/blob/master/scripts/scrapers-us-municipal-crontask#L12), but roughly, the scrapers: 
+* run a full scrape every night
+* scrape recently updated events and bills four times per hour Saturday through Friday morning
+* scrape all bills and events twice per hour on Friday evenings  
 
-If you need to manually intervene, then consider the below commands. (And as noted above, depending on the volume of the scrape, e.g., a scrape for all bills, you should consider turning off the crons.)
+Sometimes, you may need to kick off a manual scrape on the server to assist with debugging ventures. If so, then consider the below commands. (N.B. Depending on the volume of the scrape, e.g., a scrape for all bills, you should consider turning off the crons before executing these commands on the server.)
 
-First, shell into the server.
+First, get situated on the server.
 
 ```bash
 # shell into the server
@@ -21,43 +24,45 @@ sudo su - datamade
 cd scrapers-us-municipal
 workon opencivicdata
 ```
+
 Then, run the appropriate command.
 
 ```bash
-# update all recently updated data
+# scrape all recently updated data
 pupa update lametro
 
-# update all recently updated data, but used cached pages
+# scrape all recently updated data, but used cached pages
 pupa update lametro --fastmode
 
-# update all recently updated data, and move as quickly as possible (but do not use cache)
+# scrape all recently updated data, and move as quickly as possible (but do not use cache)
 pupa update lametro --rpm=0 
 ```
 
 ```bash
-# update bills from last 28 days
+# scrape bills from last 28 days
 # https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/bills.py#L97
 pupa update lametro bills
 
 # update all bills
 pupa update lametro bills window=0
 
-# update bills from the last 7 days, using cached pages
+# scrape bills from the last 7 days, using cached pages
 pupa update lametro bills window=7 --fastmode
 ```
 
 ```bash
-# update all events
+# scrape all events
 # https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/events.py#L139
 pupa update lametro events
 
-# updated events from the last 7 days
+# scrape events from the last 7 days
 pupa update lametro events window=7
 ```
 
 ```bash
-# update all people
-# the people scraper does not have a "window" argument, but instead determines which people to update by looking at those visible on the web interface
+# scrape all people
+# the people scraper does not have a "window" argument
+# but instead determines which people to update by looking at those visible on the web interface
 pupa update lametro people
 ```
 
@@ -65,7 +70,7 @@ pupa update lametro people
 
 `django-councilmatic` comes with a lengthy, sometimes abstruse management command: `import_data`. The [LA Metro Councilmatic README offers some details on it](https://github.com/datamade/la-metro-councilmatic#import-data), and anyone who has the app running locally already knows something about `import_data`. 
 
-Note! On the server, [the cron for the production site](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks) executes this command four times per hour. However, sometimes, you may need to kick off a manual import on the server to assist with debugging ventures. Depending on the volume of the import (e.g., an import for all data), you should consider turning off the crons or executing the command during the 15-minute window between cron processes.
+**Note!** On the server, [the cron for the production site](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks) executes this command four times per hour. You may need to manually intervene, however. As with the scraper, consider turning off the crons or executing the command during the 15-minute window between cron processes: usually the import runs quickly, so running the command between cronjobs often works best. 
 
 ```bash
 # shell into the server
@@ -80,7 +85,7 @@ workon lametro
 python manage.py import_data
 ```
 
-The command, by default, considers only the most recently updated data. However, you can tell `import_data` to consider bills, people, organizations, and events with less recent `updated_at` timestamps. Why? The Councilmatic database may be missing past data (e.g., because a scraped failed without notice, several months ago). 
+The command, by default, considers only the most recently updated data. However, you can tell `import_data` to consider bills, people, organizations, and events with less recent `updated_at` timestamps. Why? The Councilmatic database may be missing past data (e.g., because the scraper failed without notice, several months ago). 
 
 ```bash
 # run the command for many months ago
