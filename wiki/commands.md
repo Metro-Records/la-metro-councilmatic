@@ -1,6 +1,6 @@
 # Commands to know
 
-The LA metro galaxy comes with several CLI commands and their various options. This section identifies some of the most significant commands, how to use them, and where to execute them. 
+The LA metro galaxy comes with several CLI commands and their various options. This section identifies some of the most significant commands, how to use them, where to execute them, and [where to log the output](#logs). 
 
 ## Scraping data from Legistar
 
@@ -134,5 +134,20 @@ python manage.py rebuild_index --batch-size=200
 
 # update can be run with an age argument, which instructs Solr to consider bills updated so many hours ago
 python manage.py update_index --age=2
+
+# update should be run in non-interactive mode, when logging the results
+# `noinput` tells Haystack to skips the prompts
+python manage.py update_index --noinput
 ```
 
+## Logs
+
+The crontasks help us maintain reliable records of every scrape, import, pic refresh, conversion, and Solr update. Manually executed commands should be recorded, too. Ideally, the command output should be preserved in the same log that the crontasks point to. 
+
+```
+# example
+# 2>&1 silences command output and redirects it to the specified location
+python manage.py import_data >> /var/log/councilmatic/lametro-importdata.log 2>&1
+``` 
+
+We do not place logs in the `/tmp` directory, because it gets wiped when the server reboots. This happens very, very rarely, but when it does, the logs carry great significance for debugging. 
