@@ -6,14 +6,16 @@ The LA metro galaxy comes with several CLI commands and their various options. T
 
 Running the scrapers can be simple or fairly involved. You can run full scrapes or "windowed" scrapes; you can run scrapes at faster or slower rates; you can run scrapes for all data or just bills, events, or people (oh, my). 
 
-**Note!** The Metro scrapers on the server run at different intervals, depending on the day. [The crontask file includes the details](https://github.com/datamade/scrapers-us-municipal/blob/master/scripts/scrapers-us-municipal-crontask#L12), but roughly, the scrapers: 
+**Note!** The Metro scrapers on the server run at different intervals, depending on the day. [The crontask file includes the details](https://github.com/datamade/scrapers-us-municipal/blob/master/scripts/scrapers-us-municipal-crontask#L12). (Learn how to decipher the specifics of crontasks with [the beloved crontab guru](https://crontab.guru/). Roughly, the scrapers: 
 * run a full scrape every night
 * scrape recently updated events and bills, four times per hour, Saturday through Friday morning
 * scrape all bills and events twice per hour on Friday evenings  
 
-Sometimes, you may need to run a scrape on the server to assist with debugging ventures. If so, then consider the below commands. (N.B. Depending on the volume of the scrape, e.g., a scrape for all bills, you should consider turning off the crons before executing these commands on the server.)
+Sometimes, you may need to run a scrape on the server to assist with debugging ventures. If so, then consider the below commands. 
 
-First, get situated on the server.
+**Hold on!** What about the commands auto-executed via cronjobs? You do not want a cronjob to collide with a manual run of the scraper: such collisions can raise an IntegrityError or other database issues, which will necessitate redoing the scraper (...and placing your palm firmly on your forehead). A scrape may take longer than 15 minutes, e.g., a scrape for all bills: if so, you should consider turning off the crons, [via a pull request](https://github.com/datamade/scrapers-us-municipal/pull/20), before executing these commands on the server. However, scraping all bills from the last two days, for example, should be relatively fast. Leave the crons on for a scrape of this size.
+
+All right. First, get situated on the server.
 
 ```bash
 # shell into the server
