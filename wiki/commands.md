@@ -34,6 +34,8 @@ Then, run the appropriate command.
 pupa update lametro
 
 # scrape all recently updated data, but used cached pages
+# avoid fastmode for larger scrapes, since you risk scraping out-of-date data
+# instead, use th `rpm` option (see below)
 pupa update lametro --fastmode
 
 # scrape all recently updated data, and move as quickly as possible (but do not use cache)
@@ -41,14 +43,14 @@ pupa update lametro --rpm=0
 ```
 
 ```bash
-# scrape bills from last 28 days
+# scrape bills updated in the last 28 days
 # https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/bills.py#L97
 pupa update lametro bills
 
-# update all bills
+# scrape all bills
 pupa update lametro bills window=0
 
-# scrape bills from the last 7 days, using cached pages
+# scrape bills updated in the last 7 days, using cached pages
 pupa update lametro bills window=7 --fastmode
 ```
 
@@ -57,7 +59,7 @@ pupa update lametro bills window=7 --fastmode
 # https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/events.py#L139
 pupa update lametro events
 
-# scrape events from the last 7 days
+# scrape events updated in the last 7 days
 pupa update lametro events window=7
 ```
 
@@ -90,10 +92,10 @@ python manage.py import_data
 The command, by default, considers only the most recently updated data. However, you can tell `import_data` to consider bills, people, organizations, and events with less recent `updated_at` timestamps. Why? The Councilmatic database may be missing past data (e.g., because the scraper failed without notice, several months ago). 
 
 ```bash
-# run the command for many months ago
+# import data updated on October 1, 2018 and after 
 python manage.py import_data --update_since='2018-10-01'
 
-# run the command, and update all data
+# import all data
 python manage.py import_data --update_since='1900-01-01'
 ```
 
@@ -101,7 +103,7 @@ python manage.py import_data --update_since='1900-01-01'
 
 Metro Councilmatic runs additional processes on the data, after it gets imported to the database. The commands below address the sundry data needs of the Metro system.
 
-**Refresh the Property Image Cache.** Metro caches PDFs of board reports and event agendas. [This can raise issues.](https://github.com/datamade/la-metro-councilmatic/issues/347) The [`refresh_pic` management command](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/refresh_pic.py) refreshes the document cache (an S3 bucket) by deleting potentially out-of-date versions of board reports and agendas. 
+**Refresh the Property Image Cache.** Metro caches PDFs of board reports and event agendas. [This can raise issues.](https://github.com/datamade/la-metro-councilmatic/issues/347) The [`refresh_pic` management command](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/refresh_pic.py) refreshes the document cache ([an S3 bucket connected to Metro Councilmatic via `property-image-cache`](https://github.com/datamade/property-image-cache)) by deleting potentially out-of-date versions of board reports and agendas. 
 
 ```bash
 python manage.py refresh_pic
