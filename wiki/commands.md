@@ -6,7 +6,7 @@ The LA metro galaxy comes with several CLI commands and their various options. T
 
 Running the scrapers can be simple or fairly involved. You can run full scrapes or "windowed" scrapes; you can run scrapes at faster or slower rates; you can run scrapes for all data or just bills, events, or people (oh, my). 
 
-**Note!** The Metro scrapers on the server run at different intervals, depending on the day. [The crontask file includes the details](https://github.com/datamade/scrapers-us-municipal/blob/master/scripts/scrapers-us-municipal-crontask#L12). (Learn how to decipher the specifics of crontasks with [the beloved crontab guru](https://crontab.guru/). Roughly, the scrapers: 
+**Note!** The Metro scrapers on the server run at different intervals, depending on the day. [The crontask file includes the details](https://github.com/datamade/scrapers-us-municipal/blob/master/scripts/scrapers-us-municipal-crontask#L12). (Learn how to decipher the specifics of crontasks with [the beloved crontab guru](https://crontab.guru/).) Roughly, the scrapers: 
 * run a full scrape every night
 * scrape recently updated events and bills, four times per hour, Saturday through Friday morning
 * scrape all bills and events twice per hour on Friday evenings  
@@ -35,7 +35,7 @@ pupa update lametro
 
 # scrape all recently updated data, but used cached pages
 # avoid fastmode for larger scrapes, since you risk scraping out-of-date data
-# instead, use th `rpm` option (see below)
+# instead, use the `rpm` option (see below)
 pupa update lametro --fastmode
 
 # scrape all recently updated data, and move as quickly as possible (but do not use cache)
