@@ -17,4 +17,7 @@ These practices have exceptions, of course, particularly, if Metro needs an urge
 
 ### Solr
 
-Link to the README. Plus, other information?
+Deployments rarely require special intervention or deviation from the standard CodeDeploy pipeline. Only one aspect of Metro Councilmatic requires attention upon deployment: regenerating the Solr schema.
+
+[The README contains comprehensive, step-by-step instructions on how to handle changes to the Solr schema.](https://github.com/datamade/la-metro-councilmatic#regenerate-solr-schema) Notably, you must remove and rebuild the Solr containers, since the deployment scripts do not (cannot) handle this step. 
+
