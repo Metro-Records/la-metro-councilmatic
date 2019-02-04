@@ -39,7 +39,7 @@ The OCD API provides links to the Legistar API and web interface. For example, t
 
 ![Source URLs](https://github.com/datamade/la-metro-councilmatic/tree/master/lametro/static/images/wiki/source_url.png)
 
-Events scrape the Spanish language source (i.e., "api (spa)"), as well. In initial debugging, focus on the "api" and "web" sources – by visiting these links and checking that the data in Legistar appears as expected. Does it?
+Events scrape the Spanish language source (i.e., "api (sap)"), as well. In initial debugging, focus on the "api" and "web" sources – by visiting these links and checking that the data in Legistar appears as expected. Does it?
 
 It does! Great, move onto the next step.
 

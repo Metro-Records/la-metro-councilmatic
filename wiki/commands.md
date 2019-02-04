@@ -2,6 +2,23 @@
 
 The LA metro galaxy comes with several CLI commands and their various options. This section identifies some of the most significant commands, how to use them, where to execute them, and [where to log the output](#logs). 
 
+## Logs
+
+The Metro data pipeline depends on crontasks, i.e., regularly scheduled processes that occur on the servers. We keep these under version control, and so, you can easily reference them: 
+
+* [scrapers-us-municipal cron](https://github.com/datamade/scrapers-us-municipal/blob/master/scripts/scrapers-us-municipal-crontask)
+* [Councilmatic cron](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks)
+
+The crontasks log every scrape, import, cache refresh, document conversion, and Solr update. These logs help us maintain reliable records of our data pipeline – something particularly meaningful [when the pipeline fails](debugging.md). Manually executed commands should be recorded, too. Ideally, the command output should be preserved in the same log that the crontasks point to. 
+
+```
+# example
+# 2>&1 silences command output and redirects it to the specified location
+python manage.py import_data >> /var/log/councilmatic/lametro-importdata.log 2>&1
+``` 
+
+Notably, we do not place logs in the `/tmp` directory, because it gets wiped when the server reboots. This happens very, very rarely, but when it does, the logs carry great significance for debugging. 
+
 ## Scraping data from Legistar
 
 Running the scrapers can be simple or fairly involved. You can run full scrapes or "windowed" scrapes; you can run scrapes at faster or slower rates; you can run scrapes for all data or just bills, events, or people (oh, my). 
@@ -85,8 +102,8 @@ sudo su - datamade
 cd lametro
 workon lametro
 
-# run the command!
-python manage.py import_data
+# run the command and log the results (if on the server)
+python manage.py import_data >> /var/log/councilmatic/lametro-importdata.log 2>&1
 ```
 
 The command, by default, considers only the most recently updated data. However, you can tell `import_data` to consider bills, people, organizations, and events with less recent `updated_at` timestamps. Why? The Councilmatic database may be missing past data (e.g., because the scraper failed without notice, several months ago). 
@@ -106,31 +123,36 @@ Metro Councilmatic runs additional processes on the data, after it gets imported
 **Refresh the Property Image Cache.** Metro caches PDFs of board reports and event agendas. [This can raise issues.](https://github.com/datamade/la-metro-councilmatic/issues/347) The [`refresh_pic` management command](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/refresh_pic.py) refreshes the document cache ([an S3 bucket connected to Metro Councilmatic via `property-image-cache`](https://github.com/datamade/property-image-cache)) by deleting potentially out-of-date versions of board reports and agendas. 
 
 ```bash
-python manage.py refresh_pic
+# run the command and log the results (if on the server)
+python manage.py refresh_pic >> /var/log/councilmatic/lametro-refreshpic.log 2>&1
 ```
 
 **Create PDF packets.** Metro Councilmatic has composite versions of the Event agendas (the event and all related board reports) and board reports (the report and its attachments). [A separate app assists in creating these PDF packets](https://github.com/datamade/metro-pdf-merger), and the [`compile_pdfs` command](https://github.com/datamade/la-metro-councilmatic/blob/master/lametro/management/commands/compile_pdfs.py) communicates with this app by telling it which packets to create.
 
 ```bash 
+# run the command and log the results (if on the server)
 # documented in the `metro-pdf-merger` README: https://github.com/datamade/metro-pdf-merger#get-started
-python manage.py compile_pdfs
+python manage.py compile_pdfs >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1
 
 python manage.py compile_pdfs --all_documents
 ```
 
 **Convert report attachments into plain text.** Metro Councilmatic allows users to query board reports via attachment text. The attachments must appear as plain text in the database: [`convert_attachment_text`](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/convert_attachment_text.py) helps accomplish this.
 ```bash
-python manage.py convert_attachment_text
+# run the command and log the results (if on the server)
+python manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1
 
 # update all documents
 python manage.py convert_attachment_text --update_all
 ```
 
 **Rebuild or update the Solr search index.** Haystack comes with a utility command for rebuilding and updating the search index. [Learn more in the Haystack docs.](https://django-haystack.readthedocs.io/en/master/management_commands.html)
+
 ```bash
 # ideally, rebuild should be run with a small batch-size to avoid memory consumption issues
 # https://github.com/datamade/devops/issues/42
-python manage.py rebuild_index --batch-size=200
+# run the command and log the results (if on the server)
+python manage.py rebuild_index --batch-size=200 >> /var/log/councilmatic/lametro-updateindex.log 2>&1
 
 # update can be run with an age argument, which instructs Solr to consider bills updated so many hours ago
 python manage.py update_index --age=2
@@ -140,14 +162,11 @@ python manage.py update_index --age=2
 python manage.py update_index --noinput
 ```
 
-## Logs
-
-The crontasks help us maintain reliable records of every scrape, import, pic refresh, conversion, and Solr update. Manually executed commands should be recorded, too. Ideally, the command output should be preserved in the same log that the crontasks point to. 
+**Are the Solr index and Councilmatic database in sync?** Sometimes, the Solr index falls behind the Councilmatic database. This issue arises for a number of reasons and, resultantly, [causes headaches](https://github.com/datamade/la-metro-councilmatic/issues/256). The [`data_integrity` script](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/data_integrity.py) checks that the Councilmatic database has the same number of records as the Solr index. 
 
 ```
-# example
-# 2>&1 silences command output and redirects it to the specified location
-python manage.py import_data >> /var/log/councilmatic/lametro-importdata.log 2>&1
-``` 
+# run the command and log the results (if on the server)
+python manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1
+```
 
-We do not place logs in the `/tmp` directory, because it gets wiped when the server reboots. This happens very, very rarely, but when it does, the logs carry great significance for debugging. 
+Appropriately, `data_integrity` executes at the very end of the crontab, a (usually) happy conclusion to the marching progression of Metro commands.
