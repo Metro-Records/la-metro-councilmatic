@@ -2,7 +2,7 @@
 
 DON'T PANIC. 
 
-Many issues can arise in the Metro galaxy, from the shallowest part of the frontend to the deepest end of the backend. Tackling data inaccuracies requires a strategic approach. This guide traces an easeful, step-by-step process for efficient debugging. 
+Many issues can arise in the Metro galaxy, from the shallowest part of the frontend to the deepest depths of the backend. Tackling data inaccuracies requires a strategic approach. This guide traces an easeful, step-by-step process for efficient debugging. 
 
 If the bug-in-question feels like a familiar one, then read below about [recurring problems](#recurring-problems).
 
