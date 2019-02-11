@@ -85,7 +85,7 @@ class LAMetroBill(Bill):
         This issue summarizes why that might happen: https://github.com/datamade/la-metro-councilmatic/issues/345#issuecomment-421184826
         Metro staff devised three checks for knowing when to hide or show a report:
 
-        (1) Is the view restricted, i.e., is `MatterRestrictViewViaWeb` set to True in the Legistar API? We skip these bills further upstream. https://github.com/opencivicdata/scrapers-us-municipal/pull/251
+        (1) Is the view restricted, i.e., is `MatterRestrictViewViaWeb` set to True in the Legistar API? Then, do not show it.
 
         (2) Does the Bill have a classification of "Board Box"? Then, show it.
 
@@ -96,6 +96,9 @@ class LAMetroBill(Bill):
         This strategy minimizes complexity (e.g., attempting to implement an LAMetroBillManager),
         and this strategy avoids making adjustments to the `data_integrity` script (https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/data_integrity.py)
         '''
+        if self.restrict_view == True:
+            return False
+
         if self.bill_type == "Board Box":
             return True
 

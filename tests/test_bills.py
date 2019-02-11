@@ -64,19 +64,22 @@ def test_format_full_text(bill, text, subject):
 
     assert format_full_text(full_text) == subject
 
-@pytest.mark.parametrize('bill_type,event_status,assertion', [
-        ('Board Box', 'passed', True),
-        ('Resolution', 'passed', True),
-        ('Resolution', 'cancelled', True),
-        ('Resolution', 'confirmed', False),
+@pytest.mark.parametrize('restrict_view,bill_type,event_status,assertion', [
+        (True,'Board Box', 'passed', False),
+        (False,'Board Box', 'passed', True),
+        (False,'Resolution', 'passed', True),
+        (False,'Resolution', 'cancelled', True),
+        (False,'Resolution', 'confirmed', False),
     ])
 def test_viewable_bill(bill, 
-                       event_agenda_item, 
+                       event_agenda_item,
+                       restrict_view, 
                        bill_type, 
                        event_status, 
                        assertion):
     bill_info = {
         'bill_type': bill_type,
+        'restrict_view': restrict_view,
     }
     bill = bill.build(**bill_info)
     bill.refresh_from_db()
