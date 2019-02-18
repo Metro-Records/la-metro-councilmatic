@@ -59,7 +59,7 @@
                         {% endfor %}
                     </p>
                     {% endif %}
-              
+
                     <!-- Check that the database has an agenda to display -->
                     {% if agenda_url or uploaded_agenda_url or uploaded_agenda_pdf %}
 
@@ -78,7 +78,7 @@
                             <h4>Agenda</h4>
                             <p>
                                 <a id="pdf-download-link" target='_blank' href={% if agenda_url %}'{{agenda_url}}'{% elif uploaded_agenda_url %}'{{uploaded_agenda_url}}'{% elif uploaded_agenda_pdf %}'/static/{{uploaded_agenda_pdf}}'{% endif %}>
-                                    <i class="fa fa-file-text-o" aria-hidden="true"></i> 
+                                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
                                     Download Agenda
                                 </a>
                             </p>
@@ -109,7 +109,9 @@
 
                         </div>
                     </div>
-   
+                    <p class="hidden-xs"><i>
+                      To use a link in the PDF below, hold the CTRL button on your keyboard when clicking the link.
+                    </i></p>
                     <iframe
                         id="pdf-embed-agenda"
                         class="pdf-viewer hidden-xs"
@@ -139,13 +141,13 @@
                             </div>
                             <div id="collapseURL" class="panel-collapse collapse {% if url_form.errors %}in{% endif %}" role="tabpanel" aria-labelledby="headingOne">
                               <div class="panel-body">
-                                                                                 
-                                <p>Find the corresponding agenda URL on Legistar, and paste it here.</p> 
+
+                                <p>Find the corresponding agenda URL on Legistar, and paste it here.</p>
                                 <!-- The variable "name" identifies the modal and form submit button -->
-                                {% with form=url_form name='url_form' %}                  
-                                    {% include 'partials/agenda_url_form.html' %}  
-                                {% endwith %}                     
-                                                   
+                                {% with form=url_form name='url_form' %}
+                                    {% include 'partials/agenda_url_form.html' %}
+                                {% endwith %}
+
                               </div>
                             </div>
                           </div>
@@ -167,10 +169,10 @@
                                 {% endif %}
 
                                 <!-- The variable "name" identifies the modal and form submit button -->
-                                {% with form=pdf_form name='pdf_form' %}                  
-                                    {% include 'partials/agenda_pdf_form.html' %}  
-                                {% endwith %}   
-                                
+                                {% with form=pdf_form name='pdf_form' %}
+                                    {% include 'partials/agenda_pdf_form.html' %}
+                                {% endwith %}
+
                               </div>
                             </div>
                           </div>
@@ -214,7 +216,7 @@
     <script>
     $(document).ready(function() {
         // Admin view: Display preview of event document submitted via URL
-        $('#url_form_modal').on('shown.bs.modal', function (e) {  
+        $('#url_form_modal').on('shown.bs.modal', function (e) {
             e.preventDefault();
             agenda_url_submitted = $('#agenda_url').val();
             base_url = '{{base_url}}'
