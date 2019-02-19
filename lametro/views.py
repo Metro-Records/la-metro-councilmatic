@@ -311,8 +311,10 @@ class LAMetroEventsView(EventsView):
         # If no...
         else:
             # Upcoming events
-            future_events = LAMetroEvent.objects.filter(start_time__gt=timezone.now())\
-                .order_by('start_time')
+            future_events = LAMetroEvent.objects\
+                                        .filter(start_time__gt=timezone.now())\
+                                        .order_by('start_time')\
+                                        .prefetch_related('media_urls')
 
             org_future_events = []
 
@@ -323,8 +325,10 @@ class LAMetroEventsView(EventsView):
             context['future_events'] = org_future_events
 
             # Past events
-            past_events = LAMetroEvent.objects.filter(start_time__lt=datetime.now(app_timezone))\
-                .order_by('-start_time')
+            past_events = LAMetroEvent.objects\
+                                      .filter(start_time__lt=datetime.now(app_timezone))\
+                                      .order_by('-start_time')\
+                                      .prefetch_related('media_urls')
 
             org_past_events = []
 

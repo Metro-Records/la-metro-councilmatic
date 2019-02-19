@@ -213,3 +213,15 @@ def get_highlighted_attachment_text(context, ocd_id):
     highlight = ExactHighlighter(context['query'])
     
     return highlight.highlight(attachment_text)
+
+
+@register.filter
+def media_label(media):
+    '''
+    EventMedia imported prior to django-councilmatic 0.10.0 may not have
+    an associated note.
+    '''
+    if media.note and media.note.endswith('(SAP)'):
+        return 'Ver en Español'
+    else:
+        return 'Watch in English'
