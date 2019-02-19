@@ -178,6 +178,8 @@ def short_topic_name(text):
 
 @register.filter
 def updates_made(event_id):
+# @register.simple_tag
+# def updates_made(event_documents_set, event_updated_at):
     ''' 
     When Metro finalizes an agenda, they add it to legistar, and we scrape this link, and add it to our DB. Sometimes, Metro might change the date or time of the event - after adding the agenda. When this occurs, a label indicates that event has been updated.
     This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated. 
@@ -193,6 +195,14 @@ def updates_made(event_id):
     else:
         updated = document.updated_at < event.updated_at
         return updated 
+
+    # try:
+    #     latest_document_date = max([doc.updated_at for doc in event_documents_set])
+    # except ValueError:
+    #     return False
+    # else:
+    #     updated = latest_document_date < event_updated_at
+    #     return updated
 
 @register.filter
 def find_agenda_url(all_documents):

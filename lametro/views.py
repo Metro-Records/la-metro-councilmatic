@@ -286,8 +286,9 @@ class LAMetroEventsView(EventsView):
             end_date_time         = parser.parse(end_date_str)
 
             select_events = LAMetroEvent.objects.filter(start_time__gt=start_date_time)\
-                .filter(start_time__lt=end_date_time)\
-                .order_by('start_time')
+                                        .filter(start_time__lt=end_date_time)\
+                                        .order_by('start_time')\
+                                        .prefetch_related('media_urls')
 
             org_select_events = []
 
@@ -299,7 +300,9 @@ class LAMetroEventsView(EventsView):
 
         # If all meetings
         elif self.request.GET.get('show'):
-            all_events = LAMetroEvent.objects.order_by('-start_time')
+            all_events = LAMetroEvent.objects\
+                                     .order_by('-start_time')\
+                                     .prefetch_related('media_urls')
 
             org_all_events = []
 
@@ -329,6 +332,7 @@ class LAMetroEventsView(EventsView):
                                       .filter(start_time__lt=datetime.now(app_timezone))\
                                       .order_by('-start_time')\
                                       .prefetch_related('media_urls')
+
 
             org_past_events = []
 

@@ -26,9 +26,13 @@
                     <br/>
                 {% else %}
                     {{event.name}}
-<!--                     {# if event.ocd_id|updates_made %}
+                    <!-- {# updates_made event.documents.all event.updated_at as add_update_tag %} -->
+                    <!-- {# if add_update_tag %} -->
+                        <!-- <span class='label label-info label-teal'>Updated</span> -->
+                    <!-- {# endif %} -->
+                    {% if event.ocd_id|updates_made %}
                         <span class='label label-info label-teal'>Updated</span>
-                    {# endif %} -->
+                    {% endif %}
                     <br/>
                 {% endif %}
             </p>
