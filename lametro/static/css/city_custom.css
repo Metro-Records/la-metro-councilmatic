@@ -267,6 +267,22 @@ div#toggleControls { margin-bottom: 1em; }
     .remove-order-value {
         display: none;
     }
+
+    .site-intro-search input {
+      max-height: 30px;
+      padding: 2px;
+    }
+
+    .site-intro-search .input-group-btn button {
+      max-height: 30px;
+      padding: 2px;
+    }
+    div.btn-group label.btn.btn-primary.btn-search-option.active,
+    div.btn-group label.btn.btn-primary.btn-search-option {
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin-bottom: 10px;
+    }
 }
 
 @media (min-width: 767px) and (max-width: 1180px) {
