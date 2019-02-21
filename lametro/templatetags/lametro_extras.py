@@ -215,7 +215,6 @@ def get_highlighted_attachment_text(context, ocd_id):
     
     return highlight.highlight(attachment_text)
 
-
 @register.filter
 def media_label(media):
     '''
@@ -226,3 +225,11 @@ def media_label(media):
         return 'Ver en Español'
     else:
         return 'Watch in English'
+
+@register.filter
+def media_order(lametro_media_set):
+    '''
+    EventMedia imported prior to django-councilmatic 0.10.0 may not have
+    an associated note.
+    '''
+    return sorted(lametro_media_set, key=lambda media: media_label(media), reverse=True)
