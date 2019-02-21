@@ -17,6 +17,15 @@
                     {{event.name}}
                 {% endif%}
 
+        
+        {% for media in event.media_urls.all %}
+          <p>
+            <a href="{{ media.url }}" target="_blank">{{ media|media_label }}</a>
+            </br>
+          </p>
+        {% endfor %}
+
+
                 {% for media in event.media %}
                     <a class="btn btn-salmon" href="{{ media.url }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> {{ media.label }}</a>
                 {% endfor %}

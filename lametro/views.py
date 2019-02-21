@@ -333,7 +333,6 @@ class LAMetroEventsView(EventsView):
                                       .order_by('-start_time')\
                                       .prefetch_related('media_urls')
 
-
             org_past_events = []
 
             for event_date, events in itertools.groupby(past_events, key=day_grouper):
