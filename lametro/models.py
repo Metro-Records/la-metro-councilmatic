@@ -422,6 +422,10 @@ class LAMetroEventMedia(EventMedia):
     class Meta:
         proxy = True
 
+    def __init__(self, *args, **kwargs):
+        super(LAMetroEventMedia, self).__init__(*args, **kwargs)
+        self.event = override_relation(self.event)
+
     @property
     def label(self):
         '''

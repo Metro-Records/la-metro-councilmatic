@@ -285,7 +285,8 @@ class LAMetroEventsView(EventsView):
             start_date_time       = parser.parse(start_date_str)
             end_date_time         = parser.parse(end_date_str)
 
-            select_events = LAMetroEvent.objects.filter(start_time__gt=start_date_time)\
+            select_events = LAMetroEvent.objects\
+                                        .filter(start_time__gt=start_date_time)\
                                         .filter(start_time__lt=end_date_time)\
                                         .order_by('start_time')\
                                         .prefetch_related('media_urls')
