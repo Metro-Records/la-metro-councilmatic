@@ -54,11 +54,11 @@
     </div>
     <div class="col-xs-1">
         {% if 'regular board meeting' in event.name|lower %}
-            <!-- {# if event.ocd_id|get_minutes %}
+            {% if event.ocd_id|get_minutes %}
             <p>
-                <a href="{# event.ocd_id|get_minutes }}">Minutes</a>
+                <a href="{{ event.ocd_id|get_minutes }}">Minutes</a>
             </p>
-            {# endif %} -->
+            {% endif %}
         {% endif %}
     </div>
     {% endif %}
