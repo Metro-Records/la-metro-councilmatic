@@ -247,7 +247,7 @@ div#toggleControls { margin-bottom: 1em; }
     }
 
     .home-header {
-        font-size: 32px;
+        font-size: 26px;
     }
 
     .nav a.sort-by, .nav a.btn {
@@ -263,9 +263,25 @@ div#toggleControls { margin-bottom: 1em; }
     }
 }
 
-@media only screen and (max-width : 400px) {
+@media only screen and (max-width : 415px) {
     .remove-order-value {
         display: none;
+    }
+
+    .site-intro-search input {
+      max-height: 30px;
+      padding: 2px;
+    }
+
+    .site-intro-search .input-group-btn button {
+      max-height: 30px;
+      padding: 2px;
+    }
+    div.btn-group label.btn.btn-primary.btn-search-option.active,
+    div.btn-group label.btn.btn-primary.btn-search-option {
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin-bottom: 10px;
     }
 }
 
