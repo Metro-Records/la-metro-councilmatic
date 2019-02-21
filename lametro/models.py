@@ -417,27 +417,6 @@ class LAMetroEvent(Event, LiveMediaMixin):
         return query_set
 
 
-class LAMetroEventMedia(EventMedia):
-
-    class Meta:
-        proxy = True
-
-    def __init__(self, *args, **kwargs):
-        super(LAMetroEventMedia, self).__init__(*args, **kwargs)
-        self.event = override_relation(self.event)
-
-    @property
-    def label(self):
-        '''
-        EventMedia imported prior to django-councilmatic 0.10.0 may not have
-        an associated note.
-        '''
-        if self.note and self.note.endswith('(SAP)'):
-            return 'Ver en Español'
-        else:
-            return 'Watch in English'
-
-
 class LAMetroOrganization(Organization):
     '''
     Overrides use the LAMetroEvent object, rather than the default Event
