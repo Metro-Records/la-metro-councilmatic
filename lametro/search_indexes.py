@@ -5,7 +5,7 @@ from councilmatic_core.haystack_indexes import BillIndex
 from councilmatic_core.models import Action, EventAgendaItem
 
 from lametro.models import LAMetroBill
-from lametro.utils import format_full_text, parse_subject, find_last_action_date
+from lametro.utils import format_full_text, parse_subject
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
     topics = indexes.MultiValueField(faceted=True)
@@ -25,7 +25,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     def prepare_last_action_date(self, obj):
         # Solr seems to be fussy about the time format, and we do not need the time, just the date stamp.
         # https://lucene.apache.org/solr/guide/7_5/working-with-dates.html#date-formatting
-        last_action_date = find_last_action_date(obj.ocd_id)
+        last_action_date = obj.get_last_action_date(obj.ocd_id)
         if last_action_date:
             return last_action_date.date()
 
@@ -38,7 +38,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
             if results:
                 return parse_subject(results)
         else:
-            return obj.bill_type    
+            return obj.bill_type
 
     def prepare_topics(self, obj):
         return [s.subject for s in obj.subjects.all()]
