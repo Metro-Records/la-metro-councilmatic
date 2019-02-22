@@ -35,9 +35,9 @@
     </div>
 
     <div class="col-xs-3">
-        {% for media in event.media_urls.all|media_order %}
+        {% for media in event.media_urls.all %}
           <p>
-            <a href="{{ media.url }}" target="_blank">{{ media|media_label }}</a>
+            <a href="{{ media.url }}" target="_blank">{{ media.label }}</a>
             </br>
           </p>
         {% endfor %}
@@ -60,6 +60,7 @@
             </p>
             {% endif %}
         {% endif %}
+
     </div>
     {% endif %}
 

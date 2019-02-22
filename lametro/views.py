@@ -315,10 +315,21 @@ class LAMetroEventsView(EventsView):
         # If no...
         else:
             # Upcoming events
+            from django.db.models import Prefetch
+            from lametro.models import LAMetroEventMedia
+            from django.db.models import Case, When, Value
+            
+            mediaqueryset = LAMetroEventMedia.objects.annotate(
+                olabel=Case(
+                    When(note__endswith='(SAP)', then=Value(0)),
+                    output_field=models.CharField(),
+                )
+            ).order_by('-olabel')
+
             future_events = LAMetroEvent.objects\
                                         .filter(start_time__gt=timezone.now())\
                                         .order_by('start_time')\
-                                        .prefetch_related('media_urls')
+                                        .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
             org_future_events = []
 
@@ -332,7 +343,7 @@ class LAMetroEventsView(EventsView):
             past_events = LAMetroEvent.objects\
                                       .filter(start_time__lt=datetime.now(app_timezone))\
                                       .order_by('-start_time')\
-                                      .prefetch_related('media_urls')
+                                      .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
             org_past_events = []
 
