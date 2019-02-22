@@ -22,7 +22,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
 from django.db.models.functions import Lower
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Prefetch, Case, When, Value
 from django.utils import timezone
 from django.utils.text import slugify
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
@@ -36,7 +36,7 @@ from councilmatic_core.views import IndexView, BillDetailView, \
 from councilmatic_core.models import *
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
-    LAMetroEvent, LAMetroOrganization
+    LAMetroEvent, LAMetroEventMedia, LAMetroOrganization
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
@@ -130,8 +130,19 @@ class LAMetroEventDetail(EventDetailView):
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
-        # Create URL for packet download.
+        
+        # Get the event with prefetched media_urls in proper order. 
         event = context['event']
+        mediaqueryset = LAMetroEventMedia.objects.annotate(
+            olabel=Case(
+                When(note__endswith='(SAP)', then=Value(0)),
+                output_field=models.CharField(),
+            )
+        ).order_by('-olabel')
+        event = Event.objects\
+                     .filter(ocd_id=event.ocd_id).prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))\
+                     .first()
+        context['event'] = event
 
         # Metro admins should see a status report if Legistar is down.
         # GET the calendar page, which contains relevant URL for agendas.
@@ -139,6 +150,7 @@ class LAMetroEventDetail(EventDetailView):
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
 
+        # Create URL for packet download.
         packet_slug = event.ocd_id.replace('/', '-')
         try:
             r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
@@ -271,7 +283,23 @@ class LAMetroEventsView(EventsView):
     template_name = 'lametro/events.html'
 
     def get_context_data(self, **kwargs):
+        '''
+        The EventsView returns all Events – often, filtered and sorted.
+
+        We prefetch EventMedia (i.e., 'media_urls') in the Events querysets: 
+        this makes for a more efficient page load. 
+        We also order the 'media_urls' by label, ensuring that links to SAP audio
+        come after links to English audio. 'mediaqueryset' facilitates 
+        the ordering of prefetched 'media_urls'.
+        '''
         context = super(LAMetroEventsView, self).get_context_data(**kwargs)
+
+        mediaqueryset = LAMetroEventMedia.objects.annotate(
+            olabel=Case(
+                When(note__endswith='(SAP)', then=Value(0)),
+                output_field=models.CharField(),
+            )
+        ).order_by('-olabel')
 
         # Did the user set date boundaries?
         start_date_str = self.request.GET.get('from')
@@ -289,7 +317,7 @@ class LAMetroEventsView(EventsView):
                                         .filter(start_time__gt=start_date_time)\
                                         .filter(start_time__lt=end_date_time)\
                                         .order_by('start_time')\
-                                        .prefetch_related('media_urls')
+                                        .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
             org_select_events = []
 
@@ -303,7 +331,7 @@ class LAMetroEventsView(EventsView):
         elif self.request.GET.get('show'):
             all_events = LAMetroEvent.objects\
                                      .order_by('-start_time')\
-                                     .prefetch_related('media_urls')
+                                     .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
             org_all_events = []
 
@@ -315,17 +343,6 @@ class LAMetroEventsView(EventsView):
         # If no...
         else:
             # Upcoming events
-            from django.db.models import Prefetch
-            from lametro.models import LAMetroEventMedia
-            from django.db.models import Case, When, Value
-            
-            mediaqueryset = LAMetroEventMedia.objects.annotate(
-                olabel=Case(
-                    When(note__endswith='(SAP)', then=Value(0)),
-                    output_field=models.CharField(),
-                )
-            ).order_by('-olabel')
-
             future_events = LAMetroEvent.objects\
                                         .filter(start_time__gt=timezone.now())\
                                         .order_by('start_time')\
