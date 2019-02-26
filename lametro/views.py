@@ -22,7 +22,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
 from django.db.models.functions import Lower
-from django.db.models import Max, Min, Prefetch, Case, When, Value
+from django.db.models import Max, Min, Prefetch
 from django.utils import timezone
 from django.utils.text import slugify
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
@@ -36,7 +36,7 @@ from councilmatic_core.views import IndexView, BillDetailView, \
 from councilmatic_core.models import *
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
-    LAMetroEvent, LAMetroEventMedia, LAMetroOrganization
+    LAMetroEvent, LAMetroOrganization
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS

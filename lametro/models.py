@@ -210,7 +210,7 @@ class LAMetroEventManager(models.Manager):
 
     def with_media(self):
         '''
-        This function comes to uses in the EventDetailView 
+        This function proves useful in the EventDetailView 
         and EventsView (which returns all Events – often, filtered and sorted).
 
         We prefetch EventMedia (i.e., 'media_urls') in these views: 
