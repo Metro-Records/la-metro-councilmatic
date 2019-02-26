@@ -209,6 +209,16 @@ class LAMetroEventManager(models.Manager):
         return super().get_queryset()
 
     def with_media(self):
+        '''
+        This function comes to uses in the EventDetailView 
+        and EventsView (which returns all Events – often, filtered and sorted).
+
+        We prefetch EventMedia (i.e., 'media_urls') in these views: 
+        this makes for a more efficient page load. 
+        We also order the 'media_urls' by label, ensuring that links to SAP audio
+        come after links to English audio. 'mediaqueryset' facilitates 
+        the ordering of prefetched 'media_urls'.
+        '''
         mediaqueryset = LAMetroEventMedia.objects.annotate(
             olabel=Case(
                 When(note__endswith='(SAP)', then=Value(0)),
@@ -216,10 +226,7 @@ class LAMetroEventManager(models.Manager):
             )
         ).order_by('-olabel')
 
-        events_with_media = Event.objects\
-                                 .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
-
-        return events_with_media
+        return self.prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
 
 class LiveMediaMixin(object):

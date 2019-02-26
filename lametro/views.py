@@ -133,16 +133,6 @@ class LAMetroEventDetail(EventDetailView):
         
         # Get the event with prefetched media_urls in proper order. 
         event = context['event']
-        # mediaqueryset = LAMetroEventMedia.objects.annotate(
-        #     olabel=Case(
-        #         When(note__endswith='(SAP)', then=Value(0)),
-        #         output_field=models.CharField(),
-        #     )
-        # ).order_by('-olabel')
-        # event = Event.objects\
-        #              .filter(ocd_id=event.ocd_id).prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))\
-        #              .first()
-
         event = LAMetroEvent.objects.with_media().filter(ocd_id=event.ocd_id).first()
         context['event'] = event
 
@@ -285,23 +275,7 @@ class LAMetroEventsView(EventsView):
     template_name = 'lametro/events.html'
 
     def get_context_data(self, **kwargs):
-        '''
-        The EventsView returns all Events – often, filtered and sorted.
-
-        We prefetch EventMedia (i.e., 'media_urls') in the Events querysets: 
-        this makes for a more efficient page load. 
-        We also order the 'media_urls' by label, ensuring that links to SAP audio
-        come after links to English audio. 'mediaqueryset' facilitates 
-        the ordering of prefetched 'media_urls'.
-        '''
         context = super(LAMetroEventsView, self).get_context_data(**kwargs)
-
-        mediaqueryset = LAMetroEventMedia.objects.annotate(
-            olabel=Case(
-                When(note__endswith='(SAP)', then=Value(0)),
-                output_field=models.CharField(),
-            )
-        ).order_by('-olabel')
 
         # Did the user set date boundaries?
         start_date_str = self.request.GET.get('from')
@@ -320,7 +294,6 @@ class LAMetroEventsView(EventsView):
                                         .filter(start_time__gt=start_date_time)\
                                         .filter(start_time__lt=end_date_time)\
                                         .order_by('start_time')\
-                                        # .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
             org_select_events = []
 
@@ -335,7 +308,6 @@ class LAMetroEventsView(EventsView):
             all_events = LAMetroEvent.objects\
                                      .with_media()\
                                      .order_by('-start_time')\
-                                     # .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
             org_all_events = []
 
@@ -348,9 +320,9 @@ class LAMetroEventsView(EventsView):
         else:
             # Upcoming events
             future_events = LAMetroEvent.objects\
+                                        .with_media()\
                                         .filter(start_time__gt=timezone.now())\
                                         .order_by('start_time')\
-                                        .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
             org_future_events = []
 
@@ -362,9 +334,9 @@ class LAMetroEventsView(EventsView):
 
             # Past events
             past_events = LAMetroEvent.objects\
+                                      .with_media()\
                                       .filter(start_time__lt=datetime.now(app_timezone))\
                                       .order_by('-start_time')\
-                                      .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
             org_past_events = []
 

@@ -10,7 +10,7 @@ import urllib
 
 from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic_core.models import Person, EventDocument, Bill, Event
+from councilmatic_core.models import Person, EventDocument, Bill
 from councilmatic_core.utils import ExactHighlighter
 
 from lametro.models import LAMetroEvent
@@ -120,7 +120,7 @@ def format_string(label_list):
 
 @register.filter
 def get_minutes(event_id):
-    event = Event.objects.get(ocd_id=event_id)
+    event = LAMetroEvent.objects.get(ocd_id=event_id)
 
     doc = event.documents.filter(note__icontains='RBM Minutes').first()
 
@@ -183,14 +183,13 @@ def updates_made(event_id):
     This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated. 
     If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page. 
     '''
-
-    # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded
     try: 
+        # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded
         document = EventDocument.objects.filter(event_id=event_id).latest('updated_at')
     except EventDocument.DoesNotExist:
         return False
     else:
-        event = Event.objects.get(ocd_id=event_id)
+        event = LAMetroEvent.objects.get(ocd_id=event_id)
         updated = document.updated_at < event.updated_at
         return updated 
 
