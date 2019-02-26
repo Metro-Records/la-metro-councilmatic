@@ -8,6 +8,7 @@ from django.db import models, connection
 from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.db.models import Max, Min, Prefetch, Case, When, Value
 
 import requests
 
@@ -206,6 +207,19 @@ class LAMetroEventManager(models.Manager):
             return super().get_queryset().exclude(location_name='TEST')
 
         return super().get_queryset()
+
+    def with_media(self):
+        mediaqueryset = LAMetroEventMedia.objects.annotate(
+            olabel=Case(
+                When(note__endswith='(SAP)', then=Value(0)),
+                output_field=models.CharField(),
+            )
+        ).order_by('-olabel')
+
+        events_with_media = Event.objects\
+                                 .prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
+
+        return events_with_media
 
 
 class LiveMediaMixin(object):
