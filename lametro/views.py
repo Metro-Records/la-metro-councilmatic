@@ -127,14 +127,15 @@ class LAMetroEventDetail(EventDetailView):
         else:
             return self.render_to_response(self.get_context_data(url_form=url_form, pdf_form=pdf_form))
 
+    def get_object(self):
+        # Get the event with prefetched media_urls in proper order. 
+        event = LAMetroEvent.objects.with_media().get(slug=self.kwargs['slug'])
+        
+        return event 
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
-        
-        # Get the event with prefetched media_urls in proper order. 
         event = context['event']
-        event = LAMetroEvent.objects.with_media().filter(ocd_id=event.ocd_id).first()
-        context['event'] = event
 
         # Metro admins should see a status report if Legistar is down.
         # GET the calendar page, which contains relevant URL for agendas.
