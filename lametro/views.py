@@ -22,7 +22,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
 from django.db.models.functions import Lower
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Prefetch
 from django.utils import timezone
 from django.utils.text import slugify
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
@@ -127,10 +127,14 @@ class LAMetroEventDetail(EventDetailView):
         else:
             return self.render_to_response(self.get_context_data(url_form=url_form, pdf_form=pdf_form))
 
+    def get_object(self):
+        # Get the event with prefetched media_urls in proper order. 
+        event = LAMetroEvent.objects.with_media().get(slug=self.kwargs['slug'])
+        
+        return event 
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
-        # Create URL for packet download.
         event = context['event']
 
         # Metro admins should see a status report if Legistar is down.
@@ -139,6 +143,7 @@ class LAMetroEventDetail(EventDetailView):
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
 
+        # Create URL for packet download.
         packet_slug = event.ocd_id.replace('/', '-')
         try:
             r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
@@ -285,9 +290,11 @@ class LAMetroEventsView(EventsView):
             start_date_time       = parser.parse(start_date_str)
             end_date_time         = parser.parse(end_date_str)
 
-            select_events = LAMetroEvent.objects.filter(start_time__gt=start_date_time)\
-                .filter(start_time__lt=end_date_time)\
-                .order_by('start_time')
+            select_events = LAMetroEvent.objects\
+                                        .with_media()\
+                                        .filter(start_time__gt=start_date_time)\
+                                        .filter(start_time__lt=end_date_time)\
+                                        .order_by('start_time')\
 
             org_select_events = []
 
@@ -299,7 +306,9 @@ class LAMetroEventsView(EventsView):
 
         # If all meetings
         elif self.request.GET.get('show'):
-            all_events = LAMetroEvent.objects.order_by('-start_time')
+            all_events = LAMetroEvent.objects\
+                                     .with_media()\
+                                     .order_by('-start_time')\
 
             org_all_events = []
 
@@ -311,8 +320,10 @@ class LAMetroEventsView(EventsView):
         # If no...
         else:
             # Upcoming events
-            future_events = LAMetroEvent.objects.filter(start_time__gt=timezone.now())\
-                .order_by('start_time')
+            future_events = LAMetroEvent.objects\
+                                        .with_media()\
+                                        .filter(start_time__gt=timezone.now())\
+                                        .order_by('start_time')\
 
             org_future_events = []
 
@@ -323,8 +334,10 @@ class LAMetroEventsView(EventsView):
             context['future_events'] = org_future_events
 
             # Past events
-            past_events = LAMetroEvent.objects.filter(start_time__lt=datetime.now(app_timezone))\
-                .order_by('-start_time')
+            past_events = LAMetroEvent.objects\
+                                      .with_media()\
+                                      .filter(start_time__lt=datetime.now(app_timezone))\
+                                      .order_by('-start_time')\
 
             org_past_events = []
 

@@ -8,6 +8,7 @@ from django.db import models, connection
 from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.db.models import Max, Min, Prefetch, Case, When, Value
 
 import requests
 
@@ -206,6 +207,26 @@ class LAMetroEventManager(models.Manager):
             return super().get_queryset().exclude(location_name='TEST')
 
         return super().get_queryset()
+
+    def with_media(self):
+        '''
+        This function proves useful in the EventDetailView 
+        and EventsView (which returns all Events – often, filtered and sorted).
+
+        We prefetch EventMedia (i.e., 'media_urls') in these views: 
+        this makes for a more efficient page load. 
+        We also order the 'media_urls' by label, ensuring that links to SAP audio
+        come after links to English audio. 'mediaqueryset' facilitates 
+        the ordering of prefetched 'media_urls'.
+        '''
+        mediaqueryset = LAMetroEventMedia.objects.annotate(
+            olabel=Case(
+                When(note__endswith='(SAP)', then=Value(0)),
+                output_field=models.CharField(),
+            )
+        ).order_by('-olabel')
+
+        return self.prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
 
 
 class LiveMediaMixin(object):
@@ -407,14 +428,6 @@ class LAMetroEvent(Event, LiveMediaMixin):
                                   .order_by('start_time').all()
 
         return meetings
-
-
-    @property
-    def media(self):
-        '''Return related LAMetroEventMedia objects such that English audio appears first'''
-        query_set = LAMetroEventMedia.objects.filter(event_id=self.ocd_id)
-        query_set = sorted(query_set, key=lambda media: media.label, reverse=True)
-        return query_set
 
 
 class LAMetroEventMedia(EventMedia):

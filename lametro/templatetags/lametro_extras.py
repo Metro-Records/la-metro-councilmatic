@@ -183,16 +183,16 @@ def updates_made(event_id):
     This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated. 
     If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page. 
     '''
-    event = LAMetroEvent.objects.get(ocd_id=event_id)
-
-    # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded
     try: 
+        # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded
         document = EventDocument.objects.filter(event_id=event_id).latest('updated_at')
     except EventDocument.DoesNotExist:
         return False
     else:
+        event = LAMetroEvent.objects.get(ocd_id=event_id)
         updated = document.updated_at < event.updated_at
         return updated 
+
 
 @register.filter
 def find_agenda_url(all_documents):
