@@ -39,28 +39,3 @@ def format_full_text(full_text):
 def parse_subject(text):
     if ('[PROJECT OR SERVICE NAME]' not in text) and ('[DESCRIPTION]' not in text) and ('[CONTRACT NUMBER]' not in text):
         return text.strip()
-
-def find_last_action_date(bill_ocd_id):
-    '''
-    Several Metro bills do not have "histories."
-    Discussed in this issue:
-    https://github.com/datamade/la-metro-councilmatic/issues/340
-
-    If a bill does not have a history, then determine its `last_action_date` by
-    looking for the most recent agenda that references the bill. Consider only
-    events that have already occurred, so the last action date is not in the
-    future.
-    '''
-    actions = Action.objects.filter(_bill_id=bill_ocd_id)
-    last_action_date = ''
-
-    if actions:
-        last_action_date = actions.reverse()[0].date
-    else:
-        events = Event.objects.filter(agenda_items__bill_id=bill_ocd_id,
-                                      start_time__lt=timezone.now())
-
-        if events:
-            last_action_date = events.latest('start_time').start_time
-
-    return last_action_date

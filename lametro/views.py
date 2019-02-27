@@ -86,7 +86,7 @@ class LABillDetail(BillDetailView):
             all_related_bills = context['legislation'].related_bills.all().values('related_bill_identifier')
             related_bills = LAMetroBill.objects.filter(identifier__in=all_related_bills)
             minimum_date = datetime(MINYEAR, 1, 1, tzinfo=app_timezone)
-            context['related_bills'] = sorted(related_bills, key=lambda bill: bill.last_action_date or minimum_date, reverse=True)
+            context['related_bills'] = sorted(related_bills, key=lambda bill: bill.get_last_action_date() or minimum_date, reverse=True)
 
 
         return context

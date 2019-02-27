@@ -15,7 +15,6 @@ import requests
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
     Action, EventMedia
 
-from lametro.utils import find_last_action_date
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -73,7 +72,29 @@ class LAMetroBill(Bill):
         return self.from_organization
 
     def get_last_action_date(self):
-        return find_last_action_date(self.ocd_id)
+        '''
+        Several Metro bills do not have "histories."
+        Discussed in this issue:
+        https://github.com/datamade/la-metro-councilmatic/issues/340
+
+        If a bill does not have a history, then determine its `last_action_date` by
+        looking for the most recent agenda that references the bill. Consider only
+        events that have already occurred, so the last action date is not in the
+        future.
+        '''
+        actions = Action.objects.filter(_bill_id=self.ocd_id)
+        last_action_date = ''
+
+        if actions:
+            last_action_date = actions.reverse()[0].date
+        else:
+            events = Event.objects.filter(agenda_items__bill_id=self.ocd_id,
+                                          start_time__lt=timezone.now())
+
+            if events:
+                last_action_date = events.latest('start_time').start_time
+
+        return last_action_date
 
     @property
     def topics(self):
