@@ -2,15 +2,14 @@ import pytz
 import re
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+import requests
 
 from django.conf import settings
 from django.db import models, connection
 from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.db.models import Max, Min, Prefetch, Case, When, Value
-
-import requests
+from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
     Action, EventMedia
@@ -42,9 +41,6 @@ class LAMetroBillManager(models.Manager):
         when getting bill querysets. Otherwise restricted view bills
         may slip through the crevices of Councilmatic display logic.
         '''
-
-        from django.db.models import Q
-
         filtered_qs = super().get_queryset().exclude(restrict_view=True)\
                                             .filter(Q(related_agenda_items__event__status='passed') | \
                                                     Q(related_agenda_items__event__status='cancelled') | \

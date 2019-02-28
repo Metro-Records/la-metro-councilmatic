@@ -5,8 +5,10 @@ import pytest
 
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 from councilmatic_core.models import Bill, RelatedBill, Event, EventAgendaItem
+from lametro.models import LAMetroBill
 from lametro.utils import format_full_text, parse_subject
 
 
@@ -64,38 +66,48 @@ def test_format_full_text(bill, text, subject):
 
     assert format_full_text(full_text) == subject
 
-# @pytest.mark.parametrize('restrict_view,bill_type,event_status,assertion', [
-#         (True,'Board Box', 'passed', False),
-#         (False,'Board Box', 'passed', True),
-#         (False,'Resolution', 'passed', True),
-#         (False,'Resolution', 'cancelled', True),
-#         (False,'Resolution', 'confirmed', False),
-#     ])
-# def test_viewable_bill(bill,
-#                        event_agenda_item,
-#                        restrict_view,
-#                        bill_type,
-#                        event_status,
-#                        assertion):
-#     bill_info = {
-#         'bill_type': bill_type,
-#         'restrict_view': restrict_view,
-#     }
-#     bill = bill.build(**bill_info)
-#     bill.refresh_from_db()
+@pytest.mark.parametrize('restrict_view,bill_type,event_status,is_public', [
+        (True, 'Board Box', 'passed', False),
+        (False, 'Board Box', 'passed', True),
+        (False, 'Resolution', 'passed', True),
+        (False, 'Resolution', 'cancelled', True),
+        (False, 'Resolution', 'confirmed', False),
+    ])
+def test_bill_manager(bill,
+                      event_agenda_item,
+                      restrict_view,
+                      bill_type,
+                      event_status,
+                      is_public):
+    '''
+    Tests if the LAMetroBillManager properly filters public and private bills.
+    Private bills should not be discoverable, i.e., refresh_from_db should fail.
+    '''
+    bill_info = {
+        'bill_type': bill_type,
+        'restrict_view': restrict_view,
+    }
+    bill = bill.build(**bill_info)
 
-#     event_agenda_item_info = {
-#         'bill_id': bill.ocd_id,
-#     }
-#     item = event_agenda_item.build(**event_agenda_item_info)
-#     item.refresh_from_db()
+    event_agenda_item_info = {
+        'bill_id': bill.ocd_id,
+    }
+    item = event_agenda_item.build(**event_agenda_item_info)
 
-#     event = Event.objects.get(ocd_id=item.event_id)
-#     event.status = event_status
-#     event.save()
-#     event.refresh_from_db()
+    event = Event.objects.get(ocd_id=item.event_id)
+    event.status = event_status
+    event.save()
+    
+    event.refresh_from_db()
+    item.refresh_from_db()
 
-#     assert bill.is_viewable == assertion
+    try:
+        bill.refresh_from_db()
+    except ObjectDoesNotExist:
+        assert is_public == False
+    else:
+        bill_qs_with_manager = LAMetroBill.objects.filter(ocd_id=bill.ocd_id)
+        assert is_public == (bill in bill_qs_with_manager)
 
 @pytest.mark.django_db
 def test_last_action_date_has_already_occurred(bill, event):
