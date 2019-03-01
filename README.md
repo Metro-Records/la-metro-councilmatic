@@ -173,9 +173,13 @@ The Dockerized versions of Solr on the server need your attention, too. Follow t
 
 ```
 cd lametro-staging
-sudo docker stop lametro-staging-solr  # we need to stop it before removing it!
+
+# we need to stop the container before removing it!
+sudo docker stop lametro-staging-solr  
 sudo docker rm lametro-staging-solr
-sudo docker-compose up -d solr-staging # -d is the daemon flag
+
+# -d is the daemon flag
+sudo docker-compose up -d solr-staging
 ```
 
 3. Logout as the ubuntu user, then log in as the datamade user.
