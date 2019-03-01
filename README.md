@@ -127,7 +127,7 @@ HAYSTACK_CONNECTIONS = {
 }
 ```
 
-2. Now, run docker! 
+2. Now, run docker!
 
 ```
 docker-compose up solr-staging
@@ -168,26 +168,41 @@ cp solr_configs/conf/schema.xml solr_scripts/schema.xml
 
 The Dockerized versions of Solr on the server need your attention, too. Follow these steps.
 
-1. Deploy the schema changes on the staging server. 
-2. Shell into the server, go to the `lametro-staging` repo, and remove and rebuild the Solr container.
+1. Deploy the schema changes on the staging server.
+2. Shell into the server as the ubuntu user, go to the `lametro-staging` repo, and remove and rebuild the Solr container.
 
 ```
-docker rm lametro-staging-solr
-docker-compose up solr-staging
+cd lametro-staging
+sudo docker stop lametro-staging-solr  # we need to stop it before removing it!
+sudo docker rm lametro-staging-solr
+sudo docker-compose up -d solr-staging # -d is the daemon flag
 ```
 
-3. Rebuild the index for the staging server: `python manage.py rebuild_index`.
+3. Logout as the ubuntu user, then log in as the datamade user.
+4. Rebuild the index for the staging server:
+```
+workon lametro-staging
+python manage.py rebuild_index --batch-size=200
+```
 
-Did everything work as expected? Great - now onto the production site. 
+Did everything work as expected? Great - now onto the production site.
 
-1. Contact the folks at Metro and let them know the search funcitonality and data import will be down for a short period.
-2. Turn off the crons (`lametro-crontasks`) - do this in a pull request.
-3. Deploy the schema changes to the production server.
-4. As above: shell into the server, go to the `lametro` repo, and remove and rebuild the Solr container.
-5. Rebuild the index.
-6. Turn on the crons - again, do this in a pull request!
+Make sure your changes are deployed to the production server (i.e. you've cut a release with your changes).
 
-Nice! The production server should have the newly edited schema and freshly built index, ready to search, filter, and facet. 
+1. Contact the folks at Metro and let them know the search functionality and data import will be down for a short period.
+2. Open a new pull request and comment out the crons  under `scripts/`(`lametro-crontasks`).
+3. Merge in the pull request and deploy it.
+4. As above: shell into the server, go to the `lametro` repo, and remove and rebuild the Solr container as the ubuntu user.
+5. Rebuild the index as the datamade user.
+```
+workon lametro
+python manage.py rebuild_index --batch-size=200
+```
+
+6. Open a new pull, uncommenting the crons. Merge and deploy.
+
+
+Nice! The production server should have the newly edited schema and freshly built index, ready to search, filter, and facet.
 
 ## A note on tests
 
