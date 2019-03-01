@@ -190,16 +190,16 @@ Did everything work as expected? Great - now onto the production site.
 Make sure your changes are deployed to the production server (i.e. you've cut a release with your changes).
 
 1. Contact the folks at Metro and let them know the search functionality and data import will be down for a short period.
-2. Open a new pull request and comment out the crons  under `scripts/`(`lametro-crontasks`).
-3. Merge in the pull request and deploy it.
-4. As above: shell into the server, go to the `lametro` repo, and remove and rebuild the Solr container as the ubuntu user.
-5. Rebuild the index as the datamade user.
+2. Open a new pull request and comment out the crons under [`scripts/lametro-crontasks`](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks).
+3. Merge in the pull request and deploy.
+4. As above: shell into the server as the ubuntu user, go to the `lametro` repo, and remove and rebuild the Solr container.
+5. Switch to the datamade user and rebuild the index.
 ```
 workon lametro
 python manage.py rebuild_index --batch-size=200
 ```
 
-6. Open a new pull, uncommenting the crons. Merge and deploy.
+6. Open a new pull request, uncommenting the crons. Merge and deploy.
 
 
 Nice! The production server should have the newly edited schema and freshly built index, ready to search, filter, and facet.
