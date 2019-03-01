@@ -2,15 +2,14 @@ import pytz
 import re
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+import requests
 
 from django.conf import settings
 from django.db import models, connection
 from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.db.models import Max, Min, Prefetch, Case, When, Value
-
-import requests
+from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
     Action, EventMedia
@@ -18,7 +17,45 @@ from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
+
+class LAMetroBillManager(models.Manager):
+    def get_queryset(self):
+        '''
+        The Councilmatic database contains both "private" and "public" bills. 
+        This issue thread explains why: 
+        https://github.com/datamade/la-metro-councilmatic/issues/345#issuecomment-455683240
+        
+        We do not display "private" bills in Councilmatic.
+        Metro staff devised three checks for knowing when to hide or show a report:
+
+        (1) Is the bill private (i.e., `restrict_view` is True)? Then, do not show it.
+        N.b., the scrapers contain logic for populating the restrict_view field:
+        https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/bills.py
+
+        (2) Does the Bill have a classification of "Board Box"? Then, show it.
+
+        (3) Is the Bill on a published agenda, i.e., an event with the 
+        status of "passed" or "cancelled"? Then, show it.
+
+        NOTE! A single bill can appear on multiple event agendas.
+        We thus call 'distinct' on the below query, otherwise
+        the queryset would contain duplicate bills. 
+
+        WARNING! Be sure to use LAMetroBill, rather than the base Bill class,
+        when getting bill querysets. Otherwise restricted view bills
+        may slip through the crevices of Councilmatic display logic.
+        '''
+        filtered_qs = super().get_queryset().exclude(restrict_view=True)\
+                                            .filter(Q(related_agenda_items__event__status='passed') | \
+                                                    Q(related_agenda_items__event__status='cancelled') | \
+                                                    Q(bill_type='Board Box'))\
+                                            .distinct()
+
+        return filtered_qs
+
+
 class LAMetroBill(Bill):
+    objects = LAMetroBillManager()
 
     class Meta:
         proxy = True
@@ -100,36 +137,6 @@ class LAMetroBill(Bill):
     def topics(self):
         return [s.subject for s in self.subjects.all()]
 
-    @property
-    def is_viewable(self):
-        '''
-        Sometimes, a Bill may be imported to Councilmatic, though it should not be visible to the public.
-        This issue summarizes why that might happen: https://github.com/datamade/la-metro-councilmatic/issues/345#issuecomment-421184826
-        Metro staff devised three checks for knowing when to hide or show a report:
-
-        (1) Is the view restricted, i.e., is `MatterRestrictViewViaWeb` set to True in the Legistar API? Then, do not show it.
-
-        (2) Does the Bill have a classification of "Board Box"? Then, show it.
-
-        (3) Is the Bill on a published agenda, i.e., an event with the status of "passed" or "cancelled"? Then, show it.
-
-        This property coms into play when filtering the SearchQuerySet object in  LAMetroCouncilmaticSearchForm (views.py).
-        Note: we filter the sqs object, rather than remove "hidden" bills from the Solr index.
-        This strategy minimizes complexity (e.g., attempting to implement an LAMetroBillManager),
-        and this strategy avoids making adjustments to the `data_integrity` script (https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/data_integrity.py)
-        '''
-        if self.restrict_view == True:
-            return False
-
-        if self.bill_type == "Board Box":
-            return True
-
-        events_with_bill = Event.objects.filter(agenda_items__bill_id=self.ocd_id)
-        passed_events = [event for event in events_with_bill if (event.status == 'passed' or event.status == 'cancelled')]
-        if passed_events:
-            return True
-
-        return False
 
 class LAMetroPost(Post):
 

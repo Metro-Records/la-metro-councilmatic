@@ -200,8 +200,6 @@
     <field name="source_url" type="string" indexed="false" stored="true" multiValued="false" />
 
     <field name="identifier" type="text_en" indexed="true" stored="true" multiValued="false" />
-
-    <field name="viewable" type="boolean" indexed="true" stored="false" multiValued="false" />
     
   </fields>
 

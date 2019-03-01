@@ -705,8 +705,6 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
             sqs = sqs.filter_or(attachment_text=Raw(self.cleaned_data['q']))
 
-        sqs = sqs.filter(viewable=True)
-
         return sqs
 
 

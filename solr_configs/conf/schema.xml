@@ -153,7 +153,6 @@
     <field name="attachment_text" type="text_en" indexed="true" stored="false" multiValued="false" />
     <field name="source_url" type="string" indexed="false" stored="true" multiValued="false" />
     <field name="identifier" type="text_en" indexed="true" stored="true" multiValued="false" />
-    <field name="viewable" type="boolean" indexed="true" stored="false" multiValued="false" />
 
     <!-- Dynamic field definitions allow using convention over configuration
     for fields via the specification of patterns to match field names. 
