@@ -37,7 +37,11 @@ class LAMetroBillManager(models.Manager):
         (3) Is the Bill on a published agenda, i.e., an event with the 
         status of "passed" or "cancelled"? Then, show it.
 
-        NOTE: Be sure to use LAMetroBill, rather than the base Bill class,
+        NOTE! A single bill can appear on multiple event agendas.
+        We thus call 'distinct' on the below query, otherwise
+        the queryset would contain duplicate bills. 
+
+        WARNING! Be sure to use LAMetroBill, rather than the base Bill class,
         when getting bill querysets. Otherwise restricted view bills
         may slip through the crevices of Councilmatic display logic.
         '''
