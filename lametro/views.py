@@ -201,10 +201,16 @@ class LAMetroEventDetail(EventDetailView):
 
                 obj = obj + (packet_url,)
 
-                # Add status
-                board_report = LAMetroBill.objects.get(ocd_id=ocd_id)
-                obj = obj + (board_report.inferred_status,)
-                cursor_copy.append(obj)
+                # The cursor object potentially includes public and private bills.
+                # However, the LAMetroBillManager excludes private bills 
+                # from the LAMetroBill queryset. 
+                # Attempting to `get` a private bill from LAMetroBill.objects
+                # raises a DoesNotExist error. As a precaution, we use filter()
+                # rather than get().
+                board_report = LAMetroBill.objects.filter(ocd_id=ocd_id)
+                if board_report:
+                    obj = obj + (board_report.first().inferred_status,)
+                    cursor_copy.append(obj)
 
             # Create a named tuple
             board_report_tuple = namedtuple('BoardReportProperties', columns, rename=True)
