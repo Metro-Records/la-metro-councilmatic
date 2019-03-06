@@ -169,12 +169,17 @@ cp solr_configs/conf/schema.xml solr_scripts/schema.xml
 The Dockerized versions of Solr on the server need your attention, too. Follow these steps.
 
 1. Deploy the schema changes on the staging server.
-2. Shell into the server as the ubuntu user, go to the `lametro-staging` repo, and remove and rebuild the Solr container.
-
+2. Shell into the server, and go to the `lametro-staging` repo.
 ```
-cd lametro-staging
+ssh ubuntu@boardagendas.metro.net
 
-# we need to stop the container before removing it!
+# Do not switch to the DataMade user!
+# Docker requires sudo priviliges
+cd /home/datamade/lametro-staging
+```
+3. Remove and rebuild the Solr container.
+```
+# We need to stop the container before removing it!
 sudo docker stop lametro-staging-solr  
 sudo docker rm lametro-staging-solr
 
@@ -182,7 +187,11 @@ sudo docker rm lametro-staging-solr
 sudo docker-compose up -d solr-staging
 ```
 
-3. Logout as the ubuntu user, then log in as the datamade user.
+3. Log in as the datamade user.
+```
+sudo su - datamade
+```
+
 4. Rebuild the index for the staging server:
 ```
 workon lametro-staging
@@ -193,7 +202,7 @@ Did everything work as expected? Great - now onto the production site.
 
 Make sure your changes are deployed to the production server (i.e. you've cut a release with your changes).
 
-1. Contact the folks at Metro and let them know the search functionality and data import will be down for a short period.
+1. Look at the times cron tasks are run (specified in [`scripts/lametro-crontasks`](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks)), and plan to rebuild the index inbetween those times. Rebuilding the index will take a few minutes, so plan accordingly.
 2. Open a new pull request and comment out the crons under [`scripts/lametro-crontasks`](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks).
 3. Merge in the pull request and deploy.
 4. As above: shell into the server as the ubuntu user, go to the `lametro` repo, and remove and rebuild the Solr container.
