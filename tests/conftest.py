@@ -6,7 +6,7 @@ from random import randrange
 
 from django.core.management import call_command
 
-from councilmatic_core.models import EventDocument, Bill, EventAgendaItem, Membership
+from councilmatic_core.models import EventDocument, Bill, EventAgendaItem, Membership, LegislativeSession
 from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, LAMetroOrganization
 
 def get_uid_chunk(uid=None):
@@ -21,7 +21,7 @@ def get_uid_chunk(uid=None):
 
 @pytest.fixture
 @pytest.mark.django_db
-def bill(db):
+def bill(db, legislative_session):
     class BillFactory():
         def build(self, **kwargs):
             bill_info = {
@@ -31,7 +31,8 @@ def bill(db):
                 'ocd_updated_at': '2017-06-09 13:06:21.10075-05',
                 'updated_at': '2017-07-26 11:06:47.1853',
                 'identifier': '2017-0686',
-                'slug': '2017-0686'
+                'slug': '2017-0686',
+                '_legislative_session': legislative_session,
             }
 
             bill_info.update(kwargs)
@@ -42,6 +43,21 @@ def bill(db):
             return bill
 
     return BillFactory()
+
+@pytest.fixture
+@pytest.mark.django_db
+def legislative_session(db):
+    session_info = {
+        'identifier': '2017',
+        'jurisdiction_ocd_id': 'ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority',
+        'name': '2017 Legislative Session',
+        'updated_at': '2019-02-07 08:34:56.455542-06',
+    }
+
+    session = LegislativeSession.objects.create(**session_info)
+    session.save()
+
+    return session
 
 @pytest.fixture
 @pytest.mark.django_db

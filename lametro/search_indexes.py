@@ -45,3 +45,12 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
     def prepare_attachment_text(self, obj):
         return ' '.join(d.full_text for d in obj.documents.all() if d.full_text)
+
+    def prepare_legislative_session(self, obj):
+        start_year = obj._legislative_session.identifier
+        end_year = int(start_year) + 1
+
+        session = '7/1/{start_year} to 6/30/{end_year}'.format(start_year=start_year, 
+                                                               end_year=end_year)
+        
+        return session
