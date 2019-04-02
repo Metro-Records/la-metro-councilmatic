@@ -1,4 +1,10 @@
 # /etc/cron.d/lametro-crontasks
 APPDIR=/home/datamade/lametro
 PYTHONDIR=/home/datamade/.virtualenvs/lametro/bin/python
-10,25,40,55 * * * * datamade /usr/bin/flock -n /tmp/lametro_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py import_data >> /var/log/councilmatic/lametro-importdata.log 2>&1 && $PYTHONDIR manage.py refresh_pic >> /var/log/councilmatic/lametro-refreshpic.log 2>&1 && $PYTHONDIR manage.py compile_pdfs >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 --age=1 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1'
+10,25,40 * * * * datamade /usr/bin/flock -n /tmp/lametro_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py import_data >> /var/log/councilmatic/lametro-importdata.log 2>&1 && $PYTHONDIR manage.py refresh_pic >> /var/log/councilmatic/lametro-refreshpic.log 2>&1 && $PYTHONDIR manage.py compile_pdfs >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 --age=1 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1'
+
+# Once per hour! Run the full data-import process,
+# but remove the `age` argument from `update_index,`
+# in order to update the entire Solr index. 
+55 * * * * datamade /usr/bin/flock -n /tmp/lametro_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py import_data >> /var/log/councilmatic/lametro-importdata.log 2>&1 && $PYTHONDIR manage.py refresh_pic >> /var/log/councilmatic/lametro-refreshpic.log 2>&1 && $PYTHONDIR manage.py compile_pdfs >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1'
+ 
