@@ -191,3 +191,31 @@ def test_current_meeting_no_potentially_current(event):
 
     # Assert we did not return any current meetings.
     assert not current_meetings
+
+@pytest.mark.parametrize('name', [
+        ('Construction Committee'),
+        ('Regular Board Meeting'),
+    ]
+)
+def test_event_minutes_none(event, name):
+    e_info = {
+        'name': name,
+    }
+    e = event.build(**e_info)
+
+    assert e.event_minutes == None
+
+# def test_event_minutes_bill(event, bill):
+#     b_info = {
+#         'bill_type': 'Minutes',
+#         'ocr_full_text': 'APPROVE Minutes of the Regular Board Meeting held May 18, 2017.',
+#     }
+#     b = bill.build(**b_info)
+    
+#     e_info = {
+#         'name': 'Regular Board Meeting',
+#     }
+#     e = event.build(**e_info)
+
+
+#     assert e.event_minutes == '/board-report/' + b.slug

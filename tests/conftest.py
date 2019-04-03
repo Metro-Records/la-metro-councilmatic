@@ -31,14 +31,14 @@ def bill(db, legislative_session):
                 'ocd_updated_at': '2017-06-09 13:06:21.10075-05',
                 'updated_at': '2017-07-26 11:06:47.1853',
                 'identifier': '2017-0686',
-                'slug': '2017-0686',
+                'slug': uuid4(),
                 '_legislative_session': legislative_session,
             }
 
             bill_info.update(kwargs)
 
             bill = LAMetroBill.objects.create(**bill_info)
-            bill.save()
+            bill.save
 
             return bill
 
@@ -69,7 +69,7 @@ def event(db):
                 'ocd_created_at': '2017-05-27 11:10:46.574-05',
                 'ocd_updated_at': '2017-05-27 11:10:46.574-05',
                 'name': 'System Safety, Security and Operations Committee',
-                'start_time': '2017-05-18 12:15:00-05',
+                'start_time': datetime.strptime('2017-05-18 12:15', '%Y-%m-%d %H:%M'), 
                 'updated_at': '2017-05-17 11:06:47.1853',
                 'slug': uuid4(),
             }

@@ -53,6 +53,7 @@
         {% endif %}
     </div>
     <div class="col-xs-1">
+        {% if 'regular board meeting' in event.name|lower %}
             {% with minutes=event.event_minutes %}
                 {% if minutes %}
                 <p>
@@ -60,6 +61,7 @@
                 </p>
                 {% endif %}
             {% endwith %}
+        {% endif %}
     </div>
     {% endif %}
 

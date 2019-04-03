@@ -468,19 +468,21 @@ class LAMetroEvent(Event, LiveMediaMixin):
         LAMetroBill. For these, we can query for an EventDocument and 
         return its link. 
         '''
-        if 'regular board meeting' in self.name.lower():
-            date = self.start_time.date().strftime('%B %d, %Y')
-            content = 'minutes of the regular board meeting held ' + date
+        date = self.start_time.date().strftime('%B %d, %Y')
+        content = 'minutes of the regular board meeting held ' + date
+        try:
+            import pdb; pdb.set_trace()
+            board_report = LAMetroBill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
+        except LAMetroBill.DoesNotExist:
             try:
-                board_report = LAMetroBill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
-                return '/board-report/' + board_report.slug
-            except LAMetroBill.DoesNotExist:
                 doc = self.documents.get(note__icontains='RBM Minutes')
-                return doc.url
             except EventDocument.DoesNotExist:
                 return None
+            else:
+                return doc.url
         else:
-            return None
+            return '/board-report/' + board_report.slug
+
 
 class LAMetroEventMedia(EventMedia):
 
