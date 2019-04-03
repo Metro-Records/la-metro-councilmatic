@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
-    Action, EventMedia, BillDocument
+    Action, EventMedia, EventDocument
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -464,21 +464,21 @@ class LAMetroEvent(Event, LiveMediaMixin):
         '''
         This method returns the link to an Event's minutes. 
 
-        TODO: why do some events not have RBM Minutes documents?
+        A small number of Events do not have minutes in a corresponding
+        LAMetroBill. For these, we can query for an EventDocument and 
+        return its link. 
         '''
         if 'regular board meeting' in self.name.lower():
-            doc = self.documents.filter(note__icontains='RBM Minutes').first()
-
-            if doc:
+            date = self.start_time.date().strftime('%B %d, %Y')
+            content = 'minutes of the regular board meeting held ' + date
+            try:
+                board_report = LAMetroBill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
+                return '/board-report/' + board_report.slug
+            except LAMetroBill.DoesNotExist:
+                doc = self.documents.get(note__icontains='RBM Minutes')
                 return doc.url
-            else:
-                date = self.start_time.date().strftime('%B %d, %Y')
-                content = 'minutes of the regular board meeting held ' + date
-                try:
-                    board_report = LAMetroBill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
-                    return '/board-report/' + board_report.slug
-                except ObjectDoesNotExist:
-                    return None
+            except EventDocument.DoesNotExist:
+                return None
         else:
             return None
 
