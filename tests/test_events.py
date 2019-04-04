@@ -205,17 +205,29 @@ def test_event_minutes_none(event, name):
 
     assert e.event_minutes == None
 
-# def test_event_minutes_bill(event, bill):
-#     b_info = {
-#         'bill_type': 'Minutes',
-#         'ocr_full_text': 'APPROVE Minutes of the Regular Board Meeting held May 18, 2017.',
-#     }
-#     b = bill.build(**b_info)
-    
-#     e_info = {
-#         'name': 'Regular Board Meeting',
-#     }
-#     e = event.build(**e_info)
+def test_event_minutes_bill(event, bill):
+    bill_info = {
+        'bill_type': 'Minutes',
+        'ocr_full_text': 'APPROVE Minutes of the Regular Board Meeting held May 18, 2017.',
+    }
+    bill_minutes = bill.build(**bill_info)
 
+    event_info = {
+        'name': 'Regular Board Meeting',
+    }
+    board_meeting = event.build(**event_info)
 
-#     assert e.event_minutes == '/board-report/' + b.slug
+    assert board_meeting.event_minutes == '/board-report/' + bill_minutes.slug
+
+def test_event_minutes_doc(event, event_document):
+    event_info = {
+        'name': 'Regular Board Meeting',
+    }
+    board_meeting = event.build(**event_info)
+
+    event_document_info = {
+        'note': '2017-06-22 RBM Minutes'
+    }
+    minutes_document = event_document.build(**event_document_info)
+
+    assert board_meeting.event_minutes == minutes_document.url

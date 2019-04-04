@@ -464,24 +464,24 @@ class LAMetroEvent(Event, LiveMediaMixin):
         '''
         This method returns the link to an Event's minutes. 
 
-        A small number of Events do not have minutes in a corresponding
-        LAMetroBill. For these, we can query for an EventDocument and 
-        return its link. 
+        A small number of Events do not have minutes in 
+        a discoverable, corresponding EventDocument. 
+        For these, we can query board reports 
+        for indicative text, i.e., "minutes of the regular..."
         '''
-        date = self.start_time.date().strftime('%B %d, %Y')
-        content = 'minutes of the regular board meeting held ' + date
         try:
-            import pdb; pdb.set_trace()
-            board_report = LAMetroBill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
-        except LAMetroBill.DoesNotExist:
+            doc = self.documents.get(note__icontains='RBM Minutes')
+        except EventDocument.DoesNotExist:
             try:
-                doc = self.documents.get(note__icontains='RBM Minutes')
-            except EventDocument.DoesNotExist:
+                date = self.start_time.date().strftime('%B %d, %Y')
+                content = 'minutes of the regular board meeting held ' + date
+                board_report = Bill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
+            except Bill.DoesNotExist:
                 return None
             else:
-                return doc.url
+                return '/board-report/' + board_report.slug
         else:
-            return '/board-report/' + board_report.slug
+            return doc.url
 
 
 class LAMetroEventMedia(EventMedia):
