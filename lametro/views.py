@@ -128,10 +128,10 @@ class LAMetroEventDetail(EventDetailView):
             return self.render_to_response(self.get_context_data(url_form=url_form, pdf_form=pdf_form))
 
     def get_object(self):
-        # Get the event with prefetched media_urls in proper order. 
+        # Get the event with prefetched media_urls in proper order.
         event = LAMetroEvent.objects.with_media().get(slug=self.kwargs['slug'])
-        
-        return event 
+
+        return event
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
@@ -202,8 +202,8 @@ class LAMetroEventDetail(EventDetailView):
                 obj = obj + (packet_url,)
 
                 # The cursor object potentially includes public and private bills.
-                # However, the LAMetroBillManager excludes private bills 
-                # from the LAMetroBill queryset. 
+                # However, the LAMetroBillManager excludes private bills
+                # from the LAMetroBill queryset.
                 # Attempting to `get` a private bill from LAMetroBill.objects
                 # raises a DoesNotExist error. As a precaution, we use filter()
                 # rather than get().
@@ -504,7 +504,7 @@ class LACommitteesView(CommitteesView):
         with connection.cursor() as cursor:
 
             sql = ('''
-              SELECT DISTINCT on (o.ocd_id, m.person_id) o.*, m.person_id, m.role, p.name
+              SELECT DISTINCT on (o.ocd_id, m.person_id) o.*, m.person_id, m.role, p.name AS member_name
               FROM councilmatic_core_organization AS o
               JOIN councilmatic_core_membership AS m
               ON o.ocd_id=m.organization_id
