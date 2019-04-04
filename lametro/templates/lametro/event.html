@@ -100,11 +100,13 @@
                             </p>
                             {% endif %}
                             {% if 'regular board meeting' in event.name|lower %}
-                                {% if event.ocd_id|get_minutes %}
-                                <p>
-                                    <a href="{{ event.ocd_id|get_minutes }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
-                                </p>
-                                {% endif %}
+                                {% with minutes=event.event_minutes %}
+                                    {% if minutes %}
+                                    <p>
+                                        <a href="{{ minutes }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
+                                    </p>
+                                    {% endif %}
+                                {% endwith %}
                             {% endif %}
                         {% endif %}
 
