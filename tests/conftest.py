@@ -38,7 +38,6 @@ def bill(db, legislative_session):
             bill_info.update(kwargs)
 
             bill = LAMetroBill.objects.create(**bill_info)
-            bill.save
 
             return bill
 
