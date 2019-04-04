@@ -7,12 +7,13 @@ import requests
 from django.conf import settings
 from django.db import models, connection
 from django.db.models.expressions import RawSQL
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
-    Action, EventMedia
+    Action, EventMedia, EventDocument
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -456,6 +457,32 @@ class LAMetroEvent(Event, LiveMediaMixin):
                                   .order_by('start_time').all()
 
         return meetings
+
+
+    @property
+    def board_event_minutes(self):
+        '''
+        This method returns the link to an Event's minutes. 
+
+        A small number of Events do not have minutes in 
+        a discoverable, corresponding EventDocument. 
+        For these, we can query board reports 
+        for indicative text, i.e., "minutes of the regular..."
+        '''
+        if 'regular board meeting' in self.name.lower():
+            try:
+                doc = self.documents.get(note__icontains='RBM Minutes')
+            except EventDocument.DoesNotExist:
+                try:
+                    date = self.start_time.date().strftime('%B %d, %Y')
+                    content = 'minutes of the regular board meeting held ' + date
+                    board_report = Bill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
+                except Bill.DoesNotExist:
+                    return None
+                else:
+                    return '/board-report/' + board_report.slug
+            else:
+                return doc.url
 
 
 class LAMetroEventMedia(EventMedia):

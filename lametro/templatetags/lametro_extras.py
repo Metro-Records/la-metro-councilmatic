@@ -119,28 +119,6 @@ def format_string(label_list):
     return label_list.split(',')
 
 @register.filter
-def get_minutes(event_id):
-    event = LAMetroEvent.objects.get(ocd_id=event_id)
-
-    doc = event.documents.filter(note__icontains='RBM Minutes').first()
-
-    if doc:
-        return doc.url
-    else:
-        date = event.start_time.date().strftime('%B %d, %Y')
-        content = 'minutes of the regular board meeting held ' + date
-        sqs = SearchQuerySet().filter(content=content).all()
-        if sqs:
-            for q in sqs:
-                if (q.object.bill_type == 'Minutes' and 
-                    q.object.slug and 
-                    q.object.ocr_full_text):
-                    if re.search(content, q.object.ocr_full_text, re.IGNORECASE):
-                        return '/board-report/' + q.object.slug
-        else:
-            return None
-
-@register.filter
 def compare_time(event_date):
     if event_date < timezone.now():
         return True
