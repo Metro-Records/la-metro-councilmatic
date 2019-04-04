@@ -203,7 +203,7 @@ def test_event_minutes_none(event, name):
     }
     e = event.build(**e_info)
 
-    assert e.event_minutes == None
+    assert e.board_event_minutes == None
 
 def test_event_minutes_bill(event, bill):
     bill_info = {
@@ -217,7 +217,7 @@ def test_event_minutes_bill(event, bill):
     }
     board_meeting = event.build(**event_info)
 
-    assert board_meeting.event_minutes == '/board-report/' + bill_minutes.slug
+    assert board_meeting.board_event_minutes == '/board-report/' + bill_minutes.slug
 
 def test_event_minutes_doc(event, event_document):
     event_info = {
@@ -230,4 +230,4 @@ def test_event_minutes_doc(event, event_document):
     }
     minutes_document = event_document.build(**event_document_info)
 
-    assert board_meeting.event_minutes == minutes_document.url
+    assert board_meeting.board_event_minutes == minutes_document.url

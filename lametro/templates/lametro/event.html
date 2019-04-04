@@ -99,15 +99,15 @@
                                 </br>
                             </p>
                             {% endif %}
-                            {% if 'regular board meeting' in event.name|lower %}
-                                {% with minutes=event.event_minutes %}
-                                    {% if minutes %}
-                                    <p>
-                                        <a href="{{ minutes }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
-                                    </p>
-                                    {% endif %}
-                                {% endwith %}
-                            {% endif %}
+
+                            {% with minutes=event.board_event_minutes %}
+                                {% if minutes %}
+                                <p>
+                                    <a href="{{ minutes }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
+                                </p>
+                                {% endif %}
+                            {% endwith %}
+
                         {% endif %}
 
                         </div>

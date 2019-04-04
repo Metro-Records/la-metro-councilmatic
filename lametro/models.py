@@ -460,7 +460,7 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
 
     @property
-    def event_minutes(self):
+    def board_event_minutes(self):
         '''
         This method returns the link to an Event's minutes. 
 
@@ -469,19 +469,20 @@ class LAMetroEvent(Event, LiveMediaMixin):
         For these, we can query board reports 
         for indicative text, i.e., "minutes of the regular..."
         '''
-        try:
-            doc = self.documents.get(note__icontains='RBM Minutes')
-        except EventDocument.DoesNotExist:
+        if 'regular board meeting' in self.name.lower():
             try:
-                date = self.start_time.date().strftime('%B %d, %Y')
-                content = 'minutes of the regular board meeting held ' + date
-                board_report = Bill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
-            except Bill.DoesNotExist:
-                return None
+                doc = self.documents.get(note__icontains='RBM Minutes')
+            except EventDocument.DoesNotExist:
+                try:
+                    date = self.start_time.date().strftime('%B %d, %Y')
+                    content = 'minutes of the regular board meeting held ' + date
+                    board_report = Bill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
+                except Bill.DoesNotExist:
+                    return None
+                else:
+                    return '/board-report/' + board_report.slug
             else:
-                return '/board-report/' + board_report.slug
-        else:
-            return doc.url
+                return doc.url
 
 
 class LAMetroEventMedia(EventMedia):
