@@ -53,13 +53,14 @@
         {% endif %}
     </div>
     <div class="col-xs-1">
-        {% with minutes=event.board_event_minutes %}
-            {% if minutes %}
+        {% if 'regular board meeting' in event.name|lower %}
+            {% if event.ocd_id|get_minutes %}
             <p>
-                <a href="{{ minutes }}">Minutes</a>
+                <a href="{{ event.ocd_id|get_minutes }}">Minutes</a>
             </p>
             {% endif %}
-        {% endwith %}
+        {% endif %}
+
     </div>
     {% endif %}
 
