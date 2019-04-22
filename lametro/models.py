@@ -476,8 +476,8 @@ class LAMetroEvent(Event, LiveMediaMixin):
                 try:
                     date = self.start_time.date().strftime('%B %d, %Y')
                     content = 'minutes of the regular board meeting held ' + date
-                    board_report = Bill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
-                except Bill.DoesNotExist:
+                    board_report = LAMetroBill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
+                except LAMetroBill.DoesNotExist:
                     return None
                 else:
                     return '/board-report/' + board_report.slug
