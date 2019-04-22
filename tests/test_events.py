@@ -147,7 +147,6 @@ def test_current_meeting_no_streaming_event(concurrent_current_meetings,
     assert all(m in current_meetings for m in concurrent_current_meetings)
 
 
-@pytest.mark.dev
 def test_current_meeting_no_streaming_event_late_start(event, mocker):
     '''
     Test that if an meeting is scheduled but not yet streaming, it is returned
@@ -192,6 +191,7 @@ def test_current_meeting_no_potentially_current(event):
     # Assert we did not return any current meetings.
     assert not current_meetings
 
+
 @pytest.mark.parametrize('name', [
         ('Construction Committee'),
         ('Regular Board Meeting'),
@@ -205,19 +205,29 @@ def test_event_minutes_none(event, name):
 
     assert e.board_event_minutes == None
 
-def test_event_minutes_bill(event, bill):
+
+def test_event_minutes_bill(event_agenda_item, bill):
+    # The LAMetroBill manager will only return bills that appear on a published
+    # agenda. So, build the agenda item, and associate the bill and a board
+    # meeting with a published agenda.
+    agenda_item = event_agenda_item.build()
+
+    board_meeting = agenda_item.event
+    board_meeting.name = 'Regular Board Meeting'
+    board_meeting.status = 'passed'
+    board_meeting.save()
+
     bill_info = {
         'bill_type': 'Minutes',
         'ocr_full_text': 'APPROVE Minutes of the Regular Board Meeting held May 18, 2017.',
     }
     bill_minutes = bill.build(**bill_info)
 
-    event_info = {
-        'name': 'Regular Board Meeting',
-    }
-    board_meeting = event.build(**event_info)
+    agenda_item.bill = bill_minutes
+    agenda_item.save()
 
     assert board_meeting.board_event_minutes == '/board-report/' + bill_minutes.slug
+
 
 def test_event_minutes_doc(event, event_document):
     event_info = {
