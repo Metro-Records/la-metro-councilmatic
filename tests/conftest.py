@@ -38,7 +38,6 @@ def bill(db, legislative_session):
             bill_info.update(kwargs)
 
             bill = LAMetroBill.objects.create(**bill_info)
-            bill.save()
 
             return bill
 
@@ -55,7 +54,6 @@ def legislative_session(db):
     }
 
     session = LegislativeSession.objects.create(**session_info)
-    session.save()
 
     return session
 
@@ -69,7 +67,7 @@ def event(db):
                 'ocd_created_at': '2017-05-27 11:10:46.574-05',
                 'ocd_updated_at': '2017-05-27 11:10:46.574-05',
                 'name': 'System Safety, Security and Operations Committee',
-                'start_time': '2017-05-18 12:15:00-05',
+                'start_time': datetime.strptime('2017-05-18 12:15', '%Y-%m-%d %H:%M'), 
                 'updated_at': '2017-05-17 11:06:47.1853',
                 'slug': uuid4(),
             }
@@ -77,7 +75,6 @@ def event(db):
             event_info.update(kwargs)
 
             event = LAMetroEvent.objects.create(**event_info)
-            event.save()
 
             return event
 
@@ -99,7 +96,6 @@ def event_agenda_item(db, event):
             event_agenda_item_info.update(kwargs)
 
             event_agenda_item = EventAgendaItem.objects.create(**event_agenda_item_info)
-            event_agenda_item.save()
 
             return event_agenda_item
 
@@ -120,7 +116,6 @@ def event_document(db):
             event_document_info.update(kwargs)
 
             event_document = EventDocument.objects.create(**event_document_info)
-            event_document.save()
 
             return event_document
 
@@ -186,7 +181,6 @@ def membership(db, metro_organization, metro_person):
             membership_info.update(kwargs)
 
             membership = Membership.objects.create(**membership_info)
-            membership.save()
 
             return membership
 
