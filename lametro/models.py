@@ -530,4 +530,5 @@ class LAMetroOrganization(Organization):
 
 
 class LAMetroSubject(Subject):
-    guid = models.CharField(null=True, blank=True, max_length=256)
+    guid = models.CharField(null=True, blank=True, max_length=256, unique=True)
+    name = models.CharField(null=True, blank=True, max_length=256, unique=True)
