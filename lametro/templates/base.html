@@ -64,14 +64,7 @@
                         <a href="{% url 'lametro:search' %}">Board Reports</a>
                     </li>
                     <li>
-                      <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-                        Archive Search
-                        <span class="caret"></span>
-                      </a>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                          <li><a href="http://search3.metro.net/search?access=p&output=xml_no_dtd&site=Board_Archives&ie=UTF-8&client=BoardArchive&proxystylesheet=BoardArchive&proxycustom=%3CHOME/%3E" target="_blank">Board Reports (pre-May 2015)</a></li>
-                          <li><a href="http://search3.metro.net/search?output=xml_no_dtd&client=BoardBox&proxystylesheet=BoardBox&ie=UTF-8&site=BoardBox&access=p&proxycustom=%3CHOME/%3E" target="_blank">Board Box</a></li>
-                        </ul>
+                        <a href="{% url 'lametro:archive-search' %}">Archive Search</a>
                     </li>
                     {% nocache %}
                     <li>
