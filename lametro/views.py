@@ -25,6 +25,7 @@ from django.db.models.functions import Lower
 from django.db.models import Max, Min, Prefetch
 from django.utils import timezone
 from django.utils.text import slugify
+from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
 from django.shortcuts import render_to_response, redirect
 from django.core import management
@@ -773,6 +774,10 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
 class GoogleView(IndexView):
     template_name = 'lametro/google66b34bb6957ad66c.html'
+
+
+class LAMetroArchiveSearch(TemplateView):
+    template_name = 'lametro/archive_search.html'
 
 
 def metro_login(request):
