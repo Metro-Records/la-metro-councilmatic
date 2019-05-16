@@ -12,7 +12,8 @@ from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
     LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
-    metro_login, metro_logout, delete_submission, refresh_guid_trigger
+    metro_login, metro_logout, delete_submission, LAMetroArchiveSearch, refresh_guid_trigger
+
 from lametro.feeds import *
 
 patterns = ([
@@ -21,6 +22,7 @@ patterns = ([
     url(r'^search/', LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet,
                                                           form_class=CouncilmaticSearchForm),
                                                           name='search'),
+    url(r'^archive-search', LAMetroArchiveSearch.as_view(), name='archive-search'),
     url(r'^$', never_cache(LAMetroIndexView.as_view()), name='index'),
     url(r'^about/$', LAMetroAboutView.as_view(), name='about'),
     url(r'^board-report/(?P<slug>[^/]+)/$', LABillDetail.as_view(), name='bill_detail'),

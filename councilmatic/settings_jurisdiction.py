@@ -237,7 +237,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
         'search_term': 'board box',
         'fa_icon': 'commenting-o',
         'html_desc': True,
-        'desc': "Formal information communication to the Board not requiring actions. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box items through the <a href='http://search3.metro.net/search?access=p&output=xml_no_dtd&site=Board_Archives&ie=UTF-8&client=BoardArchive&proxystylesheet=BoardArchive&proxycustom=%3CHOME/%3E' target='_blank'>Board Archive</a>."
+        'desc': "Formal information communication to the Board not requiring actions. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box items through the <a href='/archive-search' target='_blank'>Archive Search</a>."
     },
 ]
 
