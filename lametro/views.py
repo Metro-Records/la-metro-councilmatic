@@ -801,9 +801,8 @@ def refresh_guid_trigger(request, refresh_key):
         if refresh_key == settings.REFRESH_KEY:
             management.call_command('refresh_guid')
             return HttpResponse(200)
-    except AttributeError:
-        if not refresh_key:
-            print('You need a refresh_key in your local deployment settings files to access this.')
         else:
             print('You do not have the correct refresh_key to access this.')
+    except AttributeError:
+        print('You need a refresh_key in your local deployment settings files to access this.')
     return HttpResponse(403)
