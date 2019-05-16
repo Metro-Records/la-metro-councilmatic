@@ -529,6 +529,9 @@ class LAMetroOrganization(Organization):
         return events
 
 
-class LAMetroSubject(Subject):
-    guid = models.CharField(null=True, blank=True, max_length=256, unique=True)
-    name = models.CharField(null=True, blank=True, max_length=256, unique=True)
+class SubjectGuid(models.Model):
+    class Meta:
+        unique_together = ['guid', 'name']
+
+    guid = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, unique=True)
