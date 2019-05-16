@@ -796,6 +796,14 @@ def metro_logout(request):
     return HttpResponseRedirect('/')
 
 @csrf_exempt
-def refresh_guid_trigger(request):
-    management.call_command('refresh_guid')
-    return HttpResponse(200)
+def refresh_guid_trigger(request, refresh_key):
+    try:
+        if refresh_key == settings.REFRESH_KEY:
+            management.call_command('refresh_guid')
+            return HttpResponse(200)
+    except AttributeError:
+        if not refresh_key:
+            print('You need a refresh_key in your local deployment settings files to access this.')
+        else:
+            print('You do not have the correct refresh_key to access this.')
+    return HttpResponse(403)

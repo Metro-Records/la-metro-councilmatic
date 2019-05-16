@@ -32,7 +32,7 @@ patterns = ([
     url(r'^events/$', LAMetroEventsView.as_view(), name='event'),
     url(r'^person/(?P<slug>[^/]+)/rss/$', LAMetroPersonDetailFeed(), name='person_feed'),
     url(r'^google66b34bb6957ad66c.html/$', GoogleView.as_view(), name='google_view'),
-    url(r'^refresh-guid/$', refresh_guid_trigger, name='refresh_guid')
+    url(r'^refresh-guid/(.*)$', refresh_guid_trigger, name='refresh_guid')
 ], settings.APP_NAME)
 
 urlpatterns = [
