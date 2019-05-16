@@ -28,6 +28,8 @@ from django.utils.text import slugify
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
 from django.shortcuts import render_to_response, redirect
 from django.core import management
+from django.views.generic import View
+from django.views.decorators.csrf import csrf_exempt
 
 from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
@@ -792,3 +794,8 @@ def metro_login(request):
 def metro_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+@csrf_exempt
+def refresh_guid_trigger(request):
+    management.call_command('refresh_guid')
+    return HttpResponse(200)

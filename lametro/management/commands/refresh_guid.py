@@ -18,7 +18,7 @@ class Command(BaseCommand):
         current_topics = Subject.objects.values_list('subject', flat=True)
         deleted, _ = SubjectGuid.objects.exclude(name__in=current_topics).delete()
 
-        self.stdout.write('Removing {0} stale topics'.format(deleted))
+        self.stdout.write('Removed {0} stale topics'.format(deleted))
 
         total_created = 0
         for topic in all_topics:
