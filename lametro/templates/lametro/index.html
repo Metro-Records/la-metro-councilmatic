@@ -141,10 +141,9 @@
 
         $('#search-bar').autocomplete({
           serviceUrl: "{% url 'autocomplete' %}",
-          // paramName: '',
+          paramName: '',
           transformResult: function(response) {
             response = JSON.parse(response);
-            console.log(response);
             return {
               suggestions: $.map(response.termHints, function(d) {
                 console.log(d.name);
