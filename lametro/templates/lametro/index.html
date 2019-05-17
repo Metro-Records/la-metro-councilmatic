@@ -13,7 +13,7 @@
                 </p>
                 <form class="search form-search=" action="/search/" method="GET">
                     <div class="input-group site-intro-search">
-                        <input name="q" type="text" class="input-lg form-control form-lg" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}">
+                        <input name="q"  id="search-bar" type="text" class="input-lg form-control form-lg" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}">
                         <div class='input-group-btn'>
                             <button type="submit" class="btn btn-lg btn-primary">
                                 <i class='fa fa-fw fa-search'></i>
@@ -136,5 +136,15 @@
             collapseActivity();
             return false;
         });
+
+
+
+        $('#search-bar').autocomplete({
+          serviceUrl: "{% url 'autocomplete' %}",
+          onSelect: function(suggestion) {
+            alert('You selected ' + suggestion);
+          }
+        })
+
     </script>
 {% endblock %}

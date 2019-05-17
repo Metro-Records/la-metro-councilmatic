@@ -797,3 +797,11 @@ def metro_login(request):
 def metro_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+def test_autocomplete(request):
+    items = [
+        {'name': 'Armstrong'},
+        {'name': 'Army'},
+        {'name': 'Bakery'}
+    ]
+    return json.dumps(items)
