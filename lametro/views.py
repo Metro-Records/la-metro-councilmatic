@@ -26,7 +26,7 @@ from django.db.models import Max, Min, Prefetch
 from django.utils import timezone
 from django.utils.text import slugify
 from django.views.generic import TemplateView
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render_to_response, redirect
 from django.core import management
 
@@ -799,9 +799,36 @@ def metro_logout(request):
     return HttpResponseRedirect('/')
 
 def test_autocomplete(request):
-    items = [
-        {'name': 'Armstrong'},
-        {'name': 'Army'},
-        {'name': 'Bakery'}
-    ]
-    return json.dumps(items)
+    items = {
+      "parameters" : {
+        "q" : "autocomplete_en_plf:arm* autocomplete_en_f:arm* autocomplete_en_pl:arm* autocomplete_en:arm*",
+        "defType" : "edismax",
+        "qf" : "autocomplete_en_plf^100.0 autocomplete_en_f^20.0 autocomplete_en_pl^50.0 autocomplete_en^1.0",
+        "fl" : "id, name_en, class_name_en, [child parentFilter=\"(content_type:concept OR content_type:concept_scheme)\" childFilter=content_type:facet]",
+        "language" : "en",
+        "fq" : "content_type:concept_scheme content_type:concept",
+        "sort" : "score desc, name_en_pl asc",
+        "rows" : "10",
+        "raw_query" : "arm",
+        "wt" : "sesHintsJSON"
+      },
+      "termHints" : [ {
+        "name" : "Neil Armstrong",
+        "id" : "01e1fb66-05c6-47c6-8907-ab6c499e27e9",
+        "classes" : [ "Astronaut" ],
+        "values" : [ {
+          "pre_em" : "Neil ",
+          "nature" : "PT",
+          "em" : "Arm",
+          "post_em" : "strong",
+          "value" : "Neil Armstrong"
+        } ],
+        "facets" : [ {
+          "name" : "People",
+          "id" : "bfc33274-197f-4873-a1f4-f421c8ab64aa"
+        } ]
+      } ],
+      "total" : 1
+    }
+
+    return JsonResponse(items)
