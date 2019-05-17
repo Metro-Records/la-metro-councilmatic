@@ -798,7 +798,7 @@ def metro_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-def test_autocomplete(request, *args, **kwargs):
+def test_autocomplete(request):
     items = {
       "parameters" : {
         "q" : "autocomplete_en_plf:arm* autocomplete_en_f:arm* autocomplete_en_pl:arm* autocomplete_en:arm*",
