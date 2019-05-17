@@ -141,6 +141,19 @@
 
         $('#search-bar').autocomplete({
           serviceUrl: "{% url 'autocomplete' %}",
+          paramName: '',
+          transformResult: function(response) {
+            console.log(response);
+            return {
+              suggestions: $(response).map(response['termHints'], function(d) {
+                console.log(d);
+                return d.name;
+              })
+            }
+          },
+          // onSearchComplete: function(suggestion) {
+          //   console.log(suggestion);
+          // },
           onSelect: function(suggestion) {
             alert('You selected ' + suggestion);
           }
