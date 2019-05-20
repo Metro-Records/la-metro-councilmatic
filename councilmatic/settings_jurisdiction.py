@@ -258,7 +258,7 @@ COMMITTEE_DESCRIPTIONS = {
 # these blurbs populate the wells on the committees, events, & council members pages
 ABOUT_BLURBS = {
     "COMMITTEES" :      "",
-    "EVENTS": "<p>Committee meetings are the first level of review for Metro business matters being brought to the Board of Directors for their review and decision.</p><p>Committee meetings take place on Wednesday and Thursday, the week before a regular, scheduled Board Meeting. A unanimous vote at the Committee level will place an item on the Consent Calendar of the Board of Directors.</p><p>The full Board of Directors typically meets once a month to review presented budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p>",
+    "EVENTS": "<p>Committee meetings are the first level of review for Metro business matters being brought to the Board of Directors for their review and decision.</p><p>Committee meetings take place on Wednesday and Thursday, the week before a regular, scheduled Board Meeting. A unanimous vote at the Committee level will place an item on the Consent Calendar of the Board of Directors.</p><p>The full Board of Directors typically meets once a month to review presented budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><p>In addition to the Board of Directors meetings, Metro also has appointed Advisory Committees which meet. <a href='https://www.metro.net/about/about-metro/'>Learn more in the \"Advisory Meetings\" tab here.</a></p>",
     "COUNCIL_MEMBERS":  "",
 }
 
