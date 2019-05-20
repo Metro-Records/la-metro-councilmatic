@@ -832,3 +832,18 @@ def test_autocomplete(request):
     }
 
     return JsonResponse(items)
+
+def fetch_topic(request):
+    guid = request.GET.guid
+
+    try:
+        subject = SubjectGuid.objects.get(guid=guid)
+        subject = subject.name
+    except MultipleObjectsReturned:
+        subjects = [s.subject for s in SubjectGuid.objects.all()]
+        for s in subjects:
+            if Subject.objects.get(subject=s):
+                subject = s
+                break
+
+    return subject
