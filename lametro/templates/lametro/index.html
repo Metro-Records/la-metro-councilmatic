@@ -154,7 +154,7 @@
             $.when(
               $.get('/topic/', { 'guid': suggestion.data }))
                 .then(function(response) {
-                  console.log(response)
+                  console.log(response.guid, response.status_code, response.subject)
               })
           }
         })

@@ -20,7 +20,7 @@ from django.db import transaction, connection, connections
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.exceptions import MultipleObjectsReturned
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.shortcuts import render
 from django.db.models.functions import Lower
 from django.db.models import Max, Min, Prefetch
@@ -851,25 +851,25 @@ def test_autocomplete(request):
 def fetch_topic(request):
     guid = request.GET['guid']
 
-    response = {
-        'guid': guid
-    }
+    response = {}
+    response['guid'] = guid
+    response['status_code'] = 404
+    response['subject'] = None
 
     try:
         subject = SubjectGuid.objects.get(guid=guid)
         subject = subject.name
-        response['HttpResponse'] = 200
+        response['status_code'] = 200
+        response['subject'] = subject
     except MultipleObjectsReturned:
         subjects = [s.subject for s in SubjectGuid.objects.all()]
         for s in subjects:
             if Subject.objects.get(subject=s):
                 subject = s
-            response['HttpResponse'] = 200
+                response['status_code'] = 200
+                response['subject'] = subject
             break
-    except DoesNotExist:
-        response['HttpResponse'] = 404
-        subject = None
+    except ObjectDoesNotExist:
+        pass
 
-    response['subject'] = subject
-
-    return response
+    return HttpResponse(response)
