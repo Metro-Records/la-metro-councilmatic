@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
-    Action, EventMedia, EventDocument
+    Action, EventMedia, EventDocument, Subject
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -22,10 +22,10 @@ app_timezone = pytz.timezone(settings.TIME_ZONE)
 class LAMetroBillManager(models.Manager):
     def get_queryset(self):
         '''
-        The Councilmatic database contains both "private" and "public" bills. 
-        This issue thread explains why: 
+        The Councilmatic database contains both "private" and "public" bills.
+        This issue thread explains why:
         https://github.com/datamade/la-metro-councilmatic/issues/345#issuecomment-455683240
-        
+
         We do not display "private" bills in Councilmatic.
         Metro staff devised three checks for knowing when to hide or show a report:
 
@@ -35,12 +35,12 @@ class LAMetroBillManager(models.Manager):
 
         (2) Does the Bill have a classification of "Board Box"? Then, show it.
 
-        (3) Is the Bill on a published agenda, i.e., an event with the 
+        (3) Is the Bill on a published agenda, i.e., an event with the
         status of "passed" or "cancelled"? Then, show it.
 
         NOTE! A single bill can appear on multiple event agendas.
         We thus call 'distinct' on the below query, otherwise
-        the queryset would contain duplicate bills. 
+        the queryset would contain duplicate bills.
 
         WARNING! Be sure to use LAMetroBill, rather than the base Bill class,
         when getting bill querysets. Otherwise restricted view bills
@@ -239,13 +239,13 @@ class LAMetroEventManager(models.Manager):
 
     def with_media(self):
         '''
-        This function proves useful in the EventDetailView 
+        This function proves useful in the EventDetailView
         and EventsView (which returns all Events – often, filtered and sorted).
 
-        We prefetch EventMedia (i.e., 'media_urls') in these views: 
-        this makes for a more efficient page load. 
+        We prefetch EventMedia (i.e., 'media_urls') in these views:
+        this makes for a more efficient page load.
         We also order the 'media_urls' by label, ensuring that links to SAP audio
-        come after links to English audio. 'mediaqueryset' facilitates 
+        come after links to English audio. 'mediaqueryset' facilitates
         the ordering of prefetched 'media_urls'.
         '''
         mediaqueryset = LAMetroEventMedia.objects.annotate(
@@ -462,11 +462,11 @@ class LAMetroEvent(Event, LiveMediaMixin):
     @property
     def board_event_minutes(self):
         '''
-        This method returns the link to an Event's minutes. 
+        This method returns the link to an Event's minutes.
 
-        A small number of Events do not have minutes in 
-        a discoverable, corresponding EventDocument. 
-        For these, we can query board reports 
+        A small number of Events do not have minutes in
+        a discoverable, corresponding EventDocument.
+        For these, we can query board reports
         for indicative text, i.e., "minutes of the regular..."
         '''
         if 'regular board meeting' in self.name.lower():
@@ -527,3 +527,11 @@ class LAMetroOrganization(Organization):
                              .order_by('start_time')\
                              .all()
         return events
+
+
+class SubjectGuid(models.Model):
+    class Meta:
+        unique_together = ['guid', 'name']
+
+    guid = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, unique=True)
