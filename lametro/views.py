@@ -29,6 +29,8 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render_to_response, redirect
 from django.core import management
+from django.views.generic import View
+from django.views.decorators.csrf import csrf_exempt
 
 from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
@@ -797,6 +799,18 @@ def metro_login(request):
 def metro_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+@csrf_exempt
+def refresh_guid_trigger(request, refresh_key):
+    try:
+        if refresh_key == settings.REFRESH_KEY:
+            management.call_command('refresh_guid')
+            return HttpResponse(200)
+        else:
+            print('You do not have the correct refresh_key to access this.')
+    except AttributeError:
+        print('You need a refresh_key in your local deployment settings files to access this.')
+    return HttpResponse(403)
 
 def test_autocomplete(request):
     items = {
