@@ -26,7 +26,7 @@ from django.db.models.functions import Lower
 from django.db.models import Max, Min, Prefetch
 from django.utils import timezone
 from django.utils.text import slugify
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render_to_response, redirect
 from django.core import management
@@ -44,7 +44,41 @@ from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
-from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
+from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL, SMART_LOGIC_KEY
+
+
+class SmartLogicAPI(ListView):
+    api_key = SMART_LOGIC_KEY
+
+    @property
+    def access_token(self):
+        if not self.request.session.get('smart_logic_token'):
+            token = self.generate_token()
+            self.request.session['smart_logic_token'] = self.generate_token()
+
+        return self.request.session['smart_logic_token']
+
+    def generate_token(self):
+        url = 'https://cloud.smartlogic.com/token'
+        params = {'grant_type': 'apikey', 'key': self.api_key}
+        response = requests.post(url, data=params)
+        data = json.loads(response.content.decode('utf-8'))
+        return data['access_token']
+
+    def render_to_response(self, context):
+        return JsonResponse(self.get_queryset(context))
+
+    def get_queryset(self, *args, **kwargs):
+        url = 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/{}.json'.format(self.request.GET['query'])
+        headers = {'Authorization': 'Bearer ' + self.access_token}
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            return json.loads(response.content.decode('utf-8'))
+
+        elif response.status_code == 403:
+            self.request.session['smart_logic_token'] = self.generate_token()
+            self.get_queryset(*args, **kwargs)
 
 
 class LAMetroIndexView(IndexView):
