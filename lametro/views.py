@@ -59,6 +59,7 @@ class LAMetroIndexView(IndexView):
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
         extra['current_meeting'] = self.event_model.current_meeting()
         extra['bilingual'] = bool([e for e in extra['current_meeting'] if e.bilingual])
+        extra['SMART_LOGIC_KEY'] = SMART_LOGIC_KEY
 
         return extra
 
