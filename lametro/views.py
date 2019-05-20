@@ -20,6 +20,7 @@ from django.db import transaction, connection, connections
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import render
 from django.db.models.functions import Lower
 from django.db.models import Max, Min, Prefetch
@@ -39,7 +40,7 @@ from councilmatic_core.views import IndexView, BillDetailView, \
 from councilmatic_core.models import *
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
-    LAMetroEvent, LAMetroOrganization
+    LAMetroEvent, LAMetroOrganization, SubjectGuid
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
@@ -848,16 +849,27 @@ def test_autocomplete(request):
     return JsonResponse(items)
 
 def fetch_topic(request):
-    guid = request.GET.guid
+    guid = request.GET['guid']
+
+    response = {
+        'guid': guid
+    }
 
     try:
         subject = SubjectGuid.objects.get(guid=guid)
         subject = subject.name
+        response['HttpResponse'] = 200
     except MultipleObjectsReturned:
         subjects = [s.subject for s in SubjectGuid.objects.all()]
         for s in subjects:
             if Subject.objects.get(subject=s):
                 subject = s
-                break
+            response['HttpResponse'] = 200
+            break
+    except DoesNotExist:
+        response['HttpResponse'] = 404
+        subject = None
 
-    return subject
+    response['subject'] = subject
+
+    return response

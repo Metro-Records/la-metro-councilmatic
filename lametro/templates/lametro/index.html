@@ -153,10 +153,9 @@
           onSelect: function(suggestion) {
             $.when(
               $.get('/topic/', { 'guid': suggestion.data }))
-              .then(function(response) {
-                console.log(response)
+                .then(function(response) {
+                  console.log(response)
               })
-            )
           }
         })
 

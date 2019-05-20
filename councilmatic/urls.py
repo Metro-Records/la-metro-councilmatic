@@ -43,7 +43,7 @@ urlpatterns = [
     url(r'^metro-login/$', metro_login, name='metro_login'),
     url(r'^metro-logout/$', metro_logout, name='metro_logout'),
     url(r'^autocomplete/$', test_autocomplete, name='autocomplete'),
-    url(r'^topic/$', fetch_topic, name='topic')
+    url(r'^topic/$', fetch_topic, name='topic'),
     url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
     url(r'', include('councilmatic_core.urls')),
 ]
