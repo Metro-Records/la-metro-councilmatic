@@ -872,4 +872,4 @@ def fetch_topic(request):
     except ObjectDoesNotExist:
         pass
 
-    return HttpResponse(response)
+    return JsonResponse(response)
