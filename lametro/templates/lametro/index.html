@@ -146,13 +146,12 @@
             response = JSON.parse(response);
             return {
               suggestions: $.map(response.termHints, function(d) {
-                console.log(d.name);
-                return d.name;
+                return {'value': d.name, 'data': d.id};
               })
             }
           },
           onSelect: function(suggestion) {
-            alert('You selected ' + suggestion);
+            console.log(suggestion)
           }
         })
 
