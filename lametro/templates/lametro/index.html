@@ -143,7 +143,7 @@
           serviceUrl: "{% url 'autocomplete' %}",
           paramName: '',
           transformResult: function(response) {
-            response = JSON.parse(response);
+            var response = JSON.parse(response);
             return {
               suggestions: $.map(response.termHints, function(d) {
                 return {'value': d.name, 'data': d.id};
@@ -155,6 +155,16 @@
               $.get('/topic/', { 'guid': suggestion.data }))
                 .then(function(response) {
                   console.log(response.guid, response.status_code, response.subject)
+                  if (response.status_code == 200) {
+                    console.log('redirect')
+                    var formattedTopic = encodeURIComponent(response.subject);
+                    var base = 'https://boardagendas.metro.net/search/?selected_facets=topics_exact%';
+                    var url = base + formattedTopic;
+                    window.location.href = url;
+                  } else {
+                    window.location.href = 'https://datamade.us';
+                  }
+
               })
           }
         })
