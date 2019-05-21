@@ -15,6 +15,7 @@ import os
 
 from haystack.inputs import Raw
 from haystack.query import SearchQuerySet
+from requests.exceptions import HTTPError
 
 from django.db import transaction, connection, connections
 from django.conf import settings
@@ -44,41 +45,8 @@ from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
-from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL, SMART_LOGIC_KEY
-
-
-class SmartLogicAPI(ListView):
-    api_key = SMART_LOGIC_KEY
-
-    @property
-    def access_token(self):
-        if not self.request.session.get('smart_logic_token'):
-            token = self.generate_token()
-            self.request.session['smart_logic_token'] = self.generate_token()
-
-        return self.request.session['smart_logic_token']
-
-    def generate_token(self):
-        url = 'https://cloud.smartlogic.com/token'
-        params = {'grant_type': 'apikey', 'key': self.api_key}
-        response = requests.post(url, data=params)
-        data = json.loads(response.content.decode('utf-8'))
-        return data['access_token']
-
-    def render_to_response(self, context):
-        return JsonResponse(self.get_queryset(context))
-
-    def get_queryset(self, *args, **kwargs):
-        url = 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/{}.json'.format(self.request.GET['query'])
-        headers = {'Authorization': 'Bearer ' + self.access_token}
-        response = requests.get(url, headers=headers)
-
-        if response.status_code == 200:
-            return json.loads(response.content.decode('utf-8'))
-
-        elif response.status_code == 403:
-            self.request.session['smart_logic_token'] = self.generate_token()
-            self.get_queryset(*args, **kwargs)
+from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL, SMART_LOGIC_KEY, \
+    SMART_LOGIC_ENVIRONMENT
 
 
 class LAMetroIndexView(IndexView):
@@ -835,6 +803,7 @@ def metro_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+
 @csrf_exempt
 def refresh_guid_trigger(request, refresh_key):
     try:
@@ -847,40 +816,76 @@ def refresh_guid_trigger(request, refresh_key):
         print('You need a refresh_key in your local deployment settings files to access this.')
     return HttpResponse(403)
 
-def test_autocomplete(request):
-    items = {
-      "parameters" : {
-        "q" : "autocomplete_en_plf:arm* autocomplete_en_f:arm* autocomplete_en_pl:arm* autocomplete_en:arm*",
-        "defType" : "edismax",
-        "qf" : "autocomplete_en_plf^100.0 autocomplete_en_f^20.0 autocomplete_en_pl^50.0 autocomplete_en^1.0",
-        "fl" : "id, name_en, class_name_en, [child parentFilter=\"(content_type:concept OR content_type:concept_scheme)\" childFilter=content_type:facet]",
-        "language" : "en",
-        "fq" : "content_type:concept_scheme content_type:concept",
-        "sort" : "score desc, name_en_pl asc",
-        "rows" : "10",
-        "raw_query" : "arm",
-        "wt" : "sesHintsJSON"
-      },
-      "termHints" : [ {
-        "name" : "Neil Armstrong",
-        "id" : "01e1fb66-05c6-47c6-8907-ab6c499e27e9",
-        "classes" : [ "Astronaut" ],
-        "values" : [ {
-          "pre_em" : "Neil ",
-          "nature" : "PT",
-          "em" : "Arm",
-          "post_em" : "strong",
-          "value" : "Neil Armstrong"
-        } ],
-        "facets" : [ {
-          "name" : "People",
-          "id" : "bfc33274-197f-4873-a1f4-f421c8ab64aa"
-        } ]
-      } ],
-      "total" : 1
-    }
 
-    return JsonResponse(items)
+class SmartLogicAPI(ListView):
+    api_key = SMART_LOGIC_KEY
+    query_format = 'https://cloud.smartlogic.com/svc/' \
+        + SMART_LOGIC_ENVIRONMENT + '/ses/CombinedModel/hints/{query}.json'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.token_refreshed = False
+
+    @property
+    def access_token(self):
+        session = self.request.session
+
+        if not session.get('smart_logic_token'):
+            session['smart_logic_token'] = self._generate_token()
+
+        return session['smart_logic_token']
+
+    def render_to_response(self, context):
+        '''
+        Return response as JSON.
+        '''
+        return JsonResponse(self.get_queryset(context))
+
+    def get_queryset(self, *args, **kwargs):
+        '''
+        Hit the SmartLogic endpoint. Tokens expire in two weeks, so if we get
+        an authentication-related status code, refresh the token and try again
+        once before failing out.
+        '''
+        url = self.query_format.format(query=self.request.GET['query'])
+        headers = {'Authorization': 'Bearer ' + self.access_token}
+
+        try:
+            response = requests.get(url, headers=headers)
+        except HTTPError as e:
+            print('Could not communicate with SmartLogic: {}'.format(e))
+        except Exception:
+            raise
+        else:
+            if response.status_code == 200:
+                return json.loads(response.content.decode('utf-8'))
+
+            elif response.status_code in (401, 403) and not self.token_refreshed:
+                self.request.session['smart_logic_token'] = self._generate_token()
+                self.token_refreshed = True
+                self.get_queryset(*args, **kwargs)
+
+            else:
+                print('Unexpected response from SmartLogic: {}'.format(response.content.decode('utf-8')))
+
+    def _generate_token(self):
+        '''
+        Get a JSON Web Token from the SmartLogic API.
+        '''
+        url = 'https://cloud.smartlogic.com/token'
+        params = {'grant_type': 'apikey', 'key': self.api_key}
+
+        try:
+            response = requests.post(url, data=params)
+        except HTTPError as e:
+            print('Could not authenticate with SmartLogic: {}'.format(e))
+            return None
+        except Exception:
+            raise
+        else:
+            data = json.loads(response.content.decode('utf-8'))
+            return data['access_token']
+
 
 def fetch_topic(request):
     guid = request.GET['guid']
