@@ -80,3 +80,5 @@ LOGGING = {
 
 # Set to False in production!
 SHOW_TEST_EVENTS = True
+
+SMART_LOGIC_KEY = 'smartlogic api key'
