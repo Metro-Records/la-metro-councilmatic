@@ -153,16 +153,10 @@
             $.when(
               $.get('/topic/', { 'guid': suggestion.data }))
                 .then(function(response) {
-                  console.log(response.guid, response.status_code, response.subject)
                   if (response.status_code == 200) {
-                    console.log('redirect')
-                    //varformattedTopic = escape(response.subject)
-                    // encodeURIComponent() doesn't encode ~!*()' which is causing some issues
-                    var formattedTopic = encodeURIComponent(response.subject);
-                    var base = 'https://boardagendas.metro.net/search/?selected_facets=topics_exact%3A';
-                    var url = base + formattedTopic;
-                    console.log(url)
-                    //window.location.href = url;
+                    var base = '/search/?selected_facets=topics_exact%3A';
+                    var url = base + response.subject_safe;
+                    window.location.href = url;
                   } else {
                     console.log(response)
                   }
