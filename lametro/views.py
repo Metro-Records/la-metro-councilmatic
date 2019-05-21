@@ -853,23 +853,22 @@ def fetch_topic(request):
 
     response = {}
     response['guid'] = guid
-    response['status_code'] = 404
-    response['subject'] = None
 
     try:
         subject = SubjectGuid.objects.get(guid=guid)
         subject = subject.name
         response['status_code'] = 200
-        response['subject'] = subject
     except MultipleObjectsReturned:
         subjects = [s.subject for s in SubjectGuid.objects.all()]
         for s in subjects:
             if Subject.objects.get(subject=s):
                 subject = s
                 response['status_code'] = 200
-                response['subject'] = subject
             break
     except ObjectDoesNotExist:
-        pass
+        response['status_code'] = 404
+        subject = None
+
+    response['subject'] = subject
 
     return JsonResponse(response)
