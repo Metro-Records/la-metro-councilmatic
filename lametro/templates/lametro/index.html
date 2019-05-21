@@ -142,6 +142,7 @@
           paramName: 'query',
           transformResult: function(response) {
             var response = JSON.parse(response);
+            console.log(response);
             return {
               suggestions: $.map(response.termHints, function(d) {
                 return {'value': d.name, 'data': d.id};
@@ -155,12 +156,15 @@
                   console.log(response.guid, response.status_code, response.subject)
                   if (response.status_code == 200) {
                     console.log('redirect')
+                    //varformattedTopic = escape(response.subject)
+                    // encodeURIComponent() doesn't encode ~!*()' which is causing some issues
                     var formattedTopic = encodeURIComponent(response.subject);
-                    var base = 'https://boardagendas.metro.net/search/?selected_facets=topics_exact%';
+                    var base = 'https://boardagendas.metro.net/search/?selected_facets=topics_exact%3A';
                     var url = base + formattedTopic;
-                    window.location.href = url;
+                    console.log(url)
+                    //window.location.href = url;
                   } else {
-                    window.location.href = 'https://datamade.us';
+                    console.log(response)
                   }
 
               })
