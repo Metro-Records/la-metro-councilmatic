@@ -899,7 +899,7 @@ def fetch_topic(request):
         response['subject_safe'] = urllib.parse.quote(subject)
         response['status_code'] = 200
     except MultipleObjectsReturned:
-        subjects = [s.name for s in SubjectGuid.objects.all()]
+        subjects = [s.name for s in SubjectGuid.objects.filter(guid=guid)]
         subject = Subject.objects.get(subject__in=subjects)
         response['subject_safe'] = urllib.parse.quote(subject)
         response['status_code'] = 200
