@@ -218,7 +218,7 @@ def subject_guid(db, subject):
 
             subject_guid_info = {
                 'id': randrange(10000),
-                'name' = related_subject.subject,
+                'name': related_subject.subject,
                 'guid': guid
             }
 
