@@ -142,7 +142,6 @@
           paramName: 'query',
           transformResult: function(response) {
             var response = JSON.parse(response);
-            console.log(response);
             return {
               suggestions: $.map(response.termHints, function(d) {
                 return {'value': d.name, 'data': d.id};
