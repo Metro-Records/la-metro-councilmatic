@@ -900,12 +900,9 @@ def fetch_topic(request):
         response['status_code'] = 200
     except MultipleObjectsReturned:
         subjects = [s.name for s in SubjectGuid.objects.all()]
-        for s in subjects:
-            if Subject.objects.get(subject=s):
-                subject = s
-                response['subject_safe'] = urllib.parse.quote(subject)
-                response['status_code'] = 200
-            break
+        subject = Subject.objects.get(subject__in=subjects)
+        response['subject_safe'] = urllib.parse.quote(subject)
+        response['status_code'] = 200
     except ObjectDoesNotExist:
         response['status_code'] = 404
         subject = None
