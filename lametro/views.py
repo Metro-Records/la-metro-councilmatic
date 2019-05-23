@@ -900,7 +900,9 @@ def fetch_topic(request):
         response['status_code'] = 200
     except MultipleObjectsReturned:
         subjects = [s.name for s in SubjectGuid.objects.filter(guid=guid)]
+        print(subjects)
         subject = Subject.objects.get(subject__in=subjects)
+        subject = subject.subject
         response['subject_safe'] = urllib.parse.quote(subject)
         response['status_code'] = 200
     except ObjectDoesNotExist:

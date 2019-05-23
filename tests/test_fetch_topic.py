@@ -27,8 +27,6 @@ def test_one_guid_multiple_topics(client, subject_guid, subject, bill):
     response = client.get('/topic/', { 'guid': canonical_subject_guid.guid })
     assert response.status_code == 200
 
-# def test_fetch_multiple_topics():
-
 # def test_fetch_no_topics(client, subject_guid):
 #
 #     guid = '0000-4-0000'
