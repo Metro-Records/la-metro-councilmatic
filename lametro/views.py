@@ -894,8 +894,8 @@ def fetch_topic(request):
     response['guid'] = guid
 
     try:
-        subject = SubjectGuid.objects.get(guid=guid)
-        subject = subject.name
+        subject_guid = SubjectGuid.objects.get(guid=guid)
+        subject = subject_guid.name
         response['subject_safe'] = urllib.parse.quote(subject)
         response['status_code'] = 200
     except MultipleObjectsReturned:

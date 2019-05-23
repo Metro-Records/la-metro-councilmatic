@@ -191,12 +191,16 @@ def membership(db, metro_organization, metro_person):
 def subject(db, bill):
     class SubjectFactory():
         def build(self, **kwargs):
-            related_bill = bill.build()
+
+            if 'bill' in kwargs:
+                current_bill = kwargs.get('bill')
+            else:
+                current_bill = bill.build()
+
             subject_name = 'Metro Gold Line'
 
             subject_info = {
-                'id': randrange(10000),
-                'bill': related_bill,
+                'bill': current_bill,
                 'subject': subject_name
             }
 
@@ -213,12 +217,19 @@ def subject(db, bill):
 def subject_guid(db, subject):
     class SubjectGuidFactory():
         def build(self, **kwargs):
-            related_subject = subject.build()
-            guid = '0000-0-0000'
+
+            if 'name' in kwargs:
+                current_subject = kwargs.get('name')
+            else:
+                current_subject = 'Metro Gold Line'
+
+            if 'guid' in kwargs:
+                guid = kwargs.get('guid')
+            else:
+                guid = '0000-0-0000'
 
             subject_guid_info = {
-                'id': randrange(10000),
-                'name': related_subject.subject,
+                'name': current_subject,
                 'guid': guid
             }
 
