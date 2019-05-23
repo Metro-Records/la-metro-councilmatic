@@ -906,9 +906,9 @@ def fetch_topic(request):
         response['subject_safe'] = urllib.parse.quote(subject)
         response['status_code'] = 200
     except ObjectDoesNotExist:
+        subject = ''
+        subject_safe = ''
         response['status_code'] = 404
-        subject = None
-        subject_safe = None
 
     response['subject'] = subject
 
