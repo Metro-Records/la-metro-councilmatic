@@ -18,7 +18,9 @@ def test_fetch_single_topic(client, subject_guid):
 
     response = client.get('/topic/', { 'guid': s_g.guid })
     response = json.loads(response.content.decode('utf-8'))
+
     assert response['status_code'] == 200
+    assert s_g.name == response['subject']
 
 def test_one_guid_multiple_topics(client, subject_guid, subject, bill):
 
@@ -35,7 +37,10 @@ def test_one_guid_multiple_topics(client, subject_guid, subject, bill):
     old_subject_guid = subject_guid.build(**old_subject_guid_info)
 
     response = client.get('/topic/', { 'guid': canonical_subject_guid.guid })
-    assert response.status_code == 200
+    response = json.loads(response.content.decode('utf-8'))
+
+    assert response['status_code'] == 200
+    assert canonical_subject.subject == response['subject']
 
 def test_fetch_no_topics(client, subject_guid):
 
