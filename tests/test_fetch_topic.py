@@ -46,4 +46,4 @@ def test_fetch_no_topics(client, subject_guid):
     response = client.get('/topic/', { 'guid': '0000-5-0000' })
     response = json.loads(response.content)
 
-    assert response.content['status_code'] == 404
+    assert response['status_code'] == 404
