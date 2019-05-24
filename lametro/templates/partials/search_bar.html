@@ -22,34 +22,3 @@ string.
         <input type="radio" name="search-reports" autocomplete="off" {% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
     </label>
 </div>
-
-{% block extra_js %}
-<script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
-<script src="{% static 'js/jquery.autocomplete.js' %}"></script>
-
-<script>
-  $('#autocomplete-search').autocomplete({
-    serviceUrl: '{% url "autocomplete" %}',
-    paramName: 'query',
-    transformResult: function(response) {
-      var response = JSON.parse(response);
-      return {
-        suggestions: $.map(response.termHints, function(d) {
-          return {'value': d.name, 'data': d.id};
-        })
-      }
-    },
-    onSelect: function(suggestion) {
-      $.when(
-        $.get('/topic/', { 'guid': suggestion.data }))
-          .then(function(response) {
-            if (response.status_code == 200) {
-              var base = '/search/?selected_facets=topics_exact%3A';
-              var url = base + response.subject_safe;
-              window.location.href = url;
-        }
-      })
-    }
-  })
-</script>
-{% endblock %}
