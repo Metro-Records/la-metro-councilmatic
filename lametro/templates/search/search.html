@@ -2,11 +2,8 @@
 
 {% load staticfiles %}
 
-{% block content %}
-  {{ block.super }}
-{% endblock %}
-
 {% block extra_js %}
+  {{ block.super }}
   <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
   <script src="{% static 'js/jquery.autocomplete.js' %}"></script>
 
@@ -37,5 +34,3 @@
   </script>
 
 {% endblock %}
-
-{}
