@@ -888,6 +888,13 @@ class SmartLogicAPI(ListView):
 
 
 def fetch_topic(request):
+
+    '''
+    Retrieves Subject title from given GUID. There maybe be more than one Subject mapped to a
+    GUID in our SubjectGuid lookup table due to the way we have syncing set up. We only expect one
+    canonical Subject from each GUID, so we handle the MultpleObjectsReturn exception.
+    '''
+
     guid = request.GET['guid']
 
     response = {}
