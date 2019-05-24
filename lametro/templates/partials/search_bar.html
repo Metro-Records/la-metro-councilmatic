@@ -1,6 +1,6 @@
-{% load staticfiles %}
+{% load static %}
 
-  <input name="q" type="text" class="input-lg form-control" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}" value="{{ formatted_q }}">
+  <input name="q" id="autocomplete-search" type="text" class="input-lg form-control" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}" value="{{ formatted_q }}">
   <div class="input-group-btn">
       <button type="submit" class="btn btn-lg btn-primary">
           <i class="fa fa-fw fa-search"></i>
@@ -16,37 +16,40 @@ string.
 {% endcomment %}
 <div class="btn-group" data-toggle="buttons">
     <label class="btn btn-primary btn-search-option{% if 'search-reports' not in request.GET %} active{% endif %}">
-        <input class="autocomplete-search-bar" type="radio" autocomplete="off" name="search-all"{% if 'search-reports' not in request.GET %} checked{% endif %}> Search reports and attachments
+        <input type="radio" autocomplete="off" name="search-all"{% if 'search-reports' not in request.GET %} checked{% endif %}> Search reports and attachments
     </label>
     <label class="btn btn-primary btn-search-option{% if 'search-reports' in request.GET %} active{% endif %}">
-        <input class="autocomplete-search-bar" type="radio" name="search-reports" autocomplete="off" {% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
+        <input type="radio" name="search-reports" autocomplete="off" {% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
     </label>
 </div>
 
 {% block extra_js %}
-  <script>
-    $('.autocomplete-search-bar').autocomplete({
-      serviceUrl: '{% url "autocomplete" %}',
-      paramName: 'query',
-      transformResult: function(response) {
-        var response = JSON.parse(response);
-        return {
-          suggestions: $.map(response.termHints, function(d) {
-            return {'value': d.name, 'data': d.id};
-          })
-        }
-      },
-      onSelect: function(suggestion) {
-        $.when(
-          $.get('/topic/', { 'guid': suggestion.data }))
-            .then(function(response) {
-              if (response.status_code == 200) {
-                var base = '/search/?selected_facets=topics_exact%3A';
-                var url = base + response.subject_safe;
-                window.location.href = url;
-          }
+<script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
+<script src="{% static 'js/jquery.autocomplete.js' %}"></script>
+
+<script>
+  $('#autocomplete-search').autocomplete({
+    serviceUrl: '{% url "autocomplete" %}',
+    paramName: 'query',
+    transformResult: function(response) {
+      var response = JSON.parse(response);
+      return {
+        suggestions: $.map(response.termHints, function(d) {
+          return {'value': d.name, 'data': d.id};
         })
       }
-    })
-  </script>
+    },
+    onSelect: function(suggestion) {
+      $.when(
+        $.get('/topic/', { 'guid': suggestion.data }))
+          .then(function(response) {
+            if (response.status_code == 200) {
+              var base = '/search/?selected_facets=topics_exact%3A';
+              var url = base + response.subject_safe;
+              window.location.href = url;
+        }
+      })
+    }
+  })
+</script>
 {% endblock %}
