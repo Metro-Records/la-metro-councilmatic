@@ -28,6 +28,10 @@ h1, .h1 {
   padding: 19.5px 10px;
 }
 
+#no-sessions {
+  padding-top: 3px;
+}
+
 .site-intro-search { margin-bottom: 1em; }
 
 #section-photo {
