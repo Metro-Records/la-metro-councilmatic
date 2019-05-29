@@ -237,6 +237,13 @@ div#toggleControls { margin-bottom: 1em; }
     margin-bottom: 14px;
 }
 
+/* Styles for events page */
+.divider {
+  border-width: 1px 0px;
+  border-style: solid;
+  border-color: #777777;
+}
+
 
 /* Media queries */
 @media only screen and (max-width : 767px) {
