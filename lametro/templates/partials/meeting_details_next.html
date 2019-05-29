@@ -22,6 +22,11 @@
                       <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
                       <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name}}<br />
                   </p>
+                  {% if meeting.documents.all %}
+                    <div class="col-xs-7">
+                      <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
+                    </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -32,11 +37,7 @@
             <p class="small" style="padding-top: 10px;"><strong>No meetings are in session at this time. The links to watch a meeting live, in English or Spanish, will be posted here once the meeting begins.</strong></p>
 
             <!-- Links to media url and PDF download -->
-            {% if meeting.documents.all %}
-              <div class="col-xs-7">
-                <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
-              </div>
-            {% else %}
+            {% if not meeting.documents.all %}
               <p class="small"><em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em></p>
             {% endif %}
 
