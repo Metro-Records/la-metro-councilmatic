@@ -239,7 +239,7 @@ div#toggleControls { margin-bottom: 1em; }
 
 /* Styles for events page */
 .divider {
-  border-width: 1px 0px;
+  border-width: 1px 0px 0px 0px;
   border-style: solid;
   border-color: #777777;
 }
