@@ -1,0 +1,8 @@
+<h5 class="text-default">
+  <i class="fa fa-fw fa-calendar-o"></i> {{date | date:"D m/d/Y"}}
+  <div class="divider" />
+</h5>
+
+{% for event in event_list %}
+  {% include "partials/event_time_item.html" %}
+{% endfor %}

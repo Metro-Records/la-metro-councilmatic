@@ -1,9 +1,17 @@
 {% load lametro_extras %}
 
 <a href="{{event.event_page_url}}">
-    <div class="row">
+  {% if forloop.last %}
+  <div class="row" style="margin-bottom: 30px;">
+  {% else %}
+  <div class="row">
+  {% endif %}
+
+  {% if not forloop.first %}
+    <hr />
+  {% endif %}
         <div class="col-xs-3 no-pad-right">
-            
+
             {% if event.status == 'cancelled' %}<strike>{% endif %}
 
             <p class="small">
@@ -21,7 +29,7 @@
         <div class="col-xs-9">
             <p>
                 {% if event.status == 'cancelled' %}
-                    <strike>{{event.name}}</strike> 
+                    <strike>{{event.name}}</strike>
                     <span class="label label-stale">Cancelled</span>
                     <br/>
                 {% else %}

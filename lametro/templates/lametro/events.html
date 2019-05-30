@@ -13,7 +13,7 @@
             <div id="events-form" class="row">
                 <div class="col-xs-8">
                     <form action='/events' method='GET'>
-                        
+
                       <div class="input-group" id='date-search'>
                             <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                             <input type="text" id="from" name="from" class="form-control date-filter" placeholder="Select start date..." value='{{ start_date }}'>
@@ -37,7 +37,7 @@
             <div class="row">
                 <div class="col-md-10">
                     <div class="well login">
-                        <h4>Hello, {{ user.username }}!</h4> 
+                        <h4>Hello, {{ user.username }}!</h4>
                         <p>You have the authority to add agenda links to relevant events. Please click on an event that needs an agenda, and look for the URL input box.</p>
                         <p><em>You only have this option for events without agendas.</em></p>
                     </div>
@@ -55,8 +55,6 @@
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
 
-                <hr/>
-
                 {% for date, event_list in future_events %}
                     <div class="event-upcoming-listing">
                         {% include "partials/event_day.html" %}
@@ -66,8 +64,6 @@
                 <a href="" class="btn btn-salmon" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down"></i>Show all upcoming meetings</a>
                 <a href="" class="btn btn-salmon" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer upcoming meetings</a>
 
-                <hr/>
-
                 <h2><span>Past {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
@@ -76,8 +72,6 @@
                 <div class='row'>
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
-
-                <hr/>
 
                 {% for date, event_list in past_events %}
                     <div class='event-listing'>
@@ -98,8 +92,6 @@
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
 
-                <hr/>
-
                 {% for date, event_list in select_events %}
                     {% include "partials/past_event_day.html" %}
                 {% endfor %}
@@ -113,8 +105,6 @@
                 <div class='row'>
                     <div class='col-sm-8' id='events_message'></div>
                 </div>
-
-                <hr/>
 
                 {% for date, event_list in all_events %}
                     {% include "partials/past_event_day.html" %}
@@ -178,7 +168,7 @@
 
         collapseEvents();
         collapseUpcomingEvents();
-        
+
         $("#more-upcoming-events").click(function() {
             expandUpcomingEvents();
             return false;
