@@ -246,7 +246,7 @@ div#toggleControls { margin-bottom: 1em; }
   margin-bottom: 20px;
 }
 
-hr {
+hr .events-line {
   margin: 10px 15px 15px 15px;
 }
 
