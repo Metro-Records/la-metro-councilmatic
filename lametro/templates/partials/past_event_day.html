@@ -2,10 +2,19 @@
 
 <h5 class="text-default">
     <i class="fa fa-fw fa-calendar-o"></i> {{date | date:"D m/d/Y"}}
+    <div class="divider" />
 </h5>
-
 {% for event in event_list %}
-<div class="row divider">
+
+  {% if forloop.last %}
+  <div class="row" style="margin-bottom: 30px;">
+  {% else %}
+  <div class="row">
+  {% endif %}
+
+  {% if not forloop.first %}
+    <hr />
+  {% endif %}
     <div class="col-xs-3 no-pad-right">
 
         {% if event.status == 'cancelled' %}<strike>{% endif %}
