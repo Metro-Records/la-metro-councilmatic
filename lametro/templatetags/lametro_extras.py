@@ -175,6 +175,7 @@ def get_highlighted_attachment_text(context, id):
     return highlight.highlight(attachment_text)
 
 @register.filter
+<<<<<<< HEAD
 def matches_query(tag, request):
     # request.GET['q'] looks like "token AND token AND token"
     return tag.lower() in [token.lower() for token in request.GET.get('q', '').split(' AND ')]
@@ -226,8 +227,7 @@ def all_have_extra(entities, extra):
 def get_list(querydict, key):
     return querydict.getlist(key)
 
-@register.filter
-def get_event_status(action):
+def get_event_occured(action):
     try:
         event = LAMetroEvent.objects.get(participants__entity_type='organization',\
                                         participants__entity_name=action.organization, \
@@ -239,19 +239,12 @@ def get_event_status(action):
                                         start_time__date=action.date.date()) \
                                         .get(agenda_items__bill=bill)
 
+    return event
+
+@register.filter
+def get_event_status(event):
     return event.status
 
 @register.filter
-def get_event_link(action):
-    try:
-        event = LAMetroEvent.objects.get(participants__entity_type='organization',\
-                                        participants__entity_name=action.organization, \
-                                        start_time__date=action.date.date())
-    except MultipleObjectsReturned:
-        bill = action.bill()
-        event = LAMetroEvent.objects.get(participants__entity_type='organization',\
-                                        participants__entity_name=action.organization, \
-                                        start_time__date=action.date.date()) \
-                                        .get(agenda_items__bill=bill)
-
+def get_event_link(event):
     return event.link_html
