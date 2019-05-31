@@ -839,7 +839,12 @@ class SmartLogicAPI(ListView):
         '''
         Return response as JSON.
         '''
-        return JsonResponse(self.get_queryset(context))
+        try:
+            response = self.get_queryset(context)
+            return JsonResponse(response)
+        except json.JSONDecodeError:
+            return JsonResponse({ 'status': 'false', 'message': 'No topic found' }, status=500)
+
 
     def get_queryset(self, *args, **kwargs):
         '''
@@ -858,7 +863,14 @@ class SmartLogicAPI(ListView):
             raise
         else:
             if response.status_code == 200:
-                return json.loads(response.content.decode('utf-8'))
+                try:
+                    content = json.loads(response.content.decode('utf-8'))
+                    return content
+                except json.JSONDecodeError:
+                    response = {
+                        'status_code': 500
+                    }
+                    return response
 
             elif response.status_code in (401, 403) and not self.token_refreshed:
                 self.request.session['smart_logic_token'] = self._generate_token()
