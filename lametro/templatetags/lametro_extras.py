@@ -239,7 +239,7 @@ def get_event_status(action):
                                         start_time__date=action.date.date()) \
                                         .get(agenda_items__bill=bill)
 
-    return 'cancelled'
+    return event.status
 
 @register.filter
 def get_event_link(action):
