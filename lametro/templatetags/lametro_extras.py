@@ -174,6 +174,7 @@ def get_highlighted_attachment_text(context, id):
 
     return highlight.highlight(attachment_text)
 
+<<<<<<< HEAD
 @register.filter
 <<<<<<< HEAD
 def matches_query(tag, request):
@@ -227,6 +228,7 @@ def all_have_extra(entities, extra):
 def get_list(querydict, key):
     return querydict.getlist(key)
 
+@register.filter
 def get_event_occured(action):
     try:
         event = LAMetroEvent.objects.get(participants__entity_type='organization',\
