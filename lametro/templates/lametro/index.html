@@ -142,7 +142,6 @@
           paramName: 'query',
           transformResult: function(response) {
             var res = JSON.parse(response);
-            console.log(res)
             if (res.status_code == 500 || res.termHints.length < 1) {
               return {
                 suggestions: [{'value': 'No topics found', 'data': 'na'}]
