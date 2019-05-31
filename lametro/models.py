@@ -810,26 +810,3 @@ class LAMetroSubject(models.Model):
 
         else:
             return self.name
-
-
-class LAMetroAction(Action):
-    class Metro:
-        proxy = True
-
-    @property
-    def event_occurred(self):
-        """
-        returns the event that this action occurred during
-        """
-        try:
-            event = LAMetroEvents.objects.get(participants__entity_type='organization',\
-                                            participants__entity_name=self.organization, \
-                                            start_date__date=self.date.date())
-        except MultipleObjectsReturned:
-            bill = self.bill()
-            event = LAMetroEvents.objects.get(participants__entity_type='organization',\
-                                            participants__entity_name=self.organization, \
-                                            start_date__date=self.date.date()) \
-                                            .get(agenda_items__bill=bill)
-
-        return event
