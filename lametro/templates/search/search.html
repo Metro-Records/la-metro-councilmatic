@@ -12,11 +12,18 @@
       serviceUrl: '{% url "autocomplete" %}',
       paramName: 'query',
       transformResult: function(response) {
-        var response = JSON.parse(response);
-        return {
-          suggestions: $.map(response.termHints, function(d) {
-            return {'value': d.name, 'data': d.id};
-          })
+        var res = JSON.parse(response);
+        if (res.status_code == 500 || res.termHints.length < 1) {
+          return {
+            suggestions: [{'value': 'No topics found', 'data': 'na'}]
+          };
+        } else {
+          return {
+            suggestions: $.map(res.termHints, function(d) {
+                return {'value': d.name, 'data': d.id};
+              }
+            )
+          };
         }
       },
       onSelect: function(suggestion) {
