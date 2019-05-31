@@ -7,6 +7,7 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.html import strip_tags
 from django.utils import timezone
+from django.core.exceptions import MultipleObjectsReturned
 
 from haystack.query import SearchQuerySet
 
@@ -224,3 +225,33 @@ def all_have_extra(entities, extra):
 @register.filter
 def get_list(querydict, key):
     return querydict.getlist(key)
+
+@register.filter
+def get_event_status(action):
+    try:
+        event = LAMetroEvent.objects.get(participants__entity_type='organization',\
+                                        participants__entity_name=action.organization, \
+                                        start_time__date=action.date.date())
+    except MultipleObjectsReturned:
+        bill = action.bill()
+        event = LAMetroEvent.objects.get(participants__entity_type='organization',\
+                                        participants__entity_name=action.organization, \
+                                        start_time__date=action.date.date()) \
+                                        .get(agenda_items__bill=bill)
+
+    return 'cancelled'
+
+@register.filter
+def get_event_link(action):
+    try:
+        event = LAMetroEvent.objects.get(participants__entity_type='organization',\
+                                        participants__entity_name=action.organization, \
+                                        start_time__date=action.date.date())
+    except MultipleObjectsReturned:
+        bill = action.bill()
+        event = LAMetroEvent.objects.get(participants__entity_type='organization',\
+                                        participants__entity_name=action.organization, \
+                                        start_time__date=action.date.date()) \
+                                        .get(agenda_items__bill=bill)
+
+    return event.link_html
