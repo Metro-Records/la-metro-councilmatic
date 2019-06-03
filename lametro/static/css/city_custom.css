@@ -128,7 +128,7 @@ div#google_translate_element {
 
 #ceo-table td { vertical-align: middle; }
 
-/* Styling for autocomplete, default from library */
+/* Styling for autocomplete */
 .autocomplete-suggestions {
   border: 1px solid #999;
   background: #FFF;
@@ -144,7 +144,7 @@ div#google_translate_element {
 .autocomplete-selected { background: #F0F0F0; }
 
 .autocomplete-suggestions strong {
-  font-weight: normal;
+  font-weight: bold;
   color: #EB6864;
 }
 .autocomplete-group { padding: 2px 5px; }
