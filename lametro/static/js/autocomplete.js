@@ -8,7 +8,7 @@ function autocompleteSearchBar(element) {
       console.log(response)
       if (res.status_code == 500 || res.termHints.length < 1) {
         return {
-          suggestions: [{'value': 'No topics found', 'data': 'na'}]
+          suggestions: ['No topics found']
         };
       } else {
         return {
@@ -26,7 +26,6 @@ function autocompleteSearchBar(element) {
       $.when(
         $.get('/topic/', { 'guid': suggestion.data }))
           .then(function(response) {
-            console.log(response)
             if (response.status_code == 200) {
               var base = '/search/?selected_facets=topics_exact%3A';
               var url = base + response.subject_safe;

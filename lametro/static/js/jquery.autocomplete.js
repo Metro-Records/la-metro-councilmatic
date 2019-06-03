@@ -193,7 +193,11 @@
 
             // Listen for click event on suggestions list:
             container.on('click.autocomplete', suggestionSelector, function () {
+                if (this.innerText == 'No topics found') {
+                  this.innerText = '';
+                }
                 that.select($(this).data('index'));
+
             });
 
             container.on('click.autocomplete', function () {
@@ -925,8 +929,13 @@
             var that = this,
                 onSelectCallback = that.options.onSelect,
                 suggestion = that.suggestions[index];
+            if (that.getValue(suggestion.value) == 'No topics found') {
+              that.currentValue = ''
+            }
+            else {
+              that.currentValue = that.getValue(suggestion.value);
+            }
 
-            that.currentValue = that.getValue(suggestion.value);
 
             if (that.currentValue !== that.el.val() && !that.options.preserveInput) {
                 that.el.val(that.currentValue);
