@@ -867,6 +867,10 @@ class SmartLogicAPI(ListView):
                     content = json.loads(response.content.decode('utf-8'))
                     return content
                 except json.JSONDecodeError:
+                    '''
+                    Occasionally we are returned a 200 response with the html of a SmartLogic page.
+                    We handle the json.JSONDecodeError that causes here.
+                    '''
                     response = {
                         'status_code': 500
                     }
