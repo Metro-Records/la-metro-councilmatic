@@ -5,7 +5,6 @@ function autocompleteSearchBar(element) {
     paramName: 'query',
     transformResult: function(response) {
       var res = JSON.parse(response);
-      console.log(response)
       if (res.status_code == 500 || res.termHints.length < 1) {
         return {
           suggestions: ['No topics found']
@@ -18,9 +17,6 @@ function autocompleteSearchBar(element) {
           )
         };
       }
-    },
-    onSearchError: function(query, jqXHR, textStatus, errorThrown) {
-      return textStatus + ' : ' + errorThrown;
     },
     onSelect: function(suggestion) {
       $.when(
