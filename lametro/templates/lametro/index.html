@@ -113,6 +113,8 @@
 
 
 {% block extra_js %}
+    <script src="{% static 'js/jquery.autocomplete.js' %}"></script>
+    <script src="{% static 'js/autocomplete.js' %}"></script>
     <script>
 
         function collapseActivity(){
@@ -137,40 +139,7 @@
             return false;
         });
 
-        $('#search-bar').autocomplete({
-          serviceUrl: '{% url "autocomplete" %}',
-          paramName: 'query',
-          transformResult: function(response) {
-            var res = JSON.parse(response);
-            if (res.status_code == 500 || res.termHints.length < 1) {
-              return {
-                suggestions: [{'value': 'No topics found', 'data': 'na'}]
-              };
-            } else {
-              return {
-                suggestions: $.map(res.termHints, function(d) {
-                    return {'value': d.name, 'data': d.id};
-                  }
-                )
-              };
-            }
-          },
-          onSearchError: function(query, jqXHR, textStatus, errorThrown) {
-            return textStatus + ' : ' + errorThrown;
-          },
-          onSelect: function(suggestion) {
-            $.when(
-              $.get('/topic/', { 'guid': suggestion.data }))
-                .then(function(response) {
-                  console.log(response)
-                  if (response.status_code == 200) {
-                    var base = '/search/?selected_facets=topics_exact%3A';
-                    var url = base + response.subject_safe;
-                    window.location.href = url;
-              }
-          })
-        }
-      })
+        autocompleteSearchBar('#search-bar');
 
     </script>
 {% endblock %}

@@ -6,38 +6,10 @@
   {{ block.super }}
   <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
   <script src="{% static 'js/jquery.autocomplete.js' %}"></script>
+  <script src="{% static 'js/autocomplete.js' %}"></script>
 
   <script>
-    $('#autocomplete-search').autocomplete({
-      serviceUrl: '{% url "autocomplete" %}',
-      paramName: 'query',
-      transformResult: function(response) {
-        var res = JSON.parse(response);
-        if (res.status_code == 500 || res.termHints.length < 1) {
-          return {
-            suggestions: [{'value': 'No topics found', 'data': 'na'}]
-          };
-        } else {
-          return {
-            suggestions: $.map(res.termHints, function(d) {
-                return {'value': d.name, 'data': d.id};
-              }
-            )
-          };
-        }
-      },
-      onSelect: function(suggestion) {
-        $.when(
-          $.get('/topic/', { 'guid': suggestion.data }))
-            .then(function(response) {
-              if (response.status_code == 200) {
-                var base = '/search/?selected_facets=topics_exact%3A';
-                var url = base + response.subject_safe;
-                window.location.href = url;
-          }
-        })
-      }
-    })
+    autocompleteSearchBar('#autocomplete-search');
   </script>
 
 {% endblock %}
