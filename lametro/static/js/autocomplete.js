@@ -12,7 +12,13 @@ function autocompleteSearchBar(element) {
       } else {
         return {
           suggestions: $.map(res.termHints, function(d) {
-              return {'value': d.name, 'data': d.id};
+              /* If the search term is an acronym, displays that as a part of the suggestion */
+              var nature = '';
+              if (d.values[0]['nature'] == 'NPT') {
+                nature = d.values[0]['value'];
+                nature = ' (' + nature + ')';
+              }
+              return {'value': d.name + nature, 'data': d.id};
             }
           )
         };
