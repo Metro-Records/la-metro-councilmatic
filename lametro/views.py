@@ -820,7 +820,7 @@ def refresh_guid_trigger(request, refresh_key):
 class SmartLogicAPI(ListView):
     api_key = SMART_LOGIC_KEY
     query_format = 'https://cloud.smartlogic.com/svc/' \
-        + SMART_LOGIC_ENVIRONMENT + '/ses/CombinedModel/hints/{query}.json'
+        + SMART_LOGIC_ENVIRONMENT + '/ses/CombinedModel/hints/{query}.json?FILTER=AT=System:%20Legistar'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
