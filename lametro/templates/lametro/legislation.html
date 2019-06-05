@@ -110,12 +110,14 @@
                                         {% endif %}
                                     </td>
                                     <td class="small">
-                                      {% if action|get_action_event|get_event_status == 'cancelled' %}<strike>{% endif %}
-                                        {{action|get_action_event|get_event_link|safe}}
+                                      {% with action|get_action_event=action_event %}
+                                        {% if action_event.status == 'cancelled' %}<strike>{% endif %}
+                                        {{ action_event.link_html|safe }}
 
-                                      {% if action|get_action_event|get_event_status == 'cancelled' %}
-                                    </strike><small>&nbsp;<span class="label label-stale">Cancelled</span></small>
-                                      {% endif %}
+                                        {% if action_event.status == 'cancelled' %}
+                                      </strike><small>&nbsp;<span class="label label-stale">Cancelled</span></small>
+                                        {% endif %}
+                                      {% endwith %}
                                     </td>
                                 </tr>
                             {% endfor %}
