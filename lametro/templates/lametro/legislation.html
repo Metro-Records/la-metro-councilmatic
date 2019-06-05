@@ -110,7 +110,7 @@
                                         {% endif %}
                                     </td>
                                     <td class="small">
-                                      {% with action|get_action_event=action_event %}
+                                      {% with action|get_action_event as action_event %}
                                         {% if action_event.status == 'cancelled' %}<strike>{% endif %}
                                         {{ action_event.link_html|safe }}
 

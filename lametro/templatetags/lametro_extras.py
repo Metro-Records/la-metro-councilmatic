@@ -7,7 +7,6 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.html import strip_tags
 from django.utils import timezone
-from django.core.exceptions import MultipleObjectsReturned
 
 from haystack.query import SearchQuerySet
 
@@ -174,9 +173,7 @@ def get_highlighted_attachment_text(context, id):
 
     return highlight.highlight(attachment_text)
 
-<<<<<<< HEAD
 @register.filter
-<<<<<<< HEAD
 def matches_query(tag, request):
     # request.GET['q'] looks like "token AND token AND token"
     return tag.lower() in [token.lower() for token in request.GET.get('q', '').split(' AND ')]
@@ -244,9 +241,11 @@ def get_event_occured(action):
     return event
 
 @register.filter
-def get_event_status(event):
-    return event.status
+def get_action_event(action):
+    bill = action.bill
+    event = LAMetroEvent.objects.filter(participants__entity_type='organization',\
+                                        participants__entity_name=action.organization, \
+                                        start_time__date=action.date.date()) \
+                                        .get(agenda_items__bill=action._bill)
 
-@register.filter
-def get_event_link(event):
-    return event.link_html
+    return event
