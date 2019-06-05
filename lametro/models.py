@@ -7,7 +7,7 @@ import requests
 from django.conf import settings
 from django.db import models, connection
 from django.db.models.expressions import RawSQL
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.contrib.auth.models import User
