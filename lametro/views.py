@@ -825,16 +825,6 @@ class SmartLogicAPI(ListView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.token_refreshed = False
-
-    @property
-    def access_token(self):
-        session = self.request.session
-
-        if not session.get('smart_logic_token'):
-            session['smart_logic_token'] = self._generate_token()
-
-        return session['smart_logic_token']
 
     def render_to_response(self, context):
         '''

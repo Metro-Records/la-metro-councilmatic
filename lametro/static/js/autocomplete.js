@@ -1,17 +1,21 @@
 var SmartLogic = {
   getToken: function(refresh=false) {
-    console.log('getToken fired');
-    if ( refresh || !window.localStorage.getItem('ses_token') ) {
-      console.log('refresh ' + refresh);
-      $.get('/ses-token/')
-        .then(function(response) {
+    tokenNeeded = !window.localStorage.getItem('ses_token')
+
+    msInDay = 86400000
+    tokenExpired = (Date.now() - window.localStorage.getItem('ses_issued')) / msInDay >= 14
+
+    if ( refresh || (tokenNeeded || tokenExpired) ) {
+      return $.get(
+        '/ses-token/'
+      ).then(function(response) {
           window.localStorage.setItem('ses_token', response.access_token);
-        });
+          window.localStorage.setItem('ses_issued', Date.now());
+      });
     };
-    return window.localStorage.getItem('ses_token');
   },
   buildServiceUrl: function(query) {
-    return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/' + query + '.json';
+    return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/' + query + '.json&maxResultCount=10';
   }
 };
 
@@ -21,15 +25,9 @@ function autocompleteSearchBar(element) {
     serviceUrl: SmartLogic.buildServiceUrl,
     ajaxSettings: {
       beforeSend: function (xhr) {
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        SmartLogic.getToken();
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.setRequestHeader('Authorization', 'Bearer ' + window.localStorage.getItem('ses_token'));
-      },
-      statusCode: {
-        403: function (xhr, textStatus, errorThrown) {
-          console.log('status 403');
-          SmartLogic.getToken(refresh=true);
-          $.ajax(this);
-        }
       },
       data: {}
     },
@@ -57,17 +55,15 @@ function autocompleteSearchBar(element) {
     },
     onSelect: function(suggestion) {
       $.when(
-        $.get('/topic/', { 'guid': suggestion.data }))
-          .then(function(response) {
-            if (response.status_code == 200) {
-              var base = '/search/?selected_facets=topics_exact%3A';
-              var url = base + response.subject_safe;
-              window.location.href = url;
-            }
-          })
-        },
-    onSearchError: function (query, jqXHR, textStatus, errorThrown) {
-      console.log('error')
-    }
-  )
+        $.get('/topic/', { 'guid': suggestion.data })
+      ).then(function(response) {
+        if (response.status_code == 200) {
+          var base = '/search/?selected_facets=topics_exact%3A';
+          var url = base + response.subject_safe;
+          window.location.href = url;
+        };
+      });
+    },
+    deferRequestBy: 100
+  });
 };
