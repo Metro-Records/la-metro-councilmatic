@@ -15,7 +15,7 @@ var SmartLogic = {
     };
   },
   buildServiceUrl: function(query) {
-    return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/' + query + '.json&maxResultCount=10';
+    return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/' + query + '.json';
   }
 };
 
