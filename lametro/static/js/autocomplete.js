@@ -11,11 +11,13 @@ var SmartLogic = {
       ).then(function(response) {
           window.localStorage.setItem('ses_token', response.access_token);
           window.localStorage.setItem('ses_issued', Date.now());
+      }).fail(function() {
+          console.log('Failed to retrieve token');
       });
     };
   },
   buildServiceUrl: function(query) {
-    return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/' + query + '.json';
+    return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/' + query + '.json?FILTER=AT=System:%20Legistar';
   }
 };
 

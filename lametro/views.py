@@ -59,7 +59,6 @@ class LAMetroIndexView(IndexView):
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
         extra['current_meeting'] = self.event_model.current_meeting()
         extra['bilingual'] = bool([e for e in extra['current_meeting'] if e.bilingual])
-        extra['SMART_LOGIC_KEY'] = SMART_LOGIC_KEY
 
         return extra
 
@@ -820,8 +819,6 @@ def refresh_guid_trigger(request, refresh_key):
 
 class SmartLogicAPI(ListView):
     api_key = SMART_LOGIC_KEY
-    query_format = 'https://cloud.smartlogic.com/svc/' \
-        + SMART_LOGIC_ENVIRONMENT + '/ses/CombinedModel/hints/{query}.json?FILTER=AT=System:%20Legistar'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -855,10 +852,15 @@ class SmartLogicAPI(ListView):
         except HTTPError as e:
             print('Could not authenticate with SmartLogic: {}'.format(e))
             return None
-        except Exception:
-            raise
-        else:
+
+        try:
             return json.loads(response.content.decode('utf-8'))
+        except json.JSONDecodeError:
+            '''
+            Occasionally we are returned a 200 response with the html of a SmartLogic page.
+            We handle the json.JSONDecodeError that causes here.
+            '''
+            raise
 
 
 def fetch_topic(request):
