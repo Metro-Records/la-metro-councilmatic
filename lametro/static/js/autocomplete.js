@@ -4,6 +4,7 @@ function autocompleteSearchBar(element) {
     serviceUrl: '/autocomplete/',
     paramName: 'query',
     transformResult: function(response) {
+      console.log('transforming result');
       var res = JSON.parse(response);
       if (res.status_code == 500 || res.termHints.length < 1) {
         return {

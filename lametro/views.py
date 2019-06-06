@@ -840,11 +840,9 @@ class SmartLogicAPI(ListView):
         Return response as JSON.
         '''
         try:
-            response = self.get_queryset(context)
-            return JsonResponse(response)
+            return JsonResponse(context['object_list'])
         except json.JSONDecodeError:
             return JsonResponse({ 'status': 'false', 'message': 'No topic found' }, status=500)
-
 
     def get_queryset(self, *args, **kwargs):
         '''
