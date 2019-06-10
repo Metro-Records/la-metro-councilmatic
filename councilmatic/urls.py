@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^metro-login/$', metro_login, name='metro_login'),
     url(r'^metro-logout/$', metro_logout, name='metro_logout'),
-    url(r'^autocomplete/$', SmartLogicAPI.as_view(), name='autocomplete'),
+    url(r'^ses-token/$', SmartLogicAPI.as_view(), name='ses_token'),
     url(r'^topic/$', fetch_topic, name='topic'),
     url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
     url(r'', include('councilmatic_core.urls')),

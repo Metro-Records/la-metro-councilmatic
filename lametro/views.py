@@ -819,21 +819,9 @@ def refresh_guid_trigger(request, refresh_key):
 
 class SmartLogicAPI(ListView):
     api_key = SMART_LOGIC_KEY
-    query_format = 'https://cloud.smartlogic.com/svc/' \
-        + SMART_LOGIC_ENVIRONMENT + '/ses/CombinedModel/hints/{query}.json?FILTER=AT=System:%20Legistar'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.token_refreshed = False
-
-    @property
-    def access_token(self):
-        session = self.request.session
-
-        if not session.get('smart_logic_token'):
-            session['smart_logic_token'] = self._generate_token()
-
-        return session['smart_logic_token']
 
     def render_to_response(self, context):
         '''
@@ -850,37 +838,7 @@ class SmartLogicAPI(ListView):
         an authentication-related status code, refresh the token and try again
         once before failing out.
         '''
-        url = self.query_format.format(query=self.request.GET['query'])
-        headers = {'Authorization': 'Bearer ' + self.access_token}
-
-        try:
-            response = requests.get(url, headers=headers)
-        except HTTPError as e:
-            print('Could not communicate with SmartLogic: {}'.format(e))
-        except Exception:
-            raise
-        else:
-            if response.status_code == 200:
-                try:
-                    content = json.loads(response.content.decode('utf-8'))
-                    return content
-                except json.JSONDecodeError:
-                    '''
-                    Occasionally we are returned a 200 response with the html of a SmartLogic page.
-                    We handle the json.JSONDecodeError that causes here.
-                    '''
-                    response = {
-                        'status_code': 500
-                    }
-                    return response
-
-            elif response.status_code in (401, 403) and not self.token_refreshed:
-                self.request.session['smart_logic_token'] = self._generate_token()
-                self.token_refreshed = True
-                self.get_queryset(*args, **kwargs)
-
-            else:
-                print('Unexpected response from SmartLogic: {}'.format(response.content.decode('utf-8')))
+        return self._generate_token()
 
     def _generate_token(self):
         '''
@@ -894,11 +852,15 @@ class SmartLogicAPI(ListView):
         except HTTPError as e:
             print('Could not authenticate with SmartLogic: {}'.format(e))
             return None
-        except Exception:
+
+        try:
+            return json.loads(response.content.decode('utf-8'))
+        except json.JSONDecodeError:
+            '''
+            Occasionally we are returned a 200 response with the html of a SmartLogic page.
+            We handle the json.JSONDecodeError that causes here.
+            '''
             raise
-        else:
-            data = json.loads(response.content.decode('utf-8'))
-            return data['access_token']
 
 
 def fetch_topic(request):
