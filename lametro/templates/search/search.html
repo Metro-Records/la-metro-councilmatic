@@ -1,0 +1,8 @@
+{% extends "search/search.html" %}
+{% block title %}
+    {% if request.GET.q %}
+        Search results for '{{ request.GET.q }}'
+    {% else %}
+        Search Reports
+    {% endif %}
+{% endblock %}
