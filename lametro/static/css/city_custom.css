@@ -241,6 +241,19 @@ div#toggleControls { margin-bottom: 1em; }
     margin-bottom: 14px;
 }
 
+/* Styles for events page */
+.divider {
+  border-width: 0px 0px 1px 0px;
+  border-style: solid;
+  border-color: rgba(119, 119, 119);
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+hr .events-line {
+  margin: 10px 15px 15px 15px;
+}
+
 
 /* Media queries */
 @media only screen and (max-width : 767px) {
