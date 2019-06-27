@@ -2,45 +2,49 @@
 {% load lametro_extras %}
 
 <div>
-    <div>
-        <div class="row" style="margin-top: 1em;">
-            <div class="col-xs-6">
-                <img src='/static/images/Gateway03RT.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
+  <div>
+    <div class="row" style="margin-top: 1em;">
+      <div class="col-xs-6">
+        <img src='/static/images/Gateway03RT.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
+      </div>
+      <div class="col-xs-6">
+        <div class="row">
+          <div class="col-xs-12">
+            <!-- Meeting name -->
+            <h4>
+              {{  meeting.link_html | safe }}<br/>
+              <span class="small text-muted">{{ meeting.description }}</span>
+            </h4>
+
+            <!-- Meeting info -->
+
+            <p class="small text-muted">
+              <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y"}}<br/>
+              <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
+              <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name}}<br />
+            </p>
+            {% if meeting.documents.all %}
+            <div class="row">
+              <div class="col-xs-7">
+                <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
+              </div>
             </div>
-            <div class="col-xs-6">
-                <div class="row">
-                  <div class="col-xs-12">
-                    <!-- Meeting name -->
-                    <h4>
-                      {{  meeting.link_html | safe }}<br/>
-                      <span class="small text-muted">{{ meeting.description }}</span>
-                    </h4>
-
-                    <!-- Meeting info -->
-                    <p class="small text-muted">
-                        <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y"}}<br/>
-                        <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
-                        <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name}}<br />
-                    </p>
-
-                    <!-- Links to media url and PDF download -->
-                    <div class="row">
-                        {% if meeting.documents.all %}
-                          <div class="col-xs-7">
-                            <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
-                          </div>
-                        {% else %}
-                          <br>
-                          <p class="small"><em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em></p>
-                        {% endif %}
-
-                    </div>
-
-                  </div>
-                </div>
-                </br>
-            </div>
-
+            {% endif %}
+          </div>
         </div>
+      </div>
     </div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <p class="small" style="padding-top: 10px;"><strong>No meetings are in session at this time. The links to watch a meeting live, in English or Spanish, will be posted here once the meeting begins.</strong></p>
+
+        <!-- Links to media url and PDF download -->
+        {% if not meeting.documents.all %}
+        <p class="small"><em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em></p>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
 </div>
