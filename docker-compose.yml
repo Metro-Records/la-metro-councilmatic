@@ -64,7 +64,7 @@ services:
     ports:
       - 8986:8983
     environment:
-      SOLR_LOG_LEVEL: ERROR
+      SOLR_LOG_LEVEL: INFO
     restart: on-failure
 
 volumes:
