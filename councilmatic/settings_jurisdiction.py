@@ -7,7 +7,7 @@
 OCD_CITY_COUNCIL_ID = 'ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
 CITY_COUNCIL_NAME = 'Metro'
 OCD_JURISDICTION_IDS = ['ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority']
-LEGISLATIVE_SESSIONS = ['2014', '2015', '2016', '2017', '2018'] # the last one in this list should be the current legislative session
+LEGISLATIVE_SESSIONS = ['2014', '2015', '2016', '2017', '2018', '2019'] # the last one in this list should be the current legislative session
 CITY_NAME = 'Metro'
 CITY_NAME_SHORT = 'Metro'
 
