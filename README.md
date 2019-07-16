@@ -146,7 +146,7 @@ First, remove the solr container.
 docker ps -a
 
 # remove the solr container
-docker rm lametro-{{deployment}}-solr
+docker-compose down lametro-{{deployment}}-solr
 
 # build the container anew
 docker-compose up solr-{{deployment}}
