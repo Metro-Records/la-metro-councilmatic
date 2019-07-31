@@ -1,5 +1,5 @@
 var SmartLogic = {
-  getToken: function(refresh=false) {
+  getToken: function(refresh) {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
     msInDay = 86400000
@@ -27,7 +27,7 @@ function autocompleteSearchBar(element) {
     serviceUrl: SmartLogic.buildServiceUrl,
     ajaxSettings: {
       beforeSend: function (xhr) {
-        SmartLogic.getToken();
+        SmartLogic.getToken(false);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.setRequestHeader('Authorization', 'Bearer ' + window.localStorage.getItem('ses_token'));
       },
