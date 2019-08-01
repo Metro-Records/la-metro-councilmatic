@@ -5,7 +5,7 @@ var SmartLogic = {
     msInDay = 86400000
     tokenExpired = (Date.now() - window.localStorage.getItem('ses_issued')) / msInDay >= 14
 
-    if ( refresh || (tokenNeeded || tokenExpired) ) {
+    if ( (tokenNeeded || tokenExpired) ) {
       return $.get(
         '/ses-token/'
       ).then(function(response) {
