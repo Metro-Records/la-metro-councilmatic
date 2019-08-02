@@ -1,11 +1,11 @@
 var SmartLogic = {
-  getToken: function(refresh=false) {
+  getToken: function() {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
     msInDay = 86400000
     tokenExpired = (Date.now() - window.localStorage.getItem('ses_issued')) / msInDay >= 14
 
-    if ( refresh || (tokenNeeded || tokenExpired) ) {
+    if ( (tokenNeeded || tokenExpired) ) {
       return $.get(
         '/ses-token/'
       ).then(function(response) {
