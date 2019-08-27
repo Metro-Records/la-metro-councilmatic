@@ -49,4 +49,4 @@ class Command(BaseCommand):
 
         self.stdout.write('Created {0} new topics'.format(total_created))
         self.stdout.write('Updated {0} existing topics'.format(total_updated))
-        self.stdout.write("No-op'ed {0} topics".format(total_updated))
+        self.stdout.write('No-op {0} topics'.format(total_noop))
