@@ -39,9 +39,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    environment:
+      - POSTGRES_DB: lametro
     volumes:
       - lametro-db-data:/var/lib/postgresql/data
-      - ${PWD}/scripts/init-db.sh:/docker-entrypoint-initdb.d/10-init.sh
     ports:
       - 32001:5432
 
