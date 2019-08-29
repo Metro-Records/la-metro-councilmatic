@@ -63,6 +63,8 @@ Once you've imported the data and added it to your index, create the cache, then
 docker-compose run --rm app python manage.py createcachetable
 ```
 
+Head over to http://localhost:8000 to view the app.
+
 ## Making changes to the Solr schema
 
 Did you make a change to the schema file that Solr uses to make its magic (`solr_configs/conf/schema.xml`)? Did you add a new field or adjust how solr indexes data? If so, you need to take a few steps – locally and on the server.
