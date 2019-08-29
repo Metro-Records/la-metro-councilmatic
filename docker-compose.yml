@@ -17,6 +17,8 @@ services:
     volumes:
       - .:/app
       - ${PWD}/councilmatic/settings_deployment.py.example:/app/councilmatic/settings_deployment.py
+    environment:
+      POSTGRES_HOST: postgres
     command: python manage.py runserver 0.0.0.0:8000
 
   migration:
