@@ -36,9 +36,15 @@ Run the `import_data` command, which may take a few minutes to an hour, dependin
 
 ```bash
 # Run the command in the background (-d) inside an application container.
-# Allow attach/detachment (-it). Remove the container when the command exits
-# (--rm).
-docker-compose run --rm -itd app python manage.py import_data
+# Remove the container when the command exits (--rm).
+docker-compose run --rm -d app python manage.py import_data
+```
+
+For long-running data imports, you can view the logs like:
+
+```bash
+docker ps  # Look for the container named like la-metro-councilmatic_app_run_<SOME_ID>
+docker-compose logs -f la-metro-councilmatic_app_run_<SOME_ID>
 ```
 
 By default, the `import_data` command carefully looks at the OCD API; it is a smart management command. If you already have bills loaded, it will not look at everything on the API - it will look at the most recently updated bill in your database, see when that bill was last updated on the OCD API, and then look through everything on the API that was updated after that point.
@@ -48,13 +54,13 @@ If you'd like to load things that are older than what you currently have loaded,
 Next, add your shiny new data to your search index with the `rebuild_index` command from Haystack.
 
 ```bash
-docker-compose run --rm -itd app python manage.py rebuild_index --batch-size=25
+docker-compose run --rm app python manage.py rebuild_index --batch-size=25
 ```
 
 Once you've imported the data and added it to your index, create the cache, then you're all set!
 
 ```bash
-docker-compose run --rm -it app python manage.py createcachetable
+docker-compose run --rm app python manage.py createcachetable
 ```
 
 ## Making changes to the Solr schema

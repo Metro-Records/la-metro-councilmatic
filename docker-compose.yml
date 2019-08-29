@@ -40,7 +40,7 @@ services:
       timeout: 5s
       retries: 5
     environment:
-      - POSTGRES_DB: lametro
+      POSTGRES_DB: lametro
     volumes:
       - lametro-db-data:/var/lib/postgresql/data
     ports:
