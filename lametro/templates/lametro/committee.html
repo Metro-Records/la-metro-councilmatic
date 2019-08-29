@@ -25,7 +25,6 @@
     <div class="row-fluid">
         <div class="col-sm-12">
             {% if committee.recent_events %}
-
                 <h4>
                     <i class='fa fa-fw fa-calendar-o'></i> Committee {{ CITY_VOCAB.EVENTS }}
                     <a href="events/rss/" title="RSS feed for Committe Events by {{committee.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
@@ -167,16 +166,6 @@
             }
         });
 
-        function collapseActivity(){
-            $(".activity-row:gt(4)").hide();
-            $("#more-actions").show();
-            $("#fewer-actions").hide();
-        }
-        function expandActivity(){
-            $(".activity-row:gt(4)").show();
-            $("#more-actions").hide();
-            $("#fewer-actions").show();
-        }
         function collapseEvents(){
             $(".event-listing:gt(4)").hide();
             $("#more-events").show();
@@ -188,17 +177,8 @@
             $("#fewer-events").show();
         }
 
-        collapseActivity();
         collapseEvents();
 
-        $("#more-actions").click(function() {
-            expandActivity();
-            return false;
-        });
-        $("#fewer-actions").click(function() {
-            collapseActivity();
-            return false;
-        });
         $("#more-events").click(function() {
             expandEvents();
             return false;
