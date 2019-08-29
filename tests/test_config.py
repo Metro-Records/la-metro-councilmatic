@@ -17,8 +17,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'lametro',
-        'USER': '',
+        'USER': 'postgres',
         'PASSWORD': '',
+        'HOST': 'postgres',
         'PORT': 5432,
     }
 }
