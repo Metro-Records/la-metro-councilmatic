@@ -23,62 +23,7 @@
     </div>
 
     <div class="row-fluid">
-        {% if committee.recent_activity %}
-        <!-- Recent activity -->
-        <div class="col-sm-7">
-            <h4><i class='fa fa-fw fa-list-ul'></i> Recent Activity
-                <a href="actions/rss/" title="RSS feed for Recent Activity by {{committee.name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
-            </h4>
-            <div class="table-responsive">
-                <table class='table' id='committee-actions'>
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for action in committee.recent_activity %}
-                            <tr class="activity-row">
-                                <td class='nowrap'>
-                                    <p class="text-muted small no-pad-bottom">
-                                        {{action.date|date:'n/d/Y'}}
-                                    </p>
-                                    <p class="small no-pad-bottom">
-                                        <span class='text-{{action.label}}'>{{action.description | remove_action_subj}}</span>
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="small no-pad-bottom">
-                                        <a href="/board-report/{{action.bill.slug}}/">{{action.bill.friendly_name}}</a>
-                                    </p>
-                                    <p class="small no-pad-bottom">
-                                        {{action.bill.description | short_blurb}}
-                                    </p>
-                                </td>
-                            </tr>
-                        {% endfor %}
-
-                        {% if committee.recent_activity|length > 4  %}
-                            <tr>
-                                <td colspan="3" align="center">
-                                    <a href="" id="more-actions"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
-                                    <a href="" id="fewer-actions"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
-                                </td>
-                            </tr>
-                        {% endif %}
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Recent events -->
-        <div class="col-sm-5">
-        {% else %}
-        <!-- If no committee activity, remove `committee-actions` table entirely, and expand the recent events column to 100%.  -->
         <div class="col-sm-12">
-        {% endif %}
             {% if committee.recent_events %}
 
                 <h4>
@@ -94,7 +39,6 @@
                 <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
                 <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
             {% endif %}
-
         </div>
     </div>
 
