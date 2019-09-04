@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <div class="col-sm-8 no-pad-mobile">
+        <div class="col-sm-8 no-pad-mobile" id="pdf-container">
 
             {% if legislation.board_report %}
 	    {% with board_report=legislation.board_report %}
@@ -55,15 +55,14 @@
                     </p>
                 {% endif %}
 
-                <iframe
+                <!-- Width is set programmatically. --->
+                <object
                     id="pdf-embed-agenda"
                     class="pdf-viewer hidden-xs"
-                    frameborder="0"
-                    seamless="true"
-                    width="100%"
-                    height="600px"
-                    src="/pdfviewer/?{{board_report.url|full_text_doc_url}}">
-                </iframe>
+                    type="application/pdf"
+                    data="{{board_report.url|full_text_doc_url}}"
+                    height="600px">
+                </object>
 
                 <div class="divider"></div>
 	    {% endwith %}
@@ -277,10 +276,10 @@
         });
 
         if (window.screen.width > 768){
-            $("#pdf-embed").attr("src", "/pdfviewer/?{{legislation.url|full_text_doc_url}}");
+            $('#pdf-embed-agenda').width($('#pdf-container').width());
         }
         else{
-            $('#pdf-embed').hide()
+            $('#pdf-embed-agenda').hide()
             $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link'></i> View PDF")
         }
 
