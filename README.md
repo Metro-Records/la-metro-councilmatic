@@ -14,7 +14,7 @@ Metro Board Reports is a member of the [Councilmatic family](https://www.council
 
 ## Setup
 
-These days, we run apps in containers for local development. Prefer to run the app locally? See the [legacy setup instructions](https://github.com/datamade/la-metro-councilmatic/blob/b8bc14f6d90f1b05e24b5076b1bfcd5e0d37527a/README.md).
+These days, we run apps in containers for local development. More on that [here](https://github.com/datamade/how-to/blob/master/docker/local-development.md). Prefer to run the app locally? See the [legacy setup instructions](https://github.com/datamade/la-metro-councilmatic/blob/b8bc14f6d90f1b05e24b5076b1bfcd5e0d37527a/README.md).
 
 ### Install OS level dependencies:
 
@@ -26,13 +26,17 @@ These days, we run apps in containers for local development. Prefer to run the a
 docker-compose up -d
 ```
 
+Note that you can omit the `-d` flag to follow the application and service logs. If you prefer a quieter environment, you can view one log stream at a time with `docker-compose logs -f SERVICE_NAME`, where `SERVICE_NAME` is the name of one of the services defined in `docker-compose.yml`, e.g., `app`, `postgres`, etc.
+
+When the command exits (`-d`) or your logs indicate that your app is up and running, visit http://localhost:8000 to visit your shiny, new local application!
+
 ### Load in the data
 
 Every hour, DataMade scrapes the Legistar Web API and makes the results available on the Open Civic Data API, which hosts standardized data patterns about government organizations, people, legislation, and events. Metro Board Reports relies upon this data.
 
 The django-councilmatic app comes with an `import_data` management command, which populates your database with content loaded from the OCD API. You can explore the nitty-gritty of this code [here](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/import_data.py).
 
-Run the `import_data` command, which may take a few minutes to an hour, depending on how much data you need to import:
+Run the `import_data` command, which may take a few minutes to an hour, depending on how much data you need to import. You can read more on how to limit the amount of data you import [in the wiki](https://github.com/datamade/la-metro-councilmatic/wiki/Commands-to-know#importing-data-to-councilmatic).
 
 ```bash
 # Run the command in the background (-d) inside an application container.
@@ -74,14 +78,11 @@ Did you make a change to the schema file that Solr uses to make its magic (`solr
 First, remove your Solr container.
 
 ```
-# view all containers
-docker ps -a
+# remove your existing metro containers
+docker-compose down
 
-# remove solr containers built with docker-compose up
-docker-compose down solr
-
-# build the container anew
-docker-compose up -d solr
+# build the containers anew
+docker-compose up -d
 ```
 
 Then, rebuild your index.
@@ -101,6 +102,7 @@ cp solr_configs/conf/schema.xml solr_scripts/schema.xml
 The Dockerized versions of Solr on the server need your attention, too. Follow these steps.
 
 1. Deploy the schema changes on the staging server.
+
 2. Shell into the server, and go to the `lametro-staging` repo.
     ```bash
     ssh ubuntu@boardagendas.metro.net
@@ -109,6 +111,7 @@ The Dockerized versions of Solr on the server need your attention, too. Follow t
     # Docker requires sudo priviliges
     cd /home/datamade/lametro-staging
     ```
+
 3. Remove and rebuild the Solr container.
     ```bash
     # We need to stop the container before removing it!
@@ -135,6 +138,7 @@ Did everything work as expected? Great - now onto the production site.
 Make sure your changes are deployed to the production server (i.e. you've cut a release with your changes).
 
 1. Look at the times cron tasks are run (specified in [`scripts/lametro-crontasks`](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks)), and plan to rebuild the index inbetween those times. Rebuilding the index will take a few minutes, so plan accordingly.
+
 2. As above: shell into the server, go to the `lametro` repo, then remove and rebuild the Solr container.
     ```bash
     ssh ubuntu@boardagendas.metro.net
@@ -145,6 +149,7 @@ Make sure your changes are deployed to the production server (i.e. you've cut a 
 
     sudo docker-compose up -d solr-production
     ```
+
 3. Switch to the datamade user and rebuild the index.
     ```bash
     workon lametro
@@ -164,7 +169,7 @@ docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
 ## Errors / Bugs
 
 If something is not behaving intuitively, it is a bug, and should be reported.
-Report it here: https://github.com/datamade/nyc-councilmatic/issues
+Report it here: https://github.com/datamade/la-metro-councilmatic/issues
 
 ## Note on Patches/Pull Requests
 
@@ -175,4 +180,4 @@ Report it here: https://github.com/datamade/nyc-councilmatic/issues
 
 ## Copyright
 
-Copyright (c) 2019 DataMade. Released under the [MIT License](https://github.com/datamade/nyc-councilmatic/blob/master/LICENSE).
+Copyright (c) 2019 DataMade. Released under the [MIT License](https://github.com/datamade/la-metro-councilmatic/blob/master/LICENSE).
