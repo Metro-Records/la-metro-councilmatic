@@ -66,6 +66,7 @@ function autocompleteSearchBar(element) {
         };
       });
     },
-    deferRequestBy: 100
+    deferRequestBy: 100,
+    triggerSelectOnValidInput: false,
   });
 };
