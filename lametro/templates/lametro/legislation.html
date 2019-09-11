@@ -146,15 +146,15 @@
                         <thead>
                             <tr>
                                 <th>Board Report</th>
-                                <th class='no-wrap'>Last action</th>                            
+                                <th class='no-wrap'>Last action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for bill in related_bills %}
                                 <tr>
                                     <td class='text-muted small'>
-                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a> 
-                                        
+                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
+
                                         {% if bill.ocr_full_text|prepare_title %}
                                             - {{ bill.ocr_full_text|prepare_title }}
                                         {% endif %}
@@ -168,6 +168,19 @@
                     </table>
                 </div>
                 <div class="divider"></div>
+            {% endif %}
+
+            {% if topics %}
+              <h3 class="no-pad-bottom"><i class="fas fa-tag" aria-hidden="true"></i> Tags</h3>
+              {% for topic in topics %}
+                {% with "topics_exact:"|add:tag as tag_facet %}
+                  <li>
+                      <a href="{% search_with_querystring request selected_facets=tag_facet %}" target="blank">
+                        {{ topic.subject }}
+                      </a>
+                  </li>
+                {% endwith %}
+              {% endfor %}
             {% endif %}
         </div>
 
