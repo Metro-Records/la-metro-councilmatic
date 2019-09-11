@@ -169,11 +169,11 @@
                 <div class="divider"></div>
             {% endif %}
 
-            {% if legislation.topics %}
+            {% if topics %}
             <br>
               <h3><i class="fa fa-tag" aria-hidden="true"></i> Tags</h3>
               <ul>
-                {% for topic in legislation.topics %}
+                {% for topic in topics %}
                   {% with "topics_exact:"|add:topic as tag_facet %}
                     <li>
                         <a href="{% search_with_querystring request selected_facets=tag_facet %}" target="blank">

@@ -73,6 +73,7 @@ class LABillDetail(BillDetailView):
         actions = Action.objects.filter(_bill_id=item.ocd_id)
         organization_lst = [action.organization for action in actions]
         context['sponsorships'] = set(organization_lst)
+        context['topics'] = self.get_object().topics
 
         # Create URL for packet download.
         packet_slug = item.ocd_id.replace('/', '-')
