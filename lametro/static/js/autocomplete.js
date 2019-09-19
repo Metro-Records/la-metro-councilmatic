@@ -36,9 +36,10 @@ function autocompleteSearchBar(element) {
     paramName: '',
     transformResult: function(response) {
       var res = JSON.parse(response);
+      var noneFoundText = "No suggestions found. Press enter to perform a keyword search."
       if (res.status_code == 500 || res.termHints.length < 1) {
         return {
-          suggestions: ['No topics found']
+          suggestions: [noneFoundText]
         };
       } else {
         return {
