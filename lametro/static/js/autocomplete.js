@@ -17,7 +17,7 @@ var SmartLogic = {
     };
   },
   buildServiceUrl: function(query) {
-    return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/hints/' + query + '.json?FILTER=AT=System:%20Legistar';
+    return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/concepts/' + query + '.json?FILTER=AT=System:%20Legistar&stop_cm_after_stage=3&maxResultCount=10';
   }
 };
 
@@ -37,20 +37,23 @@ function autocompleteSearchBar(element) {
     transformResult: function(response) {
       var res = JSON.parse(response);
       var noneFoundText = "No suggestions found. Press enter to perform a keyword search."
-      if (res.status_code == 500 || res.termHints.length < 1) {
+      if (res.status_code == 500 || res.terms.length < 1) {
         return {
           suggestions: [noneFoundText]
         };
       } else {
         return {
-          suggestions: $.map(res.termHints, function(d) {
+          suggestions: $.map(res.terms, function(d) {
+              // TODO: If Metro prefers these results, refactor this to work
+              // with the /concepts result structure
               /* If the search term is an acronym, displays that as a part of the suggestion */
-              var nature = '';
-              if (d.values[0]['nature'] == 'NPT') {
-                nature = d.values[0]['value'];
-                nature = ' (' + nature + ')';
-              }
-              return {'value': d.name + nature, 'data': d.id};
+              //var nature = '';
+              //if (d.values[0]['nature'] == 'NPT') {
+              //  nature = d.values[0]['value'];
+              //  nature = ' (' + nature + ')';
+              //}
+              //return {'value': d.name + nature, 'data': d.id};
+              return {'value': d.term.name, 'data': d.term.id};
             }
           )
         };
