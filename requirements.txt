@@ -1,5 +1,4 @@
-psycopg2==2.7.6.1
-django-councilmatic==0.10.16
+django-councilmatic==2.5.4
 django-debug-toolbar==1.9.1
 raven==5.30.0
 gunicorn==19.6.0

@@ -45,6 +45,8 @@ INSTALLED_APPS = (
     'haystack',
     'lametro',
     'councilmatic_core',
+    'opencivicdata.core',
+    'opencivicdata.legislative',
     'adv_cache_tag',
     'debug_toolbar',
 )
@@ -54,18 +56,15 @@ try:
 except NameError:
     pass
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    # 'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'councilmatic.urls'

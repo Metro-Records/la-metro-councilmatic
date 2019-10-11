@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.feedgenerator import Rss201rev2Feed
 from django.conf import settings
 

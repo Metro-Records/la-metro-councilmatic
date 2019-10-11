@@ -39,7 +39,7 @@ patterns = ([
 
 urlpatterns = [
     url(r'', include(patterns)),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^metro-login/$', metro_login, name='metro_login'),
     url(r'^metro-logout/$', metro_logout, name='metro_logout'),
     url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),

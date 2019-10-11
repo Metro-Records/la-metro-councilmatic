@@ -12,8 +12,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
-from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
-    Action, EventMedia, EventDocument, Subject
+from councilmatic_core.models import Bill, Event, Post, Person, Organization
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -485,21 +484,6 @@ class LAMetroEvent(Event, LiveMediaMixin):
                 return doc.url
 
 
-class LAMetroEventMedia(EventMedia):
-
-    class Meta:
-        proxy = True
-
-    @property
-    def label(self):
-        '''
-        EventMedia imported prior to django-councilmatic 0.10.0 may not have
-        an associated note.
-        '''
-        if self.note and self.note.endswith('(SAP)'):
-            return 'Ver en Español'
-        else:
-            return 'Watch in English'
 
 
 class LAMetroOrganization(Organization):

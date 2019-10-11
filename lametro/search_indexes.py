@@ -2,7 +2,6 @@ import re
 
 from haystack import indexes
 from councilmatic_core.haystack_indexes import BillIndex
-from councilmatic_core.models import Action, EventAgendaItem
 
 from lametro.models import LAMetroBill
 from lametro.utils import format_full_text, parse_subject
