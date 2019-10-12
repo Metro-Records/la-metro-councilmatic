@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
-from councilmatic_core.models import Bill, Event, Post, Person, Organization
+from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -222,7 +222,7 @@ class LAMetroPerson(Person):
         return bills
 
 
-class LAMetroEventManager(models.Manager):
+class LAMetroEventManager(EventManager):
     def get_queryset(self):
         '''
         If SHOW_TEST_EVENTS is False, omit them from the initial queryset.
@@ -318,7 +318,6 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
     class Meta:
         proxy = True
-
 
     @classmethod
     def upcoming_board_meeting(cls):

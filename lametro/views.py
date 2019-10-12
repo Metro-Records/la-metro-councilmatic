@@ -51,6 +51,7 @@ class LAMetroIndexView(IndexView):
 
     event_model = LAMetroEvent
 
+    @property
     def extra_context(self):
         extra = {}
         extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()

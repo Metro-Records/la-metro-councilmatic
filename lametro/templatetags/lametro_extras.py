@@ -1,6 +1,6 @@
 from django import template
 from django.template.defaultfilters import stringfilter
-from django.utils.html import strip_entities, strip_tags
+from django.utils.html import strip_tags
 from django.utils import timezone
 
 from haystack.query import SearchQuerySet
@@ -10,7 +10,7 @@ import urllib
 
 from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic_core.models import Person, EventDocument, Bill
+from councilmatic_core.models import Person, Bill
 from councilmatic_core.utils import ExactHighlighter
 
 from lametro.models import LAMetroEvent
