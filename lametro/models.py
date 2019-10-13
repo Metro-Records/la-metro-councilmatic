@@ -9,10 +9,13 @@ from django.db import models, connection
 from django.db.models.expressions import RawSQL
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager
+
+from opencivicdata.legislative.models import EventMedia, EventDocument
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -45,11 +48,12 @@ class LAMetroBillManager(models.Manager):
         when getting bill querysets. Otherwise restricted view bills
         may slip through the crevices of Councilmatic display logic.
         '''
-        filtered_qs = super().get_queryset().exclude(restrict_view=True)\
-                                            .filter(Q(related_agenda_items__event__status='passed') | \
-                                                    Q(related_agenda_items__event__status='cancelled') | \
-                                                    Q(bill_type='Board Box'))\
-                                            .distinct()
+        filtered_qs = super().get_queryset()
+        # .exclude(restrict_view=True)\
+        #                                     .filter(Q(related_agenda_items__event__status='passed') | \
+        #                                             Q(related_agenda_items__event__status='cancelled') | \
+        #                                             Q(bill_type='Board Box'))\
+        #                                     .distinct()
 
         return filtered_qs
 
@@ -247,14 +251,14 @@ class LAMetroEventManager(EventManager):
         come after links to English audio. 'mediaqueryset' facilitates
         the ordering of prefetched 'media_urls'.
         '''
-        mediaqueryset = LAMetroEventMedia.objects.annotate(
+        mediaqueryset = EventMedia.objects.annotate(
             olabel=Case(
                 When(note__endswith='(SAP)', then=Value(0)),
                 output_field=models.CharField(),
             )
         ).order_by('-olabel')
 
-        return self.prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
+        return self.prefetch_related(Prefetch('media', queryset=mediaqueryset))
 
 
 class LiveMediaMixin(object):
@@ -457,30 +461,21 @@ class LAMetroEvent(Event, LiveMediaMixin):
         return meetings
 
 
-    @property
+    @cached_property
     def board_event_minutes(self):
         '''
         This method returns the link to an Event's minutes.
 
-        A small number of Events do not have minutes in
-        a discoverable, corresponding EventDocument.
-        For these, we can query board reports
-        for indicative text, i.e., "minutes of the regular..."
         '''
         if 'regular board meeting' in self.name.lower():
             try:
-                doc = self.documents.get(note__icontains='RBM Minutes')
+                doc = self.documents.get(note__icontains='Minutes')
             except EventDocument.DoesNotExist:
-                try:
-                    date = self.start_time.date().strftime('%B %d, %Y')
-                    content = 'minutes of the regular board meeting held ' + date
-                    board_report = LAMetroBill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
-                except LAMetroBill.DoesNotExist:
-                    return None
-                else:
-                    return '/board-report/' + board_report.slug
+                return None
             else:
-                return doc.url
+                # seems like maybe we could have better design of
+                # eventdocument, like a one-to-one
+                return(doc.links.first().url)
 
 
 
@@ -495,8 +490,8 @@ class LAMetroOrganization(Organization):
 
     @property
     def recent_events(self):
-        events = LAMetroEvent.objects.filter(participants__entity_type='organization', participants__entity_name=self.name)
-        events = events.order_by('-start_time').all()
+        events = LAMetroEvent.objects.filter(participants__organization=self)
+        events = events.order_by('-start_time')
         return events
 
     @property

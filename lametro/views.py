@@ -16,13 +16,15 @@ import os
 from haystack.inputs import Raw
 from haystack.query import SearchQuerySet
 
+import pytz
+
 from django.db import transaction, connection, connections
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
-from django.db.models.functions import Lower
-from django.db.models import Max, Min, Prefetch
+from django.db.models.functions import Lower, Now
+from django.db.models import Max, Min, Prefetch, Case, When, Value, IntegerField
 from django.utils import timezone
 from django.utils.text import slugify
 from django.views.generic import TemplateView
@@ -45,6 +47,7 @@ from lametro.forms import AgendaUrlForm, AgendaPdfForm
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
 
+app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
@@ -76,7 +79,7 @@ class LABillDetail(BillDetailView):
         context['sponsorships'] = set(organization_lst)
 
         # Create URL for packet download.
-        packet_slug = item.ocd_id.replace('/', '-')
+        packet_slug = item.id.replace('/', '-')
         try:
             r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
             if r.status_code == 200:
@@ -143,12 +146,12 @@ class LAMetroEventDetail(EventDetailView):
 
         # Metro admins should see a status report if Legistar is down.
         # GET the calendar page, which contains relevant URL for agendas.
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
 
         # Create URL for packet download.
-        packet_slug = event.ocd_id.replace('/', '-')
+        packet_slug = event.id.replace('/', '-')
         try:
             r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
             if r.status_code == 200:
@@ -158,95 +161,95 @@ class LAMetroEventDetail(EventDetailView):
         except:
             context['packet_url'] = None
 
+        agenda_with_board_reports = event.agenda\
+                            .filter(related_entities__bill__versions__note__istartswith='board report')\
+                            .distinct()
         # Logic for getting relevant board report information.
-        with connection.cursor() as cursor:
-            query = '''
-                SELECT DISTINCT
-                    b.identifier,
-                    b.ocd_id,
-                    b.slug,
-                    b.ocr_full_text,
-                    i.description,
-                    d_bill.url,
-                    i.order,
-                    i.notes
-                FROM councilmatic_core_billdocument AS d_bill
-                INNER JOIN councilmatic_core_eventagendaitem as i
-                ON i.bill_id=d_bill.bill_id
-                INNER JOIN councilmatic_core_eventdocument as d_event
-                ON i.event_id=d_event.event_id
-                INNER JOIN councilmatic_core_bill AS b
-                ON d_bill.bill_id=b.ocd_id
-                WHERE d_event.event_id='{}'
-                AND trim(lower(d_bill.note)) LIKE 'board report%'
-                ORDER BY i.order
-                '''.format(event.ocd_id)
+        # with connection.cursor() as cursor:
+        #     query = '''
+        #         SELECT DISTINCT
+        #             b.identifier,
+        #             b.ocd_id,
+        #             b.slug,
+        #             b.ocr_full_text,
+        #             i.description,
+        #             d_bill.url,
+        #             i.order,
+        #             i.notes
+        #         FROM councilmatic_core_billdocument AS d_bill
+        #         INNER JOIN councilmatic_core_eventagendaitem as i
+        #         ON i.bill_id=d_bill.bill_id
+        #         INNER JOIN councilmatic_core_eventdocument as d_event
+        #         ON i.event_id=d_event.event_id
+        #         INNER JOIN councilmatic_core_bill AS b
+        #         ON d_bill.bill_id=b.ocd_id
+        #         WHERE d_event.event_id='{}'
+        #         AND trim(lower(d_bill.note)) LIKE 'board report%'
+        #         ORDER BY i.order
+        #         '''.format(event.id)
 
-            cursor.execute(query)
+        #     cursor.execute(query)
 
-            # Get field names
-            columns = [c[0] for c in cursor.description]
-            columns.append('packet_url')
-            columns.append('inferred_status')
+            # # Get field names
+            # columns = [c[0] for c in cursor.description]
+            # columns.append('packet_url')
+            # columns.append('inferred_status')
 
-            # Add field for packet_url
-            cursor_copy = []
-            packet_url = None
+            # # Add field for packet_url
+            # cursor_copy = []
+            # packet_url = None
 
-            for obj in cursor:
-                packet_url = None
-                # Add packet slug
-                ocd_id = obj[1]
-                packet_slug = ocd_id.replace('/', '-')
+            # for obj in cursor:
+            #     packet_url = None
+            #     # Add packet slug
+            #     obj_id = obj[1]
+            #     packet_slug = obj_id.replace('/', '-')
 
-                r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
-                if r.status_code == 200:
-                    packet_url = MERGER_BASE_URL + '/document/' + packet_slug
+            #     r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
+            #     if r.status_code == 200:
+            #         packet_url = MERGER_BASE_URL + '/document/' + packet_slug
 
-                obj = obj + (packet_url,)
+            #     obj = obj + (packet_url,)
 
-                # The cursor object potentially includes public and private bills.
-                # However, the LAMetroBillManager excludes private bills
-                # from the LAMetroBill queryset.
-                # Attempting to `get` a private bill from LAMetroBill.objects
-                # raises a DoesNotExist error. As a precaution, we use filter()
-                # rather than get().
-                board_report = LAMetroBill.objects.filter(ocd_id=ocd_id)
-                if board_report:
-                    obj = obj + (board_report.first().inferred_status,)
-                    cursor_copy.append(obj)
+            #     # The cursor object potentially includes public and private bills.
+            #     # However, the LAMetroBillManager excludes private bills
+            #     # from the LAMetroBill queryset.
+            #     # Attempting to `get` a private bill from LAMetroBill.objects
+            #     # raises a DoesNotExist error. As a precaution, we use filter()
+            #     # rather than get().
+            #     board_report = LAMetroBill.objects.filter(id=id)
+            #     if board_report:
+            #         obj = obj + (board_report.first().inferred_status,)
+            #         cursor_copy.append(obj)
 
             # Create a named tuple
-            board_report_tuple = namedtuple('BoardReportProperties', columns, rename=True)
-            # Put results inside a list with assigned fields (from namedtuple)
-            related_board_reports = [board_report_tuple(*r) for r in cursor_copy]
+        
+        # Find agenda link.
+        if event.documents.all():
+            for document in event.documents.all():
+                if "Agenda" in document.note:
+                    context['agenda_url'] = document.url
+                    context['document_timestamp'] = document.updated_at
+                elif "Manual upload URL" in document.note:
+                    context['uploaded_agenda_url'] = document.url
+                    context['document_timestamp'] = document.updated_at
+                elif "Manual upload PDF" in document.note:
+                    context['uploaded_agenda_pdf'] = document.url
+                    context['document_timestamp'] = document.updated_at
+                    '''
+                    LA Metro Councilmatic uses the adv_cache library to partially cache templates: in the event view, we cache the entire template, except the iframe. (N.B. With this library, the views do not cached, unless explicitly wrapped in a django cache decorator.
+                    Nonetheless, several popular browsers (e.g., Chrome and Firefox) retrieve cached iframe images, regardless of the site's caching specifications.
+                    We use the agenda's "updated_at" timestamp to bust the iframe cache: we save it inside context and then assign it as the "name" of the iframe, preventing the browser from retrieving a cached iframe, when the timestamp changes.
+                    '''
 
-            # Find agenda link.
-            if event.documents.all():
-                for document in event.documents.all():
-                    if "Agenda" in document.note:
-                        context['agenda_url'] = document.url
-                        context['document_timestamp'] = document.updated_at
-                    elif "Manual upload URL" in document.note:
-                        context['uploaded_agenda_url'] = document.url
-                        context['document_timestamp'] = document.updated_at
-                    elif "Manual upload PDF" in document.note:
-                        context['uploaded_agenda_pdf'] = document.url
-                        context['document_timestamp'] = document.updated_at
-                        '''
-                        LA Metro Councilmatic uses the adv_cache library to partially cache templates: in the event view, we cache the entire template, except the iframe. (N.B. With this library, the views do not cached, unless explicitly wrapped in a django cache decorator.
-                        Nonetheless, several popular browsers (e.g., Chrome and Firefox) retrieve cached iframe images, regardless of the site's caching specifications.
-                        We use the agenda's "updated_at" timestamp to bust the iframe cache: we save it inside context and then assign it as the "name" of the iframe, preventing the browser from retrieving a cached iframe, when the timestamp changes.
-                        '''
+        context['related_board_reports'] = agenda_with_board_reports
+        context['base_url'] = PIC_BASE_URL # Give JS access to this variable
 
-            context['related_board_reports'] = related_board_reports
-            context['base_url'] = PIC_BASE_URL # Give JS access to this variable
-
-            # Render forms if not a POST request
-            if 'url_form' not in context:
-                context['url_form'] = AgendaUrlForm()
-            if 'pdf_form' not in context:
-                context['pdf_form'] = AgendaPdfForm()
+        # Render forms if not a POST request
+        if 'url_form' not in context:
+            context['url_form'] = AgendaUrlForm()
+        if 'pdf_form' not in context:
+            context['pdf_form'] = AgendaPdfForm()
 
         return context
 
@@ -268,7 +271,7 @@ def handle_uploaded_agenda(agenda, event):
 
 def delete_submission(request, event_slug):
     event = LAMetroEvent.objects.get(slug=event_slug)
-    event_doc = EventDocument.objects.filter(event_id=event.ocd_id, note__icontains='Manual upload')
+    event_doc = EventDocument.objects.filter(event_id=event.id, note__icontains='Manual upload')
 
     for e in event_doc:
         # Remove stored PDF from Metro app.
@@ -346,7 +349,7 @@ class LAMetroEventsView(EventsView):
             # Past events
             past_events = LAMetroEvent.objects\
                                       .with_media()\
-                                      .filter(start_time__lt=datetime.now(app_timezone))\
+                                      .filter(start_time__lt=datetime.datetime.now(app_timezone))\
                                       .order_by('-start_time')\
 
             org_past_events = []
@@ -357,133 +360,87 @@ class LAMetroEventsView(EventsView):
 
             context['past_events'] = org_past_events
 
-        context['user_subscribed'] = False
-        if self.request.user.is_authenticated():
-            user = self.request.user
-            context['user'] = user
-
-            if settings.USING_NOTIFICATIONS:
-                if (len(user.eventssubscriptions.all()) > 0):
-                    context['user_subscribed'] = True
 
         return context
 
 class LABoardMembersView(CouncilMembersView):
     template_name = 'lametro/board_members.html'
 
-    model = LAMetroPost
+    def map(self):
+        map_geojson = {
+            'type': 'FeatureCollection',
+            'features': []
+        }
+
+        map_geojson_sectors = {
+            'type': 'FeatureCollection',
+            'features': []
+        }
+
+        map_geojson_city = {
+            'type': 'FeatureCollection',
+            'features': []
+        }
+
+        for post in self.object_list:
+            if post.shape:
+                council_member = "Vacant"
+                detail_link = ""
+                if post.current_members:
+                    for membership in post.current_members:
+                        council_member = membership.person.name
+                        detail_link = membership.person.slug
+
+                feature = {
+                    'type': 'Feature',
+                    'geometry': json.loads(post.shape),
+                    'properties': {
+                        'district': post.label,
+                        'council_member': council_member,
+                        'detail_link': '/person/' + detail_link,
+                        'select_id': 'polygon-{}'.format(slugify(post.label)),
+                    },
+                }
+
+                if 'council_district' in post.division_id:
+                    map_geojson['features'].append(feature)
+
+                if 'la_metro_sector' in post.division_id:
+                    map_geojson_sectors['features'].append(feature)
+
+                if post.division_id == 'ocd-division/country:us/state:ca/place:los_angeles':
+                    map_geojson_city['features'].append(feature)
+
+        context['map_geojson'] = json.dumps(map_geojson)
+        context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
+        context['map_geojson_city'] = json.dumps(map_geojson_city)
 
     def get_queryset(self):
-        posts = LAMetroPost.objects.filter(_organization__ocd_id=settings.OCD_CITY_COUNCIL_ID)
+        get_kwarg = {'name': settings.OCD_CITY_COUNCIL_NAME}
 
-        return posts
+        # put family name in scraper
+        # fix doubling up of garcetti in scraper
+        # ceo's should be removed in the scraper
+        return Organization.objects.get(**get_kwarg)\
+                                   .memberships\
+                                   .filter(end_date_dt__gte=Now())\
+                                   .exclude(role='Chief Executive Officer')\
+                                   .annotate(role_order=Case(
+                                       When(role='Chair', then=Value(1)),
+                                       When(role='Vice Chair', then=Value(2)),
+                                       When(role='1st Vice Chair', then=Value(2)),
+                                       When(role='2nd Vice Chair', then=Value(3)),
+                                       When(role='Board Member', then=Value(4)),
+                                       When(role='Nonvoting Board Member', then=Value(5)),
+                                       output_field=IntegerField()))\
+                                   .order_by('role_order', 'person__family_name')
 
     def get_context_data(self, *args, **kwargs):
         context = super(LABoardMembersView, self).get_context_data(**kwargs)
-        context['seo'] = self.get_seo_blob()
 
-        context['map_geojson'] = None
-
-        if settings.MAP_CONFIG:
-
-            map_geojson = {
-                            'type': 'FeatureCollection',
-                            'features': []
-                          }
-
-            map_geojson_sectors = {
-                                    'type': 'FeatureCollection',
-                                    'features': []
-                                  }
-
-            map_geojson_city = {
-                                 'type': 'FeatureCollection',
-                                 'features': []
-                               }
-
-            for post in self.object_list:
-                if post.shape:
-                    council_member = "Vacant"
-                    detail_link = ""
-                    if post.current_members:
-                        for membership in post.current_members:
-                            council_member = membership.person.name
-                            detail_link = membership.person.slug
-
-                    feature = {
-                        'type': 'Feature',
-                        'geometry': json.loads(post.shape),
-                        'properties': {
-                            'district': post.label,
-                            'council_member': council_member,
-                            'detail_link': '/person/' + detail_link,
-                            'select_id': 'polygon-{}'.format(slugify(post.label)),
-                        },
-                    }
-
-                    if 'council_district' in post.division_ocd_id:
-                        map_geojson['features'].append(feature)
-
-                    if 'la_metro_sector' in post.division_ocd_id:
-                        map_geojson_sectors['features'].append(feature)
-
-                    if post.division_ocd_id == 'ocd-division/country:us/state:ca/place:los_angeles':
-                        map_geojson_city['features'].append(feature)
-
-            context['map_geojson'] = json.dumps(map_geojson)
-            context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
-            context['map_geojson_city'] = json.dumps(map_geojson_city)
-
-
-        with connection.cursor() as cursor:
-            today = timezone.now().date()
-
-            sql = '''
-            SELECT p.ocd_id, p.name, array_agg(pt.label) as label,
-                m.extras,
-                array_agg(m.role) as role,
-                split_part(p.name, ' ', 2) AS last_name
-            FROM councilmatic_core_membership as m
-            INNER JOIN councilmatic_core_post as pt
-            ON pt.ocd_id=m.post_id
-            INNER JOIN councilmatic_core_person as p
-            ON m.person_id=p.ocd_id
-            WHERE m.organization_id='ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
-            AND m.end_date >= '{0}'
-            AND m.person_id <> 'ocd-person/912c8ddf-8d04-4f7f-847d-2daf84e096e2'
-            GROUP BY p.ocd_id, p.name, m.extras
-            ORDER BY last_name
-            '''.format(today)
-
-            cursor.execute(sql)
-
-            columns = [c[0] for c in cursor.description]
-            columns.append('index')
-            cursor_copy = []
-
-            # from operator import itemgetter
-            for obj in cursor:
-                if '1st Vice Chair' in obj[3]:
-                    obj = obj + ("2",)
-                elif '2nd Vice Chair' in obj[3]:
-                    obj = obj + ("3",)
-                elif 'Chair' in obj[3]:
-                    obj = obj + ("1",)
-                elif 'Nonvoting Board Member' in obj[3]:
-                    obj = obj + ("5",)
-                else:
-                    obj = obj + ("4",)
-                cursor_copy.append(obj)
-
-            # Create tuple-like object...iterable and accessible by field names.
-            membership_tuple = namedtuple('Membership', columns)
-            membership_objects = [membership_tuple(*r) for r in cursor_copy]
-            membership_objects = sorted(membership_objects, key=lambda x: x[5])
-            context['membership_objects'] = membership_objects
-
-            board = LAMetroOrganization.objects.get(ocd_id=settings.OCD_CITY_COUNCIL_ID)
-            context['recent_activity'] = board.actions.order_by('-date', '-_bill__identifier', '-order')
-            context['recent_events'] = board.recent_events
+        board = LAMetroOrganization.objects.get(name=settings.OCD_CITY_COUNCIL_NAME)
+        context['recent_activity'] = board.actions.order_by('-date', '-_bill__identifier', '-order')
+        context['recent_events'] = board.recent_events
 
         return context
 
@@ -494,7 +451,7 @@ class LAMetroAboutView(AboutView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['timestamp'] = datetime.now(app_timezone).strftime('%m%d%Y%s')
+        context['timestamp'] = datetime.datetime.now(app_timezone).strftime('%m%d%Y%s')
 
         return context
 
@@ -502,38 +459,6 @@ class LAMetroAboutView(AboutView):
 class LACommitteesView(CommitteesView):
     template_name = 'lametro/committees.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        with connection.cursor() as cursor:
-
-            sql = ('''
-              SELECT DISTINCT on (o.ocd_id, m.person_id) o.*, m.person_id, m.role, p.name AS member_name
-              FROM councilmatic_core_organization AS o
-              JOIN councilmatic_core_membership AS m
-              ON o.ocd_id=m.organization_id
-              JOIN councilmatic_core_person as p
-              ON p.ocd_id=m.person_id
-              WHERE o.classification='committee'
-              AND m.end_date::date > NOW()::date
-              AND m.role != 'Chief Executive Officer'
-              ORDER BY o.ocd_id, m.person_id, m.end_date;
-                ''')
-
-            cursor.execute(sql)
-
-            columns           = [c[0] for c in cursor.description]
-            committees_tuple  = namedtuple('Committee', columns, rename=True)
-            data              = [committees_tuple(*r) for r in cursor]
-            groups            = []
-
-            for key, group in groupby(data, lambda x: x[1]):
-                groups.append(list(group))
-
-            committees_list = groups
-            context["committees_list"] = committees_list
-
-        return context
 
 class LACommitteeDetailView(CommitteeDetailView):
 

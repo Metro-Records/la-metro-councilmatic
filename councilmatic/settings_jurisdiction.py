@@ -4,7 +4,7 @@
 # These settings are required #
 ###############################
 
-OCD_CITY_COUNCIL_NAME = 'Los Angeles County Metropolitan Transportation Authority'
+OCD_CITY_COUNCIL_NAME = 'Board of Directors'
 CITY_COUNCIL_NAME = 'Metro'
 OCD_JURISDICTION_IDS = ['ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority']
 LEGISLATIVE_SESSIONS = ['2014', '2015', '2016', '2017', '2018', '2019'] # the last one in this list should be the current legislative session
@@ -47,12 +47,13 @@ LEGISTAR_URL = ''           # e.g. 'https://chicago.legistar.com/Legislation.asp
 
 BOUNDARY_SET = ['la-metro-supervisory-districts', 'la-metro-committee-districts', 'city-of-la']
 
-MAP_CONFIG = {
-    'center': [34.0522, -118.2437],
-    'zoom': 10,
-    'color': "#54afe8",
-    'highlight_color': '#eb6864'
-}
+MAP_CONFIG = None
+# MAP_CONFIG = {
+#     'center': [34.0522, -118.2437],
+#     'zoom': 10,
+#     'color': "#54afe8",
+#     'highlight_color': '#eb6864'
+# }
 
 # FOOTER_CREDITS = [
     # {
