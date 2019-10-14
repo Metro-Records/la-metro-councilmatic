@@ -235,10 +235,10 @@ class LAMetroEventManager(EventManager):
         when getting event querysets. If a test event slips through, it is
         likely because we used the default Event to get the queryset.
         '''
-        if not settings.SHOW_TEST_EVENTS:
-            return super().get_queryset().exclude(location_name='TEST')
+        if settings.SHOW_TEST_EVENTS:
+            return super().get_queryset()
 
-        return super().get_queryset()
+        return super().get_queryset().exclude(location__name='TEST')
 
     def with_media(self):
         '''
@@ -258,7 +258,8 @@ class LAMetroEventManager(EventManager):
             )
         ).order_by('-olabel')
 
-        return self.prefetch_related(Prefetch('media', queryset=mediaqueryset))
+        return self.prefetch_related(Prefetch('media', queryset=mediaqueryset))\
+                   .prefetch_related('media__links')
 
 
 class LiveMediaMixin(object):
@@ -461,7 +462,6 @@ class LAMetroEvent(Event, LiveMediaMixin):
         return meetings
 
 
-    @cached_property
     def board_event_minutes(self):
         '''
         This method returns the link to an Event's minutes.
@@ -476,8 +476,6 @@ class LAMetroEvent(Event, LiveMediaMixin):
                 # seems like maybe we could have better design of
                 # eventdocument, like a one-to-one
                 return(doc.links.first().url)
-
-
 
 
 class LAMetroOrganization(Organization):

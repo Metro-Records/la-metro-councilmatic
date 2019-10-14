@@ -45,9 +45,9 @@
     </div>
 
     <div class="col-xs-3">
-        {% for media in event.media_urls.all %}
+        {% for media in event.media.all %}
           <p>
-            <a href="{{ media.url }}" target="_blank">{{ media.label }}</a>
+            <a href="{{ media.links.all.0.url }}" target="_blank">{% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
             </br>
           </p>
         {% endfor %}

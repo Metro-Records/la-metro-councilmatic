@@ -350,7 +350,7 @@ class LAMetroEventsView(EventsView):
             past_events = LAMetroEvent.objects\
                                       .with_media()\
                                       .filter(start_time__lt=datetime.datetime.now(app_timezone))\
-                                      .order_by('-start_time')\
+                                      .order_by('-start_time')
 
             org_past_events = []
 
@@ -360,6 +360,14 @@ class LAMetroEventsView(EventsView):
 
             context['past_events'] = org_past_events
 
+        context['user_subscribed'] = False
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            context['user'] = user
+
+            if settings.USING_NOTIFICATIONS:
+                if (len(user.eventssubscriptions.all()) > 0):
+                    context['user_subscribed'] = True
 
         return context
 
