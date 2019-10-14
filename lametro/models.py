@@ -15,7 +15,7 @@ from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager
 
-from opencivicdata.legislative.models import EventMedia, EventDocument
+from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -469,13 +469,12 @@ class LAMetroEvent(Event, LiveMediaMixin):
         '''
         if 'regular board meeting' in self.name.lower():
             try:
-                doc = self.documents.get(note__icontains='Minutes')
-            except EventDocument.DoesNotExist:
+                link = EventDocumentLink.objects.get(document__note__icontains='Minutes',
+                                                     document__event=self)
+            except EventDocumentLink.DoesNotExist:
                 return None
             else:
-                # seems like maybe we could have better design of
-                # eventdocument, like a one-to-one
-                return(doc.links.first().url)
+                return link.url
 
 
 class LAMetroOrganization(Organization):
