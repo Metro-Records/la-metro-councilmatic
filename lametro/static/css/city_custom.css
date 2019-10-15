@@ -334,3 +334,16 @@ div#toggleControls { margin-bottom: 1em; }
     background-color: #d9edf7;
     font-weight: 900;
 }
+
+.hover-hand {
+    cursor: pointer;
+}
+
+.tooltip-inner {
+    background-color: #000000;
+    max-width: 300px;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: #000000;
+}

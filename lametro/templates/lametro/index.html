@@ -12,7 +12,7 @@
                 </p>
                 <p>
                   <span class="text-bg">
-                    Press enter to perform a keyword search, or select from suggested topics as they appear.
+                    Press enter to perform a keyword search, or select from suggested topics as they appear. <a id="beta-info" class="hover-hand" data-toggle="tooltip" title="<strong>Suggested topics are a new feature.</strong> If you aren't seeing helpful suggestions or have any additional feedback or questions, get in touch with us at <a href='mailto:boardreport@metro.net'>boardreport@metro.net</a>."><i id="beta-info" class="fa fa-info-circle fa-fw"></i></a>
                   </span>
                 </p>
                 <form class="search form-search=" action="/search/" method="GET">
@@ -145,5 +145,7 @@
         });
 
         autocompleteSearchBar('#search-bar');
+
+        $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'})
     </script>
 {% endblock %}
