@@ -1,28 +1,66 @@
-version: '3.3'
+version: '2.4'
 services:
-  solr-production:
+  app:
+    image: lametro
+    container_name: lametro
+    restart: always
+    build: .
+    stdin_open: true
+    tty: true
+    ports:
+      - 8000:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      solr:
+        condition: service_started
+    volumes:
+      - .:/app
+      - ${PWD}/councilmatic/settings_deployment.py.example:/app/councilmatic/settings_deployment.py
+    environment:
+      POSTGRES_HOST: postgres
+    command: python manage.py runserver 0.0.0.0:8000
+
+  migration:
+    container_name: lametro-migration
+    image: lametro:latest
+    depends_on:
+      - app
+      - postgres
+    volumes:
+      - .:/app
+      - ${PWD}/councilmatic/settings_deployment.py.example:/app/councilmatic/settings_deployment.py
+    command: python manage.py migrate
+
+  postgres:
+    container_name: lametro-postgres
+    restart: always
+    image: postgres:9.6
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_DB: lametro
+    volumes:
+      - lametro-db-data:/var/lib/postgresql/data
+    ports:
+      - 32001:5432
+
+  solr:
     image: solr:7.5
-    container_name: lametro-production-solr
+    container_name: lametro-solr
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
-      - data:/opt/solr/server/solr/mycores
+      - lametro-solr-data:/opt/solr/server/solr/mycores
     command: sh -c 'solr-create -c lametro -d /la-metro-councilmatic_configs'
     ports:
-      - '127.0.0.1:8985:8983'
+      - 8986:8983
     environment:
-      SOLR_LOG_LEVEL: ERROR
+      SOLR_LOG_LEVEL: INFO
     restart: on-failure
-  solr-staging:
-    image: solr:7.5
-    container_name: lametro-staging-solr
-    volumes:
-      - ./solr_configs:/la-metro-councilmatic_configs
-      - data:/opt/solr/server/solr/mycores
-    command: sh -c 'solr-create -c lametro-staging -d /la-metro-councilmatic_configs'
-    ports:
-      - '127.0.0.1:8986:8983'
-    environment:
-      SOLR_LOG_LEVEL: ERROR
-    restart: on-failure
+
 volumes:
-  data:
+  lametro-solr-data:
+  lametro-db-data:

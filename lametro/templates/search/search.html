@@ -1,7 +1,16 @@
 {% extends "search/search.html" %}
+<<<<<<< HEAD
 
 {% load staticfiles %}
 {% load extras %}
+
+{% block title %}
+    {% if request.GET.q %}
+        Search results for '{{ request.GET.q }}'
+    {% else %}
+        Search Reports
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 

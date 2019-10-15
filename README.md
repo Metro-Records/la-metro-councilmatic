@@ -14,148 +14,81 @@ Metro Board Reports is a member of the [Councilmatic family](https://www.council
 
 ## Setup
 
-**Install OS level dependencies:**
+These days, we run apps in containers for local development. More on that [here](https://github.com/datamade/how-to/blob/master/docker/local-development.md). Prefer to run the app locally? See the [legacy setup instructions](https://github.com/datamade/la-metro-councilmatic/blob/b8bc14f6d90f1b05e24b5076b1bfcd5e0d37527a/README.md).
 
-* Python 3.4
-* PostgreSQL 9.4 +
+### Install OS level dependencies:
 
-**Install app requirements**
+* [Docker](https://www.docker.com/get-started)
 
-We recommend using [virtualenv](http://virtualenv.readthedocs.org/en/latest/virtualenv.html) and [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/install.html) for working in a virtualized development environment. [Read how to set up virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
-
-Once you have virtualenvwrapper set up, run the following in your terminal:
+### Run the application
 
 ```bash
-mkvirtualenv la-metro
-git clone git@github.com:datamade/la-metro-councilmatic.git
-cd la-metro-councilmatic
-pip install -r requirements.txt
+docker-compose up -d
 ```
 
-Afterwards, whenever you want to use this virtual environment, run `workon la-metro`.
+Note that you can omit the `-d` flag to follow the application and service logs. If you prefer a quieter environment, you can view one log stream at a time with `docker-compose logs -f SERVICE_NAME`, where `SERVICE_NAME` is the name of one of the services defined in `docker-compose.yml`, e.g., `app`, `postgres`, etc.
 
-**Special installation requirements**
+When the command exits (`-d`) or your logs indicate that your app is up and running, visit http://localhost:8000 to visit your shiny, new local application!
 
-Metro runs a custom script that converts board-report attachments into plaintext. The script uses `textract` for conversions. Mac users can [follow the instructions given by `textract`](http://textract.readthedocs.io/en/stable/installation.html#osx).
-
-For Ubuntu users and on the server, the `textract` installation instructions require a little remediation. Follow these steps:
-
-(1) [Install all the dependencies](http://textract.readthedocs.io/en/stable/installation.html#ubuntu-debian).
-
-(2) `textract` fails when installing `pocketsphinx`. Happily, `textract` does not need this dependency for converting PDFs or word documents into plain text. [This issue offers a script that installs a "fake pocketsphinx"](https://github.com/deanmalmgren/textract/pull/178). Do as the issue instructs.
-
-(3) You're ready! Inside your virtualenv execute: `pip install textract==1.6.1`.
-
-
-**Create your settings file**
-
-```bash
-cp councilmatic/settings_deployment.py.example councilmatic/settings_deployment.py
-```
-
-Then edit `councilmatic/settings_deployment.py`:
-- `USER` should be your username
-
-**Setup your database**
-
-Before we can run the website, we need to create a database.
-
-```bash
-createdb lametro
-```
-
-Then, run migrations:
-
-```bash
-python manage.py migrate
-```
-
-Create an admin user. Terminal will prompt you to provide a username, email, and password. This superuser has access to the Django admin backend.
-
-```bash
-python manage.py createsuperuser
-```
-
-## Import data
+### Load in the data
 
 Every hour, DataMade scrapes the Legistar Web API and makes the results available on the Open Civic Data API, which hosts standardized data patterns about government organizations, people, legislation, and events. Metro Board Reports relies upon this data.
 
 The django-councilmatic app comes with an `import_data` management command, which populates your database with content loaded from the OCD API. You can explore the nitty-gritty of this code [here](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/import_data.py).
 
-Run the `import_data` command, which may take a few minutes, depending on volume:
+Run the `import_data` command, which may take a few minutes to an hour, depending on how much data you need to import. You can read more on how to limit the amount of data you import [in the wiki](https://github.com/datamade/la-metro-councilmatic/wiki/Commands-to-know#importing-data-to-councilmatic).
 
 ```bash
-python manage.py import_data
+# Run the command in the background (-d) inside an application container.
+# Remove the container when the command exits (--rm).
+docker-compose run --rm -d app python manage.py import_data
 ```
 
-By default, the import_data command carefully looks at the OCD API; it is a smart management command. If you already have bills loaded, it will not look at everything on the API - it will look at the most recently updated bill in your database, see when that bill was last updated on the OCD API, and then look through everything on the API that was updated after that point. If you'd like to load things that are older than what you currently have loaded, you can run the import_data management command with a `--delete` option, which removes everything from your database before loading.
-
-The import_data command has some more nuance than the description above, for the different types of data it loads. If you have any questions, open up an issue and pester us to write better documentation.
-
-Once you've imported the data, create the cache, then you're all set!
+For long-running data imports, you can view the logs like:
 
 ```bash
-python manage.py createcachetable
+docker ps  # Look for the container named like la-metro-councilmatic_app_run_<SOME_ID>
+docker-compose logs -f la-metro-councilmatic_app_run_<SOME_ID>
 ```
 
-## Run Metro Board Reports locally
+By default, the `import_data` command carefully looks at the OCD API; it is a smart management command. If you already have bills loaded, it will not look at everything on the API - it will look at the most recently updated bill in your database, see when that bill was last updated on the OCD API, and then look through everything on the API that was updated after that point.
 
-Run the following in terminal:
+If you'd like to load things that are older than what you currently have loaded, you can run the import_data management command with a `--delete` option, which removes everything from your database before loading.
 
-``` bash
-python manage.py runserver
+Next, add your shiny new data to your search index with the `rebuild_index` command from Haystack.
+
+```bash
+docker-compose run --rm app python manage.py rebuild_index --batch-size=25
 ```
 
-Then, navigate to http://localhost:8000/.
+Once you've imported the data and added it to your index, create the cache, then you're all set!
 
-## Solr Search
-
-### Get setup
-
-LA Metro containerizes Solr with Docker. Be sure you have [Docker on your local machine](https://www.docker.com/get-started), and then, follow these steps.
-
-1. Peek inside the `docker-compose.yml` file. It has configurations for two solr containers: staging and production. Staging runs on port 8986, and production runs on port 8985. Use 8986 (lametro-staging) for local development. Specify it in `settings_deployment.py`.
-
-```
-# councilmatic/settings_deployment.py
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8986/solr/lametro-staging',
-    },
-}
+```bash
+docker-compose run --rm app python manage.py createcachetable
 ```
 
-2. Now, run docker!
+Head over to http://localhost:8000 to view the app.
 
-```
-docker-compose up solr-staging
-```
-
-### Regenerate Solr schema
+## Making changes to the Solr schema
 
 Did you make a change to the schema file that Solr uses to make its magic (`solr_configs/conf/schema.xml`)? Did you add a new field or adjust how solr indexes data? If so, you need to take a few steps – locally and on the server.
 
-**Local development**
+### Local development
 
-First, remove the solr container.  
+First, remove your Solr container.
 
 ```
-# view all containers
-docker ps -a
+# remove your existing metro containers
+docker-compose down
 
-# remove the solr container
-docker rm lametro-{{deployment}}-solr
-
-# build the container anew
-docker-compose up solr-{{deployment}}
+# build the containers anew
+docker-compose up -d
 ```
 
 Then, rebuild your index.
 
 ```
-python manage.py rebuild_index
+docker-compose run --rm app python manage.py rebuild_index --batch-size=25
 ```
 
 Finally, prepare for deployment: move your new schema to `solr_scripts`.
@@ -164,60 +97,64 @@ Finally, prepare for deployment: move your new schema to `solr_scripts`.
 cp solr_configs/conf/schema.xml solr_scripts/schema.xml
 ```
 
-**On the Sever**
+### On the Server
 
 The Dockerized versions of Solr on the server need your attention, too. Follow these steps.
 
 1. Deploy the schema changes on the staging server.
+
 2. Shell into the server, and go to the `lametro-staging` repo.
-```
-ssh ubuntu@boardagendas.metro.net
+    ```bash
+    ssh ubuntu@boardagendas.metro.net
 
-# Do not switch to the DataMade user!
-# Docker requires sudo priviliges
-cd /home/datamade/lametro-staging
-```
+    # Do not switch to the DataMade user!
+    # Docker requires sudo priviliges
+    cd /home/datamade/lametro-staging
+    ```
+
 3. Remove and rebuild the Solr container.
-```
-# We need to stop the container before removing it!
-sudo docker stop lametro-staging-solr  
-sudo docker rm lametro-staging-solr
+    ```bash
+    # We need to stop the container before removing it!
+    sudo docker stop lametro-staging-solr
+    sudo docker rm lametro-staging-solr
 
-# -d is the daemon flag
-sudo docker-compose up -d solr-staging
-```
+    # -d is the daemon flag
+    sudo docker-compose up -d solr-staging
+    ```
 
 4. Log in as the datamade user.
-```
-sudo su - datamade
-```
+    ```bash
+    sudo su - datamade
+    ```
 
 5. Rebuild the index for the staging server:
-```
-workon lametro-staging
-python manage.py rebuild_index --batch-size=200
-```
+    ```bash
+    workon lametro-staging
+    python manage.py rebuild_index --batch-size=200
+    ```
 
 Did everything work as expected? Great - now onto the production site.
 
 Make sure your changes are deployed to the production server (i.e. you've cut a release with your changes).
 
 1. Look at the times cron tasks are run (specified in [`scripts/lametro-crontasks`](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks)), and plan to rebuild the index inbetween those times. Rebuilding the index will take a few minutes, so plan accordingly.
+
 2. As above: shell into the server, go to the `lametro` repo, then remove and rebuild the Solr container.
-```
-ssh ubuntu@boardagendas.metro.net
-cd /home/datamade/lametro
+    ```bash
+    ssh ubuntu@boardagendas.metro.net
+    cd /home/datamade/lametro
 
-sudo docker stop lametro-production-solr  
-sudo docker rm lametro-production-solr
+    sudo docker stop lametro-production-solr
+    sudo docker rm lametro-production-solr
 
-sudo docker-compose up -d solr-production
-```
+    sudo docker-compose up -d solr-production
+    ```
+
 3. Switch to the datamade user and rebuild the index.
-```
-workon lametro
-python manage.py rebuild_index --batch-size=200
-```
+    ```bash
+    workon lametro
+    python manage.py rebuild_index --batch-size=200
+    ```
 
 Nice! The production server should have the newly edited schema and freshly built index, ready to search, filter, and facet.
 
@@ -226,19 +163,13 @@ Nice! The production server should have the newly edited schema and freshly buil
 LA Metro Councilmatic has a basic test suite. If you need to run it, simply run:
 
 ```bash
-pytest
+docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
 ```
-
-## Team
-
-* Forest Gregg, DataMade - Open Civic Data (OCD) and Legistar scraping
-* Eric van Zanten, DataMade - search and dev ops
-* Regina Compton, DataMade - developer
 
 ## Errors / Bugs
 
 If something is not behaving intuitively, it is a bug, and should be reported.
-Report it here: https://github.com/datamade/nyc-councilmatic/issues
+Report it here: https://github.com/datamade/la-metro-councilmatic/issues
 
 ## Note on Patches/Pull Requests
 
@@ -249,4 +180,4 @@ Report it here: https://github.com/datamade/nyc-councilmatic/issues
 
 ## Copyright
 
-Copyright (c) 2017 DataMade. Released under the [MIT License](https://github.com/datamade/nyc-councilmatic/blob/master/LICENSE).
+Copyright (c) 2019 DataMade. Released under the [MIT License](https://github.com/datamade/la-metro-councilmatic/blob/master/LICENSE).

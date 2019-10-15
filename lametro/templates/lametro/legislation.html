@@ -137,24 +137,23 @@
                 <div class="divider"></div>
             {% endif %}
 
-            <br>
-
             {% if related_bills %}
+            <br>
                 <h3 class="no-pad-bottom"><i class="fa fa-file-text" aria-hidden="true"></i> Related Board Reports</h3>
                 <div class="table-responsive">
                     <table class='table table-responsive' id='committee-actions'>
                         <thead>
                             <tr>
                                 <th>Board Report</th>
-                                <th class='no-wrap'>Last action</th>                            
+                                <th class='no-wrap'>Last action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for bill in related_bills %}
                                 <tr>
                                     <td class='text-muted small'>
-                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a> 
-                                        
+                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
+
                                         {% if bill.ocr_full_text|prepare_title %}
                                             - {{ bill.ocr_full_text|prepare_title }}
                                         {% endif %}
@@ -168,6 +167,22 @@
                     </table>
                 </div>
                 <div class="divider"></div>
+            {% endif %}
+
+            {% if legislation.topics %}
+            <br>
+              <h3><i class="fa fa-tag" aria-hidden="true"></i> Topics</h3>
+              <ul>
+                {% for topic in legislation.topics %}
+                  {% with "topics_exact:"|add:topic as tag_facet %}
+                    <li>
+                        <a href="{% search_with_querystring request selected_facets=tag_facet %}" target="blank">
+                          {{ topic }}
+                        </a>
+                    </li>
+                  {% endwith %}
+                {% endfor %}
+              </ul>
             {% endif %}
         </div>
 

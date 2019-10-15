@@ -1,3 +1,6 @@
+import os
+
+
 SECRET_KEY = 'sweet bird most musical most melancholy'
 
 INSTALLED_APPS = (
@@ -17,8 +20,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'lametro',
-        'USER': '',
+        'USER': 'postgres',
         'PASSWORD': '',
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': 5432,
     }
 }
