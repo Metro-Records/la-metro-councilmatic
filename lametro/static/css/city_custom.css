@@ -37,8 +37,8 @@ h1, .h1 {
 #section-photo {
     background-image:
         linear-gradient(
-          rgba(0, 0, 0, 0.6),
-          rgba(270, 270, 270, 0.3)
+          rgba(0, 0, 0, 0.9),
+          rgba(270, 270, 270, 0.6)
         ),
         url('../images/la-metro-regional-rail-map-copy.gif');
     background-size: cover;
@@ -132,6 +132,32 @@ div#google_translate_element {
 
 #ceo-table td { vertical-align: middle; }
 
+/* Styling for autocomplete */
+.autocomplete-suggestions {
+  border: 1px solid #999;
+  background: #FFF;
+  overflow: auto;
+}
+
+.autocomplete-suggestion {
+  padding: 2px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.autocomplete-selected { background: #F0F0F0; }
+
+.autocomplete-suggestions strong {
+  font-weight: bold;
+  color: #EB6864;
+}
+.autocomplete-group { padding: 2px 5px; }
+
+.autocomplete-group strong {
+  display: block;
+  border-bottom: 1px solid #000;
+}
+
 /* Labels for statues */
 .label {
     padding: .25em .6em .25em;
@@ -149,6 +175,10 @@ div#google_translate_element {
 
 .label-failed, .label-withdrawn {
     background-color: #E00700;
+}
+
+#search-help {
+  font-size: 16px;
 }
 
 /* Styles for order by options on search page */
@@ -315,4 +345,22 @@ hr .events-line {
     .navbar-header {
         float:none;
     }
+}
+
+.badge-highlight {
+    background-color: #d9edf7;
+    font-weight: 900;
+}
+
+.hover-hand {
+    cursor: pointer;
+}
+
+.tooltip-inner {
+    background-color: #000000;
+    max-width: 300px;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: #000000;
 }

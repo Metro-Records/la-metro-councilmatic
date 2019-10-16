@@ -1,13 +1,13 @@
 from datetime import datetime
-from datetime import timedelta 
+from datetime import timedelta
 import pytest
 from uuid import uuid4
 from random import randrange
 
 from django.core.management import call_command
 
-from councilmatic_core.models import EventDocument, Bill, EventAgendaItem, Membership, LegislativeSession
-from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, LAMetroOrganization
+from councilmatic_core.models import EventDocument, Bill, EventAgendaItem, Membership, LegislativeSession, Subject
+from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, LAMetroOrganization, SubjectGuid
 
 def get_uid_chunk(uid=None):
     '''
@@ -67,7 +67,7 @@ def event(db):
                 'ocd_created_at': '2017-05-27 11:10:46.574-05',
                 'ocd_updated_at': '2017-05-27 11:10:46.574-05',
                 'name': 'System Safety, Security and Operations Committee',
-                'start_time': datetime.strptime('2017-05-18 12:15', '%Y-%m-%d %H:%M'), 
+                'start_time': datetime.strptime('2017-05-18 12:15', '%Y-%m-%d %H:%M'),
                 'updated_at': '2017-05-17 11:06:47.1853',
                 'slug': uuid4(),
             }
@@ -175,7 +175,7 @@ def membership(db, metro_organization, metro_person):
                 'id': randrange(10000),
                 '_organization': related_org,
                 '_person': related_person,
-                'end_date': datetime.now() + timedelta(days=1) 
+                'end_date': datetime.now() + timedelta(days=1)
             }
 
             membership_info.update(kwargs)
@@ -185,3 +185,58 @@ def membership(db, metro_organization, metro_person):
             return membership
 
     return MembershipFactory()
+
+@pytest.fixture
+@pytest.mark.django_db
+def subject(db, bill):
+    class SubjectFactory():
+        def build(self, **kwargs):
+
+            if 'bill' in kwargs:
+                current_bill = kwargs.get('bill')
+            else:
+                current_bill = bill.build()
+
+            subject_name = 'Metro Gold Line'
+
+            subject_info = {
+                'bill': current_bill,
+                'subject': subject_name
+            }
+
+            subject_info.update(kwargs)
+
+            subject = Subject.objects.create(**subject_info)
+
+            return subject
+
+    return SubjectFactory()
+
+@pytest.fixture
+@pytest.mark.django_db
+def subject_guid(db, subject):
+    class SubjectGuidFactory():
+        def build(self, **kwargs):
+
+            if 'name' in kwargs:
+                current_subject = kwargs.get('name')
+            else:
+                current_subject = 'Metro Gold Line'
+
+            if 'guid' in kwargs:
+                guid = kwargs.get('guid')
+            else:
+                guid = '0000-0-0000'
+
+            subject_guid_info = {
+                'name': current_subject,
+                'guid': guid
+            }
+
+            subject_guid_info.update(kwargs)
+
+            subject_guid = SubjectGuid.objects.create(**subject_guid_info)
+
+            return subject_guid
+
+    return SubjectGuidFactory()

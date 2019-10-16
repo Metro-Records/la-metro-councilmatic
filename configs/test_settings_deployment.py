@@ -32,7 +32,7 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
-# Remember to run python manage.py createcachetable so this will work! 
+# Remember to run python manage.py createcachetable so this will work!
 # developers, set your BACKEND to 'django.core.cache.backends.dummy.DummyCache'
 CACHES = {
     'default': {
@@ -60,3 +60,6 @@ RAVEN_CONFIG = {
 }
 
 SHOW_TEST_EVENTS = True
+
+SMART_LOGIC_KEY = 'smartlogic api key'
+SMART_LOGIC_ENVIRONMENT = '0ef5d755-1f43-4a7e-8b06-7591bed8d453'
