@@ -136,7 +136,7 @@ class LAMetroBill(Bill):
 
     @property
     def topics(self):
-        return [s.subject for s in self.subjects.all()]
+        return sorted(s.subject for s in self.subjects.all())
 
 
 class LAMetroPost(Post):

@@ -33,10 +33,18 @@
                             <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
                                <i class="fa fa-times"></i>
                             </a>
-                        {% else %}
-                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name | short_topic_name }}</a>
+                            <span class="badge badge-facet pull-right">{{ count }}</span>
                         {% endif %}
-                        <span class="badge badge-facet pull-right">{{ count }}</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                {% for name, count in facets.fields.topics %}
+                    {% if count %}
+                    <li class="small">
+                        {% if name not in selected_list %}
+                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name | short_topic_name }}</a>
+                            <span class="badge badge-facet pull-right">{{ count }}</span>
+                        {% endif %}
                     </li>
                     {% endif %}
                 {% endfor %}
