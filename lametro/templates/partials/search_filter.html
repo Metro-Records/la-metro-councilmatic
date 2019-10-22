@@ -38,7 +38,7 @@
                     </li>
                     {% endif %}
                 {% endfor %}
-                {% for name, count in facets.fields.topics %}
+                {% for name, count in facets.fields.topics|sort_by_index:0 %}
                     {% if count %}
                     <li class="small">
                         {% if name not in selected_list %}

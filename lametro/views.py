@@ -742,7 +742,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         sqs = SearchQuerySet().facet('bill_type', sort='index')\
                               .facet('sponsorships', sort='index')\
                               .facet('inferred_status')\
-                              .facet('topics', sort='index')\
+                              .facet('topics')\
                               .facet('legislative_session', sort='index')\
                               .highlight(**{'hl.fl': 'text,attachment_text'})
 
