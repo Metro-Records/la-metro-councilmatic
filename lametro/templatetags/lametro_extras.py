@@ -54,7 +54,6 @@ def prepare_title(full_text):
     if formatted_text:
         return parse_subject(formatted_text)
 
-
 @register.filter
 def full_text_doc_url(url):
     query = {'document_url': url, 'filename': 'agenda'}
@@ -62,10 +61,9 @@ def full_text_doc_url(url):
 
     return urllib.parse.urlencode(pic_query)
 
-
 '''
 This filter converts the post title into a prose-style format with nomination info,
-(e.g., "Appointee of Los Angeles County City Selection Committee, Southeast Long Beach sector" into "Appointee of [Committee], nominated by the [Subcommittee]") 
+(e.g., "Appointee of Los Angeles County City Selection Committee, Southeast Long Beach sector" into "Appointee of [Committee], nominated by the [Subcommittee]")
 Some posts do not require modification, e.g., "Caltrans District 7 Director, Appointee of Governor of California."
 A full list of posts resides in the scraper: https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/people.py
 '''
@@ -81,12 +79,12 @@ def appointment_label(label):
 
     if len(label_parts) < 1:
         return full_label
-    
+
     if 'sector' in full_label:
         return ', nominated by the '.join(label_parts).replace('sector', 'Subcommittee')
     else:
         return ', nominated by the '.join(label_parts) + ' Subcommittee'
-    
+
 
 @register.filter
 def clean_membership_extras(extras):
@@ -128,7 +126,7 @@ def parse_agenda_item(text):
     if text:
         label, number = text.split(',')
         return number
-    else: 
+    else:
         return ''
 
 @register.filter
@@ -142,12 +140,12 @@ def short_topic_name(text):
 
 @register.filter
 def updates_made(event_id):
-    ''' 
-    When Metro finalizes an agenda, they add it to legistar, and we scrape this link, and add it to our DB. Sometimes, Metro might change the date or time of the event - after adding the agenda. When this occurs, a label indicates that event has been updated.
-    This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated. 
-    If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page. 
     '''
-    try: 
+    When Metro finalizes an agenda, they add it to legistar, and we scrape this link, and add it to our DB. Sometimes, Metro might change the date or time of the event - after adding the agenda. When this occurs, a label indicates that event has been updated.
+    This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated.
+    If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page.
+    '''
+    try:
         # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded
         document = EventDocument.objects.filter(event_id=event_id).latest('updated_at')
     except EventDocument.DoesNotExist:
@@ -155,8 +153,7 @@ def updates_made(event_id):
     else:
         event = LAMetroEvent.objects.get(ocd_id=event_id)
         updated = document.updated_at < event.updated_at
-        return updated 
-
+        return updated
 
 @register.filter
 def find_agenda_url(all_documents):
@@ -175,7 +172,7 @@ def get_highlighted_attachment_text(context, ocd_id):
     attachment_text = ' '.join(d.full_text for d in bill.documents.all() if d.full_text)
 
     highlight = ExactHighlighter(context['query'])
-    
+
     return highlight.highlight(attachment_text)
 
 @register.filter
@@ -183,3 +180,17 @@ def matches_query(tag, request):
     if request.GET.get('q'):
         return tag.lower() == request.GET.get('q').lower()
     return False
+
+@register.filter
+def sort_by_index(array, index):
+    '''
+    Sort a list of tuples by an item in that tuple, e.g., sort a facet listing
+    like [(topic, count), (topic, count)].
+
+    Django's dictsort template filter supports this natively >= 1.10, but for
+    now, we're still on Django < 1.10.
+
+    TODO: Transition to dictsort when we upgrade Django. See:
+    https://docs.djangoproject.com/en/1.10/ref/templates/builtins/
+    '''
+    return sorted(array, key=lambda x: x[index])
