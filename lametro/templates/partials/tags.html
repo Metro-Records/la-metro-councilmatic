@@ -16,25 +16,40 @@
     <div class="col-xs-11">
     {% if result.object.topics %}
         <i class="fa fa-fw fa-tag"></i>
-        {% for tag in result.object.topics %}
+        {% hits_first result.object.topics selected_facets.topics as tags %}
+        {% for tag in tags|slice:":10" %}
             {% with "topics_exact:"|add:tag as tag_facet %}
-            <span class="badge {% if tag|matches_query:request %}badge-highlight{% else %}badge-muted{% endif %} pseudo-topic-tag">
+            <span class="badge{% if tag|matches_query:request or tag|matches_facet:selected_facets.topics %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
                 <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag}}</a>
             </span>&nbsp;
             {% endwith %}
         {% endfor %}
-        <br/>
+        {% if tags|length > 10 %}
+            <small>
+                <a data-toggle="collapse" href="#collapse-{{ result.slug }}" aria-expanded="false" aria-controls="collapse-{{ result.slug }}">More&nbsp;topics...</a>
+            </small>
+            <div class="collapse" id="collapse-{{ result.slug }}">
+                {% for tag in tags|slice:"10:" %}
+                    {% with "topics_exact:"|add:tag as tag_facet %}
+                    <span class="badge{% if tag|matches_query:request or tag|matches_facet:selected_facets.topics %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
+                        <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag}}</a>
+                    </span>&nbsp;
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <br /><br />
     {% elif result.object.pseudo_topics %}
         <i class="fa fa-fw fa-tag"></i>
-        {% for tag in result.object.pseudo_topics %}
+        {% hits_first result.object.pseudo_topics selected_facets.topics as tags %}
+        {% for tag in tags %}
             {% with "sponsorships_exact:"|add:tag as tag_facet %}
-            <span class="badge badge-muted pseudo-topic-tag">
+            <span class="badge{% if tag|matches_query:request or tag|matches_facet:selected_facets.topics %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
                 <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{ tag | committee_topic_only }}</a>
             </span>&nbsp;
             {% endwith %}
         {% endfor %}
         <br/>
     {% endif %}
-    </br>
     </div>
 </div>

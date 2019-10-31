@@ -50,7 +50,6 @@
                 {% with formatted_q=request.GET.q|remove_question %}
                     {% include 'partials/search_bar.html' %}
                 {% endwith %}
-            </div>
         </form>
     </div>
 
@@ -285,13 +284,11 @@
 
 {% block extra_js %}
   {{ block.super }}
-  <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
-  <script src="{% static 'js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/jquery.autocomplete.js' %}"></script>
   <script src="{% static 'js/autocomplete.js' %}"></script>
 
   <script>
     autocompleteSearchBar('#autocomplete-search');
-    $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'})
+    $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
   </script>
 {% endblock %}

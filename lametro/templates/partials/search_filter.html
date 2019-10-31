@@ -23,29 +23,28 @@
         </div>
         <div class="panel-body {% if facet_name in selected_facets %}panel-show{% endif %} collapse" id="filter-{{facet_name}}">
             <ul class="search-facet-list">
-
             {% if facet_name == 'topics' %}
                 {% for name, count in facets.fields.topics %}
                     {% if count %}
-                    <li class="small">
                         {% if name in selected_list %}
-                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}"><strong>{{ name | short_topic_name }}</strong></a>
-                            <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
-                               <i class="fa fa-times"></i>
-                            </a>
-                            <span class="badge badge-facet pull-right">{{ count }}</span>
+                            <li class="small">
+                                <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}"><strong>{{ name | short_topic_name }}</strong></a>
+                                <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
+                                   <i class="fa fa-times"></i>
+                                </a>
+                                <span class="badge badge-facet pull-right">{{ count }}</span>
+                            </li>
                         {% endif %}
-                    </li>
                     {% endif %}
                 {% endfor %}
                 {% for name, count in facets.fields.topics|sort_by_index:0 %}
                     {% if count %}
-                    <li class="small">
                         {% if name not in selected_list %}
-                            <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name | short_topic_name }}</a>
-                            <span class="badge badge-facet pull-right">{{ count }}</span>
+                            <li class="small">
+                                <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name | short_topic_name }}</a>
+                                <span class="badge badge-facet pull-right">{{ count }}</span>
+                            </li>
                         {% endif %}
-                    </li>
                     {% endif %}
                 {% endfor %}
             {% elif facet_name == 'sponsorships' %}
