@@ -23,7 +23,6 @@
         </div>
         <div class="panel-body {% if facet_name in selected_facets %}panel-show{% endif %} collapse" id="filter-{{facet_name}}">
             <ul class="search-facet-list">
-
             {% if facet_name == 'topics' %}
                 {% for name, count in facets.fields.topics %}
                     {% if count %}

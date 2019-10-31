@@ -182,6 +182,12 @@ def matches_query(tag, request):
     return False
 
 @register.filter
+def matches_facet(tag, facet):
+    if facet:
+        return tag.lower() in [t.lower() for t in facet]
+    return False
+
+@register.filter
 def sort_by_index(array, index):
     '''
     Sort a list of tuples by an item in that tuple, e.g., sort a facet listing
@@ -194,3 +200,19 @@ def sort_by_index(array, index):
     https://docs.djangoproject.com/en/1.10/ref/templates/builtins/
     '''
     return sorted(array, key=lambda x: x[index])
+
+@register.simple_tag(takes_context=True)
+def hits_first(context, topics, selected_topics):
+    '''
+    Return array of topics, such that topics matching a selected facet or the
+    search term are returned first, followed by the remaining tags in ABC order.
+    '''
+    terms = [context['query']]
+
+    if selected_topics:
+        terms += selected_topics
+
+    hits = list(set(topics).intersection(set(terms)))
+    topics = list(set(topics) - set(terms))
+
+    return sorted(hits) + sorted(topics)
