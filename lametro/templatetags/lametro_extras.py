@@ -212,7 +212,9 @@ def hits_first(context, topics, selected_topics):
     if selected_topics:
         terms += selected_topics
 
-    hits = list(set(topics).intersection(set(terms)))
-    topics = list(set(topics) - set(terms))
+    lower_terms = [t.lower() for t in terms]
+    lower_topics = [t.lower() for t in topics]
 
-    return sorted(hits) + sorted(topics)
+    hits = list(set(lower_topics).intersection(set(lower_terms)))
+
+    return sorted(t for t in topics if t.lower() in hits) + sorted(t for t in topics if t.lower() not in hits)
