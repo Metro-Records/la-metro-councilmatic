@@ -50,7 +50,6 @@
                 {% with formatted_q=request.GET.q|remove_question %}
                     {% include 'partials/search_bar.html' %}
                 {% endwith %}
-            </div>
         </form>
     </div>
 
@@ -292,6 +291,6 @@
 
   <script>
     autocompleteSearchBar('#autocomplete-search');
-    $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'})
+    $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
   </script>
 {% endblock %}
