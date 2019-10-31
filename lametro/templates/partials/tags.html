@@ -25,9 +25,9 @@
             {% endwith %}
         {% endfor %}
         {% if tags|length > 5 %}
-            <a data-toggle="collapse" href="#collapse-{{ result.slug }}" aria-expanded="false" aria-controls="collapse-{{ result.slug }}">
-                More&nbsp;tags...
-            </a>
+            <small>
+                <a data-toggle="collapse" href="#collapse-{{ result.slug }}" aria-expanded="false" aria-controls="collapse-{{ result.slug }}">More&nbsp;topics...</a>
+            </small>
             <div class="collapse" id="collapse-{{ result.slug }}">
                 {% for tag in tags|slice:"10:" %}
                     {% with "topics_exact:"|add:tag as tag_facet %}
