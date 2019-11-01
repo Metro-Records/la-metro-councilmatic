@@ -290,5 +290,13 @@
   <script>
     autocompleteSearchBar('#autocomplete-search');
     $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
+    $('.collapse').on('show.bs.collapse', function(e) {
+        var slug = $(this).attr('id');
+        $('a[href="#' + slug + '"]').text('Fewer topics');
+    });
+    $('.collapse').on('hide.bs.collapse', function(e) {
+        var slug = $(this).attr('id');
+        $('a[href="#' + slug + '"]').text('More topics...');
+    });
   </script>
 {% endblock %}
