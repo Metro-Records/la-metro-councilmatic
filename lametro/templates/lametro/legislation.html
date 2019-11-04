@@ -28,7 +28,7 @@
                 </h1>
 
                 <p>
-                    <a href='{{legislation.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
+                    <a href='{{legislation.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
                         <i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website
                     </a>
                 </p>
@@ -61,7 +61,7 @@
                     seamless="true"
                     width="100%"
                     height="600px"
-                    src="/pdfviewer/?{{board_report.url|full_text_doc_url}}">
+                    src="/pdfviewer/?{{board_report.links.all.0.url|full_text_doc_url}}">
                 </iframe>
 
                 <div class="divider"></div>
@@ -98,7 +98,7 @@
                             {% for action in actions %}
                                 <tr>
                                     <td class='nowrap text-muted small'>
-                                        <span datetime='{{action.date | format_date_sort }}'>{{action.date|date:'n/d/y'}}</span>
+                                        <span datetime='{{action.date_dt | format_date_sort }}'>{{action.date_dt|date:'n/d/y'}}</span>
                                     </td>
                                     <td class="small">
                                         <span class='text-{{action.label}}'>{{action.description | remove_action_subj}}</span>
@@ -130,7 +130,7 @@
                 <ul>
                     {% for doc in attachments %}
                         <li>
-                            <a href="{{doc.url}}" target="blank">{{ doc.note }}</a>
+                            <a href="{{doc.links.all.0.url}}" target="blank">{{ doc.note }}</a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -149,10 +149,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for bill in related_bills %}
+                          {% for relation in related_bills %}
+                          {% with bill=relation.related_bill %}
                                 <tr>
                                     <td class='text-muted small'>
-                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
+                                      <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
 
                                         {% if bill.ocr_full_text|prepare_title %}
                                             - {{ bill.ocr_full_text|prepare_title }}
@@ -162,6 +163,7 @@
                                     </td>
                                     <td class='text-muted small' align='right'>{{ bill.get_last_action_date|date:'n/d/Y' }}</td>
                                 </tr>
+                            {% endwith %}
                             {% endfor %}
                         </tbody>
                     </table>

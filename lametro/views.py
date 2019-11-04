@@ -72,7 +72,7 @@ class LABillDetail(BillDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['actions'] = self.get_object().actions.all().order_by('-order')
-        context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
+        context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
 
         context['board_report'] = self.get_object().versions.get(note="Board Report")
         item = context['legislation']
@@ -89,14 +89,12 @@ class LABillDetail(BillDetailView):
         except:
             context['packet_url'] = None
 
-        # Create list of related board reports, ordered by descending last_action_date.
-        # Thanks https://stackoverflow.com/a/2179053 for how to handle null last_action_date
-        if context['legislation'].related_bills.all():
-            all_related_bills = context['legislation'].related_bills.all().values('related_bill_identifier')
-            related_bills = LAMetroBill.objects.filter(identifier__in=all_related_bills)
-            minimum_date = datetime(MINYEAR, 1, 1, tzinfo=app_timezone)
-            context['related_bills'] = sorted(related_bills, key=lambda bill: bill.get_last_action_date() or minimum_date, reverse=True)
+        related_bills = context['legislation']\
+            .related_bills\
+            .annotate(latest_date=Max('related_bill__actions__date'))\
+            .order_by('-latest_date')
 
+        context['related_bills'] = related_bills
 
         return context
 

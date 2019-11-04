@@ -15,7 +15,7 @@ from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager
 
-from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity
+from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill
 
 from proxy_overrides.related import ProxyForeignKey
 
@@ -133,23 +133,26 @@ class LAMetroBill(Bill, SourcesMixin):
         events that have already occurred, so the last action date is not in the
         future.
         '''
-        actions = Action.objects.filter(_bill_id=self.ocd_id)
-        last_action_date = ''
-
-        if actions:
-            last_action_date = actions.reverse()[0].date
-        else:
-            events = Event.objects.filter(agenda_items__bill_id=self.ocd_id,
-                                          start_time__lt=timezone.now())
-
-            if events:
-                last_action_date = events.latest('start_time').start_time
-
-        return last_action_date
+        return self.actions.last().date_dt
 
     @property
     def topics(self):
-        return self.subject
+        return sorted(self.subject)
+
+
+class RelatedBill(RelatedBill):
+
+    class Meta:
+        proxy = True
+
+    bill = ProxyForeignKey(LAMetroBill,
+                           related_name='related_bills',
+                           on_delete=models.CASCADE)
+
+    related_bill = ProxyForeignKey(LAMetroBill,
+                                   related_name='related_bills_reverse',
+                                   null=True,
+                                   on_delete=models.SET_NULL)
 
 
 class LAMetroPost(Post):
