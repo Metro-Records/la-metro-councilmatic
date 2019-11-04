@@ -23,7 +23,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
-from django.db.models.functions import Lower, Now
+from django.db.models.functions import Lower, Now, Cast
 from django.db.models import Max, Min, Prefetch, Case, When, Value, IntegerField
 from django.utils import timezone
 from django.utils.text import slugify
@@ -46,6 +46,8 @@ from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
+
+from opencivicdata.legislative.models import EventDocument
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -72,9 +74,9 @@ class LABillDetail(BillDetailView):
         context['actions'] = self.get_object().actions.all().order_by('-order')
         context['attachments'] = self.get_object().attachments.all().order_by(Lower('note')).exclude(note="Board Report")
 
-        context['board_report'] = self.get_object().attachments.get(note="Board Report")
+        context['board_report'] = self.get_object().versions.get(note="Board Report")
         item = context['legislation']
-        actions = Action.objects.filter(_bill_id=item.ocd_id)
+        actions = self.get_object().actions.all()
         organization_lst = [action.organization for action in actions]
         context['sponsorships'] = set(organization_lst)
 
@@ -162,84 +164,38 @@ class LAMetroEventDetail(EventDetailView):
             context['packet_url'] = None
 
         agenda_with_board_reports = event.agenda\
-                            .filter(related_entities__bill__versions__note__istartswith='board report')\
-                            .distinct()
-        # Logic for getting relevant board report information.
-        # with connection.cursor() as cursor:
-        #     query = '''
-        #         SELECT DISTINCT
-        #             b.identifier,
-        #             b.ocd_id,
-        #             b.slug,
-        #             b.ocr_full_text,
-        #             i.description,
-        #             d_bill.url,
-        #             i.order,
-        #             i.notes
-        #         FROM councilmatic_core_billdocument AS d_bill
-        #         INNER JOIN councilmatic_core_eventagendaitem as i
-        #         ON i.bill_id=d_bill.bill_id
-        #         INNER JOIN councilmatic_core_eventdocument as d_event
-        #         ON i.event_id=d_event.event_id
-        #         INNER JOIN councilmatic_core_bill AS b
-        #         ON d_bill.bill_id=b.ocd_id
-        #         WHERE d_event.event_id='{}'
-        #         AND trim(lower(d_bill.note)) LIKE 'board report%'
-        #         ORDER BY i.order
-        #         '''.format(event.id)
-
-        #     cursor.execute(query)
-
-            # # Get field names
-            # columns = [c[0] for c in cursor.description]
-            # columns.append('packet_url')
-            # columns.append('inferred_status')
-
-            # # Add field for packet_url
-            # cursor_copy = []
-            # packet_url = None
-
-            # for obj in cursor:
-            #     packet_url = None
-            #     # Add packet slug
-            #     obj_id = obj[1]
-            #     packet_slug = obj_id.replace('/', '-')
-
-            #     r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
-            #     if r.status_code == 200:
-            #         packet_url = MERGER_BASE_URL + '/document/' + packet_slug
-
-            #     obj = obj + (packet_url,)
-
-            #     # The cursor object potentially includes public and private bills.
-            #     # However, the LAMetroBillManager excludes private bills
-            #     # from the LAMetroBill queryset.
-            #     # Attempting to `get` a private bill from LAMetroBill.objects
-            #     # raises a DoesNotExist error. As a precaution, we use filter()
-            #     # rather than get().
-            #     board_report = LAMetroBill.objects.filter(id=id)
-            #     if board_report:
-            #         obj = obj + (board_report.first().inferred_status,)
-            #         cursor_copy.append(obj)
-
-            # Create a named tuple
+            .filter(related_entities__bill__versions__isnull=False)\
+            .annotate(int_order=Cast('order', IntegerField()))\
+            .order_by('int_order')
         
         # Find agenda link.
         if event.documents.all():
             for document in event.documents.all():
                 if "Agenda" in document.note:
-                    context['agenda_url'] = document.url
-                    context['document_timestamp'] = document.updated_at
+                    context['agenda_url'] = document.links.first().url
+                    context['document_timestamp'] = document.date
                 elif "Manual upload URL" in document.note:
-                    context['uploaded_agenda_url'] = document.url
-                    context['document_timestamp'] = document.updated_at
+                    context['uploaded_agenda_url'] = document.links.first().url
+                    context['document_timestamp'] = document.date
                 elif "Manual upload PDF" in document.note:
-                    context['uploaded_agenda_pdf'] = document.url
-                    context['document_timestamp'] = document.updated_at
+                    context['uploaded_agenda_pdf'] = document.links.first().url
+                    context['document_timestamp'] = document.date
                     '''
-                    LA Metro Councilmatic uses the adv_cache library to partially cache templates: in the event view, we cache the entire template, except the iframe. (N.B. With this library, the views do not cached, unless explicitly wrapped in a django cache decorator.
-                    Nonetheless, several popular browsers (e.g., Chrome and Firefox) retrieve cached iframe images, regardless of the site's caching specifications.
-                    We use the agenda's "updated_at" timestamp to bust the iframe cache: we save it inside context and then assign it as the "name" of the iframe, preventing the browser from retrieving a cached iframe, when the timestamp changes.
+                    LA Metro Councilmatic uses the adv_cache library
+                    to partially
+
+                    cache templates: in the event view, we cache the
+                    entire template, except the iframe. (N.B. With
+                    this library, the views do not cached, unless
+                    explicitly wrapped in a django cache decorator.
+                    Nonetheless, several popular browsers (e.g.,
+                    Chrome and Firefox) retrieve cached iframe images,
+                    regardless of the site's caching specifications.
+                    We use the agenda's "updated_at" timestamp to bust
+                    the iframe cache: we save it inside context and
+                    then assign it as the "name" of the iframe,
+                    preventing the browser from retrieving a cached
+                    iframe, when the timestamp changes.
                     '''
 
         context['related_board_reports'] = agenda_with_board_reports
@@ -289,12 +245,14 @@ class LAMetroEventsView(EventsView):
     template_name = 'lametro/events.html'
 
     def get_context_data(self, **kwargs):
-        context = super(LAMetroEventsView, self).get_context_data(**kwargs)
+        context = {}
 
         # Did the user set date boundaries?
         start_date_str = self.request.GET.get('from')
         end_date_str   = self.request.GET.get('to')
         day_grouper    = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
+
+        minutes_queryset = EventDocument.objects.filter(note__icontains='minutes')
 
         # If yes...
         if start_date_str and end_date_str:
@@ -308,6 +266,11 @@ class LAMetroEventsView(EventsView):
                                         .filter(start_time__gt=start_date_time)\
                                         .filter(start_time__lt=end_date_time)\
                                         .order_by('start_time')\
+
+            select_events = select_events.prefetch_related(Prefetch('documents',
+                                                                minutes_queryset,
+                                                                to_attr='minutes'))\
+                                         .prefetch_related('minutes__links')
 
             org_select_events = []
 
@@ -351,6 +314,11 @@ class LAMetroEventsView(EventsView):
                                       .with_media()\
                                       .filter(start_time__lt=datetime.datetime.now(app_timezone))\
                                       .order_by('-start_time')
+
+            past_events = past_events.prefetch_related(Prefetch('documents',
+                                                                minutes_queryset,
+                                                                to_attr='minutes'))\
+                                     .prefetch_related('minutes__links')
 
             org_past_events = []
 

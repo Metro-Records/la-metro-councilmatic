@@ -63,7 +63,7 @@
         {% endif %}
     </div>
     <div class="col-xs-1">
-        {% with minutes=event.board_event_minutes %}
+        {% with minutes=event.minutes.0.links.all.0.url %}
             {% if minutes %}
             <p>
                 <a href="{{ minutes }}">Minutes</a>

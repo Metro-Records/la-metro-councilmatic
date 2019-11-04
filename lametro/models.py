@@ -15,10 +15,22 @@ from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager
 
-from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink
+from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity
+
+from proxy_overrides.related import ProxyForeignKey
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
+
+class SourcesMixin(object):
+
+    @property
+    def web_source(self):
+        return self.sources.get(note='web')
+
+    @property
+    def api_source(self):
+        return self.sources.get(note='api')
 
 
 class LAMetroBillManager(models.Manager):
@@ -58,7 +70,7 @@ class LAMetroBillManager(models.Manager):
         return filtered_qs
 
 
-class LAMetroBill(Bill):
+class LAMetroBill(Bill, SourcesMixin):
     objects = LAMetroBillManager()
 
     class Meta:
@@ -74,15 +86,13 @@ class LAMetroBill(Bill):
     @property
     def inferred_status(self):
         # Get most recent action.
-        action = self.actions.all().order_by('-order').first()
+        action = self.actions.last()
 
         # Get description of that action.
         if action:
             description = action.description
         else:
             description = ''
-
-        bill_type = self.bill_type
 
         return self._status(description)
 
@@ -139,7 +149,7 @@ class LAMetroBill(Bill):
 
     @property
     def topics(self):
-        return [s.subject for s in self.subjects.all()]
+        return self.subject
 
 
 class LAMetroPost(Post):
@@ -152,7 +162,7 @@ class LAMetroPost(Post):
         today = timezone.now().date()
         return self.memberships.filter(end_date__gte=today)
 
-class LAMetroPerson(Person):
+class LAMetroPerson(Person, SourcesMixin):
 
     class Meta:
         proxy = True
@@ -318,7 +328,7 @@ class LiveMediaMixin(object):
             return None
 
 
-class LAMetroEvent(Event, LiveMediaMixin):
+class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     objects = LAMetroEventManager()
 
     class Meta:
@@ -462,22 +472,25 @@ class LAMetroEvent(Event, LiveMediaMixin):
         return meetings
 
 
-    def board_event_minutes(self):
-        '''
-        This method returns the link to an Event's minutes.
+class EventAgendaItem(EventAgendaItem):
 
-        '''
-        if 'regular board meeting' in self.name.lower():
-            try:
-                link = EventDocumentLink.objects.get(document__note__icontains='Minutes',
-                                                     document__event=self)
-            except EventDocumentLink.DoesNotExist:
-                return None
-            else:
-                return link.url
+    class Meta:
+        proxy = True
 
+    event = ProxyForeignKey(LAMetroEvent, related_name='agenda', on_delete=models.CASCADE)
 
-class LAMetroOrganization(Organization):
+class EventRelatedEntity(EventRelatedEntity):
+
+    class Meta:
+        proxy = True
+
+    agenda_item = ProxyForeignKey(EventAgendaItem,
+                                  related_name='related_entities',
+                                  on_delete=models.CASCADE)
+
+    bill = ProxyForeignKey(LAMetroBill, null=True, on_delete=models.SET_NULL)
+
+class LAMetroOrganization(Organization, SourcesMixin):
     '''
     Overrides use the LAMetroEvent object, rather than the default Event
     object, so test events are hidden appropriately.
