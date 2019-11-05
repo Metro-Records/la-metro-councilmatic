@@ -1,5 +1,6 @@
-https://github.com/opencivicdata/python-opencivicdata/archive/master.zip
+Django<2.2,>=2.0
 django-councilmatic==2.5.4
+https://github.com/opencivicdata/python-opencivicdata/archive/master.zip
 django-debug-toolbar==1.9.1
 raven==5.30.0
 gunicorn==19.6.0

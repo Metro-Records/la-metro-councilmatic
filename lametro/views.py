@@ -24,7 +24,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
-from django.db.models import Max, Min, Prefetch, Case, When, Value, IntegerField
+from django.db.models import (Max,
+                              Min,
+                              Prefetch,
+                              Case,
+                              When,
+                              Value,
+                              IntegerField,
+                              Q)
 from django.utils import timezone
 from django.utils.text import slugify
 from django.views.generic import TemplateView
@@ -432,6 +439,32 @@ class LAMetroAboutView(AboutView):
 
 class LACommitteesView(CommitteesView):
     template_name = 'lametro/committees.html'
+
+    def get_queryset(self):
+
+        ceo = Membership.objects\
+            .select_related('person')\
+            .get(post__role='Chief Executive Officer',
+                 end_date_dt__gt=Now())\
+            .person
+
+        memberships = Membership.objects\
+            .exclude(person=ceo)\
+            .filter(end_date_dt__gt=Now(),
+                    organization__classification='committee')
+        
+        qs = LAMetroOrganization.objects\
+                 .filter(classification='committee')\
+                 .filter(memberships__in=memberships)\
+                 .distinct()
+
+
+        qs = qs.prefetch_related(Prefetch('memberships',
+                                          memberships,
+                                          to_attr='current_members'))
+
+        return qs
+    
 
 
 class LACommitteeDetailView(CommitteeDetailView):
