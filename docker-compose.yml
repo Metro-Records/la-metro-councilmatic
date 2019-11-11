@@ -17,20 +17,11 @@ services:
     volumes:
       - .:/app
       - ${PWD}/councilmatic/settings_deployment.py:/app/councilmatic/settings_deployment.py
+      - /Users/fgregg/work/django-councilmatic:/django-councilmatic
     environment:
       POSTGRES_HOST: postgres
+      DJANGO_MANAGEPY_MIGRATE: "on"
     command: python manage.py runserver 0.0.0.0:8000
-
-  migration:
-    container_name: lametro-migration
-    image: lametro:latest
-    depends_on:
-      - app
-      - postgres
-    volumes:
-      - .:/app
-      - ${PWD}/councilmatic/settings_deployment.py:/app/councilmatic/settings_deployment.py
-    command: python manage.py migrate
 
   postgres:
     container_name: lametro-postgres

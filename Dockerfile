@@ -17,3 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install textract==1.6.3
 
 COPY . /app
+
+RUN DATABASE_URL='' python manage.py collectstatic --noinput
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
