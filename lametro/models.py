@@ -13,7 +13,7 @@ from django.utils.functional import cached_property
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
 
-from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager
+from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager, Membership
 
 from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill
 
@@ -161,9 +161,11 @@ class LAMetroPost(Post):
         proxy = True
 
     @property
-    def current_members(self):
-        today = timezone.now().date()
-        return self.memberships.filter(end_date__gte=today)
+    def acting_label(self):
+        if self.extras.get('acting'):
+            return 'Acting ' + self.label
+        else:
+            return self.label
 
 class LAMetroPerson(Person, SourcesMixin):
 
@@ -172,27 +174,17 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def latest_council_membership(self):
-        if hasattr(settings, 'OCD_CITY_COUNCIL_ID'):
-            filter_kwarg = {'_organization__ocd_id': settings.OCD_CITY_COUNCIL_ID}
-        else:
-            filter_kwarg = {'_organization__name': settings.OCD_CITY_COUNCIL_NAME}
+        filter_kwarg = {'organization__name': settings.OCD_CITY_COUNCIL_NAME,}
         city_council_memberships = self.memberships.filter(**filter_kwarg)
-        if city_council_memberships.count():
-            return city_council_memberships.order_by('-end_date').first()
-        return None
 
-    @property
-    def current_council_seat(self):
-        '''
-        current_council_seat operated on assumption that board members
-        represent a jurisdiction; that's not the case w la metro. just
-        need to know whether member is current or not...
-        '''
-        m = self.latest_council_membership
-        if m:
-            end_date = m.end_date
-            today = timezone.now().date()
-            return True if today < end_date else False
+        # We want to exclude memberships like 1st chair and just
+        # get the memberships confer membership to the org
+        #
+        # see https://github.com/opencivicdata/python-opencivicdata/issues/129
+        primary_memberships = city_council_memberships.filter(Q(role='Board Member') |
+                                                              Q(role='Nonvoting Board Member'))
+        if primary_memberships.count():
+            return primary_memberships.order_by('-end_date').first()
         return None
 
     @property
@@ -206,7 +198,7 @@ class LAMetroPerson(Person, SourcesMixin):
     def latest_council_seat(self):
         pass
 
-    @property
+    @cached_property
     def committee_sponsorships(self):
         '''
         This property returns a list of ten bills, which have recent actions
@@ -214,29 +206,14 @@ class LAMetroPerson(Person, SourcesMixin):
 
         Organizations do not include the Board of Directors.
         '''
-        query = '''
-            SELECT bill_id
-            FROM councilmatic_core_bill as bill
-            JOIN councilmatic_core_action as action
-            ON bill.ocd_id = action.bill_id
-            JOIN councilmatic_core_organization as org
-            ON org.ocd_id = action.organization_id
-            JOIN councilmatic_core_membership as membership
-            ON org.ocd_id = membership.organization_id
-            WHERE membership.person_id='{person}'
-            AND action.date >= membership.start_date
-            AND org.classification = 'committee'
-            ORDER BY action.date DESC
-            LIMIT 10
-        '''.format(person=self.ocd_id)
+        qs = LAMetroBill.objects\
+            .defer('extras')\
+            .filter(actions__organization__classification='committee')\
+            .filter(actions__organization__memberships__in=self.current_memberships)\
+            .order_by('-actions__date')\
+            .distinct()[:10]
 
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            bill_ids = [bill_tup[0] for bill_tup in cursor.fetchall()]
-
-            bills = LAMetroBill.objects.filter(ocd_id__in=bill_ids)
-
-        return bills
+        return qs
 
 
 class LAMetroEventManager(EventManager):
@@ -518,6 +495,36 @@ class LAMetroOrganization(Organization, SourcesMixin):
                              .order_by('start_time')\
                              .all()
         return events
+
+class Membership(Membership):
+    class Meta:
+        proxy = True
+
+    organization = ProxyForeignKey(
+        LAMetroOrganization,
+        related_name='memberships',
+        # memberships will go away if the org does
+        on_delete=models.CASCADE,
+        help_text="A link to the Organization in which the Person is a member."
+    )
+
+    person = ProxyForeignKey(
+        LAMetroPerson,
+        related_name='memberships',
+        null=True,
+        # Membership will just unlink if the person goes away
+        on_delete=models.SET_NULL,
+        help_text="A link to the Person that is a member of the Organization."
+    )
+
+    post = ProxyForeignKey(
+        LAMetroPost,
+        related_name='memberships',
+        null=True,
+        # Membership will just unlink if the post goes away
+        on_delete=models.SET_NULL,
+        help_text="The Post held by the member in the Organization."
+    )
 
 
 class SubjectGuid(models.Model):
