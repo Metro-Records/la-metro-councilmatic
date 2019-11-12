@@ -61,61 +61,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if 'Ad-Hoc' in committee.name %}
-                        {% for member in ad_hoc_list %}
+                        {% for membership in non_ceos %}
                             <tr>
-                                <td data-order='{{ member.index }}'>
+                                <td data-order='{{ membership.index }}'>
                                     <div class="thumbnail-square">
-                                        <img src='{{ member.ocd_id | call_headshot_url }}' alt='{{member.name}}' title='{{member.name}}' class='img-responsive img-thumbnail' />
+                                        <img src='{{ membership.person.headshot.url }}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
                                     </div>
                                 </td>
                                 <td>
-                                    {% if member.label %}
-                                        <a href="{% url 'lametro:person' member.slug %}">{{ member.name }}</a>
-                                    {% else %}
-                                        {{ member.name }}
-                                    {% endif %}
+                                    <a href="{% url 'lametro:person' membership.person.slug %}">{{ membership.person.name }}</a>
                                 </td>
                                 <td>
-                                    {% if member.label %}
-                                        {{ extras | clean_membership_extras }} {{ member.label.0 | format_string | clean_label | format_label | safe }}
-                                    {% else %}
-                                        None
-                                    {% endif %}
+                                    {{ membership.extras | clean_membership_extras }} {{ membership.person.latest_council_membership.post.label | format_label }}
                                 </td>
                                 <td>
-                                    {% if member.committee_role %}
-                                        {{ member.committee_role }}
-                                    {% else %}
-                                        None
-                                    {% endif %}
-                                </td>
-                            </tr>
-
-                        {% endfor %}
-
-                    {% else %}
-
-                        {% for member in membership_objects %}
-                            <tr>
-                                <td data-order='{{ member.index }}'>
-                                    <div class="thumbnail-square">
-                                        <img src='{{ member.ocd_id | call_headshot_url }}' alt='{{member.name}}' title='{{member.name}}' class='img-responsive img-thumbnail' />
-                                    </div>
-                                </td>
-                                <td>
-                                    <a href="{% url 'lametro:person' member.slug %}">{{ member.name }}</a>
-                                </td>
-                                <td>
-                                    {{ member.extras | clean_membership_extras }} {{ member.label.0 | format_string | clean_label | format_label | safe }}
-                                </td>
-                                <td>
-                                    {{ member.role }}
+                                    {{ membership.role }}
                                 </td>
                             </tr>
                         {% endfor %}
-
-                    {% endif %}
                 </tbody>
             </table>
 
@@ -127,7 +90,7 @@
                     <tr>
                         <td width="12%">
                             <div class="thumbnail-square">
-                                <img src='{{ ceo.ocd_id | call_headshot_url }}' alt='{{ceo.name}}' title='{{ceo.name}}' class='img-responsive img-thumbnail' />
+                                <img src='{{ ceo.headshot.url }}' alt='{{ceo.name}}' title='{{ceo.name}}' class='img-responsive img-thumbnail' />
                             </div>
                         </td>
                         <td width="22%"><a href="{% url 'lametro:person' ceo.slug %}">{{ ceo.name }}</a></td>
@@ -189,7 +152,7 @@
         });
 
         // for reference purposes
-        console.log( "OCD ID: {{committee.ocd_id}}" )
+        console.log( "OCD ID: {{committee.id}}" )
 
     </script>
 {% endblock %}
