@@ -47,6 +47,8 @@ from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilmaticSearchForm
 from councilmatic_core.models import *
 
+from opencivicdata.core.models import PersonLink
+
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
     LAMetroEvent, LAMetroOrganization
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
@@ -406,7 +408,7 @@ class LABoardMembersView(CouncilMembersView):
                                    .memberships\
                                    .filter(end_date_dt__gte=Now())\
                                    .exclude(role='Chief Executive Officer')\
-                                   .annotate(role_order=Case(
+                                   .annotate(index=Case(
                                        When(role='Chair', then=Value(1)),
                                        When(role='Vice Chair', then=Value(2)),
                                        When(role='1st Vice Chair', then=Value(2)),
@@ -414,13 +416,13 @@ class LABoardMembersView(CouncilMembersView):
                                        When(role='Board Member', then=Value(4)),
                                        When(role='Nonvoting Board Member', then=Value(5)),
                                        output_field=IntegerField()))\
-                                   .order_by('role_order', 'person__family_name')
+                                   .order_by('person__family_name')
 
     def get_context_data(self, *args, **kwargs):
         context = super(LABoardMembersView, self).get_context_data(**kwargs)
 
         board = LAMetroOrganization.objects.get(name=settings.OCD_CITY_COUNCIL_NAME)
-        context['recent_activity'] = board.actions.order_by('-date', '-_bill__identifier', '-order')
+        context['recent_activity'] = board.actions.order_by('-date', '-bill__identifier', '-order')
         context['recent_events'] = board.recent_events
 
         return context
@@ -441,6 +443,12 @@ class LACommitteesView(CommitteesView):
     template_name = 'lametro/committees.html'
 
     def get_queryset(self):
+        '''
+        We only want committees that have at least one member who is not
+        the CEO. We also want to not count the CEO in the committee
+        size
+
+        '''
 
         ceo = Membership.objects\
             .select_related('person')\
@@ -457,7 +465,6 @@ class LACommitteesView(CommitteesView):
                  .filter(classification='committee')\
                  .filter(memberships__in=memberships)\
                  .distinct()
-
 
         qs = qs.prefetch_related(Prefetch('memberships',
                                           memberships,
@@ -481,65 +488,26 @@ class LACommitteeDetailView(CommitteeDetailView):
             description = settings.COMMITTEE_DESCRIPTIONS.get(committee.slug)
             context['committee_description'] = description
 
-        with connection.cursor() as cursor:
-            base_sql = '''
-              SELECT
-                m.role,
-                p.name, p.slug, p.ocd_id,
-                m.extras,
-                array_agg(mm.label::VARCHAR)
-                FILTER (WHERE mm.label is not Null) as label,
-                split_part(p.name, ' ', 2) AS last_name
-              FROM councilmatic_core_membership AS m
-              LEFT JOIN (
-                SELECT
-                  person_id,
-                  array_agg(DISTINCT pt.label) as label
-                FROM councilmatic_core_membership AS m
-                JOIN councilmatic_core_post AS pt
-                  ON m.post_id=pt.ocd_id
-                WHERE m.organization_id = %s
-                GROUP BY person_id
-              ) AS mm
-                USING(person_id)
-              JOIN councilmatic_core_person AS p
-                ON m.person_id = p.ocd_id
-              WHERE m.organization_id = %s
-              AND m.end_date::date > NOW()::date
-              AND m.role != 'Chief Executive Officer'
-              GROUP BY
-                m.role, p.name, p.slug, p.ocd_id, m.extras
-              {order_by}
-            '''
-            committee_sql = base_sql.format(order_by="ORDER BY CASE " +
-                                           "WHEN m.role='Chair' THEN 0 " +
-                                           "WHEN m.role='Vice Chair' THEN 1 " +
-                                           "WHEN m.role='Member' THEN 2" +
-                                           "END")
+        ceo = Membership.objects\
+            .get(post__role='Chief Executive Officer',
+                 end_date_dt__gt=Now())\
+            .person
 
-            cursor.execute(committee_sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
-            columns = [c[0] for c in cursor.description]
-            results_tuple = namedtuple('Member', columns)
-            objects_list = [results_tuple(*r) for r in cursor]
+        non_ceos = committee.all_members\
+            .annotate(index=Case(
+                When(role='Chair', then=Value(0)),
+                When(role='Vice Chair', then=Value(1)),
+                When(role='1st Vice Chair', then=Value(1)),
+                When(role='2nd Vice Chair', then=Value(2)),
+                When(role='Member', then=Value(3)),
+                default=Value(999),
+                output_field=IntegerField()))\
+            .exclude(person=ceo)\
+            .order_by('index', 'person__family_name', 'person__given_name')
 
-            context['membership_objects'] = objects_list
+        context['non_ceos'] = non_ceos
 
-            ad_hoc_committee_sql = base_sql.format(order_by="ORDER BY CASE " +
-                                           "WHEN m.role='Chair' THEN 0 " +
-                                           "WHEN m.role='1st Vice Chair' THEN 1 " +
-                                           "WHEN m.role='2nd Vice Chair' THEN 2 "
-                                           "WHEN m.role='Member' THEN 3" +
-                                           "END")
-
-            cursor.execute(ad_hoc_committee_sql, [settings.OCD_CITY_COUNCIL_ID, committee.ocd_id])
-
-            columns = [c[0] for c in cursor.description]
-            results_tuple = namedtuple('Member', columns)
-            objects_list = [results_tuple(*r) for r in cursor]
-
-            context['ad_hoc_list'] = objects_list
-
-            context['ceo'] = Person.objects.filter(memberships__role='Chief Executive Officer',                                   memberships___organization=committee.ocd_id).first()
+        context['ceo'] = ceo
 
         return context
 
@@ -581,54 +549,32 @@ class LAPersonDetailView(PersonDetailView):
         context = super().get_context_data(**kwargs)
         person = context['person']
 
-        title = ''
-        qualifying_post = '' # board membership criteria met by person in question
-        m = person.latest_council_membership
-        if person.current_council_seat:
-            title = m.role
-            if m.post:
-                qualifying_post = m.post.label
-                if m.extras.get('acting'):
-                    qualifying_post = 'Acting' + ' ' + qualifying_post
-
-        else:
-            title = 'Former %s' % m.role
-        context['title'] = title
-        context['qualifying_post'] = qualifying_post
+        context['qualifying_post'] = person.current_council_seat.post.acting_label
 
         if person.committee_sponsorships:
             context['sponsored_legislation'] = person.committee_sponsorships
         else:
             context['sponsored_legislation'] = []
 
-        with connection.cursor() as cursor:
-
-            sql = ('''
-                SELECT o.name as organization, o.slug as org_slug, m.role
-                FROM councilmatic_core_membership AS m
-                JOIN councilmatic_core_organization AS o
-                ON o.ocd_id = m.organization_id
-                WHERE m.person_id = %s
-                AND m.end_date::date > NOW()::date
-                AND m.organization_id != %s
-                ORDER BY
-                    CASE
-                        WHEN m.role='Chair' THEN 0
-                        WHEN m.role='Vice Chair' THEN 1
-                        WHEN m.role='Member' THEN 2
-                    END
-                ''')
-
-            cursor.execute(sql, [person.ocd_id, settings.OCD_CITY_COUNCIL_ID])
-
-            columns = [c[0] for c in cursor.description]
-
-            results_tuple = namedtuple('Member', columns)
-            memberships_list = [results_tuple(*r) for r in cursor]
-            context['memberships_list'] = memberships_list
+        context['memberships_list'] = person.current_memberships\
+            .exclude(organization__name='Board of Directors')\
+            .annotate(index=Case(
+                When(role='Chair', then=Value(0)),
+                When(role='Vice Chair', then=Value(1)),
+                When(role='1st Vice Chair', then=Value(1)),
+                When(role='2nd Vice Chair', then=Value(2)),
+                When(role='Member', then=Value(3)),
+                default=Value(999),
+                output_field=IntegerField()))\
+            .order_by('index')
 
         if person.slug in MEMBER_BIOS:
             context['member_bio'] = MEMBER_BIOS[person.slug]
+
+        try:
+            context['website_url'] = person.links.get(note='web_site').url
+        except PersonLink.DoesNotExist:
+            pass
 
         return context
 
