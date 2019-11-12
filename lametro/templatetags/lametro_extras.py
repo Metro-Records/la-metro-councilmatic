@@ -21,23 +21,20 @@ from opencivicdata.legislative.models import EventDocument
 register = template.Library()
 
 @register.filter
-def call_headshot_url(person_id):
-    person = Person.objects.get(ocd_id=person_id)
-    url = person.headshot_url
-    return url
-
-@register.filter
 def call_link_html(person_id):
-    person = Person.objects.get(ocd_id=person_id)
+    person = Person.objects.get(id=person_id)
     url = person.link_html
     return url
 
 @register.filter
 def format_label(label):
-    label_parts = label.split(', ')
-    formatted_label = '<br />'.join(label_parts)
+    first_part = label.split(', ')[0]
 
-    return formatted_label
+    return first_part
+
+@register.filter
+def comma_to_line_break(text):
+    return '<br />'.join(text.split(', '))
 
 @register.filter
 def format_district(label):
@@ -108,19 +105,6 @@ def clean_role(role_list):
     return role_list[0]
 
 @register.filter
-def clean_label(label_list):
-    label_list = [ label for label in label_list if 'Chair' not in label ]
-    label = label_list[0]
-
-    return label
-
-@register.filter
-def format_string(label_list):
-    label_list = label_list.replace('{', '').replace('}', '').replace('"', '')
-
-    return label_list.split(',')
-
-@register.filter
 def compare_time(event_date):
     if event_date < timezone.now():
         return True
@@ -177,8 +161,8 @@ def find_agenda_url(all_documents):
     return valid_urls[0]
 
 @register.simple_tag(takes_context=True)
-def get_highlighted_attachment_text(context, ocd_id):
-    bill = Bill.objects.get(ocd_id=ocd_id)
+def get_highlighted_attachment_text(context, id):
+    bill = Bill.objects.get(id=id)
     attachment_text = ' '.join(d.full_text for d in bill.documents.all() if d.full_text)
 
     highlight = ExactHighlighter(context['query'])
