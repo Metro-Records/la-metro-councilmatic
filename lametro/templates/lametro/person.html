@@ -20,7 +20,11 @@
                 <span>{{ person.name }}</span>
                 <br class="non-desktop-only"/>
                 <small>
-            {{ title }}
+            {% if person.current_council_seat %}
+                {{ person.current_council_seat.role }}
+	    {% else %}
+	        Former {{ person.latest_council_seat.role }}
+	    {% endif %}
             <a href="rss/" title="RSS feed for Sponsored Board Actions by {{person.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
                 </small>
             </h1>
@@ -151,7 +155,7 @@
                             {% for membership in memberships_list %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'lametro:committee' membership.org_slug %}">{{membership.organization}}</a>
+                                        <a href="{% url 'lametro:committee' membership.organization.slug %}">{{membership.organization}}</a>
                                     </td>
                                     <td>{{membership.role}}</td>
                                 </tr>
@@ -170,7 +174,7 @@
           "@context": "http://schema.org",
           "@type": "Person",
           "email": "{{person.email}}",
-          "image": "{{person.headshot_url}}",
+          "image": "{{person.headshot.url}}",
           {% if person.current_council_seat %}
           "jobTitle": "{{ person.current_council_seat }} Representative",
           {% endif %}
@@ -179,7 +183,7 @@
                                 "name": "{{ CITY_COUNCIL_NAME }}"
                             },
           "name": "{{person.name}}",
-          "url": "{{person.website_url}}"
+          "url": "{{website_url}}"
         }
     </script>
 
