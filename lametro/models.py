@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
+from django.db.models.functions import Now
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager, Membership
 
@@ -183,6 +184,7 @@ class LAMetroPerson(Person, SourcesMixin):
         # see https://github.com/opencivicdata/python-opencivicdata/issues/129
         primary_memberships = city_council_memberships.filter(Q(role='Board Member') |
                                                               Q(role='Nonvoting Board Member'))
+
         if primary_memberships.count():
             return primary_memberships.order_by('-end_date').first()
         return None
@@ -197,6 +199,22 @@ class LAMetroPerson(Person, SourcesMixin):
     @property
     def latest_council_seat(self):
         pass
+
+    @property
+    def board_office(self):
+
+        try:
+            office_membership = self.memberships\
+                .filter(organization__name=settings.OCD_CITY_COUNCIL_NAME)\
+                .filter(Q(role='Chair') |
+                        Q(role='1st Chair') |
+                        Q(role='2nd Chair') |
+                        Q(role='Vice Chair'))\
+                .get(end_date_dt__gt=Now())
+        except Membership.DoesNotExist:
+            office_membership = None
+
+        return office_membership
 
     @cached_property
     def committee_sponsorships(self):

@@ -17,18 +17,19 @@
         <tbody>
           {% for membership in posts %}
 
-                    <tr id="polygon-{{ membership.label| format_label | slugify }}" data="{{ membership.name | slugify}}">
+                    <tr id="polygon-{{ membership.post.label | slugify }}" data="{{ membership.name | slugify}}">
 
                         <td>
                             <div class="thumbnail-square">
                                 <img src='{{ membership.person.headshot.url }}' alt='{{ membership.name }}' title='{{ membership.name }}' class='img-responsive img-thumbnail' />
                             </div>
                         </td>
-                        <td>
+                        <td data-order='{{ membership.person.family_name}}'>
                             {{ membership.person.id | call_link_html | safe }}
                         </td>
-                        <td>
-                            {{ membership.role }}<br>
+                        <td data-order='{{ membership.index }}'>
+			  {% firstof membership.person.board_office.role membership.role %}
+			  <br>
                             <span class="small">
                                  {{ membership.post.acting_label | comma_to_line_break | safe }}
                             </span><br>

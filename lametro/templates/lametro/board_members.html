@@ -166,7 +166,7 @@
             "info": false,
             "bLengthChange": false,
             "paging": false,
-            "aaSorting": [ [3,'asc'] ],
+            "aaSorting": [ [1,'asc'] ],
             "aoColumns": [
                 { "bSortable": false },
                 null,
@@ -232,7 +232,7 @@
 
             if (active_id.includes('city') || controlView) {
                 los_angeles_city.eachLayer(function (layer) {
-                    if (layer.feature.properties.select_id === select_id || select_id.includes("mayor-of-the-city-of-los-angeles")){
+                    if (layer.feature.properties.select_id === select_id){
                         layer.fire('tableout');
                     }
                 });
@@ -261,8 +261,7 @@
 
             if (active_id.includes('city') || controlView) {
                 los_angeles_city.eachLayer(function (layer) {
-                    var target_member = layer.feature.properties.council_member.toLowerCase().replace(' ', '-')
-                    if (member_name == target_member) {
+                    if (layer.feature.properties.select_id === select_id){
                         layer.fire('tableover');
                     }
                 });

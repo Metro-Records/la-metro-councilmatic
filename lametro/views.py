@@ -350,80 +350,71 @@ class LABoardMembersView(CouncilMembersView):
     template_name = 'lametro/board_members.html'
 
     def map(self):
-        map_geojson = {
-            'type': 'FeatureCollection',
-            'features': []
+
+        maps = {'map_geojson': {'type': 'FeatureCollection',
+                                'features': []},
+                'map_geojson_sectors': {'type': 'FeatureCollection',
+                                        'features': []},
+                'map_geojson_city': {'type': 'FeatureCollection',
+                                     'features': []},
         }
 
-        map_geojson_sectors = {
-            'type': 'FeatureCollection',
-            'features': []
-        }
+        posts = LAMetroPost.objects\
+                    .filter(shape__isnull=False)\
+                    .exclude(label='Appointee of Mayor of the City of Los Angeles')
 
-        map_geojson_city = {
-            'type': 'FeatureCollection',
-            'features': []
-        }
+        for post in posts:
+            council_member = "Vacant"
+            detail_link = ""
+            district = post.label
 
-        for post in self.object_list:
-            if post.shape:
-                council_member = "Vacant"
-                detail_link = ""
-                if post.current_members:
-                    for membership in post.current_members:
-                        council_member = membership.person.name
-                        detail_link = membership.person.slug
+            person = post.memberships.get(end_date_dt__gt=Now()).person
+            if person:
+                council_member = person.name
+                detail_link = person.slug
 
-                feature = {
-                    'type': 'Feature',
-                    'geometry': json.loads(post.shape),
-                    'properties': {
-                        'district': post.label,
-                        'council_member': council_member,
-                        'detail_link': '/person/' + detail_link,
-                        'select_id': 'polygon-{}'.format(slugify(post.label)),
-                    },
-                }
+            feature = {
+                'type': 'Feature',
+                'geometry': json.loads(post.shape.json),
+                'properties': {
+                    'district': district,
+                    'council_member': council_member,
+                    'detail_link': '/person/' + detail_link,
+                    'select_id': 'polygon-{}'.format(slugify(district)),
+                },
+            }
 
-                if 'council_district' in post.division_id:
-                    map_geojson['features'].append(feature)
+            if 'council_district' in post.division_id:
+                maps['map_geojson']['features'].append(feature)
 
-                if 'la_metro_sector' in post.division_id:
-                    map_geojson_sectors['features'].append(feature)
+            if 'la_metro_sector' in post.division_id:
+                maps['map_geojson_sectors']['features'].append(feature)
 
-                if post.division_id == 'ocd-division/country:us/state:ca/place:los_angeles':
-                    map_geojson_city['features'].append(feature)
+            if post.division_id == 'ocd-division/country:us/state:ca/place:los_angeles':
+                maps['map_geojson_city']['features'].append(feature)
 
-        context['map_geojson'] = json.dumps(map_geojson)
-        context['map_geojson_sectors'] = json.dumps(map_geojson_sectors)
-        context['map_geojson_city'] = json.dumps(map_geojson_city)
+
+        return maps
 
     def get_queryset(self):
         get_kwarg = {'name': settings.OCD_CITY_COUNCIL_NAME}
 
-        # put family name in scraper
-        # fix doubling up of garcetti in scraper
-        # ceo's should be removed in the scraper
         return Organization.objects.get(**get_kwarg)\
-                                   .memberships\
-                                   .filter(end_date_dt__gte=Now())\
-                                   .exclude(role='Chief Executive Officer')\
-                                   .annotate(index=Case(
-                                       When(role='Chair', then=Value(1)),
-                                       When(role='Vice Chair', then=Value(2)),
-                                       When(role='1st Vice Chair', then=Value(2)),
-                                       When(role='2nd Vice Chair', then=Value(3)),
-                                       When(role='Board Member', then=Value(4)),
-                                       When(role='Nonvoting Board Member', then=Value(5)),
-                                       output_field=IntegerField()))\
-                                   .order_by('person__family_name')
+            .memberships\
+            .filter(Q(role='Board Member') |
+                    Q(role='Nonvoting Board Member'))\
+            .filter(end_date_dt__gte=Now())
 
     def get_context_data(self, *args, **kwargs):
-        context = super(LABoardMembersView, self).get_context_data(**kwargs)
+        context = super(CouncilMembersView, self).get_context_data(**kwargs)
+
+        context['seo'] = self.get_seo_blob()
 
         board = LAMetroOrganization.objects.get(name=settings.OCD_CITY_COUNCIL_NAME)
         context['recent_activity'] = board.actions.order_by('-date', '-bill__identifier', '-order')
         context['recent_events'] = board.recent_events
+
+        context.update(self.map())
 
         return context
 
