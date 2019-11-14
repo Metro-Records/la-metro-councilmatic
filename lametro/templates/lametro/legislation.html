@@ -48,9 +48,9 @@
                 </p>
 
 
-                {% if packet_url and attachments%}
+                {% if legislation.packet.is_ready and attachments%}
                     <p>
-                        <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
+                        <a href="{{legislation.packet.url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
                     </p>
                 {% endif %}
 
@@ -175,7 +175,7 @@
             <br>
               <h3><i class="fa fa-tag" aria-hidden="true"></i> Topics</h3>
               <ul>
-                {% for topic in legislation.topics %}
+                {% for topic in legislation.topicbs %}
                   {% with "topics_exact:"|add:topic as tag_facet %}
                     <li>
                         <a href="{% search_with_querystring request selected_facets=tag_facet %}" target="blank">

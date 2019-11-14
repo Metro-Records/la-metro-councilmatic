@@ -89,15 +89,6 @@ class LABillDetail(BillDetailView):
         organization_lst = [action.organization for action in actions]
         context['sponsorships'] = set(organization_lst)
 
-        # Create URL for packet download.
-        packet_slug = item.id.replace('/', '-')
-        try:
-            r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
-            if r.status_code == 200:
-                context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
-        except:
-            context['packet_url'] = None
-
         related_bills = context['legislation']\
             .related_bills\
             .annotate(latest_date=Max('related_bill__actions__date'))\
@@ -158,17 +149,6 @@ class LAMetroEventDetail(EventDetailView):
         if self.request.user.is_authenticated:
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
-
-        # Create URL for packet download.
-        packet_slug = event.id.replace('/', '-')
-        try:
-            r = requests.head(MERGER_BASE_URL + '/document/' + packet_slug)
-            if r.status_code == 200:
-                context['packet_url'] = MERGER_BASE_URL + '/document/' + packet_slug
-            elif r.status_code == 404:
-                context['packet_url'] = None
-        except:
-            context['packet_url'] = None
 
         agenda_with_board_reports = event.agenda\
             .filter(related_entities__bill__versions__isnull=False)\
