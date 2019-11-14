@@ -6,6 +6,7 @@
 {% block content %}
 
     {% if legislation %}
+
         <div class="row-fluid">
             <div class="col-sm-12">
                 <h1 class="bill-page-title">
@@ -175,7 +176,7 @@
             <br>
               <h3><i class="fa fa-tag" aria-hidden="true"></i> Topics</h3>
               <ul>
-                {% for topic in legislation.topicbs %}
+                {% for topic in legislation.topics %}
                   {% with "topics_exact:"|add:topic as tag_facet %}
                     <li>
                         <a href="{% search_with_querystring request selected_facets=tag_facet %}" target="blank">

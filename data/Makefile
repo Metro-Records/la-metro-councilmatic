@@ -1,8 +1,9 @@
-all : city_of_la.geojson
+all : boundary.geojson
 
 boundary.geojson : boundary_full_precision.geojson
 	ogr2ogr -lco COORDINATE_PRECISION=5 $@ $<
 
+.INTERMEDIATE: boundary_full_precision.geojson
 boundary_full_precision.geojson : supervisory_districts.geojson		\
                    city_of_la.geojson long_beach.geojson		\
                    southwest_corridor.geojson san_fernando.geojson	\
