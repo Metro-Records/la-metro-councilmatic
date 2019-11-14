@@ -119,10 +119,14 @@ class LAMetroEventDetail(EventDetailView):
         # Validate forms and redirect.
         if url_form.is_valid():
             agenda_url = url_form['agenda'].value()
-            document_obj, created = EventDocument.objects.get_or_create(event=event,
-                url=agenda_url, updated_at= timezone.now())
-            document_obj.note = ('Event Document - Manual upload URL')
+            document_obj, created = EventDocument.objects.get_or_create(
+                event=event,
+                note='Event Document - Manual upload URL')
+
+            document_obj.date=timezone.now().date()
             document_obj.save()
+
+            document_obj.links.create(url=agenda_url)
 
             return HttpResponseRedirect('/event/%s' % event_slug)
         elif pdf_form.is_valid() and 'pdf_form' in request.POST:
@@ -150,6 +154,11 @@ class LAMetroEventDetail(EventDetailView):
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
 
+        try:
+            context['minutes'] = event.documents.get(note__icontains='minutes')
+        except EventDocument.DoesNotExist:
+            pass
+
         agenda_with_board_reports = event.agenda\
             .filter(related_entities__bill__versions__isnull=False)\
             .annotate(int_order=Cast('order', IntegerField()))\
@@ -169,10 +178,8 @@ class LAMetroEventDetail(EventDetailView):
                     context['document_timestamp'] = document.date
                     '''
                     LA Metro Councilmatic uses the adv_cache library
-                    to partially
-
-                    cache templates: in the event view, we cache the
-                    entire template, except the iframe. (N.B. With
+                    to partially cache templates: in the event view, we cache
+                    the entire template, except the iframe. (N.B. With
                     this library, the views do not cached, unless
                     explicitly wrapped in a django cache decorator.
                     Nonetheless, several popular browsers (e.g.,
@@ -203,9 +210,12 @@ def handle_uploaded_agenda(agenda, event):
             destination.write(chunk)
 
     # Create the document in database
-    document_obj, created = EventDocument.objects.get_or_create(event=event,
-        url='pdf/agenda-%s.pdf' % event.slug, updated_at= timezone.now())
-    document_obj.note = ('Event Document - Manual upload PDF')
+    document_obj, created = EventDocument.objects.get_or_create(
+        event=event,
+        note='Event Document - Manual upload PDF')
+
+    document_obj.date = timezone.now().date
+    document_obj.links.create(url='pdf/agenda-%s.pdf' % event.slug)
     document_obj.save()
 
     # Collect static to render PDF on server
@@ -220,7 +230,7 @@ def delete_submission(request, event_slug):
         # Remove stored PDF from Metro app.
         if 'Manual upload PDF' in e.note:
             try:
-                os.remove('lametro/static/%s' % e.url )
+                os.remove('lametro/static/%s' % e.links.get().url )
             except OSError:
                 pass
         e.delete()
