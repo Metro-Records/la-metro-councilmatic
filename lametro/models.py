@@ -3,7 +3,6 @@ import re
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import requests
-import json
 
 from django.conf import settings
 from django.db import models, connection
@@ -135,7 +134,10 @@ class LAMetroBill(Bill, SourcesMixin):
         events that have already occurred, so the last action date is not in the
         future.
         '''
-        return self.actions.last().date_dt
+        try:
+            return self.actions.last().date_dt
+        except AttributeError:
+            return None
 
     @property
     def topics(self):
@@ -592,7 +594,7 @@ class BillPacket(models.Model):
                 index=Case(
                     When(note__istartswith = '0', then=Value('z')),
                     default=F('note'),
-                    outtput_field=models.CharField()))\
+                    output_field=models.CharField()))\
             .order_by('index')
 
         doc_links = [board_report.links.get().url]
@@ -611,7 +613,7 @@ class BillPacket(models.Model):
 
         merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.bill.slug
 
-        requests.post(merge_url, data=json.dumps(self.related_files))
+        requests.post(merge_url, json=self.related_files)
 
 
 class EventPacket(models.Model):
@@ -665,4 +667,4 @@ class EventPacket(models.Model):
 
         merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.event.slug
 
-        requests.post(merge_url, data=json.dumps(self.related_files))
+        requests.post(merge_url, json=self.related_files)

@@ -27,7 +27,7 @@
                         <td data-order='{{ membership.person.family_name}}'>
                             {{ membership.person.id | call_link_html | safe }}
                         </td>
-                        <td data-order='{{ membership.index }}'>
+                        <td data-order='{{ membership.post.label }}'>
 			  {% firstof membership.person.board_office.role membership.role %}
 			  <br>
                             <span class="small">
@@ -41,8 +41,6 @@
                                 <span class="badge city-badge">Los Angeles</span>
                             {% else %}
                             {% endif %}
-                        </td>
-                        <td data='{{ membership.index }}'></td>
                     </tr>
 
             {% endfor %}

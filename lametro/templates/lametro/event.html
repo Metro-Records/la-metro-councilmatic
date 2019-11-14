@@ -100,13 +100,11 @@
                             </p>
                             {% endif %}
 
-                            {% with minutes=event.board_event_minutes %}
                                 {% if minutes %}
                                 <p>
-                                    <a href="{{ minutes }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
+                                    <a href="{{ minutes.links.get.url }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
                                 </p>
                                 {% endif %}
-                            {% endwith %}
 
                         {% endif %}
 
@@ -235,7 +233,7 @@
         });
 
         // for reference purposes
-        console.log( "OCD ID: {{event.ocd_id}}" )
+        console.log( "OCD ID: {{event.id}}" )
     });
     </script>
 

@@ -10,8 +10,8 @@
             <div class="col-sm-12">
                 <h1 class="bill-page-title">
                     <br class="non-mobile-only" />
-                    {% if legislation.ocr_full_text|prepare_title %}
-                        {{ legislation.identifier}} - {{ legislation.ocr_full_text|prepare_title }}
+                    {% if legislation.extras.plain_text|prepare_title %}
+                        {{ legislation.identifier}} - {{ legislation.extras.plain_text|prepare_title }}
                     {% else %}
                         {{ legislation.identifier}}
                     {% endif %}
@@ -65,15 +65,15 @@
                 </iframe>
 
                 <div class="divider"></div>
-            {% elif legislation.ocr_full_text != "" %}
+            {% elif legislation.extras.plain_text != "" %}
                 <h3>
                     <i class='fa fa-fw fa-file-text-o'></i>
                     Report text
                 </h3>
 
                 <div class='panel panel-default'>
-                    <div class='panel-body'>
-                        {{ legislation.ocr_full_text|prepare_title}}
+                  <div class='panel-body'>
+                        {{ legislation.extras.plain_text|prepare_title}}
                     </div>
                 </div>
 
@@ -155,8 +155,8 @@
                                     <td class='text-muted small'>
                                       <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
 
-                                        {% if bill.ocr_full_text|prepare_title %}
-                                            - {{ bill.ocr_full_text|prepare_title }}
+                                        {% if bill.extras.plain_text|prepare_title %}
+                                            - {{ bill.extras.plain_text|prepare_title }}
                                         {% endif %}
 
                                         {{bill.inferred_status | inferred_status_label | safe}}
@@ -234,7 +234,7 @@
     "alternateName": ["{{ legislation.identifier }}", "{{ legislation.identifier.split|join:'' }}"],
     {% if actions %}"datePublished": "{{actions.0.date|date:'Y-m-d'}}", {% endif %}
     "description": "{{ legislation.description }}",
-    "text": "{% firstof legislation.full_text legislation.ocr_full_text %}"
+    "text": "{% firstof legislation.full_text legislation.extras.plain_text %}"
     }
     </script>
 
@@ -279,7 +279,7 @@
         }
 
         // for reference purposes
-        console.log( "OCD ID: {{legislation.ocd_id}}" )
+        console.log( "OCD ID: {{legislation.id}}" )
 
     </script>
 {% endblock %}
