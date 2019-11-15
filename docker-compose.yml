@@ -52,6 +52,18 @@ services:
       SOLR_LOG_LEVEL: INFO
     restart: on-failure
 
+  scrapers:
+    build: https://github.com/datamade/scrapers-us-municipal.git#la_metro_upgrade
+    stdin_open: true
+    tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SHARED_DB: 'True'
+      DATABASE_URL: 'postgis://postgres:@postgres/lametro'
+    command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30  && pupa update --rpm=600 lametro events window=30'
+
 volumes:
   lametro-solr-data:
   lametro-db-data:
