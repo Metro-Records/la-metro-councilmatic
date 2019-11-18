@@ -43,10 +43,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'haystack',
-    'lametro',
-    'councilmatic_core',
     'opencivicdata.core',
     'opencivicdata.legislative',
+    'councilmatic_core',
+    'lametro',
     'adv_cache_tag',
     'debug_toolbar',
 )
@@ -72,7 +72,7 @@ ROOT_URLCONF = 'councilmatic.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'lametro/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,6 +85,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'councilmatic.wsgi.application'
 
@@ -118,12 +119,6 @@ PIC_BASE_URL = 'https://pic.datamade.us/lametro/document/'
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 ADV_CACHE_INCLUDE_PK = True
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
-}
 
 import socket
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
