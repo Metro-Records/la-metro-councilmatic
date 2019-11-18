@@ -185,7 +185,7 @@ class LAMetroEventDetail(EventDetailView):
                     Nonetheless, several popular browsers (e.g.,
                     Chrome and Firefox) retrieve cached iframe images,
                     regardless of the site's caching specifications.
-                    We use the agenda's "updated_at" timestamp to bust
+                    We use the agenda's "date" timestamp to bust
                     the iframe cache: we save it inside context and
                     then assign it as the "name" of the iframe,
                     preventing the browser from retrieving a cached
@@ -469,10 +469,13 @@ class LACommitteeDetailView(CommitteeDetailView):
             description = settings.COMMITTEE_DESCRIPTIONS.get(committee.slug)
             context['committee_description'] = description
 
-        ceo = Membership.objects\
-            .get(post__role='Chief Executive Officer',
-                 end_date_dt__gt=Now())\
-            .person
+        try:
+            ceo = Membership.objects\
+                .get(post__role='Chief Executive Officer',
+                     end_date_dt__gt=Now())\
+                .person
+        except Membership.DoesNotExist:
+            ceo = None
 
         non_ceos = committee.all_members\
             .annotate(index=Case(
