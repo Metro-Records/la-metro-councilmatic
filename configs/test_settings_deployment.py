@@ -27,7 +27,7 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
         #'URL': 'http://127.0.0.1:8983/solr'
         # ...or for multicore...
-        'URL': os.environ['SOLR_URL'] or 'http://127.0.0.1:8983/solr/lametro',
+        'URL': os.environ.get('SOLR_URL') or 'http://127.0.0.1:8983/solr/lametro',
     },
 }
 
