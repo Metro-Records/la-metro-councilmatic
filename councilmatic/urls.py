@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.staticfiles import views as staticviews
+from django.views.static import serve
 from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.views.decorators.cache import never_cache
@@ -49,6 +49,7 @@ urlpatterns = [
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [
-      url(r'^static/(?P<path>.*)/$', staticviews.serve),
-      url(r'^__debug__/', include(debug_toolbar.urls)),
+        url(r'^static/(?P<path>.*)/$', serve),
+        url(r'^images/(?P<path>.*)/$', serve, {'document_root': settings.STATIC_ROOT + '/images/'}),
+        url(r'^__debug__/', include(debug_toolbar.urls)),
     ]
