@@ -84,4 +84,4 @@ LOGGING = {
 }
 
 # Set to False in production!
-SHOW_TEST_EVENTS = DEBUG and False
+SHOW_TEST_EVENTS = DEBUG and True
