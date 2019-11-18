@@ -20,7 +20,7 @@ DEBUG = True
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {'default': dj_database_url.config(default='postgis:://travis:/travis')}
+DATABASES = {'default': dj_database_url.config(default='postgis://travis:/travis')}
 
 HAYSTACK_CONNECTIONS = {
     'default': {
