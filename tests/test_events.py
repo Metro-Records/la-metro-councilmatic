@@ -2,11 +2,13 @@ import pytest
 import pytz
 from datetime import datetime, timedelta
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 import requests
 
-from councilmatic_core.models import EventDocument, Bill, RelatedBill
+
+from opencivicdata.legislative.models import EventDocument
+from councilmatic_core.models import Bill
 
 from lametro.models import LAMetroEvent
 from lametro.templatetags.lametro_extras import updates_made
@@ -21,7 +23,8 @@ def test_agenda_creation(event, event_document):
     event = event.build()
     agenda = event_document.build()
 
-    agenda, created = EventDocument.objects.get_or_create(event=event, url='https://metro.legistar.com/View.ashx?M=A&ID=545192&GUID=19F05A99-F3FB-4354-969F-67BE32A46081')
+    agenda, created = EventDocument.objects.get_or_create(event=event)
+
     assert not created == True
 
 
@@ -63,7 +66,7 @@ def test_updates_made_true(event, event_document):
     event.updated_at = datetime.now()
     event.save()
 
-    assert updates_made(event.ocd_id) == True
+    assert updates_made(event.id) == True
 
 
 def test_updates_made_false(event, event_document):
@@ -78,7 +81,7 @@ def test_updates_made_false(event, event_document):
     agenda.updated_at = datetime.now()
     agenda.save()
 
-    assert updates_made(event.ocd_id) == False
+    assert updates_made(event.id) == False
 
 
 @pytest.fixture
@@ -87,16 +90,16 @@ def concurrent_current_meetings(event):
     Two meetings scheduled to begin in the next five minutes.
     '''
     board_meeting_info = {
-        'ocd_id': 'ocd-event/ef33b22d-b166-458f-b254-b81f656ffc09',
+        'id': 'ocd-event/ef33b22d-b166-458f-b254-b81f656ffc09',
         'name': 'Regular Board Meeting',
-        'start_time': LAMetroEvent._time_from_now(minutes=3),
+        'start_date': LAMetroEvent._time_from_now(minutes=3),
     }
     board_meeting = event.build(**board_meeting_info)
 
     construction_meeting_info = {
-        'ocd_id': 'ocd-event/FEC6A621-F5C7-4A88-B2FB-5F6E14FE0E35',
+        'id': 'ocd-event/FEC6A621-F5C7-4A88-B2FB-5F6E14FE0E35',
         'name': 'Construction Committee',
-        'start_time': LAMetroEvent._time_from_now(minutes=3),
+        'start_date': LAMetroEvent._time_from_now(minutes=3),
     }
     construction_meeting = event.build(**construction_meeting_info)
 
@@ -154,9 +157,9 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
     '''
     # Build an event scheduled to start 15 minutes ago.
     crenshaw_meeting_info = {
-        'ocd_id': 'ocd-event/3c93e81f-f1a9-42ce-97fe-30c77a4a6740',
+        'id': 'ocd-event/3c93e81f-f1a9-42ce-97fe-30c77a4a6740',
         'name': 'Crenshaw Project Corporation',
-        'start_time': LAMetroEvent._time_ago(minutes=15),
+        'start_date': LAMetroEvent._time_ago(minutes=15),
     }
     late_current_meeting = event.build(**crenshaw_meeting_info)
 
@@ -180,9 +183,9 @@ def test_current_meeting_no_potentially_current(event):
     '''
     # Build an event outside of the "potentially current" timeframe.
     safety_meeting_info = {
-        'ocd_id': 'ocd-event/5e84e91d-279c-4c83-a463-4a0e05784b62',
+        'id': 'ocd-event/5e84e91d-279c-4c83-a463-4a0e05784b62',
         'name': 'System Safety, Security and Operations Committee',
-        'start_time': LAMetroEvent._time_from_now(hours=12),
+        'start_date': LAMetroEvent._time_from_now(hours=12),
     }
     event.build(**safety_meeting_info)
 
@@ -218,8 +221,8 @@ def test_event_minutes_bill(event_agenda_item, bill):
     board_meeting.save()
 
     bill_info = {
-        'bill_type': 'Minutes',
-        'ocr_full_text': 'APPROVE Minutes of the Regular Board Meeting held May 18, 2017.',
+        'classification': ['Minutes'],
+        'extras': {'plain_text': 'APPROVE Minutes of the Regular Board Meeting held May 18, 2017.'},
     }
     bill_minutes = bill.build(**bill_info)
 

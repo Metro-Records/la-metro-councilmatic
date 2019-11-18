@@ -2,6 +2,14 @@
 
 import os
 
+import dj_database_url
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+]
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'testing secrets'
 
@@ -12,23 +20,14 @@ DEBUG = True
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'travis',
-        'USER': 'travis',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+DATABASES = {'default': dj_database_url.config(default='postgis:://travis:/travis')}
 
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
         #'URL': 'http://127.0.0.1:8983/solr'
         # ...or for multicore...
-        'URL': 'http://127.0.0.1:8983/solr/lametro',
+        'URL': os.environ['SOLR_URL'] or 'http://127.0.0.1:8983/solr/lametro',
     },
 }
 
@@ -53,10 +52,6 @@ ANALYTICS_TRACKING_CODE = ''
 HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), '..'
                              '/lametro/static/images/')
 
-EXTRA_APPS = ('raven.contrib.django.raven_compat',)
-
-RAVEN_CONFIG = {
-    'dsn': 'https://4a1f7af075cd4fd4bedebe4db50d9c3d:f49e4e9b89ed41e889f69be65b4f6f21@sentry.io/107858',
-}
+EXTRA_APPS = ()
 
 SHOW_TEST_EVENTS = True

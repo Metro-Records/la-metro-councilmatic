@@ -3,11 +3,12 @@ from uuid import uuid4
 
 import pytest
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 
-from councilmatic_core.models import Bill, RelatedBill, Event, EventAgendaItem
+from opencivicdata.legislative.models import EventAgendaItem, RelatedBill
+from councilmatic_core.models import Bill, Event
 from lametro.models import LAMetroBill
 from lametro.utils import format_full_text, parse_subject
 
@@ -30,22 +31,21 @@ def test_related_bill_relation(client, bill):
     central_bill = bill.build()
 
     related_bill_info = {
-        'ocd_id': 'ocd-bill/8b90f9f4-1421-4450-a34e-766ca2f8be26',
-        'description': 'RECEIVE AND FILE the Draft Measure M Project Acceleration/Deceleration Factors and Evaluation Process',
-        'ocd_created_at': '2017-06-16 14:23:30.970325-05',
-        'ocd_updated_at': '2017-06-16 14:23:30.970325-05',
+        'id': 'ocd-bill/8b90f9f4-1421-4450-a34e-766ca2f8be26',
+        'title': 'RECEIVE AND FILE the Draft Measure M Project Acceleration/Deceleration Factors and Evaluation Process',
         'updated_at': '2017-07-26 11:06:47.1853',
         'identifier': '2017-0596',
+        'classification': ['Report'],
         'slug': '2017-0596'
     }
 
     related_bill = bill.build(**related_bill_info)
 
-    RelatedBill.objects.create(related_bill_identifier=related_bill.identifier,
-                               central_bill_id=central_bill.ocd_id)
+    RelatedBill.objects.create(bill=central_bill,
+                               related_bill=related_bill)
 
     assert central_bill.related_bills.count() == 1
-    assert central_bill.related_bills.first().related_bill_identifier == '2017-0596'
+    assert central_bill.related_bills.first().related_bill.identifier == '2017-0596'
 
 @pytest.mark.parametrize('text,subject', [
     ("..Subject\nSUBJECT:\tFOOD SERVICE OPERATOR\n\n..Action\nACTION:\tAWARD SERVICES CONTRACT\n\n..", "\tFOOD SERVICE OPERATOR"),
@@ -57,12 +57,12 @@ def test_format_full_text(bill, text, subject):
     This test checks that format_full_text correctly parses the subject header.
     '''
     bill_info = {
-        'ocr_full_text': text
+        'extras': {'plain_text': text}
     }
 
     bill_with_text = bill.build(**bill_info)
 
-    full_text = bill_with_text.ocr_full_text
+    full_text = bill_with_text.extras['plain_text']
 
     assert format_full_text(full_text) == subject
 
@@ -74,7 +74,7 @@ def test_format_full_text(bill, text, subject):
         (False, 'Resolution', 'confirmed', False),
     ])
 def test_bill_manager(bill,
-                      event_agenda_item,
+                      event_related_entity,
                       restrict_view,
                       bill_type,
                       event_status,
@@ -84,29 +84,30 @@ def test_bill_manager(bill,
     Private bills should not be discoverable, i.e., refresh_from_db should fail.
     '''
     bill_info = {
-        'bill_type': bill_type,
-        'restrict_view': restrict_view,
+        'classification': [bill_type],
+        'extras': {'restrict_view': restrict_view},
     }
     bill = bill.build(**bill_info)
 
-    event_agenda_item_info = {
-        'bill_id': bill.ocd_id,
+    event_related_entity_info = {
+        'bill': bill,
     }
-    item = event_agenda_item.build(**event_agenda_item_info)
 
-    event = Event.objects.get(ocd_id=item.event_id)
+    related_entity = event_related_entity.build(**event_related_entity_info)
+
+    event = related_entity.agenda_item.event
     event.status = event_status
     event.save()
     
     event.refresh_from_db()
-    item.refresh_from_db()
+    related_entity.refresh_from_db()
 
     try:
         bill.refresh_from_db()
     except ObjectDoesNotExist:
         assert is_public == False
     else:
-        bill_qs_with_manager = LAMetroBill.objects.filter(ocd_id=bill.ocd_id)
+        bill_qs_with_manager = LAMetroBill.objects.filter(id=bill.id)
         assert is_public == (bill in bill_qs_with_manager)
 
 @pytest.mark.django_db
@@ -119,14 +120,13 @@ def test_last_action_date_has_already_occurred(bill, event):
     id_fmt = 'ocd-event/{}'
 
     for t in (two_weeks_ago, two_weeks_from_now):
-        some_event = event.build(ocd_id=id_fmt.format(uuid4()), start_time=t)
-
-        EventAgendaItem.objects.create(bill_id=some_bill.ocd_id,
-                                       event_id=some_event.ocd_id,
-                                       order=1)
+        some_event = event.build(id=id_fmt.format(uuid4()), start_date=t.date())
+        item = some_event.agenda.create(order=1)
+        item.related_entities.create(bill=some_bill)
+                                              
 
     # Assert the bill occurs on both agendas.
-    assert Event.objects.filter(agenda_items__bill_id=some_bill.ocd_id)\
+    assert Event.objects.filter(agenda__related_entities__bill=some_bill)\
                         .count() == 2
 
     last_action_date = some_bill.get_last_action_date()
