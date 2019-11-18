@@ -62,7 +62,7 @@ services:
     environment:
       SHARED_DB: 'True'
       DATABASE_URL: 'postgis://postgres:@postgres/lametro'
-    command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30  && pupa update --rpm=600 lametro events window=30'
+    command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30  && pupa update --rpm=600 lametro events'
 
 volumes:
   lametro-solr-data:
