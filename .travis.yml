@@ -18,6 +18,9 @@ addons:
     packages:
     - postgresql-9.4-postgis-2.4
 
+env:
+  - DJANGO_SETTINGS_MODULE=councilmatic.settings
+    
 before_script:
   - psql -U postgres -c "create extension postgis"
   - mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
