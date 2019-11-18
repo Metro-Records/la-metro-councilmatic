@@ -134,20 +134,14 @@ def updates_made(event_id):
     If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page. 
     '''
 
-    # we are going to have tot take another approach here since
-    # we don't have the updated_at on event documents in ocd
-    return False
+    event = LAMetroEvent.objects.get(ocd_id=event_id)
 
-    # try: 
-    #     # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded
-    #     document = EventDocument.objects.filter(event_id=event_id).latest('updated_at')
-    # except EventDocument.DoesNotExist:
-    #     return False
-    # else:
-    #     event = LAMetroEvent.objects.get(ocd_id=event_id)
-    #     updated = document.updated_at < event.updated_at
-    #     return updated 
+    try:
+        event.documents.get(note__icontains='Agenda')
+    except EventDocument.DoesNotExist:
+        return False
 
+    return event.updated_at > document.date
 
 @register.filter
 def find_agenda_url(all_documents):
