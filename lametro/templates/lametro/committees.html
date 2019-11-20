@@ -25,25 +25,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for committee in committees_list %}
+                        {% for committee in committees %}
                             <tr>
-                                <td align="left">
-                                    <a href="{% url 'lametro:committee' committee.0.slug %}">{{ committee.0.name | committee_topic_only }}</a>
+                              <td align="left">
+                                    <a href="{% url 'lametro:committee' committee.slug %}">{{ committee.name | committee_topic_only }}</a>
                                 </td>
                                 <td align="left">
-                                    {% for person in committee %}
-                                        {% if person.role == 'Chair' %}
-                                            {{ person.member_name }}
-                                        {% endif %}
+                                    {% for membership in committee.chairs %}
+                                            {{ membership.person.name }}
                                     {% endfor %}
                                 </td>
-                                <td>{{ committee | length }}</td>
+                                <td>{{ committee.current_members | length }}</td>
                             </tr>
                         {% endfor %}
                         {% for committee in ad_hoc_list %}
                             <tr>
                                 <td align="left">
-                                    <a href="{% url 'lametro:committee' committee.0.slug %}">{{ committee.0.name | committee_topic_only }}</a></br>
+                                    <a href="{% url 'lametro:committee' committee.slug %}">{{ committee.name | committee_topic_only }}</a></br>
                                 </td>
                                 <td align="left">
                                     {% for person in committee %}
