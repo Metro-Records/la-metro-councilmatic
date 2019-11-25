@@ -148,8 +148,8 @@ def find_agenda_url(all_documents):
     '''
     This filter determines how to format the URL link, particularly, in the case of manually uploaded agenda.
     '''
-    valid_urls = [x.url for x in all_documents if (x.note == 'Agenda' or x.note == 'Event Document - Manual upload URL')]
-    pdf_url = [('static/' + x.url) for x in all_documents if x.note == 'Event Document - Manual upload PDF']
+    valid_urls = [url for x in all_documents if (x.note == 'Agenda' or x.note == 'Event Document - Manual upload URL') for url in x.links.all()]
+    pdf_url = [('static/' + url) for x in all_documents if x.note == 'Event Document - Manual upload PDF' for url in x.links.all()]
     valid_urls += pdf_url
 
     return valid_urls[0]

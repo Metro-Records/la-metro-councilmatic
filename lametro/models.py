@@ -226,8 +226,8 @@ class LAMetroPerson(Person, SourcesMixin):
         '''
         qs = LAMetroBill.objects\
             .defer('extras')\
-            .filter(actions__organization__classification='committee')\
-            .filter(actions__organization__memberships__in=self.current_memberships)\
+            .filter(actions__organization__classification='committee',
+                    actions__organization__memberships__in=self.current_memberships)\
             .order_by('-actions__date')\
             .distinct()[:10]
 
