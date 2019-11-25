@@ -388,12 +388,7 @@ class LACommitteesView(CommitteesView):
         size
 
         '''
-
-        ceo = Membership.objects\
-            .select_related('person')\
-            .get(post__role='Chief Executive Officer',
-                 end_date_dt__gt=Now())\
-            .person
+        ceo = LAMetroPerson.ceo()
 
         memberships = Membership.objects\
             .exclude(person=ceo)\
@@ -427,13 +422,7 @@ class LACommitteeDetailView(CommitteeDetailView):
             description = settings.COMMITTEE_DESCRIPTIONS.get(committee.slug)
             context['committee_description'] = description
 
-        try:
-            ceo = Membership.objects\
-                .get(post__role='Chief Executive Officer',
-                     end_date_dt__gt=Now())\
-                .person
-        except Membership.DoesNotExist:
-            ceo = None
+        ceo = LAMetroPerson.ceo()
 
         non_ceos = committee.all_members\
             .annotate(index=Case(

@@ -16,6 +16,8 @@ from django.db.models.functions import Now, Cast
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager, Membership
 
+import councilmatic_core.models
+
 from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill
 
 from proxy_overrides.related import ProxyForeignKey
@@ -62,11 +64,6 @@ class LAMetroBillManager(models.Manager):
         may slip through the crevices of Councilmatic display logic.
         '''
         filtered_qs = super().get_queryset()
-        # .exclude(restrict_view=True)\
-        #                                     .filter(Q(related_agenda_items__event__status='passed') | \
-        #                                             Q(related_agenda_items__event__status='cancelled') | \
-        #                                             Q(bill_type='Board Box'))\
-        #                                     .distinct()
 
         return filtered_qs
 
@@ -181,14 +178,14 @@ class LAMetroPerson(Person, SourcesMixin):
         filter_kwarg = {'organization__name': settings.OCD_CITY_COUNCIL_NAME,}
         city_council_memberships = self.memberships.filter(**filter_kwarg)
 
-        # We want to exclude memberships like 1st chair and just
-        # get the memberships confer membership to the org
+        # Select posts denoting membership, i.e., exclude leadership
+        # posts, like 1st Chair
         #
         # see https://github.com/opencivicdata/python-opencivicdata/issues/129
         primary_memberships = city_council_memberships.filter(Q(role='Board Member') |
                                                               Q(role='Nonvoting Board Member'))
 
-        if primary_memberships.count():
+        if primary_memberships.exists():
             return primary_memberships.order_by('-end_date').first()
         return None
 
@@ -235,6 +232,18 @@ class LAMetroPerson(Person, SourcesMixin):
             .distinct()[:10]
 
         return qs
+
+    @classmethod
+    def ceo(cls):
+        try:
+            ceo = Membership.objects\
+                .get(post__role='Chief Executive Officer',
+                     end_date_dt__gt=Now())\
+                .person
+        except Membership.DoesNotExist:
+            ceo = None
+
+        return ceo
 
 
 class LAMetroEventManager(EventManager):
@@ -517,7 +526,7 @@ class LAMetroOrganization(Organization, SourcesMixin):
                              .all()
         return events
 
-class Membership(Membership):
+class Membership(councilmatic_core.models.Membership):
     class Meta:
         proxy = True
 
