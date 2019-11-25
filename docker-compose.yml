@@ -17,7 +17,6 @@ services:
     volumes:
       - .:/app
       - ${PWD}/councilmatic/settings_deployment.py:/app/councilmatic/settings_deployment.py
-      - /Users/fgregg/work/django-councilmatic:/django-councilmatic
     environment:
       POSTGRES_HOST: postgres
       DJANGO_MANAGEPY_MIGRATE: "on"
