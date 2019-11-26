@@ -15,33 +15,32 @@
             </tr>
         </thead>
         <tbody>
-            {% for membership in membership_objects %}
+          {% for membership in posts %}
 
-                    <tr id="polygon-{{ membership.label|clean_label | slugify }}" data="{{ membership.name | slugify}}">
+                    <tr id="polygon-{{ membership.post.label | slugify }}" data="{{ membership.name | slugify}}">
 
                         <td>
                             <div class="thumbnail-square">
-                                <img src='{{ membership.ocd_id | call_headshot_url }}' alt='{{ membership.name }}' title='{{ membership.name }}' class='img-responsive img-thumbnail' />
+                                <img src='{{ membership.person.headshot.url }}' alt='{{ membership.name }}' title='{{ membership.name }}' class='img-responsive img-thumbnail' />
                             </div>
                         </td>
-                        <td>
-                            {{ membership.ocd_id | call_link_html | safe }}
+                        <td data-order='{{ membership.person.family_name}}'>
+                            {{ membership.person.id | call_link_html | safe }}
                         </td>
-                        <td>
-                            {{ membership.role | clean_role }}<br>
+                        <td data-order='{{ membership.post.label }}'>
+			  {% firstof membership.person.board_office.role membership.role %}
+			  <br>
                             <span class="small">
-                                {{ membership.extras | clean_membership_extras }} {{ membership.label|clean_label | format_label | safe }}
+                                 {{ membership.post.acting_label | comma_to_line_break | safe }}
                             </span><br>
-                            {% if "District" in membership.label|clean_label and "Caltrans District" not in membership.label|clean_label %}
+                            {% if "District" in membership.post.label and "Caltrans District" not in membership.label %}
                                 <span class="badge district-badge">District appointee</span>
-                            {% elif "sector" in membership.label|clean_label %}
+                            {% elif "sector" in membership.post.label  %}
                                 <span class="badge sector-badge">Sector appointee</span>
-                            {% elif "Mayor" in membership.label|clean_label %}
+                            {% elif "Mayor" in membership.post.label %}
                                 <span class="badge city-badge">Los Angeles</span>
                             {% else %}
                             {% endif %}
-                        </td>
-                        <td data='{{ membership.index }}'></td>
                     </tr>
 
             {% endfor %}

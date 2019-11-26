@@ -9,14 +9,31 @@ from django.db import models, connection
 from django.db.models.expressions import RawSQL
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.contrib.auth.models import User
-from django.db.models import Max, Min, Prefetch, Case, When, Value, Q
+from django.db.models import Max, Min, Prefetch, Case, When, Value, Q, F
+from django.db.models.functions import Now, Cast
 
-from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
-    Action, EventMedia, EventDocument, Subject
+from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager, Membership
+
+import councilmatic_core.models
+
+from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill
+
+from proxy_overrides.related import ProxyForeignKey
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
+
+class SourcesMixin(object):
+
+    @property
+    def web_source(self):
+        return self.sources.get(note='web')
+
+    @property
+    def api_source(self):
+        return self.sources.get(note='api')
 
 
 class LAMetroBillManager(models.Manager):
@@ -46,16 +63,12 @@ class LAMetroBillManager(models.Manager):
         when getting bill querysets. Otherwise restricted view bills
         may slip through the crevices of Councilmatic display logic.
         '''
-        filtered_qs = super().get_queryset().exclude(restrict_view=True)\
-                                            .filter(Q(related_agenda_items__event__status='passed') | \
-                                                    Q(related_agenda_items__event__status='cancelled') | \
-                                                    Q(bill_type='Board Box'))\
-                                            .distinct()
+        filtered_qs = super().get_queryset()
 
         return filtered_qs
 
 
-class LAMetroBill(Bill):
+class LAMetroBill(Bill, SourcesMixin):
     objects = LAMetroBillManager()
 
     class Meta:
@@ -71,15 +84,13 @@ class LAMetroBill(Bill):
     @property
     def inferred_status(self):
         # Get most recent action.
-        action = self.actions.all().order_by('-order').first()
+        action = self.actions.last()
 
         # Get description of that action.
         if action:
             description = action.description
         else:
             description = ''
-
-        bill_type = self.bill_type
 
         return self._status(description)
 
@@ -120,23 +131,29 @@ class LAMetroBill(Bill):
         events that have already occurred, so the last action date is not in the
         future.
         '''
-        actions = Action.objects.filter(_bill_id=self.ocd_id)
-        last_action_date = ''
-
-        if actions:
-            last_action_date = actions.reverse()[0].date
-        else:
-            events = Event.objects.filter(agenda_items__bill_id=self.ocd_id,
-                                          start_time__lt=timezone.now())
-
-            if events:
-                last_action_date = events.latest('start_time').start_time
-
-        return last_action_date
+        try:
+            return self.actions.last().date_dt
+        except AttributeError:
+            return None
 
     @property
     def topics(self):
-        return [s.subject for s in self.subjects.all()]
+        return sorted(self.subject)
+
+
+class RelatedBill(RelatedBill):
+
+    class Meta:
+        proxy = True
+
+    bill = ProxyForeignKey(LAMetroBill,
+                           related_name='related_bills',
+                           on_delete=models.CASCADE)
+
+    related_bill = ProxyForeignKey(LAMetroBill,
+                                   related_name='related_bills_reverse',
+                                   null=True,
+                                   on_delete=models.SET_NULL)
 
 
 class LAMetroPost(Post):
@@ -145,38 +162,31 @@ class LAMetroPost(Post):
         proxy = True
 
     @property
-    def current_members(self):
-        today = timezone.now().date()
-        return self.memberships.filter(end_date__gte=today)
+    def acting_label(self):
+        if self.extras.get('acting'):
+            return 'Acting ' + self.label
+        else:
+            return self.label
 
-class LAMetroPerson(Person):
+class LAMetroPerson(Person, SourcesMixin):
 
     class Meta:
         proxy = True
 
     @property
     def latest_council_membership(self):
-        if hasattr(settings, 'OCD_CITY_COUNCIL_ID'):
-            filter_kwarg = {'_organization__ocd_id': settings.OCD_CITY_COUNCIL_ID}
-        else:
-            filter_kwarg = {'_organization__name': settings.OCD_CITY_COUNCIL_NAME}
+        filter_kwarg = {'organization__name': settings.OCD_CITY_COUNCIL_NAME,}
         city_council_memberships = self.memberships.filter(**filter_kwarg)
-        if city_council_memberships.count():
-            return city_council_memberships.order_by('-end_date').first()
-        return None
 
-    @property
-    def current_council_seat(self):
-        '''
-        current_council_seat operated on assumption that board members
-        represent a jurisdiction; that's not the case w la metro. just
-        need to know whether member is current or not...
-        '''
-        m = self.latest_council_membership
-        if m:
-            end_date = m.end_date
-            today = timezone.now().date()
-            return True if today < end_date else False
+        # Select posts denoting membership, i.e., exclude leadership
+        # posts, like 1st Chair
+        #
+        # see https://github.com/opencivicdata/python-opencivicdata/issues/129
+        primary_memberships = city_council_memberships.filter(Q(role='Board Member') |
+                                                              Q(role='Nonvoting Board Member'))
+
+        if primary_memberships.exists():
+            return primary_memberships.order_by('-end_date').first()
         return None
 
     @property
@@ -191,6 +201,22 @@ class LAMetroPerson(Person):
         pass
 
     @property
+    def board_office(self):
+
+        try:
+            office_membership = self.memberships\
+                .filter(organization__name=settings.OCD_CITY_COUNCIL_NAME)\
+                .filter(Q(role='Chair') |
+                        Q(role='1st Chair') |
+                        Q(role='2nd Chair') |
+                        Q(role='Vice Chair'))\
+                .get(end_date_dt__gt=Now())
+        except Membership.DoesNotExist:
+            office_membership = None
+
+        return office_membership
+
+    @cached_property
     def committee_sponsorships(self):
         '''
         This property returns a list of ten bills, which have recent actions
@@ -198,32 +224,29 @@ class LAMetroPerson(Person):
 
         Organizations do not include the Board of Directors.
         '''
-        query = '''
-            SELECT bill_id
-            FROM councilmatic_core_bill as bill
-            JOIN councilmatic_core_action as action
-            ON bill.ocd_id = action.bill_id
-            JOIN councilmatic_core_organization as org
-            ON org.ocd_id = action.organization_id
-            JOIN councilmatic_core_membership as membership
-            ON org.ocd_id = membership.organization_id
-            WHERE membership.person_id='{person}'
-            AND action.date >= membership.start_date
-            AND org.classification = 'committee'
-            ORDER BY action.date DESC
-            LIMIT 10
-        '''.format(person=self.ocd_id)
+        qs = LAMetroBill.objects\
+            .defer('extras')\
+            .filter(actions__organization__classification='committee',
+                    actions__organization__memberships__in=self.current_memberships)\
+            .order_by('-actions__date')\
+            .distinct()[:10]
 
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            bill_ids = [bill_tup[0] for bill_tup in cursor.fetchall()]
+        return qs
 
-            bills = LAMetroBill.objects.filter(ocd_id__in=bill_ids)
+    @classmethod
+    def ceo(cls):
+        try:
+            ceo = Membership.objects\
+                .get(post__role='Chief Executive Officer',
+                     end_date_dt__gt=Now())\
+                .person
+        except Membership.DoesNotExist:
+            ceo = None
 
-        return bills
+        return ceo
 
 
-class LAMetroEventManager(models.Manager):
+class LAMetroEventManager(EventManager):
     def get_queryset(self):
         '''
         If SHOW_TEST_EVENTS is False, omit them from the initial queryset.
@@ -232,10 +255,10 @@ class LAMetroEventManager(models.Manager):
         when getting event querysets. If a test event slips through, it is
         likely because we used the default Event to get the queryset.
         '''
-        if not settings.SHOW_TEST_EVENTS:
-            return super().get_queryset().exclude(location_name='TEST')
+        if settings.SHOW_TEST_EVENTS:
+            return super().get_queryset()
 
-        return super().get_queryset()
+        return super().get_queryset().exclude(location__name='TEST')
 
     def with_media(self):
         '''
@@ -248,14 +271,15 @@ class LAMetroEventManager(models.Manager):
         come after links to English audio. 'mediaqueryset' facilitates
         the ordering of prefetched 'media_urls'.
         '''
-        mediaqueryset = LAMetroEventMedia.objects.annotate(
+        mediaqueryset = EventMedia.objects.annotate(
             olabel=Case(
                 When(note__endswith='(SAP)', then=Value(0)),
                 output_field=models.CharField(),
             )
         ).order_by('-olabel')
 
-        return self.prefetch_related(Prefetch('media_urls', queryset=mediaqueryset))
+        return self.prefetch_related(Prefetch('media', queryset=mediaqueryset))\
+                   .prefetch_related('media__links')
 
 
 class LiveMediaMixin(object):
@@ -314,12 +338,11 @@ class LiveMediaMixin(object):
             return None
 
 
-class LAMetroEvent(Event, LiveMediaMixin):
+class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     objects = LAMetroEventManager()
 
     class Meta:
         proxy = True
-
 
     @classmethod
     def upcoming_board_meeting(cls):
@@ -459,50 +482,25 @@ class LAMetroEvent(Event, LiveMediaMixin):
         return meetings
 
 
-    @property
-    def board_event_minutes(self):
-        '''
-        This method returns the link to an Event's minutes.
-
-        A small number of Events do not have minutes in
-        a discoverable, corresponding EventDocument.
-        For these, we can query board reports
-        for indicative text, i.e., "minutes of the regular..."
-        '''
-        if 'regular board meeting' in self.name.lower():
-            try:
-                doc = self.documents.get(note__icontains='RBM Minutes')
-            except EventDocument.DoesNotExist:
-                try:
-                    date = self.start_time.date().strftime('%B %d, %Y')
-                    content = 'minutes of the regular board meeting held ' + date
-                    board_report = LAMetroBill.objects.get(ocr_full_text__icontains=content, bill_type='Minutes')
-                except LAMetroBill.DoesNotExist:
-                    return None
-                else:
-                    return '/board-report/' + board_report.slug
-            else:
-                return doc.url
-
-
-class LAMetroEventMedia(EventMedia):
+class EventAgendaItem(EventAgendaItem):
 
     class Meta:
         proxy = True
 
-    @property
-    def label(self):
-        '''
-        EventMedia imported prior to django-councilmatic 0.10.0 may not have
-        an associated note.
-        '''
-        if self.note and self.note.endswith('(SAP)'):
-            return 'Ver en Español'
-        else:
-            return 'Watch in English'
+    event = ProxyForeignKey(LAMetroEvent, related_name='agenda', on_delete=models.CASCADE)
 
+class EventRelatedEntity(EventRelatedEntity):
 
-class LAMetroOrganization(Organization):
+    class Meta:
+        proxy = True
+
+    agenda_item = ProxyForeignKey(EventAgendaItem,
+                                  related_name='related_entities',
+                                  on_delete=models.CASCADE)
+
+    bill = ProxyForeignKey(LAMetroBill, null=True, on_delete=models.SET_NULL)
+
+class LAMetroOrganization(Organization, SourcesMixin):
     '''
     Overrides use the LAMetroEvent object, rather than the default Event
     object, so test events are hidden appropriately.
@@ -512,8 +510,8 @@ class LAMetroOrganization(Organization):
 
     @property
     def recent_events(self):
-        events = LAMetroEvent.objects.filter(participants__entity_type='organization', participants__entity_name=self.name)
-        events = events.order_by('-start_time').all()
+        events = LAMetroEvent.objects.filter(participants__organization=self)
+        events = events.order_by('-start_time')
         return events
 
     @property
@@ -527,6 +525,36 @@ class LAMetroOrganization(Organization):
                              .order_by('start_time')\
                              .all()
         return events
+
+class Membership(councilmatic_core.models.Membership):
+    class Meta:
+        proxy = True
+
+    organization = ProxyForeignKey(
+        LAMetroOrganization,
+        related_name='memberships',
+        # memberships will go away if the org does
+        on_delete=models.CASCADE,
+        help_text="A link to the Organization in which the Person is a member."
+    )
+
+    person = ProxyForeignKey(
+        LAMetroPerson,
+        related_name='memberships',
+        null=True,
+        # Membership will just unlink if the person goes away
+        on_delete=models.SET_NULL,
+        help_text="A link to the Person that is a member of the Organization."
+    )
+
+    post = ProxyForeignKey(
+        LAMetroPost,
+        related_name='memberships',
+        null=True,
+        # Membership will just unlink if the post goes away
+        on_delete=models.SET_NULL,
+        help_text="The Post held by the member in the Organization."
+    )
 
 
 class SubjectGuid(models.Model):

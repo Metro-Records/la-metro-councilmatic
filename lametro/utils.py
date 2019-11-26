@@ -8,7 +8,7 @@ from lxml.etree import tostring
 from django.conf import settings
 from django.utils import timezone
 
-from councilmatic_core.models import EventParticipant, Organization, Event, Action
+from councilmatic_core.models import Organization, Event
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 

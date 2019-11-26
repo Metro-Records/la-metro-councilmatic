@@ -1,12 +1,11 @@
-psycopg2==2.7.6.1
-django-councilmatic==0.10.16
+https://github.com/opencivicdata/python-opencivicdata/archive/master.zip
+django-councilmatic[convert_docs]@https://github.com/datamade/django-councilmatic/archive/la_metro_accomodations.zip
 django-debug-toolbar==1.9.1
 raven==5.30.0
 gunicorn==19.6.0
-PyPDF2==1.26.0
-requests==2.20.0
 pytest
 pytest-django
 pytest-mock==1.6.3
 lxml==4.1.1
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
+dj_database_url

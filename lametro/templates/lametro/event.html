@@ -17,8 +17,8 @@
                     {{event.name}}
                 {% endif%}
 
-                {% for media in event.media_urls.all %}
-                    <a class="btn btn-salmon" href="{{ media.url }}" target="_blank"><i class="fa fa-headphones" aria-hidden="true"></i> {{ media.label }}</a>
+                {% for media in event.media.all %}
+                    <a class="btn btn-salmon" href="{{ media.links.all.0.url }}" target="_blank"><i class= "fa fa-headphones" aria-hidden="true"></i> {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
                 {% endfor %}
 
             </h1>
@@ -32,16 +32,16 @@
                 {% else %}
                     <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
                     <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
-                    <i class="fa fa-fw fa-map-marker"></i> {{event.location_name}}
+                    <i class="fa fa-fw fa-map-marker"></i> {{event.location.name}}
                 {% endif %}
             </p>
 
             <p class="small">
-                {% if 'https://metro.legistar.com' in event.source_url %}
+                {% if event.web_source.url %}
                     {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
                         Not seeing an agenda? Please use this link:<br>
                     {% endif %}
-                    <a href='{{event.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
+                    <a href='{{event.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
                         <i class='fa fa-fw fa-external-link'></i>
                         View on the {{CITY_VOCAB.SOURCE}} website
                     </a>
@@ -83,9 +83,9 @@
                                     Download Agenda
                                 </a>
                             </p>
-                            {% if packet_url %}
+                            {% if event.packet.is_ready %}
                             <p>
-                                <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Agenda and Attachments</a>
+                                <a href="{{event.packet.url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Agenda and Attachments</a>
                             </p>
                             {% endif %}
                         </div>
@@ -100,13 +100,11 @@
                             </p>
                             {% endif %}
 
-                            {% with minutes=event.board_event_minutes %}
                                 {% if minutes %}
                                 <p>
-                                    <a href="{{ minutes }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
+                                    <a href="{{ minutes.links.get.url }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
                                 </p>
                                 {% endif %}
-                            {% endwith %}
 
                         {% endif %}
 
@@ -205,7 +203,7 @@
           "@type": "PostalAddress",
           "addressLocality": "{{ CITY_NAME }}"
         },
-        "name": "{{event.location_name}}"
+        "name": "{{event.location.name}}"
       },
       "name": "{{event.name}}",
       "startDate": "{{ event.start_time.isoformat }}",
@@ -235,7 +233,7 @@
         });
 
         // for reference purposes
-        console.log( "OCD ID: {{event.ocd_id}}" )
+        console.log( "OCD ID: {{event.id}}" )
     });
     </script>
 

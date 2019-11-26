@@ -1,6 +1,6 @@
 from django import template
 from django.template.defaultfilters import stringfilter
-from django.utils.html import strip_entities, strip_tags
+from django.utils.html import strip_tags
 from django.utils import timezone
 
 from haystack.query import SearchQuerySet
@@ -10,32 +10,31 @@ import urllib
 
 from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic_core.models import Person, EventDocument, Bill
+from councilmatic_core.models import Person, Bill
 from councilmatic_core.utils import ExactHighlighter
 
 from lametro.models import LAMetroEvent
 from lametro.utils import format_full_text, parse_subject
 
+from opencivicdata.legislative.models import EventDocument
+
 register = template.Library()
 
 @register.filter
-def call_headshot_url(person_id):
-    person = Person.objects.get(ocd_id=person_id)
-    url = person.headshot_url
-    return url
-
-@register.filter
 def call_link_html(person_id):
-    person = Person.objects.get(ocd_id=person_id)
+    person = Person.objects.get(id=person_id)
     url = person.link_html
     return url
 
 @register.filter
 def format_label(label):
-    label_parts = label.split(', ')
-    formatted_label = '<br />'.join(label_parts)
+    first_part = label.split(', ')[0]
 
-    return formatted_label
+    return first_part
+
+@register.filter
+def comma_to_line_break(text):
+    return '<br />'.join(text.split(', '))
 
 @register.filter
 def format_district(label):
@@ -106,19 +105,6 @@ def clean_role(role_list):
     return role_list[0]
 
 @register.filter
-def clean_label(label_list):
-    label_list = [ label for label in label_list if 'Chair' not in label ]
-    label = label_list[0]
-
-    return label
-
-@register.filter
-def format_string(label_list):
-    label_list = label_list.replace('{', '').replace('}', '').replace('"', '')
-
-    return label_list.split(',')
-
-@register.filter
 def compare_time(event_date):
     if event_date < timezone.now():
         return True
@@ -147,31 +133,30 @@ def updates_made(event_id):
     This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated. 
     If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page. 
     '''
-    try: 
-        # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded
-        document = EventDocument.objects.filter(event_id=event_id).latest('updated_at')
+
+    event = LAMetroEvent.objects.get(ocd_id=event_id)
+
+    try:
+        event.documents.get(note__icontains='Agenda')
     except EventDocument.DoesNotExist:
         return False
-    else:
-        event = LAMetroEvent.objects.get(ocd_id=event_id)
-        updated = document.updated_at < event.updated_at
-        return updated 
 
+    return event.updated_at > document.date
 
 @register.filter
 def find_agenda_url(all_documents):
     '''
     This filter determines how to format the URL link, particularly, in the case of manually uploaded agenda.
     '''
-    valid_urls = [x.url for x in all_documents if (x.note == 'Agenda' or x.note == 'Event Document - Manual upload URL')]
-    pdf_url = [('static/' + x.url) for x in all_documents if x.note == 'Event Document - Manual upload PDF']
+    valid_urls = [url for x in all_documents if (x.note == 'Agenda' or x.note == 'Event Document - Manual upload URL') for url in x.links.all()]
+    pdf_url = [('static/' + url) for x in all_documents if x.note == 'Event Document - Manual upload PDF' for url in x.links.all()]
     valid_urls += pdf_url
 
     return valid_urls[0]
 
 @register.simple_tag(takes_context=True)
-def get_highlighted_attachment_text(context, ocd_id):
-    bill = Bill.objects.get(ocd_id=ocd_id)
+def get_highlighted_attachment_text(context, id):
+    bill = Bill.objects.get(id=id)
     attachment_text = ' '.join(d.full_text for d in bill.documents.all() if d.full_text)
 
     highlight = ExactHighlighter(context['query'])
