@@ -341,8 +341,8 @@ class LABoardMembersView(CouncilMembersView):
 
     def map(self):
 
-        maps = {'map_geojson': {'type': 'FeatureCollection',
-                                'features': []},
+        maps = {'map_geojson_districts': {'type': 'FeatureCollection',
+                                          'features': []},
                 'map_geojson_sectors': {'type': 'FeatureCollection',
                                         'features': []},
                 'map_geojson_city': {'type': 'FeatureCollection',
@@ -375,7 +375,7 @@ class LABoardMembersView(CouncilMembersView):
             }
 
             if 'council_district' in post.division_id:
-                maps['map_geojson']['features'].append(feature)
+                maps['map_geojson_districts']['features'].append(feature)
 
             if 'la_metro_sector' in post.division_id:
                 maps['map_geojson_sectors']['features'].append(feature)

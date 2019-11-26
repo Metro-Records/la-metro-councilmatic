@@ -6,7 +6,7 @@
 {% block title %}{{ person.name }}{% endblock %}
 
 {% block extra_css %}
-    {% if map_geojson %}
+    {% if MAP_CONFIG %}
         <link rel="stylesheet" href="{% static 'css/leaflet.css' %}" />
     {% endif %}
 {% endblock %}
@@ -56,7 +56,7 @@
                 <p class="small">{{ member_bio | safe }}</p>
             {% endif %}
 
-            {% if map_geojson %}
+            {% if MAP_CONFIG %}
                 <hr />
                 <h4>
                     {% if person.current_district %}
@@ -191,7 +191,7 @@
 
 {% block extra_js %}
 
-    {% if map_geojson %}
+    {% if map_geojson_districts %}
 
         <script src="{% static 'js/leaflet.js' %}" /></script>
         <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&libraries=places&v=3.17&key={{GOOGLE_API_KEY}}"></script>
@@ -219,7 +219,7 @@
                 mapOptions: {styles: google_map_styles}
             });
             map.addLayer(layer);
-            var geojson = L.geoJson({{ map_geojson|safe }}, {
+            var geojson = L.geoJson({{ map_geojson_districts |safe }}, {
                 style: {
                         "color": "#3D8A8E",
                         "weight": 1.2,
