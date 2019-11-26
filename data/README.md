@@ -1,5 +1,4 @@
-This directory contains a `boundary.geojson` file and the Makefile
-used to created it.
+This directory contains a `boundary.geojson` file and the Makefile and associated scripts used to created it.
 
 You'll use the geojson file to load in shapes of districts with
 
