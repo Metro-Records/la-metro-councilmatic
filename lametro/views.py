@@ -341,7 +341,50 @@ class LABoardMembersView(CouncilMembersView):
 
     def map(self):
 
-        return {}
+        maps = {'map_geojson': {'type': 'FeatureCollection',
+                                'features': []},
+                'map_geojson_sectors': {'type': 'FeatureCollection',
+                                        'features': []},
+                'map_geojson_city': {'type': 'FeatureCollection',
+                                     'features': []},
+        }
+
+        posts = LAMetroPost.objects\
+                    .filter(shape__isnull=False)\
+                    .exclude(label='Appointee of Mayor of the City of Los Angeles')
+
+        for post in posts:
+            council_member = "Vacant"
+            detail_link = ""
+            district = post.label
+
+            person = post.memberships.get(end_date_dt__gt=Now()).person
+            if person:
+                council_member = person.name
+                detail_link = person.slug
+
+            feature = {
+                'type': 'Feature',
+                'geometry': json.loads(post.shape.json),
+                'properties': {
+                    'district': district,
+                    'council_member': council_member,
+                    'detail_link': '/person/' + detail_link,
+                    'select_id': 'polygon-{}'.format(slugify(district)),
+                },
+            }
+
+            if 'council_district' in post.division_id:
+                maps['map_geojson']['features'].append(feature)
+
+            if 'la_metro_sector' in post.division_id:
+                maps['map_geojson_sectors']['features'].append(feature)
+
+            if post.division_id == 'ocd-division/country:us/state:ca/place:los_angeles':
+                maps['map_geojson_city']['features'].append(feature)
+
+
+        return maps
 
     def get_queryset(self):
         get_kwarg = {'name': settings.OCD_CITY_COUNCIL_NAME}
