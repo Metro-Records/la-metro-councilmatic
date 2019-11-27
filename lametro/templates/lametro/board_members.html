@@ -8,7 +8,7 @@
 {% block extra_css %}
     {% cache 86400 leaflet_wrapper 'leaflet' %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-toggle.min.css' %}" />
-    {% if map_geojson %}
+    {% if MAP_CONFIG %}
         <link rel="stylesheet" href="{% static 'css/leaflet.css' %}" />
     {% endif %}
     {% endcache %}
@@ -20,7 +20,7 @@
 {% cache 86400 members_wrapper 'members' %}
 
 <div class="container-fluid">
-    {% if map_geojson %}
+    {% if MAP_CONFIG %}
     <div class="row">
         <div class="col-sm-6">
             <h1 class="map-heading">
@@ -62,7 +62,7 @@
     {% endif %}
 
     <div class="row-fluid">
-        {% if map_geojson %}
+        {% if MAP_CONFIG %}
             <div class='col-sm-6 no-pad-mobile'>
 
                 <div id="toggleControls" class="" data-toggle="buttons">
@@ -189,7 +189,7 @@
         });
 
 
-        {% if map_geojson %}
+        {% if MAP_CONFIG %}
         $('tbody tr').on( 'mouseover', function () {
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
