@@ -563,3 +563,115 @@ class SubjectGuid(models.Model):
 
     guid = models.CharField(max_length=256)
     name = models.CharField(max_length=256, unique=True)
+
+
+class BillPacket(models.Model):
+
+    bill = models.OneToOneField(LAMetroBill,
+                                related_name='packet',
+                                on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(auto_now=True)
+    url = models.URLField()
+    ready = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+
+        self._merge_docs()
+
+        self.url = settings.MERGER_BASE_URL + '/document/' + self.bill.slug
+
+        response = requests.head(self.url)
+
+        super().save(*args, **kwargs)
+
+    def is_ready(self):
+
+        if not self.ready:
+            response = requests.head(self.url)
+            if response.status_code == 200:
+                self.ready = True
+                super().save()
+
+        return self.ready
+
+    @property
+    def related_files(self):
+        board_report = self.bill.versions.get()
+
+        attachments = self.bill.documents\
+            .annotate(
+                index=Case(
+                    When(note__istartswith = '0', then=Value('z')),
+                    default=F('note'),
+                    output_field=models.CharField()))\
+            .order_by('index')
+
+        doc_links = [board_report.links.get().url]
+
+        # sometime there are more than url for the same document name
+        # https://metro.legistar.com/LegislationDetail.aspx?ID=3104422&GUID=C30D3376-7265-477B-AFFA-815270400538%3e%5d%3e
+        # I'm not sure if this a data problem or not, so we'll just
+        # add all the doc links
+        doc_links += [link.url
+                      for doc in attachments
+                      for link in doc.links.all()]
+
+        return doc_links
+
+    def _merge_docs(self):
+
+        merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.bill.slug
+
+        requests.post(merge_url, json=self.related_files)
+
+
+class EventPacket(models.Model):
+
+    event = models.OneToOneField(LAMetroEvent,
+                                related_name='packet',
+                                on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(auto_now=True)
+    url = models.URLField()
+    ready = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+
+        self._merge_docs()
+
+        self.url = settings.MERGER_BASE_URL + '/document/' + self.event.slug
+
+        super().save(*args, **kwargs)
+
+    def is_ready(self):
+
+        if not self.ready:
+            response = requests.head(self.url)
+            if response.status_code == 200:
+                self.ready = True
+                super().save()
+
+        return self.ready
+
+    @property
+    def related_files(self):
+
+        agenda_doc = self.event.documents.get(note='Agenda')
+
+        related = [agenda_doc.links.get().url]
+
+        agenda_items = self.event.agenda\
+            .filter(related_entities__bill__documents__isnull=False)\
+            .annotate(int_order=Cast('order', models.IntegerField()))\
+            .order_by('int_order')\
+            .distinct()
+
+        for item in agenda_items:
+            for entity in item.related_entities.filter(bill__isnull=False):
+                bill_packet = BillPacket(bill=entity.bill)
+                related.extend(bill_packet.related_files)
+
+        return related
+
+    def _merge_docs(self):
+
+        merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.event.slug
