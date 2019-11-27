@@ -1,7 +1,5 @@
 from django.core.management.base import BaseCommand
-import django.db.models as models
-from django.db.models import F, Case, When
-from django.db.models.functions import Cast
+from django.db.models import F
 
 from lametro.models import LAMetroBill, BillPacket, LAMetroEvent, EventPacket
 
