@@ -608,7 +608,7 @@ class BillPacket(models.Model):
 
         doc_links = [board_report.links.get().url]
 
-        # sometime there are more than url for the same document name
+        # sometimes there is more than one url for the same document name
         # https://metro.legistar.com/LegislationDetail.aspx?ID=3104422&GUID=C30D3376-7265-477B-AFFA-815270400538%3e%5d%3e
         # I'm not sure if this a data problem or not, so we'll just
         # add all the doc links
