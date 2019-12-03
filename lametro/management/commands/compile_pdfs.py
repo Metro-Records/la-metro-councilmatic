@@ -91,7 +91,7 @@ class Command(BaseCommand):
                 .filter(packet__updated_at__lt=F('agenda__related_entities__bill__updated_at'))
 
             no_packets = events\
-                .filter(packet__isnull=True)\
+                .filter(packet__isnull=True)
 
             events = newer_events | newer_board_reports | no_packets
 
