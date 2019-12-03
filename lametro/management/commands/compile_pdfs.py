@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
         if not self.all_documents:
 
-            # if an event, or it's related objects are changed, the
+            # if an event, or its related objects are changed, the
             # updated_at of the event field will update.
             #
             # so, if an agenda item is added, removed, or changed; or
