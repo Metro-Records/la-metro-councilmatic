@@ -124,7 +124,7 @@ class Command(BaseCommand):
             #
             # Filtering on the bill's updated_at field will catch these
             # types of packet-relevant changes, but will also catch
-            # some events that had changes not related to the pdf packet
+            # some bills that had changes not related to the pdf packet
             newer_bills = bills\
                 .filter(packet__updated_at__lt=F('updated_at'))
 
