@@ -18,7 +18,7 @@ from councilmatic_core.models import Bill, Event, Post, Person, Organization, Ev
 
 import councilmatic_core.models
 
-from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill
+from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill, BillVersion
 
 from proxy_overrides.related import ProxyForeignKey
 
@@ -139,6 +139,17 @@ class LAMetroBill(Bill, SourcesMixin):
     @property
     def topics(self):
         return sorted(self.subject)
+
+    @property
+    def board_report(self):
+
+        try:
+            br = self.versions.get(note="Board Report")
+            br.url = current_version.links.get().url
+        except BillVersion.DoesNotExist:
+            br = None
+
+        return br
 
 
 class RelatedBill(RelatedBill):
@@ -564,28 +575,29 @@ class SubjectGuid(models.Model):
     guid = models.CharField(max_length=256)
     name = models.CharField(max_length=256, unique=True)
 
+class Packet(models.Model):
 
-class BillPacket(models.Model):
+    class Meta:
+        abstract = True
 
-    bill = models.OneToOneField(LAMetroBill,
-                                related_name='packet',
-                                on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
     url = models.URLField()
     ready = models.BooleanField(default=False)
 
-    def save(self, *args, **kwargs):
+    @property
+    def related_entity(self):
+        raise NotImplementedError()
 
+    @property
+    def related_files(self):
+        raise NotImplementedError()
+
+    def save():
         self._merge_docs()
-
-        self.url = settings.MERGER_BASE_URL + '/document/' + self.bill.slug
-
-        response = requests.head(self.url)
-
+        self.url = settings.MERGER_BASE_URL + '/document/' + self.related_entity.slug
         super().save(*args, **kwargs)
 
     def is_ready(self):
-
         if not self.ready:
             response = requests.head(self.url)
             if response.status_code == 200:
@@ -593,6 +605,21 @@ class BillPacket(models.Model):
                 super().save()
 
         return self.ready
+
+     def _merge_docs(self):
+        merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.related_entity.slug
+        requests.post(merge_url, json=self.related_files)
+
+
+class BillPacket(Packet):
+
+    bill = models.OneToOneField(LAMetroBill,
+                                related_name='packet',
+                                on_delete=models.CASCADE)
+
+    @property
+    def related_entity(self):
+        return self.bill
 
     @property
     def related_files(self):
@@ -618,39 +645,16 @@ class BillPacket(models.Model):
 
         return doc_links
 
-    def _merge_docs(self):
 
-        merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.bill.slug
-
-        requests.post(merge_url, json=self.related_files)
-
-
-class EventPacket(models.Model):
+class EventPacket(Packet):
 
     event = models.OneToOneField(LAMetroEvent,
                                 related_name='packet',
                                 on_delete=models.CASCADE)
-    updated_at = models.DateTimeField(auto_now=True)
-    url = models.URLField()
-    ready = models.BooleanField(default=False)
 
-    def save(self, *args, **kwargs):
-
-        self._merge_docs()
-
-        self.url = settings.MERGER_BASE_URL + '/document/' + self.event.slug
-
-        super().save(*args, **kwargs)
-
-    def is_ready(self):
-
-        if not self.ready:
-            response = requests.head(self.url)
-            if response.status_code == 200:
-                self.ready = True
-                super().save()
-
-        return self.ready
+    @property
+    def related_entity(self):
+        return self.event
 
     @property
     def related_files(self):
@@ -671,7 +675,3 @@ class EventPacket(models.Model):
                 related.extend(bill_packet.related_files)
 
         return related
-
-    def _merge_docs(self):
-
-        merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.event.slug
