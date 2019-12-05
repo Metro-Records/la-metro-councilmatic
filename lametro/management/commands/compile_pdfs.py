@@ -106,7 +106,7 @@ class Command(BaseCommand):
 
             # The docs in an bill packet are updated on save.
             # if the doc was just created, it was also saved so
-            # only save if the packet already existed
+            # only call save here if the packet already existed
             if not created:
                 bill_packet.save()
 
