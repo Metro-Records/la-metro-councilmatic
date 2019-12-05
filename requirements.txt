@@ -1,4 +1,5 @@
-https://github.com/opencivicdata/python-opencivicdata/archive/master.zip
+Django>=2.2,<2.3
+https://github.com/opencivicdata/python-opencivicdata-django/archive/2.5.0.zip
 django-councilmatic[convert_docs]@https://github.com/datamade/django-councilmatic/archive/la_metro_accomodations.zip
 django-debug-toolbar==1.9.1
 raven==5.30.0
