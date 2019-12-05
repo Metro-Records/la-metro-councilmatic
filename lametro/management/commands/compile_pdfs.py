@@ -104,7 +104,7 @@ class Command(BaseCommand):
         for bill in tqdm.tqdm(bills, desc='Board Reports'):
             bill_packet, created = BillPacket.objects.get_or_create(bill=bill)
 
-            # The docs in an bill packet are updated on save.
+            # The docs in a bill packet are updated on save.
             # if the doc was just created, it was also saved so
             # only call save here if the packet already existed
             if not created:
