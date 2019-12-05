@@ -34,7 +34,7 @@
                     <br/>
                 {% else %}
                     {{event.name}}
-                    {% if event.ocd_id|updates_made %}
+                    {% if event.id|updates_made %}
                         <span class='label label-info label-teal'>Updated</span>
                     {% endif %}
                     <br/>

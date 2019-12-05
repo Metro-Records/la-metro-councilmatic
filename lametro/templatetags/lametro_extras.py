@@ -134,7 +134,7 @@ def updates_made(event_id):
     If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page. 
     '''
 
-    event = LAMetroEvent.objects.get(ocd_id=event_id)
+    event = LAMetroEvent.objects.get(id=event_id)
 
     try:
         event.documents.get(note__icontains='Agenda')
