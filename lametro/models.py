@@ -145,7 +145,7 @@ class LAMetroBill(Bill, SourcesMixin):
 
         try:
             br = self.versions.get(note="Board Report")
-            br.url = current_version.links.get().url
+            br.url = br.links.get().url
         except BillVersion.DoesNotExist:
             br = None
 
@@ -592,7 +592,7 @@ class Packet(models.Model):
     def related_files(self):
         raise NotImplementedError()
 
-    def save():
+    def save(self, *args, **kwargs):
         self._merge_docs()
         self.url = settings.MERGER_BASE_URL + '/document/' + self.related_entity.slug
         super().save(*args, **kwargs)
@@ -606,7 +606,7 @@ class Packet(models.Model):
 
         return self.ready
 
-     def _merge_docs(self):
+    def _merge_docs(self):
         merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.related_entity.slug
         requests.post(merge_url, json=self.related_files)
 
