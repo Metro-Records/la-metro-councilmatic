@@ -83,7 +83,6 @@ class LABillDetail(BillDetailView):
         context['actions'] = self.get_object().actions.all().order_by('-order')
         context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
 
-        context['board_report'] = self.get_object().versions.get(note="Board Report")
         item = context['legislation']
         actions = self.get_object().actions.all()
         organization_lst = [action.organization for action in actions]
