@@ -23,7 +23,7 @@ def test_legislative_session(bill,
     '''
     legislative_session.identifier = session_identifier
     legislative_session.save()
-    bill = bill.build(_legislative_session=legislative_session)
+    bill = bill.build(legislative_session=legislative_session)
 
     index = LAMetroBillIndex()
     indexed_data = index.prepare(bill)

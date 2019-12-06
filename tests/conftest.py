@@ -6,7 +6,14 @@ from random import randrange
 
 from django.core.management import call_command
 
-from councilmatic_core.models import EventDocument, Bill, EventAgendaItem, Membership, LegislativeSession
+from opencivicdata.legislative.models import (
+    LegislativeSession,
+    EventAgendaItem,
+    EventRelatedEntity,
+    )
+from opencivicdata.core.models import Jurisdiction, Division
+from opencivicdata.legislative.models import EventDocument
+from councilmatic_core.models import Bill, Membership
 from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, LAMetroOrganization
 
 def get_uid_chunk(uid=None):
@@ -25,14 +32,14 @@ def bill(db, legislative_session):
     class BillFactory():
         def build(self, **kwargs):
             bill_info = {
-                'ocd_id': 'ocd-bill/2436c8c9-564f-4cdd-a2ce-bcfe082de2c1',
-                'description': 'APPROVE the policy for a Measure M Early Project Delivery Strategy',
-                'ocd_created_at': '2017-06-09 13:06:21.10075-05',
-                'ocd_updated_at': '2017-06-09 13:06:21.10075-05',
-                'updated_at': '2017-07-26 11:06:47.1853',
+                'id': 'ocd-bill/2436c8c9-564f-4cdd-a2ce-bcfe082de2c1',
+                'title': 'APPROVE the policy for a Measure M Early Project Delivery Strategy',
+                'created_at': '2017-06-09 13:06:21.10075-05',
+                'updated_at': '2017-06-09 13:06:21.10075-05',
                 'identifier': '2017-0686',
                 'slug': '2017-0686',
-                '_legislative_session': legislative_session,
+                'classification': ['Report'],
+                'legislative_session': legislative_session,
             }
 
             bill_info.update(kwargs)
@@ -45,12 +52,34 @@ def bill(db, legislative_session):
 
 @pytest.fixture
 @pytest.mark.django_db
-def legislative_session(db):
+def division(db):
+    division_info = {
+        'id': 'ocd-division/country:us/state:ca/county:los_angeles',
+        'name': 'LA'
+        }
+
+    division = Division.objects.create(**division_info)
+
+    return division
+
+@pytest.fixture
+@pytest.mark.django_db
+def jurisdiction(db, division):
+    jurisdiction_info = {
+        'id': 'ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority',
+        'division_id': 'ocd-division/country:us/state:ca/county:los_angeles'}
+
+    jurisdiction = Jurisdiction.objects.create(**jurisdiction_info)
+
+    return jurisdiction
+
+@pytest.fixture
+@pytest.mark.django_db
+def legislative_session(db, jurisdiction):
     session_info = {
         'identifier': '2017',
-        'jurisdiction_ocd_id': 'ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority',
+        'jurisdiction_id': 'ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority',
         'name': '2017 Legislative Session',
-        'updated_at': '2019-02-07 08:34:56.455542-06',
     }
 
     session = LegislativeSession.objects.create(**session_info)
@@ -59,17 +88,17 @@ def legislative_session(db):
 
 @pytest.fixture
 @pytest.mark.django_db
-def event(db):
+def event(db, jurisdiction):
     class EventFactory():
         def build(self, **kwargs):
             event_info = {
-                'ocd_id': 'ocd-event/17fdaaa3-0aba-4df0-9893-2c2e8e94d18d',
-                'ocd_created_at': '2017-05-27 11:10:46.574-05',
-                'ocd_updated_at': '2017-05-27 11:10:46.574-05',
+                'id': 'ocd-event/17fdaaa3-0aba-4df0-9893-2c2e8e94d18d',
+                'created_at': '2017-05-27 11:10:46.574-05',
+                'updated_at': '2017-05-27 11:10:46.574-05',
                 'name': 'System Safety, Security and Operations Committee',
-                'start_time': datetime.strptime('2017-05-18 12:15', '%Y-%m-%d %H:%M'), 
-                'updated_at': '2017-05-17 11:06:47.1853',
+                'start_date': '2017-05-18 12:15',
                 'slug': uuid4(),
+                'jurisdiction': jurisdiction,
             }
 
             event_info.update(kwargs)
@@ -88,8 +117,7 @@ def event_agenda_item(db, event):
             named_event = event.build()
 
             event_agenda_item_info = {
-                'event_id': named_event.ocd_id,
-                'updated_at': '2017-05-27 11:10:46.574-05',
+                'event_id': named_event.id,
                 'order': 1,
             }
 
@@ -104,18 +132,38 @@ def event_agenda_item(db, event):
 
 @pytest.fixture
 @pytest.mark.django_db
+def event_related_entity(db, event_agenda_item):
+    class EventRelatedEntityFactory():
+        def build(self, **kwargs):
+            agenda_item = event_agenda_item.build()
+
+            event_related_entity_info = {
+                'agenda_item': agenda_item
+            }
+
+            event_related_entity_info.update(kwargs)
+
+            event_related_entity = EventRelatedEntity.objects.create(**event_related_entity_info)
+
+            return event_related_entity
+
+    return EventRelatedEntityFactory()
+
+
+@pytest.fixture
+@pytest.mark.django_db
 def event_document(db):
     class EventDocumentFactory():
         def build(self, **kwargs):
             event_document_info = {
-                'url': 'https://metro.legistar.com/View.ashx?M=A&ID=545192&GUID=19F05A99-F3FB-4354-969F-67BE32A46081',
                 'event_id': 'ocd-event/17fdaaa3-0aba-4df0-9893-2c2e8e94d18d',
-                'updated_at': '2017-05-16 11:06:47.1853'
             }
 
             event_document_info.update(kwargs)
 
             event_document = EventDocument.objects.create(**event_document_info)
+
+            event_document.links.create(url='https://metro.legistar.com/View.ashx?M=A&ID=545192&GUID=19F05A99-F3FB-4354-969F-67BE32A46081')
 
             return event_document
 
@@ -129,7 +177,7 @@ def metro_person(db):
             uid = str(uuid4())
 
             person_info = {
-                'ocd_id': 'ocd-person/' + uid,
+                'id': 'ocd-person/' + uid,
                 'name': 'Wonder Woman',
                 'slug': 'wonder-woman-' + get_uid_chunk(uid),
             }
@@ -150,7 +198,7 @@ def metro_organization(db):
             uid = str(uuid4())
 
             organization_info = {
-                'ocd_id': 'ocd-organization/' + uid,
+                'id': 'ocd-organization/' + uid,
                 'name': 'Planning and Programming Committee',
                 'slug': 'planning-and-programming-committee-' + get_uid_chunk(uid),
             }
@@ -173,9 +221,9 @@ def membership(db, metro_organization, metro_person):
 
             membership_info = {
                 'id': randrange(10000),
-                '_organization': related_org,
-                '_person': related_person,
-                'end_date': datetime.now() + timedelta(days=1) 
+                'organization': related_org,
+                'person': related_person,
+                'end_date': (datetime.now() + timedelta(days=1)).date() 
             }
 
             membership_info.update(kwargs)

@@ -1,6 +1,19 @@
 version: '2.4'
 
 services:
-  app:
+  test:
+    image: lametro
     restart: "no"
     command: pytest -sxv
+    environment:
+      DJANGO_SETTINGS_MODULE: 'councilmatic.settings'
+      DATABASE_URL: 'postgis://postgres:postgres@postgres/lametro'
+      SOLR_URL: 'http://solr:8983/solr/lametro'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      solr:
+        condition: service_started
+    volumes:
+      - ${PWD}:/app
+      - ${PWD}/configs/test_settings_deployment.py:/app/councilmatic/settings_deployment.py
