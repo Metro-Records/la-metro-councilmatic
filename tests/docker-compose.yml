@@ -6,7 +6,6 @@ services:
     restart: "no"
     command: pytest -sxv
     environment:
-      DJANGO_SETTINGS_MODULE: 'councilmatic.settings'
       DATABASE_URL: 'postgis://postgres:postgres@postgres/lametro'
       SOLR_URL: 'http://solr:8983/solr/lametro'
     depends_on:
