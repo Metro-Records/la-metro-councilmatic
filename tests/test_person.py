@@ -14,6 +14,10 @@ def test_person_page_redirects(client, metro_person, mocker):
     response = mocker.Mock()
     response.status_code = 200
 
+    # The purpose of this test is to make sure we are handling different
+    # routing cases appropriately, not that particular contents of a
+    # returned view. So, in the case of a happy routing, we'll mock
+    # the response of a successful dispatch
     mocker.patch.object(PersonDetailView, 'dispatch', return_value=response)
 
     # Assert navigating to a valid slug works.
