@@ -1,6 +1,6 @@
 import pytest
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from councilmatic_core.models import Organization
 
@@ -21,23 +21,23 @@ def test_membership_context(client, metro_organization, membership, metro_person
     organization = metro_organization.build()
 
     membership_info = {
-        '_organization': organization,
+        'organization': organization,
         'role': 'Vice Chair',
     }
     chair_membership = membership.build(**membership_info)
 
     new_member = metro_person.build()
     membership_info = {
-        '_person': new_member,
-        '_organization': organization,
+        'person': new_member,
+        'organization': organization,
         'role': 'Chair',
     }
     vice_chair_membership = membership.build(**membership_info)
 
     new_member = metro_person.build()
     membership_info = {
-        '_person': new_member,
-        '_organization': organization,
+        'person': new_member,
+        'organization': organization,
         'role': 'Member',
     }
     regular_membership = membership.build(**membership_info)
@@ -45,7 +45,7 @@ def test_membership_context(client, metro_organization, membership, metro_person
     url = reverse('committee_detail', kwargs={'slug': organization.slug})
     response = client.get(url)
 
-    memberships = response.context['membership_objects']
+    memberships = response.context['non_ceos']
 
     assert len(memberships) == 3
 

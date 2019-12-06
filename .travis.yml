@@ -1,6 +1,7 @@
 branches:
   only:
   - "/^v0.*$/"
+  - 2.5
   - master
 language: python
 python:
@@ -10,12 +11,16 @@ install:
 - pip install --upgrade pip
 - pip install --upgrade -r requirements.txt
 sudo: required
-dist: trusty
-group: deprecated-2017Q4
+
 addons:
   postgresql: '9.4'
+  apt:
+    packages:
+    - postgresql-9.4-postgis-2.4
+
 before_script:
-- mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
+  - psql -U postgres -c "create extension postgis"
+  - mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
 script: python manage.py migrate && pytest
 deploy:
   - provider: codedeploy
