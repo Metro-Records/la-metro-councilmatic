@@ -8,7 +8,7 @@ from lametro.views import PersonDetailView, LAPersonDetailView
 
 
 @pytest.mark.django_db
-def test_person_page_redirects(client, metro_person, mocker, rf):
+def test_person_page_redirects(client, metro_person, mocker):
     person = metro_person.build()
 
     response = mocker.Mock()
