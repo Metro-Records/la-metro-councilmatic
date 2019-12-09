@@ -162,7 +162,7 @@ class LAMetroEventDetail(EventDetailView):
             .filter(related_entities__bill__versions__isnull=False)\
             .annotate(int_order=Cast('order', IntegerField()))\
             .order_by('int_order')
-        
+
         # Find agenda link.
         if event.documents.all():
             for document in event.documents.all():
@@ -335,7 +335,21 @@ class LAMetroEventsView(EventsView):
 
         return context
 
-class LABoardMembersView(CouncilMembersView):
+
+class MappingMixin(object):
+    def _shape_from_post(self, post, properties={}):
+        if post.shape:
+            return {
+                'type': 'FeatureCollection',
+                'features': [{
+                    'type': 'Feature',
+                    'geometry': json.loads(post.shape.json),
+                    'properties': properties,
+                }],
+            }
+
+
+class LABoardMembersView(CouncilMembersView, MappingMixin):
     template_name = 'lametro/board_members.html'
 
     def map(self):
@@ -362,16 +376,14 @@ class LABoardMembersView(CouncilMembersView):
                 council_member = person.name
                 detail_link = person.slug
 
-            feature = {
-                'type': 'Feature',
-                'geometry': json.loads(post.shape.json),
-                'properties': {
-                    'district': district,
-                    'council_member': council_member,
-                    'detail_link': '/person/' + detail_link,
-                    'select_id': 'polygon-{}'.format(slugify(district)),
-                },
+            feature_properties = {
+                'district': district,
+                'council_member': council_member,
+                'detail_link': '/person/' + detail_link,
+                'select_id': 'polygon-{}'.format(slugify(district)),
             }
+
+            feature = self._shape_from_post(post, feature_properties)
 
             if 'council_district' in post.division_id:
                 maps['map_geojson_districts']['features'].append(feature)
@@ -436,7 +448,7 @@ class LACommitteesView(CommitteesView):
             .exclude(person=ceo)\
             .filter(end_date_dt__gt=Now(),
                     organization__classification='committee')
-        
+
         qs = LAMetroOrganization.objects\
                  .filter(classification='committee')\
                  .filter(memberships__in=memberships)\
@@ -447,7 +459,6 @@ class LACommitteesView(CommitteesView):
                                           to_attr='current_members'))
 
         return qs
-    
 
 
 class LACommitteeDetailView(CommitteeDetailView):
@@ -485,7 +496,7 @@ class LACommitteeDetailView(CommitteeDetailView):
         return context
 
 
-class LAPersonDetailView(PersonDetailView):
+class LAPersonDetailView(PersonDetailView, MappingMixin):
 
     template_name = 'lametro/person.html'
     model = LAMetroPerson
@@ -517,8 +528,6 @@ class LAPersonDetailView(PersonDetailView):
         return response
 
     def get_context_data(self, **kwargs):
-        post_model = LAMetroPost
-
         context = super().get_context_data(**kwargs)
         person = context['person']
 
@@ -548,6 +557,8 @@ class LAPersonDetailView(PersonDetailView):
             context['website_url'] = person.links.get(note='web_site').url
         except PersonLink.DoesNotExist:
             pass
+
+        context['map_geojson'] = self._shape_from_post(person.current_council_seat.post)
 
         return context
 
