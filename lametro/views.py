@@ -38,6 +38,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
 from django.shortcuts import render_to_response, redirect
 from django.core import management
+from django.core.serializers import serialize
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
@@ -517,12 +518,21 @@ class LAPersonDetailView(PersonDetailView):
         return response
 
     def get_context_data(self, **kwargs):
-        post_model = LAMetroPost
 
         context = super().get_context_data(**kwargs)
         person = context['person']
 
-        context['qualifying_post'] = person.current_council_seat.post.acting_label
+        council_post = person.current_council_seat.post
+
+        context['qualifying_post'] = council_post.acting_label
+
+        if council_post.shape:
+            context['map_geojson'] = serialize('geojson',
+                                               [council_post],
+                                               geometry_field='shape',
+                                               fields=())
+        else:
+            context['map_geojson'] = None
 
         if person.committee_sponsorships:
             context['sponsored_legislation'] = person.committee_sponsorships
