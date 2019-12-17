@@ -468,7 +468,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
                 # to show board meetings first, so order in reverse, since False
                 # (0) comes before True (1).
                 current_meetings = scheduled_meetings.filter(start_time__gte=twenty_minutes_ago)\
-                                                     .annotate(is_board_meeting=RawSQL("name like %s", ('%Board Meeting%',)))\
+                                                     .annotate(is_board_meeting=RawSQL("opencivicdata_event.name like %s", ('%Board Meeting%',)))\
                                                      .order_by('-is_board_meeting')
 
         else:
