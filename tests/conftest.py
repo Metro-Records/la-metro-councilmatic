@@ -223,7 +223,7 @@ def membership(db, metro_organization, metro_person):
                 'id': randrange(10000),
                 'organization': related_org,
                 'person': related_person,
-                'end_date': (datetime.now() + timedelta(days=1)).date() 
+                'end_date': (datetime.now() + timedelta(days=1)).date().isoformat()
             }
 
             membership_info.update(kwargs)
