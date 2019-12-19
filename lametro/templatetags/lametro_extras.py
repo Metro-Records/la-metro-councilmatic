@@ -128,20 +128,14 @@ def short_topic_name(text):
 
 @register.filter
 def updates_made(event_id):
-    ''' 
-    When Metro finalizes an agenda, they add it to legistar, and we scrape this link, and add it to our DB. Sometimes, Metro might change the date or time of the event - after adding the agenda. When this occurs, a label indicates that event has been updated.
-    This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated. 
-    If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page. 
     '''
-
+    If an upcoming event has been updated in any way (changed time, address,
+    document, agenda item, status, etc), in the past three days, then show the
+    "Updated" tag.
+    '''
     event = LAMetroEvent.objects.get(id=event_id)
-
-    try:
-        event.documents.get(note__icontains='Agenda')
-    except EventDocument.DoesNotExist:
-        return False
-
-    return event.updated_at > document.date
+    three_days_ago = LAMetroEvent._time_ago(days=3)
+    return event.updated_at > three_days_ago
 
 @register.filter
 def find_agenda_url(all_documents):
