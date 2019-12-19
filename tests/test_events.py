@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 import requests
 
-
 from opencivicdata.legislative.models import EventDocument
 from councilmatic_core.models import Bill
 
@@ -52,6 +51,24 @@ def test_agenda_pdf_form_error():
         agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_image.gif', bad_agenda_file, content_type='image/gif')})
 
         assert agenda_pdf_form.is_valid() == False
+
+
+@pytest.mark.parametrize('has_updates', [True, False])
+def test_updates_made(event, has_updates, mocker):
+    if has_updates:
+        updated_at = LAMetroEvent._time_ago(days=1)
+    else:
+        updated_at = LAMetroEvent._time_ago(days=7)
+
+    # `updated_at` is an auto_now field, which means that it's always updated to
+    # the current date on save. Mock that attribute to return values useful for
+    # testing. More on auto_now:
+    # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.DateField.auto_now
+    mock_update = mocker.patch('lametro.models.LAMetroEvent.updated_at', new_callable=mocker.PropertyMock)
+    mock_update.return_value = updated_at
+
+    event = event.build()
+    assert updates_made(event.id) == has_updates
 
 
 @pytest.fixture
