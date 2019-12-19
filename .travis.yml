@@ -2,6 +2,7 @@ branches:
   only:
   - "/^v0.*$/"
   - 2.5
+  - "2.5_deploy"
   - master
 language: python
 python:
