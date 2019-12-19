@@ -63,9 +63,21 @@ class LAMetroBillManager(models.Manager):
         when getting bill querysets. Otherwise restricted view bills
         may slip through the crevices of Councilmatic display logic.
         '''
-        filtered_qs = super().get_queryset()
+        qs = super().get_queryset()
 
-        return filtered_qs
+        qs = qs.exclude(
+            restrict_view=True
+        ).annotate(board_box=Case(
+            When(bill__extras__local_classification='Board Box', then=True),
+            When(bill__classification__contains=['Board Box'], then=True),
+            default=False,
+            output_field=models.BooleanField()
+        )).filter(Q(eventrelatedentity__agenda_item__event__status='passed') | \
+                  Q(eventrelatedentity__agenda_item__event__status='cancelled') | \
+                  Q(board_box=True)
+        ).distinct()
+
+        return qs
 
 
 class LAMetroBill(Bill, SourcesMixin):
