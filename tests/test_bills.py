@@ -66,7 +66,6 @@ def test_format_full_text(bill, text, subject):
 
     assert format_full_text(full_text) == subject
 
-@pytest.mark.skip("restore in separate PR")
 @pytest.mark.parametrize('restrict_view,bill_type,event_status,is_public', [
         (True, 'Board Box', 'passed', False),
         (False, 'Board Box', 'passed', True),
@@ -86,7 +85,7 @@ def test_bill_manager(bill,
     '''
     bill_info = {
         'classification': [bill_type],
-        'extras': {'restrict_view': restrict_view},
+        'restrict_view': restrict_view,
     }
     bill = bill.build(**bill_info)
 
@@ -99,7 +98,7 @@ def test_bill_manager(bill,
     event = related_entity.agenda_item.event
     event.status = event_status
     event.save()
-    
+
     event.refresh_from_db()
     related_entity.refresh_from_db()
 
@@ -111,7 +110,7 @@ def test_bill_manager(bill,
         bill_qs_with_manager = LAMetroBill.objects.filter(id=bill.id)
         assert is_public == (bill in bill_qs_with_manager)
 
-@pytest.mark.skip("going to address this upstream in the scraper")        
+@pytest.mark.skip("going to address this upstream in the scraper")
 @pytest.mark.django_db
 def test_last_action_date_has_already_occurred(bill, event):
     some_bill = bill.build()
@@ -125,7 +124,7 @@ def test_last_action_date_has_already_occurred(bill, event):
         some_event = event.build(id=id_fmt.format(uuid4()), start_date=t.date())
         item = some_event.agenda.create(order=1)
         item.related_entities.create(bill=some_bill)
-                                              
+
 
     # Assert the bill occurs on both agendas.
     assert Event.objects.filter(agenda__related_entities__bill=some_bill)\
