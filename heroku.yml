@@ -9,9 +9,9 @@ build:
     web: Dockerfile
 # Define any scripts that you'd like to run every time the app deploys.
 release:
+  image: web
   command:
     - ./scripts/release.sh
-  image: web
 # The command that runs your application. Replace 'app' with the name of your app.
 run:
   web: gunicorn -t 180 --log-level debug councilmatic.wsgi:application

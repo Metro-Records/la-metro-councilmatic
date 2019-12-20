@@ -1,8 +1,12 @@
-#!/bin/bash -x
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput
+#!/bin/sh -x
+echo "Running release.sh"
 
-# Set ${TABLE} to the name of a table that you expect to have data in it.
+echo "Migrating database"
+python manage.py migrate --noinput
+
 if [ `psql ${DATABASE_URL} -tAX -c "SELECT COUNT(*) FROM opencivicdata_division"` -eq "0" ]; then
+    echo "Initializing pupa divisions"
     pupa dbinit us
 fi
+
+echo "Release finished"
