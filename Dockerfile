@@ -4,9 +4,10 @@ LABEL maintainer "DataMade <info@datamade.us>"
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && \
-    apt-get install -y libxml2-dev libxslt1-dev antiword unrtf poppler-utils \
-                       pstotext tesseract-ocr flac ffmpeg lame libmad0 \
-                       libsox-fmt-mp3 sox libjpeg-dev swig gdal-bin postgresql-client
+    apt-get install -y --no-install-recommends \
+        libxml2-dev libxslt1-dev antiword unrtf poppler-utils \
+        pstotext tesseract-ocr flac ffmpeg lame libmad0 \
+        libsox-fmt-mp3 sox libjpeg-dev swig gdal-bin postgresql-client
 
 RUN mkdir /app
 WORKDIR /app
