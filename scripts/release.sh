@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/bash -x
 echo "Running release.sh"
 
 echo "Migrating database"
