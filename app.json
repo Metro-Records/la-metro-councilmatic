@@ -32,6 +32,9 @@
     },
     "DJANGO_STATICFILES_STORAGE": {
       "required": true
+    },
+    "SHARED_DB": {
+      "required": true
     }
   },
   "formation": {
