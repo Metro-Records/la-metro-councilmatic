@@ -39,13 +39,13 @@ if DEBUG:
 
 SHOW_TEST_EVENTS = False if os.getenv('DJANGO_SHOW_TEST_EVENTS', True) == 'False' else True
 
-STATIC_ROOT = os.getenv('STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
+STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
 
 ANALYTICS_TRACKING_CODE = os.getenv('DJANGO_ANALYTICS_TRACKING_CODE', '')
 GOOGLE_API_KEY = os.getenv('DJANGO_GOOGLE_API_KEY', '')
 
-if os.getenv('STATICFILES_STORAGE', False):
-    STATICFILES_STORAGE = os.environ['STATICFILES_STORAGE']
+if os.getenv('DJANGO_STATICFILES_STORAGE', False):
+    STATICFILES_STORAGE = os.environ['DJANGO_STATICFILES_STORAGE']
 
 
 # Database and Solr connections
@@ -60,7 +60,7 @@ DATABASES['default'] = dj_database_url.parse(
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': os.getenv('SOLR_URL', 'http://solr:8983/solr/lametro'),
+        'URL': os.getenv('WEBSOLR_URL', 'http://solr:8983/solr/lametro'),
     },
 }
 
