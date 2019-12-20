@@ -3,22 +3,15 @@ LABEL maintainer "DataMade <info@datamade.us>"
 
 ENV PYTHONUNBUFFERED=1
 
-# Manually create a couple of directories omitted by OS image. See:
-# https://github.com/dalibo/temboard/issues/211
-
 RUN apt-get update && \
-    mkdir -p /usr/share/man/man1 && \
-    mkdir -p /usr/share/man/man7 && \
-    apt-get install -y --no-install-recommends \
-        libxml2-dev libxslt1-dev antiword unrtf poppler-utils \
-        pstotext tesseract-ocr flac ffmpeg lame libmad0 \
-        libsox-fmt-mp3 sox libjpeg-dev swig gdal-bin postgresql-client
+    apt-get install -y libxml2-dev libxslt1-dev antiword unrtf poppler-utils \
+                       pstotext tesseract-ocr flac ffmpeg lame libmad0 \
+                       libsox-fmt-mp3 sox libjpeg-dev swig gdal-bin
 
 RUN mkdir /app
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
-
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
