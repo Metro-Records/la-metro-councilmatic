@@ -8,7 +8,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - 8011:8000
+      - 8000:8000
     depends_on:
       postgres:
         condition: service_healthy
@@ -16,10 +16,12 @@ services:
         condition: service_started
     volumes:
       - .:/app
-      - ${PWD}/councilmatic/settings_deployment.py:/app/councilmatic/settings_deployment.py
     environment:
       POSTGRES_HOST: postgres
       DJANGO_MANAGEPY_MIGRATE: "on"
+      DJANGO_SECRET_KEY: dev-key
+      DJANGO_FLUSH_KEY: dev-key
+      DJANGO_REFRESH_KEY: dev-key
     command: python manage.py runserver 0.0.0.0:8000
 
   postgres:

@@ -10,3 +10,4 @@ pytest-mock==1.6.3
 lxml==4.1.1
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
 dj_database_url
+whitenoise
