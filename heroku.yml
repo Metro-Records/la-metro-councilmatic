@@ -7,7 +7,7 @@ setup:
 build:
   docker:
     web: Dockerfile
-    scrapers: https://github.com/datamade/scrapers-us-municipal.git#la_metro_upgrade
+    scrapers: https://github.com/datamade/scrapers-us-municipal/blob/la_metro_upgrade/Dockerfile
 # Define any scripts that you'd like to run every time the app deploys.
 release:
   command:
