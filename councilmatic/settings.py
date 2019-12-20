@@ -56,6 +56,7 @@ DATABASES['default'] = dj_database_url.parse(
     conn_max_age=600,
     ssl_require=True if os.getenv('POSTGRES_REQUIRE_SSL') else False
 )
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 HAYSTACK_CONNECTIONS = {
     'default': {
