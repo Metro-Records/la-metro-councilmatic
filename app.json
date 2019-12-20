@@ -1,0 +1,49 @@
+{
+  "name": "la-metro-councilmatic",
+  "description": "A Councilmatic instance for the LA Metro Transit Authority",
+  "scripts": {},
+  "env": {
+    "DJANGO_DEBUG": {
+      "required": true
+    },
+    "DJANGO_ALLOWED_HOSTS": {
+      "required": true
+    },
+    "DJANGO_SECRET_KEY": {
+      "required": true
+    },
+    "DJANGO_FLUSH_KEY": {
+      "required": true
+    },
+    "DJANGO_REFRESH_KEY": {
+      "required": true
+    },
+    "DJANGO_GOOGLE_API_KEY": {
+      "required": true
+    },
+    "DJANGO_MANAGEPY_MIGRATE": {
+      "required": true
+    },
+    "DJANGO_SHOW_TEST_EVENTS": {
+      "required": true
+    },
+    "DJANGO_STATIC_ROOT": {
+      "required": true
+    },
+    "DJANGO_STATICFILES_STORAGE": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "hobby"
+    }
+  },
+  "addons": [
+    "heroku-postgresql",
+    "websolr"
+  ],
+  "buildpacks": [],
+  "stack": "container"
+}

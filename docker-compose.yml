@@ -17,11 +17,10 @@ services:
     volumes:
       - .:/app
     environment:
-      POSTGRES_HOST: postgres
-      DJANGO_MANAGEPY_MIGRATE: "on"
       DJANGO_SECRET_KEY: dev-key
       DJANGO_FLUSH_KEY: dev-key
       DJANGO_REFRESH_KEY: dev-key
+      DJANGO_MANAGEPY_MIGRATE: "on"
     command: python manage.py runserver 0.0.0.0:8000
 
   postgres:
