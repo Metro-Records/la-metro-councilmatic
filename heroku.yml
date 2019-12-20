@@ -7,7 +7,6 @@ setup:
 build:
   docker:
     web: Dockerfile
-    scrapers: https://github.com/datamade/scrapers-us-municipal/blob/la_metro_upgrade/Dockerfile
 # Define any scripts that you'd like to run every time the app deploys.
 release:
   command:
@@ -16,9 +15,3 @@ release:
 # The command that runs your application. Replace 'app' with the name of your app.
 run:
   web: gunicorn -t 180 --log-level debug councilmatic.wsgi:application
-  scrape:
-    command:
-      - pupa update --rpm=600 lametro people
-      - pupa update --rpm=600 lametro bills window=30
-      - pupa update --rpm=600 lametro events
-    image: scrapers
