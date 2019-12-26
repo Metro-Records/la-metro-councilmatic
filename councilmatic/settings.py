@@ -41,8 +41,11 @@ SHOW_TEST_EVENTS = False if os.getenv('DJANGO_SHOW_TEST_EVENTS', True) == 'False
 
 STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
 
+# Nullable keys
 ANALYTICS_TRACKING_CODE = os.getenv('DJANGO_ANALYTICS_TRACKING_CODE', '')
 GOOGLE_API_KEY = os.getenv('DJANGO_GOOGLE_API_KEY', '')
+AWS_KEY = os.getenv('AWS_KEY', '')
+AWS_SECRET = os.getenv('AWS_SECRET', '')
 
 if os.getenv('DJANGO_STATICFILES_STORAGE', False):
     STATICFILES_STORAGE = os.environ['DJANGO_STATICFILES_STORAGE']
