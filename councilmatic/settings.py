@@ -74,7 +74,7 @@ HAYSTACK_CONNECTIONS = {
 cache_backend = 'dummy.DummyCache' if DEBUG is True else 'db.DatabaseCache'
 CACHES = {
     'default': {
-        'BACKEND': f'django.core.cache.backends.{cache_backend}',
+        'BACKEND': 'django.core.cache.backends.{}'.format(cache_backend),
         'LOCATION': 'councilmatic_cache',
     }
 }
