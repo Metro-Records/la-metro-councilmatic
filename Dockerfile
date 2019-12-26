@@ -17,4 +17,6 @@ RUN pip install --upgrade pip && \
 
 COPY . /app
 
+RUN mv scripts/etl.sh ../bin/metro_etl
+
 RUN DJANGO_SECRET_KEY='dev-key' DJANGO_REFRESH_KEY='' DJANGO_FLUSH_KEY='' python manage.py collectstatic --noinput
