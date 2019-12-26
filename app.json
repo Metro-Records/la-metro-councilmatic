@@ -33,7 +33,10 @@
     "DJANGO_STATICFILES_STORAGE": {
       "required": true
     },
-    "SHARED_DB": {
+    "AWS_KEY": {
+      "required": true
+    },
+    "AWS_SECRET": {
       "required": true
     }
   },
