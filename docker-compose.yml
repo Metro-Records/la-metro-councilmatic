@@ -52,7 +52,7 @@ services:
     restart: on-failure
 
   scrapers:
-    build: https://github.com/datamade/scrapers-us-municipal.git#la_metro_upgrade
+    build: https://github.com/datamade/scrapers-us-municipal.git#metro-upgrade-deploy
     stdin_open: true
     tty: true
     depends_on:
@@ -60,6 +60,7 @@ services:
         condition: service_healthy
     environment:
       SHARED_DB: 'True'
+      DJANGO_SETTINGS_MODULE: pupa_settings
       DATABASE_URL: 'postgis://postgres:@postgres/lametro'
     command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30  && pupa update --rpm=600 lametro events'
 

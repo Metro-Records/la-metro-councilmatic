@@ -42,7 +42,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return obj.topics
 
     def prepare_attachment_text(self, obj):
-        return ' '.join(d.full_text for d in obj.documents.all() if d.full_text)
+        return ' '.join(d.extras['full_text'] for d in obj.documents.all() if d.full_text)
 
     def prepare_legislative_session(self, obj):
         start_year = obj.legislative_session.identifier
