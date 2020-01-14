@@ -14,16 +14,14 @@ class KeyedEvent(LAMetroEvent):
     class Meta:
         proxy = True
 
-    def __str__(self):
-        return 'Event'
-
     @property
     def key(self):
+        # 2019-08-15T00:00:00 => 2019-08-15
         return (self.name, self.start_date[:10])
 
     @classmethod
     def transform_key(cls, key):
-        # 2019-08-15 18:30:00+00 => 2019-08-15T00:00:00
+        # 2019-08-15 18:30:00+00 => 2019-08-15
         dt = datetime.strptime(key[1], '%Y-%m-%d %H:%M:%S+00').date().isoformat()
         return (key[0], dt)
 
@@ -31,9 +29,6 @@ class KeyedEvent(LAMetroEvent):
 class KeyedBill(LAMetroBill):
     class Meta:
         proxy = True
-
-    def __str__(self):
-        return 'Bill'
 
     @property
     def key(self):
@@ -50,7 +45,7 @@ class KeyedCSVGenerator(object):
         self.key_fields = key_fields
         self._cache = {}
 
-    def yield_with_key(self):
+    def __call__(self):
         filepath = os.path.join(settings.BASE_DIR, self.infile)
 
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -77,24 +72,17 @@ class Command(BaseCommand):
                             action='store_true',
                             help='Import board reports only')
 
-    def councilmatic_entity(self, ocd_entity, entity_generator):
-        entity_key = ocd_entity.key
-
-        if entity_key in entity_generator._cache:
-            return entity_generator._cache[entity_key]
-
-        else:
-            for key, entity in entity_generator.yield_with_key():
-                key = ocd_entity.transform_key(key)
-                entity_generator._cache[key] = entity
-
-                if key == entity_key:
-                    return entity
-
     @transaction.atomic
     def handle(self, *args, **options):
-        self._migrate(KeyedEvent, self._event_generator)
-        self._migrate(KeyedBill, self._bill_generator)
+        if not any([options['events_only'], options['board_reports_only']]):
+            self._migrate(KeyedEvent, self._event_generator)
+            self._migrate(KeyedBill, self._bill_generator)
+
+        elif options['events_only']:
+            self._migrate(KeyedEvent, self._event_generator)
+
+        elif options['board_reports_only']:
+            self._migrate(KeyedBill, self._bill_generator)
 
     def _migrate(self, model, generator):
         obj_cache = []
@@ -129,3 +117,17 @@ class Command(BaseCommand):
             print('Found only {0} updates for {1} total objects of type {2}'.format(total_updates, event_count, model))
         else:
             print('Updated all {0} objects of type {1}'.format(event_count, model))
+
+    def councilmatic_entity(self, ocd_entity, entity_generator):
+        entity_key = ocd_entity.key
+
+        if entity_key in entity_generator._cache:
+            return entity_generator._cache[entity_key]
+
+        else:
+            for key, entity in entity_generator():
+                key = ocd_entity.transform_key(key)
+                entity_generator._cache[key] = entity
+
+                if key == entity_key:
+                    return entity
