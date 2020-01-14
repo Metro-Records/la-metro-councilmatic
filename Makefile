@@ -1,4 +1,4 @@
-GENERATED_FILES=councilmatic_core_event.csv councilmatic_core_bill.csv
+GENERATED_FILES=councilmatic_core_event.csv councilmatic_core_person.csv
 
 all : $(GENERATED_FILES)
 
@@ -13,10 +13,10 @@ councilmatic_core_event.csv :
 			    FROM councilmatic_core_event \
 		    ) TO STDOUT WITH CSV HEADER\"" > $@
 
-councilmatic_core_bill.csv :
+councilmatic_core_person.csv :
 	ssh ubuntu@boardagendas.metro.net " \
 	    psql -U postgres -d lametro -c \" \
 		    COPY ( \
-			    SELECT identifier, slug \
-			    FROM councilmatic_core_bill \
+			    SELECT name, slug \
+			    FROM councilmatic_core_person \
 		    ) TO STDOUT WITH CSV HEADER\"" > $@

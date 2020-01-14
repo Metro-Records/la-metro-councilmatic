@@ -6,8 +6,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from opencivicdata.legislative.models import Bill, Event
-from lametro.models import LAMetroEvent, LAMetroBill
+from lametro.models import LAMetroEvent, LAMetroPerson
 
 
 class KeyedEvent(LAMetroEvent):
@@ -26,13 +25,13 @@ class KeyedEvent(LAMetroEvent):
         return (key[0], dt)
 
 
-class KeyedBill(LAMetroBill):
+class KeyedPerson(LAMetroPerson):
     class Meta:
         proxy = True
 
     @property
     def key(self):
-        return (self.identifier,)
+        return (self.name,)
 
     @classmethod
     def transform_key(cls, key):
@@ -61,28 +60,28 @@ class Command(BaseCommand):
         super().__init__(*args, **kwargs)
 
         self._event_generator = KeyedCSVGenerator('councilmatic_core_event.csv', ('name', 'start_time'))
-        self._bill_generator = KeyedCSVGenerator('councilmatic_core_bill.csv', ('identifier',))
+        self._person_generator = KeyedCSVGenerator('councilmatic_core_person.csv', ('name',))
 
     def add_arguments(self, parser):
         parser.add_argument('--events_only',
                             action='store_true',
-                            help='Import events only')
+                            help='Migrate events only')
 
-        parser.add_argument('--board_reports_only',
+        parser.add_argument('--people_only',
                             action='store_true',
-                            help='Import board reports only')
+                            help='Migrate people only')
 
     @transaction.atomic
     def handle(self, *args, **options):
-        if not any([options['events_only'], options['board_reports_only']]):
+        if not any([options['events_only'], options['people_only']]):
             self._migrate(KeyedEvent, self._event_generator)
-            self._migrate(KeyedBill, self._bill_generator)
+            self._migrate(KeyedPerson, self._person_generator)
 
         elif options['events_only']:
             self._migrate(KeyedEvent, self._event_generator)
 
-        elif options['board_reports_only']:
-            self._migrate(KeyedBill, self._bill_generator)
+        elif options['people_only']:
+            self._migrate(KeyedPerson, self._person_generator)
 
     def _migrate(self, model, generator):
         obj_cache = []
