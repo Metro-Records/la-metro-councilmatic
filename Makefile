@@ -5,18 +5,18 @@ all : $(GENERATED_FILES)
 clean :
 	rm $(GENERATED_FILES) || :
 
-%.csv :
+councilmatic_core_event.csv :
 	ssh ubuntu@boardagendas.metro.net " \
-		psql -U postgres -d lametro -c \" \
-			copy ( \
-				select * \
-				from $* \
-			) to stdout with csv header\"" > $@
+	    psql -U postgres -d lametro -c \" \
+		    COPY ( \
+			    SELECT name, start_time, slug \
+			    FROM councilmatic_core_event \
+		    ) TO STDOUT WITH CSV HEADER\"" > $@
 
 councilmatic_core_bill.csv :
 	ssh ubuntu@boardagendas.metro.net " \
-		psql -U postgres -d lametro -c \" \
-			copy ( \
-				select identifier, slug \
-				from councilmatic_core_bill \
-			) to stdout with csv header\"" > $@
+	    psql -U postgres -d lametro -c \" \
+		    COPY ( \
+			    SELECT identifier, slug \
+			    FROM councilmatic_core_bill \
+		    ) TO STDOUT WITH CSV HEADER\"" > $@
