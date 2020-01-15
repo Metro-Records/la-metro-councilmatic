@@ -97,12 +97,7 @@ def event(db, jurisdiction):
                 'created_at': '2017-05-27 11:10:46.574-05',
                 'updated_at': '2017-05-27 11:10:46.574-05',
                 'name': 'System Safety, Security and Operations Committee',
-<<<<<<< HEAD
                 'start_date': '2017-05-18 12:15',
-=======
-                'start_time': datetime.strptime('2017-05-18 12:15', '%Y-%m-%d %H:%M'),
-                'updated_at': '2017-05-17 11:06:47.1853',
->>>>>>> master
                 'slug': uuid4(),
                 'jurisdiction': jurisdiction,
             }
@@ -227,15 +222,9 @@ def membership(db, metro_organization, metro_person):
 
             membership_info = {
                 'id': randrange(10000),
-<<<<<<< HEAD
                 'organization': related_org,
                 'person': related_person,
                 'end_date': (datetime.now() + timedelta(days=1)).date().isoformat()
-=======
-                '_organization': related_org,
-                '_person': related_person,
-                'end_date': datetime.now() + timedelta(days=1)
->>>>>>> master
             }
 
             membership_info.update(kwargs)
