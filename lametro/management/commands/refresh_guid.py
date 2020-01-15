@@ -1,9 +1,12 @@
+from itertools import chain
+
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db.utils import IntegrityError
 
 from legistar.bills import LegistarAPIBillScraper
-from lametro.models import SubjectGuid, Subject
+from lametro.models import LAMetroSubject
+from opencivicdata.legislative.models import Bill
 
 
 class Command(BaseCommand):
@@ -14,39 +17,27 @@ class Command(BaseCommand):
         scraper.retry_attempts = 0
         scraper.requests_per_minute = 0
 
-        all_topics = scraper.topics()
-
-        # Delete topics not currently in use
-        current_topics = Subject.objects.values_list('subject', flat=True)
-        deleted, _ = SubjectGuid.objects.exclude(name__in=current_topics).delete()
+        # Topics are removed when a bill is deleted, but there isn't a good
+        # mechanism to remove topics that become stale when a bill subject is
+        # updated. Remove topics that are not associated with any bills here.
+        current_topics = set(chain(*Bill.objects.values_list('subject', flat=True)))
+        deleted, _ = LAMetroSubject.objects.exclude(name__in=current_topics).delete()
 
         self.stdout.write('Removed {0} stale topics'.format(deleted))
 
-        total_created = 0
-        total_updated = 0
-        total_noop = 0
+        topics = scraper.topics()
 
-        for topic in all_topics:
+        for_update = []
+
+        for topic in topics:
             try:
-                subject, created = SubjectGuid.objects.get_or_create(
-                    name=topic['IndexName'],
-                    guid=topic['api_metadata']
-                )
-            except IntegrityError as e:
-                # This exception will be raised if get_or_create tries to create
-                # a SubjectGuid with a name that already exists. The Legistar
-                # API should not contain duplicates, i.e., the GUID has changed.
-                # Update the GUID on the existing topic.
-                subject = SubjectGuid.objects.get(name=topic['IndexName'])
-                subject.guid = topic['api_metadata']
-                subject.save()
-                total_updated += 1
+                subject = LAMetroSubject.objects.get(name=topic['IndexName'])
+            except LAMetroSubject.DoesNotExist:
+                self.stdout.write('Could not find LAMetroSubject with name {}'.format(topic['IndexName']))
             else:
-                if created:
-                    total_created += 1
-                else:
-                    total_noop += 1
+                subject.guid = topic['api_metadata']
+                for_update.append(subject)
 
-        self.stdout.write('Created {0} new topics'.format(total_created))
-        self.stdout.write('Updated {0} existing topics'.format(total_updated))
-        self.stdout.write('No-op {0} topics'.format(total_noop))
+        LAMetroSubject.objects.bulk_update(for_update, ['guid'])
+
+        self.stdout.write('Updated {0} topics'.format(len(for_update)))

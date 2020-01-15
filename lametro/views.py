@@ -53,7 +53,7 @@ from councilmatic_core.models import *
 from opencivicdata.core.models import PersonLink
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
-    LAMetroEvent, LAMetroOrganization, SubjectGuid
+    LAMetroEvent, LAMetroOrganization, LAMetroSubject
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
@@ -734,27 +734,14 @@ class SmartLogicAPI(ListView):
 
 
 def fetch_topic(request):
-
-    '''
-    Retrieves Subject title from given GUID. There maybe be more than one Subject mapped to a
-    GUID in our SubjectGuid lookup table due to the way we have syncing set up. We only expect one
-    canonical Subject from each GUID, so we handle the MultpleObjectsReturn exception.
-    '''
-
     guid = request.GET['guid']
 
     response = {}
     response['guid'] = guid
 
     try:
-        subject_guid = SubjectGuid.objects.get(guid=guid)
+        subject_guid = LAMetroSubject.objects.get(guid=guid)
         subject = subject_guid.name
-        response['subject_safe'] = urllib.parse.quote(subject)
-        response['status_code'] = 200
-    except MultipleObjectsReturned:
-        subjects = [s.name for s in SubjectGuid.objects.filter(guid=guid)]
-        subject = Subject.objects.get(subject__in=subjects)
-        subject = subject.subject
         response['subject_safe'] = urllib.parse.quote(subject)
         response['status_code'] = 200
     except ObjectDoesNotExist:

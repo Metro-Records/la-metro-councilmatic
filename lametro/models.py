@@ -584,14 +584,6 @@ class Membership(councilmatic_core.models.Membership):
     )
 
 
-class SubjectGuid(models.Model):
-    class Meta:
-        unique_together = ['guid', 'name']
-
-    guid = models.CharField(max_length=256)
-    name = models.CharField(max_length=256, unique=True)
-
-
 class Packet(models.Model):
 
     class Meta:
@@ -692,3 +684,22 @@ class EventPacket(Packet):
                 related.extend(bill_packet.related_files)
 
         return related
+
+
+class LAMetroSubject(models.Model):
+    class Meta:
+        unique_together = ['guid', 'name']
+
+    name = models.CharField(max_length=256, unique=True)
+    guid = models.CharField(max_length=256, blank=True, null=True)
+
+    def __str__(self):
+        if self.guid is not None:
+            return '{0} ({1})'.format(self.name, self.guid)
+
+        else:
+            return self.name
+
+    @property
+    def bills(self):
+        return LAMetroBill.objects.filter(subject__contains=[self.name])
