@@ -11,6 +11,9 @@ def create_lametro_subject(sender, instance, created, **kwargs):
     Create LAMetroSubject instances for each subject on an incoming bill. There
     is a unique constraint on subject name - ignore violations so we can bulk
     create subjects without querying for or introducing duplicates.
+
+    Create subjects on both create *and* update, because updates may include
+    new subjects.
     '''
     LAMetroSubject.objects.bulk_create([
         LAMetroSubject(name=s) for s in instance.subject
