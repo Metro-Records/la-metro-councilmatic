@@ -8,7 +8,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - 8011:8000
+      - 8000:8000
     depends_on:
       postgres:
         condition: service_healthy
@@ -16,10 +16,12 @@ services:
         condition: service_started
     volumes:
       - .:/app
-      - ${PWD}/councilmatic/settings_deployment.py:/app/councilmatic/settings_deployment.py
     environment:
-      POSTGRES_HOST: postgres
+      DJANGO_SECRET_KEY: dev-key
+      DJANGO_FLUSH_KEY: dev-key
+      DJANGO_REFRESH_KEY: dev-key
       DJANGO_MANAGEPY_MIGRATE: "on"
+    entrypoint: /app/docker-entrypoint.sh
     command: python manage.py runserver 0.0.0.0:8000
 
   postgres:
@@ -59,10 +61,8 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      SHARED_DB: 'True'
-      DJANGO_SETTINGS_MODULE: pupa_settings
       DATABASE_URL: 'postgis://postgres:@postgres/lametro'
-    command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30  && pupa update --rpm=600 lametro events'
+    command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30 && pupa update --rpm=600 lametro events'
 
 volumes:
   lametro-solr-data:

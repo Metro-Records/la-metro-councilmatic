@@ -12,29 +12,75 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from .settings_deployment import *
+
+import dj_database_url
+
 from .settings_jurisdiction import *
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
+allowed_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', [])
+ALLOWED_HOSTS = allowed_hosts.split(',') if allowed_hosts else [
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+]
+
+DEBUG = False if os.getenv('DJANGO_DEBUG', True) == 'False' else True
+
+if DEBUG:
+    # Set INTERNAL_IPS to use django-debug-toolbar in debug mode
+    import socket
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
+
+SHOW_TEST_EVENTS = False if os.getenv('DJANGO_SHOW_TEST_EVENTS', True) == 'False' else True
+
+STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
+
+# Nullable keys
+ANALYTICS_TRACKING_CODE = os.getenv('DJANGO_ANALYTICS_TRACKING_CODE', '')
+GOOGLE_API_KEY = os.getenv('DJANGO_GOOGLE_API_KEY', '')
+AWS_KEY = os.getenv('AWS_KEY', '')
+AWS_SECRET = os.getenv('AWS_SECRET', '')
+
+if os.getenv('DJANGO_STATICFILES_STORAGE', False):
+    STATICFILES_STORAGE = os.environ['DJANGO_STATICFILES_STORAGE']
 
 
-try:
-    from .settings_deployment import ALLOWED_HOSTS
-except ImportError:
-    ALLOWED_HOSTS = [
-        'localhost', '127.0.0.1',
-        '.datamade.us',
-        '.councilmatic.org'
-    ]
+# Database and Solr connections
+DATABASES = {}
+
+DATABASES['default'] = dj_database_url.parse(
+    os.getenv('DATABASE_URL', 'postgis://postgres@postgres:5432/lametro'),
+    conn_max_age=600,
+    ssl_require=True if os.getenv('POSTGRES_REQUIRE_SSL') else False
+)
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': os.getenv('WEBSOLR_URL', 'http://solr:8983/solr/lametro'),
+    },
+}
+
+
+# Caching
+# https://docs.djangoproject.com/en/2.2/topics/cache/
+cache_backend = 'dummy.DummyCache' if DEBUG is True else 'db.DatabaseCache'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.{}'.format(cache_backend),
+        'LOCATION': 'councilmatic_cache',
+    }
+}
 
 
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,6 +104,8 @@ except NameError:
     pass
 
 MIDDLEWARE = (
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,7 +113,6 @@ MIDDLEWARE = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'councilmatic.urls'
@@ -95,13 +142,9 @@ WSGI_APPLICATION = 'councilmatic.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'America/Los_Angeles'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -109,14 +152,44 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+
+# Misc. app settings
 MERGER_BASE_URL = 'https://metro-pdf-merger.datamade.us'
-# MERGER_BASE_URL = 'http://0.0.0.0:5000'
-
-PIC_BASE_URL = 'https://pic.datamade.us/lametro/document/'    
-# PIC_BASE_URL = 'http://127.0.0.1:5000/lametro/document/'
-
+PIC_BASE_URL = 'https://pic.datamade.us/lametro/document/'
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-
 ADV_CACHE_INCLUDE_PK = True
+HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), '..' '/lametro/static/images/')
+DISQUS_SHORTNAME = None
+
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # Preserve default loggers
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
+
+
+# Load deployment settings last, so they take precendence over defaults.
+try:
+    from .settings_deployment import *
+    print('Loaded deployment settings')
+except ModuleNotFoundError:
+    # For Heroku
+    print('Deployment settings not found. Skipping...')
+
+    # Load values with no defaults from environment.
+    SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+    FLUSH_KEY = os.environ['DJANGO_FLUSH_KEY']
+    REFRESH_KEY = os.environ['DJANGO_REFRESH_KEY']
