@@ -46,4 +46,12 @@ class Command(BaseCommand):
 
         LAMetroSubject.objects.bulk_update(for_update, ['guid'])
 
-        self.stdout.write('Updated {0} topics'.format(len(for_update)))
+        update_count = len(for_update)
+        topic_count = LAMetroSubject.objects.count()
+
+        try:
+            assert update_count == topic_count
+        except AssertionError:
+            raise AssertionError('Updated only {0} of {1} total topics'.format(update_count, topic_count))
+        else:
+            self.stdout.write('Updated all {0} topics'.format(topic_count))
