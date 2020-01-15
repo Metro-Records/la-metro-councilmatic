@@ -17,15 +17,16 @@ class Command(BaseCommand):
         scraper.retry_attempts = 0
         scraper.requests_per_minute = 0
 
-        # Topics are removed when a bill is deleted, but there isn't a good
-        # mechanism to remove topics that become stale when a bill subject is
-        # updated. Remove topics that are not associated with any bills here.
         current_topics = set(chain(*Bill.objects.values_list('subject', flat=True)))
 
+        # Create LAMetroSubject instances for all existing topics. Subjects are
+        # unique on name. Ignore conflicts so we can bulk create instances
+        # without querying for or introducing duplicates.
         LAMetroSubject.objects.bulk_create([
             LAMetroSubject(name=s) for s in current_topics
         ], ignore_conflicts=True)
 
+        # Delete topics no longer associated with any bills.
         deleted, _ = LAMetroSubject.objects.exclude(name__in=current_topics).delete()
 
         self.stdout.write('Removed {0} stale topics'.format(deleted))
