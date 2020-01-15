@@ -14,7 +14,8 @@ from opencivicdata.legislative.models import (
 from opencivicdata.core.models import Jurisdiction, Division
 from opencivicdata.legislative.models import EventDocument
 from councilmatic_core.models import Bill, Membership
-from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, LAMetroOrganization
+from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, \
+    LAMetroOrganization, LAMetroSubject
 
 
 def get_uid_chunk(uid=None):
