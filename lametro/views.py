@@ -13,8 +13,9 @@ from collections import namedtuple
 import json as simplejson
 import os
 
-from haystack.inputs import Raw
+from haystack.inputs import Raw, Exact
 from haystack.query import SearchQuerySet
+from requests.exceptions import HTTPError
 
 import pytz
 
@@ -22,6 +23,7 @@ from django.db import transaction, connection, connections
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
 from django.db.models import (Max,
@@ -34,8 +36,8 @@ from django.db.models import (Max,
                               Q)
 from django.utils import timezone
 from django.utils.text import slugify
-from django.views.generic import TemplateView
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
+from django.views.generic import TemplateView, ListView
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render_to_response, redirect
 from django.core import management
 from django.core.serializers import serialize
@@ -51,11 +53,12 @@ from councilmatic_core.models import *
 from opencivicdata.core.models import PersonLink
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
-    LAMetroEvent, LAMetroOrganization
+    LAMetroEvent, LAMetroOrganization, SubjectGuid
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
-from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
+from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL, SMART_LOGIC_KEY, \
+    SMART_LOGIC_ENVIRONMENT
 
 from opencivicdata.legislative.models import EventDocument
 
@@ -567,6 +570,8 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         if kwargs.get('search_corpus'):
             self.search_corpus = kwargs.pop('search_corpus')
 
+        self.result_type = kwargs.pop('result_type', None)
+
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
 
     def search(self):
@@ -575,6 +580,11 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         if self.search_corpus == 'all':
             # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
             sqs = sqs.filter_or(attachment_text=Raw(self.cleaned_data['q']))
+
+        if self.result_type == 'keyword':
+            sqs = sqs.exclude(topics__iexact=Exact(self.cleaned_data['q']))
+        elif self.result_type == 'topic':
+            sqs = sqs.filter(topics__iexact=Exact(self.cleaned_data['q']))
 
         return sqs
 
@@ -589,6 +599,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
         form_kwargs['search_corpus'] = 'all' if self.request.GET.get('search-all') else 'bills'
+        form_kwargs['result_type'] = self.request.GET.get('result_type', 'all')
 
         sqs = SearchQuerySet().facet('bill_type', sort='index')\
                               .facet('sponsorships', sort='index')\
@@ -662,6 +673,7 @@ def metro_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+
 @csrf_exempt
 def refresh_guid_trigger(request, refresh_key):
     try:
@@ -673,3 +685,83 @@ def refresh_guid_trigger(request, refresh_key):
     except AttributeError:
         print('You need a refresh_key in your local deployment settings files to access this.')
     return HttpResponse(403)
+
+
+class SmartLogicAPI(ListView):
+    api_key = SMART_LOGIC_KEY
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def render_to_response(self, context):
+        '''
+        Return response as JSON.
+        '''
+        try:
+            return JsonResponse(context['object_list'])
+        except json.JSONDecodeError:
+            return JsonResponse({ 'status': 'false', 'message': 'No topic found' }, status=500)
+
+    def get_queryset(self, *args, **kwargs):
+        '''
+        Hit the SmartLogic endpoint. Tokens expire in two weeks, so if we get
+        an authentication-related status code, refresh the token and try again
+        once before failing out.
+        '''
+        return self._generate_token()
+
+    def _generate_token(self):
+        '''
+        Get a JSON Web Token from the SmartLogic API.
+        '''
+        url = 'https://cloud.smartlogic.com/token'
+        params = {'grant_type': 'apikey', 'key': self.api_key}
+
+        try:
+            response = requests.post(url, data=params)
+        except HTTPError as e:
+            print('Could not authenticate with SmartLogic: {}'.format(e))
+            return None
+
+        try:
+            return json.loads(response.content.decode('utf-8'))
+        except json.JSONDecodeError:
+            '''
+            Occasionally we are returned a 200 response with the html of a SmartLogic page.
+            We handle the json.JSONDecodeError that causes here.
+            '''
+            raise
+
+
+def fetch_topic(request):
+
+    '''
+    Retrieves Subject title from given GUID. There maybe be more than one Subject mapped to a
+    GUID in our SubjectGuid lookup table due to the way we have syncing set up. We only expect one
+    canonical Subject from each GUID, so we handle the MultpleObjectsReturn exception.
+    '''
+
+    guid = request.GET['guid']
+
+    response = {}
+    response['guid'] = guid
+
+    try:
+        subject_guid = SubjectGuid.objects.get(guid=guid)
+        subject = subject_guid.name
+        response['subject_safe'] = urllib.parse.quote(subject)
+        response['status_code'] = 200
+    except MultipleObjectsReturned:
+        subjects = [s.name for s in SubjectGuid.objects.filter(guid=guid)]
+        subject = Subject.objects.get(subject__in=subjects)
+        subject = subject.subject
+        response['subject_safe'] = urllib.parse.quote(subject)
+        response['status_code'] = 200
+    except ObjectDoesNotExist:
+        subject = ''
+        subject_safe = ''
+        response['status_code'] = 404
+
+    response['subject'] = subject
+
+    return JsonResponse(response)

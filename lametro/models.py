@@ -191,6 +191,7 @@ class LAMetroPost(Post):
         else:
             return self.label
 
+
 class LAMetroPerson(Person, SourcesMixin):
 
     class Meta:
@@ -512,6 +513,7 @@ class EventAgendaItem(EventAgendaItem):
 
     event = ProxyForeignKey(LAMetroEvent, related_name='agenda', on_delete=models.CASCADE)
 
+
 class EventRelatedEntity(EventRelatedEntity):
 
     class Meta:
@@ -522,6 +524,7 @@ class EventRelatedEntity(EventRelatedEntity):
                                   on_delete=models.CASCADE)
 
     bill = ProxyForeignKey(LAMetroBill, null=True, on_delete=models.SET_NULL)
+
 
 class LAMetroOrganization(Organization, SourcesMixin):
     '''
@@ -548,6 +551,7 @@ class LAMetroOrganization(Organization, SourcesMixin):
                              .order_by('start_time')\
                              .all()
         return events
+
 
 class Membership(councilmatic_core.models.Membership):
     class Meta:
@@ -586,6 +590,7 @@ class SubjectGuid(models.Model):
 
     guid = models.CharField(max_length=256)
     name = models.CharField(max_length=256, unique=True)
+
 
 class Packet(models.Model):
 
