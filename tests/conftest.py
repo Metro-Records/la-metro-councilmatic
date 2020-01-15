@@ -264,7 +264,7 @@ def subject(db, bill):
 @pytest.fixture
 @pytest.mark.django_db
 def subject_guid(db, subject):
-    class SubjectGuidFactory():
+    class LAMetroSubjectFactory():
         def build(self, **kwargs):
 
             if 'name' in kwargs:
@@ -277,15 +277,15 @@ def subject_guid(db, subject):
             else:
                 guid = '0000-0-0000'
 
-            subject_guid_info = {
+            subject_info = {
                 'name': current_subject,
                 'guid': guid
             }
 
-            subject_guid_info.update(kwargs)
+            subject_info.update(kwargs)
 
-            subject_guid = SubjectGuid.objects.create(**subject_guid_info)
+            subject = LAMetroSubject.objects.create(**subject_info)
 
-            return subject_guid
+            return subject
 
-    return SubjectGuidFactory()
+    return LAMetroSubjectFactory()
