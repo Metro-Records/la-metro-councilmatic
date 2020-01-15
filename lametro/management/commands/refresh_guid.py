@@ -21,6 +21,11 @@ class Command(BaseCommand):
         # mechanism to remove topics that become stale when a bill subject is
         # updated. Remove topics that are not associated with any bills here.
         current_topics = set(chain(*Bill.objects.values_list('subject', flat=True)))
+
+        LAMetroSubject.objects.bulk_create([
+            LAMetroSubject(name=s) for s in current_topics
+        ], ignore_conflicts=True)
+
         deleted, _ = LAMetroSubject.objects.exclude(name__in=current_topics).delete()
 
         self.stdout.write('Removed {0} stale topics'.format(deleted))
