@@ -42,7 +42,7 @@
                     <p class="small text-muted">
                         <i class="fa fa-fw fa-calendar-o"></i> {{ current_meeting.first.start_time | date:"D n/d/Y"}}<br/>
                         <i class="fa fa-fw fa-clock-o"></i> {{ current_meeting.first.start_time | date:"g:i a"}}<br/>
-                        <i class="fa fa-fw fa-map-marker"></i> {{ current_meeting.first.location_name}}<br />
+                        <i class="fa fa-fw fa-map-marker"></i> {{ current_meeting.first.location.name}}<br />
                     </p>
 
                     <!-- Links to media url and PDF download -->
