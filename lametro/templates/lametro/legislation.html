@@ -181,7 +181,7 @@
                 {% for topic in legislation.topics %}
                   {% with "topics_exact:"|add:topic as tag_facet %}
                     <li>
-                        <a href="{% search_with_querystring request selected_facets=tag_facet %}" target="blank">
+                        <a href="{% search_with_querystring request selected_facets=tag_facet %}">
                           {{ topic }}
                         </a>
                     </li>

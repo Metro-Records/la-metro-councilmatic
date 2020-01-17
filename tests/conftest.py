@@ -1,5 +1,5 @@
 from datetime import datetime
-from datetime import timedelta 
+from datetime import timedelta
 import pytest
 from uuid import uuid4
 from random import randrange
@@ -14,7 +14,9 @@ from opencivicdata.legislative.models import (
 from opencivicdata.core.models import Jurisdiction, Division
 from opencivicdata.legislative.models import EventDocument
 from councilmatic_core.models import Bill, Membership
-from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, LAMetroOrganization
+from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, \
+    LAMetroOrganization, LAMetroSubject
+
 
 def get_uid_chunk(uid=None):
     '''
@@ -233,3 +235,58 @@ def membership(db, metro_organization, metro_person):
             return membership
 
     return MembershipFactory()
+
+@pytest.fixture
+@pytest.mark.django_db
+def subject(db, bill):
+    class SubjectFactory():
+        def build(self, **kwargs):
+
+            if 'bill' in kwargs:
+                current_bill = kwargs.get('bill')
+            else:
+                current_bill = bill.build()
+
+            subject_name = 'Metro Gold Line'
+
+            subject_info = {
+                'bill': current_bill,
+                'subject': subject_name
+            }
+
+            subject_info.update(kwargs)
+
+            subject = Subject.objects.create(**subject_info)
+
+            return subject
+
+    return SubjectFactory()
+
+@pytest.fixture
+@pytest.mark.django_db
+def subject_guid(db, subject):
+    class LAMetroSubjectFactory():
+        def build(self, **kwargs):
+
+            if 'name' in kwargs:
+                current_subject = kwargs.get('name')
+            else:
+                current_subject = 'Metro Gold Line'
+
+            if 'guid' in kwargs:
+                guid = kwargs.get('guid')
+            else:
+                guid = '0000-0-0000'
+
+            subject_info = {
+                'name': current_subject,
+                'guid': guid
+            }
+
+            subject_info.update(kwargs)
+
+            subject = LAMetroSubject.objects.create(**subject_info)
+
+            return subject
+
+    return LAMetroSubjectFactory()

@@ -191,6 +191,7 @@ class LAMetroPost(Post):
         else:
             return self.label
 
+
 class LAMetroPerson(Person, SourcesMixin):
 
     class Meta:
@@ -512,6 +513,7 @@ class EventAgendaItem(EventAgendaItem):
 
     event = ProxyForeignKey(LAMetroEvent, related_name='agenda', on_delete=models.CASCADE)
 
+
 class EventRelatedEntity(EventRelatedEntity):
 
     class Meta:
@@ -522,6 +524,7 @@ class EventRelatedEntity(EventRelatedEntity):
                                   on_delete=models.CASCADE)
 
     bill = ProxyForeignKey(LAMetroBill, null=True, on_delete=models.SET_NULL)
+
 
 class LAMetroOrganization(Organization, SourcesMixin):
     '''
@@ -548,6 +551,7 @@ class LAMetroOrganization(Organization, SourcesMixin):
                              .order_by('start_time')\
                              .all()
         return events
+
 
 class Membership(councilmatic_core.models.Membership):
     class Meta:
@@ -579,13 +583,6 @@ class Membership(councilmatic_core.models.Membership):
         help_text="The Post held by the member in the Organization."
     )
 
-
-class SubjectGuid(models.Model):
-    class Meta:
-        unique_together = ['guid', 'name']
-
-    guid = models.CharField(max_length=256)
-    name = models.CharField(max_length=256, unique=True)
 
 class Packet(models.Model):
 
@@ -687,3 +684,18 @@ class EventPacket(Packet):
                 related.extend(bill_packet.related_files)
 
         return related
+
+
+class LAMetroSubject(models.Model):
+    class Meta:
+        unique_together = ['guid', 'name']
+
+    name = models.CharField(max_length=256, unique=True)
+    guid = models.CharField(max_length=256, blank=True, null=True)
+
+    def __str__(self):
+        if self.guid is not None:
+            return '{0} ({1})'.format(self.name, self.guid)
+
+        else:
+            return self.name
