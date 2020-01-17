@@ -167,20 +167,6 @@ def matches_facet(tag, facet):
         return tag.lower() in [t.lower() for t in facet]
     return False
 
-@register.filter
-def sort_by_index(array, index):
-    '''
-    Sort a list of tuples by an item in that tuple, e.g., sort a facet listing
-    like [(topic, count), (topic, count)].
-
-    Django's dictsort template filter supports this natively >= 1.10, but for
-    now, we're still on Django < 1.10.
-
-    TODO: Transition to dictsort when we upgrade Django. See:
-    https://docs.djangoproject.com/en/1.10/ref/templates/builtins/
-    '''
-    return sorted(array, key=lambda x: x[index])
-
 @register.simple_tag(takes_context=True)
 def hits_first(context, topics, selected_topics):
     '''
