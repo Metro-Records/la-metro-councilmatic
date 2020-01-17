@@ -699,7 +699,3 @@ class LAMetroSubject(models.Model):
 
         else:
             return self.name
-
-    @property
-    def bills(self):
-        return LAMetroBill.objects.filter(subject__contains=[self.name])

@@ -1,11 +1,4 @@
-import pytest
-import requests
 import json
-
-from random import randrange
-
-from lametro.models import LAMetroSubject
-from lametro.views import fetch_topic
 
 
 def test_fetch_single_topic(client, subject_guid):
