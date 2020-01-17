@@ -95,8 +95,8 @@ INSTALLED_APPS = (
     'haystack',
     'opencivicdata.core',
     'opencivicdata.legislative',
-    'councilmatic_core',
     'lametro',
+    'councilmatic_core',
     'adv_cache_tag',
     'debug_toolbar',
 )
