@@ -62,6 +62,8 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: 'postgis://postgres:@postgres/lametro'
+      DJANGO_SETTINGS_MODULE: 'pupa_settings'
+      SHARED_DB: "True"
     command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30 && pupa update --rpm=600 lametro events'
 
 volumes:
