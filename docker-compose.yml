@@ -8,7 +8,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - 8011:8000
+      - 8000:8000
     depends_on:
       postgres:
         condition: service_healthy
@@ -16,10 +16,9 @@ services:
         condition: service_started
     volumes:
       - .:/app
-    entrypoint: /app/docker-entrypoint.sh
     environment:
-      POSTGRES_HOST: postgres
       DJANGO_MANAGEPY_MIGRATE: "on"
+    entrypoint: /app/docker-entrypoint.sh
     command: python manage.py runserver 0.0.0.0:8000
 
   postgres:
@@ -59,9 +58,9 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      SHARED_DB: 'True'
       DATABASE_URL: 'postgis://postgres:@postgres/lametro'
       DJANGO_SETTINGS_MODULE: 'pupa_settings'
+      SHARED_DB: "True"
     command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30 && pupa update --rpm=600 lametro events'
 
 volumes:
