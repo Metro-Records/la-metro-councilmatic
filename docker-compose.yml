@@ -17,9 +17,6 @@ services:
     volumes:
       - .:/app
     environment:
-      DJANGO_SECRET_KEY: dev-key
-      DJANGO_FLUSH_KEY: dev-key
-      DJANGO_REFRESH_KEY: dev-key
       DJANGO_MANAGEPY_MIGRATE: "on"
     entrypoint: /app/docker-entrypoint.sh
     command: python manage.py runserver 0.0.0.0:8000

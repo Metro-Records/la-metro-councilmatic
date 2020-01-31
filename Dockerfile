@@ -17,6 +17,6 @@ RUN pip install --upgrade pip && \
 
 COPY . /app
 
-RUN mv scripts/etl.sh ../bin/metro_etl
+RUN DATABASE_URL='' python manage.py collectstatic --noinput
 
-RUN DJANGO_SECRET_KEY='dev-key' DJANGO_REFRESH_KEY='' DJANGO_FLUSH_KEY='' python manage.py collectstatic --noinput
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
