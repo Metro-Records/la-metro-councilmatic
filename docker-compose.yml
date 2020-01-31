@@ -16,7 +16,6 @@ services:
         condition: service_started
     volumes:
       - .:/app
-      - ${PWD}/councilmatic/settings_deployment.py:/app/councilmatic/settings_deployment.py
     entrypoint: /app/docker-entrypoint.sh
     environment:
       POSTGRES_HOST: postgres
