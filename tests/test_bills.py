@@ -110,7 +110,6 @@ def test_bill_manager(bill,
         bill_qs_with_manager = LAMetroBill.objects.filter(id=bill.id)
         assert is_public == (bill in bill_qs_with_manager)
 
-@pytest.mark.skip("going to address this upstream in the scraper")
 @pytest.mark.django_db
 def test_last_action_date_has_already_occurred(bill, event):
     some_bill = bill.build()
@@ -125,12 +124,11 @@ def test_last_action_date_has_already_occurred(bill, event):
         item = some_event.agenda.create(order=1)
         item.related_entities.create(bill=some_bill)
 
-
     # Assert the bill occurs on both agendas.
     assert Event.objects.filter(agenda__related_entities__bill=some_bill)\
                         .count() == 2
 
-    last_action_date = some_bill.get_last_action_date()
+    last_action_date = some_bill.councilmatic_bill.get_last_action_date()
 
     # Assert the last action matches the event that has already occurred.
-    assert last_action_date == two_weeks_ago
+    assert last_action_date.date() == two_weeks_ago.date()

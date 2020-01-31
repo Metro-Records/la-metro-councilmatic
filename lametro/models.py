@@ -132,22 +132,6 @@ class LAMetroBill(Bill, SourcesMixin):
     def controlling_body(self):
         return self.from_organization
 
-    def get_last_action_date(self):
-        '''
-        Several Metro bills do not have "histories."
-        Discussed in this issue:
-        https://github.com/datamade/la-metro-councilmatic/issues/340
-
-        If a bill does not have a history, then determine its `last_action_date` by
-        looking for the most recent agenda that references the bill. Consider only
-        events that have already occurred, so the last action date is not in the
-        future.
-        '''
-        try:
-            return self.actions.last().date_dt
-        except AttributeError:
-            return None
-
     @property
     def topics(self):
         return sorted(self.subject)
