@@ -5,6 +5,10 @@ set -euo pipefail
 rm -Rf /home/datamade/la-metro-councilmatic
 mkdir -p /home/datamade/la-metro-councilmatic
 
+# Make the directory for the ETL logs
+mkdir -p /var/log/councilmatic
+chown -R datamade.www-data /var/log/councilmatic
+
 if [ "$DEPLOYMENT_GROUP_NAME" == "staging" ]
 then
     # Preserve uploaded PDFs
