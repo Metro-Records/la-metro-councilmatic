@@ -56,7 +56,7 @@ HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), '..'
 EXTRA_APPS = ('raven.contrib.django.raven_compat',)
 
 RAVEN_CONFIG = {
-    'dsn': 'https://4a1f7af075cd4fd4bedebe4db50d9c3d:f49e4e9b89ed41e889f69be65b4f6f21@sentry.io/107858',
+    'dsn': '',
 }
 
 SHOW_TEST_EVENTS = True
