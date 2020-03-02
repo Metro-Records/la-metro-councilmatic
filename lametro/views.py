@@ -856,7 +856,7 @@ class SmartLogicAPI(ListView):
         params = {'grant_type': 'apikey', 'key': self.api_key}
 
         try:
-            response = requests.post(url, data=params)
+            response = requests.post(url, data=params, timeout=3)
         except HTTPError as e:
             print('Could not authenticate with SmartLogic: {}'.format(e))
             return None
