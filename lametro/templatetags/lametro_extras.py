@@ -149,7 +149,7 @@ def find_agenda_url(all_documents):
 @register.simple_tag(takes_context=True)
 def get_highlighted_attachment_text(context, id):
     bill = Bill.objects.get(id=id)
-    attachment_text = ' '.join(d.full_text for d in bill.documents.all() if d.full_text)
+    attachment_text = ' '.join(d.extras['full_text'] for d in bill.documents.all() if d.extras.get('full_text'))
 
     highlight = ExactHighlighter(context['query'])
 
