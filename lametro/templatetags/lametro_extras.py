@@ -132,6 +132,12 @@ def updates_made(event_id):
     "Updated" tag.
     '''
     event = LAMetroEvent.objects.get(id=event_id)
+
+    try:
+        event.documents.get(note__icontains='agenda')
+    except EventDocument.DoesNotExist:
+        return False
+
     three_days_ago = LAMetroEvent._time_ago(days=3)
     return event.updated_at > three_days_ago
 
