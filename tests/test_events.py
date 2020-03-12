@@ -75,8 +75,11 @@ def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
     event = event.build()
 
     if has_agenda:
-        agenda = event_document.build(note='Agenda')
-        event.documents.add(agenda)
+        document = event_document.build(note='Agenda')
+    else:
+        document = event_document.build(note='Some document')
+
+    event.documents.add(document)
 
     assert updates_made(event.id) == (has_updates and has_agenda)
 
