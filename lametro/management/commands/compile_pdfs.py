@@ -12,10 +12,12 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
 
         group = parser.add_mutually_exclusive_group(required=False)
+
         group.add_argument(
             '--events_only',
             action='store_true',
             help='Compile new event packets only')
+
         group.add_argument('--board_reports_only',
                            action='store_true',
                            help='Compile new board report packets only')
@@ -24,9 +26,14 @@ class Command(BaseCommand):
                             action='store_true',
                             help='Compile all board report and event packets')
 
+        parser.add_argument('--db_only',
+                            action='store_true',
+                            help='Create Packet objects but do not send request to merger. Useful for staging site.')
+
     def handle(self, *args, **options):
 
         self.all_documents = options.get('all_documents')
+        self.merge = not options.get('db_only')
 
         if options.get('events_only'):
             self._compile_events()
@@ -46,7 +53,7 @@ class Command(BaseCommand):
             # if the doc was just created, it was also saved so
             # only save if the packet already existed
             if not created:
-                event_packet.save()
+                event_packet.save(merge=self.merge)
 
     def _events_to_compile(self):
 
@@ -108,10 +115,10 @@ class Command(BaseCommand):
             # if the doc was just created, it was also saved so
             # only call save here if the packet already existed
             if not created:
-                bill_packet.save()
+                bill_packet.save(merge=self.merge)
 
     def _board_reports_to_compile(self):
-            
+
         bills = LAMetroBill.objects\
             .filter(documents__isnull=False)\
             .only('id', 'slug')\

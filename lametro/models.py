@@ -585,8 +585,10 @@ class Packet(models.Model):
     def related_files(self):
         raise NotImplementedError()
 
-    def save(self, *args, **kwargs):
-        self._merge_docs()
+    def save(self, *args, merge=True, **kwargs):
+        if merge:
+            self._merge_docs()
+
         self.url = settings.MERGER_BASE_URL + '/document/' + self.related_entity.slug
         super().save(*args, **kwargs)
 
