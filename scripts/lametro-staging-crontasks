@@ -2,8 +2,11 @@
 APPDIR=/home/datamade/lametro-staging
 PYTHONDIR=/home/datamade/.virtualenvs/lametro-staging/bin/python
 
+# TODO: Sort out a way to use existing packets, rather than regenerating them
+# for both staging _and_ production.
+
 # TODO: Remove this once we deploy to production.
-10,25,40 * * * * datamade /usr/bin/flock -n /tmp/lametro_staging_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 --age=1 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1'
+10,25,40 * * * * datamade /usr/bin/flock -n /tmp/lametro_staging_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py compile_pdfs >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 --age=1 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1'
 
 # TODO: Remove this once we deploy to production.
 0 1 * * * datamade cd $APPDIR && $PYTHONDIR manage.py refresh_guid >> /var/log/councilmatic/lametro-refreshguid.log 2&1
@@ -12,4 +15,4 @@ PYTHONDIR=/home/datamade/.virtualenvs/lametro-staging/bin/python
 # Once per hour! Run the full data-import process,
 # but remove the `age` argument from `update_index,`
 # in order to update the entire Solr index.
-55 * * * * datamade /usr/bin/flock -n /tmp/lametro_staging_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1'
+55 * * * * datamade /usr/bin/flock -n /tmp/lametro_staging_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py compile_pdfs >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1'
