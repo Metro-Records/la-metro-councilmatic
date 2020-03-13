@@ -253,6 +253,15 @@ class LAMetroPerson(Person, SourcesMixin):
 
         return ceo
 
+    @property
+    def headshot_url(self):
+        if self.slug in settings.MANUAL_HEADSHOTS:
+            return '/static/images/' + settings.MANUAL_HEADSHOTS[self.slug]['image']
+        elif self.headshot:
+            return '/static/images/' + self.ocd_id + ".jpg"
+        else:
+            return '/static/images/headshot_placeholder.png'
+
 
 class LAMetroEventManager(EventManager):
     def get_queryset(self):

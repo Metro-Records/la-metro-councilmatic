@@ -40,7 +40,7 @@
     {% else %}
     <div class="row-fluid">
         <div class="col-sm-4 non-mobile-only">
-            <img src='{{person.headshot.url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail img-padded' id="person-detail-headshot" />
+            <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail img-padded' id="person-detail-headshot" />
             <p class="small">
                 {% if qualifying_post %}
                     <i class='fa fa-fw fa-briefcase'></i>
@@ -48,7 +48,7 @@
                 {% endif %}
             </p>
             <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
-            
+
             <hr />
 
             {% if member_bio %}
