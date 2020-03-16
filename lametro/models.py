@@ -486,10 +486,7 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
     @property
     def ecomment(self):
-        '''
-        TODO: Replace '#' with None when done testing!
-        '''
-        return self.extras.get('ecomment', '#')
+        return self.extras.get('ecomment', None)
 
 
 class LAMetroEventMedia(EventMedia):
