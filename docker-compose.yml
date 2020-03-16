@@ -1,8 +1,8 @@
 version: '2.4'
 services:
   app:
-    image: lametro
-    container_name: lametro
+    image: lametro:legacy
+    container_name: lametro-legacy
     restart: always
     build: .
     stdin_open: true
@@ -44,7 +44,7 @@ services:
     environment:
       POSTGRES_DB: lametro
     volumes:
-      - lametro-db-data:/var/lib/postgresql/data
+      - lametro-legacy-db-data:/var/lib/postgresql/data
     ports:
       - 32001:5432
 
@@ -53,7 +53,7 @@ services:
     container_name: lametro-solr
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
-      - lametro-solr-data:/opt/solr/server/solr/mycores
+      - lametro-legacy-solr-data:/opt/solr/server/solr/mycores
     command: sh -c 'solr-create -c lametro -d /la-metro-councilmatic_configs'
     ports:
       - 8986:8983
@@ -62,5 +62,5 @@ services:
     restart: on-failure
 
 volumes:
-  lametro-solr-data:
-  lametro-db-data:
+  lametro-legacy-solr-data:
+  lametro-legacy-db-data:

@@ -48,6 +48,25 @@
                 {% endif %}
             </p>
 
+            {% if event.ecomment %}
+                <div class="row">
+                    <div class="col-md-7">
+                        <p><strong>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</strong> Nulla fringilla imperdiet nisi, vel convallis ante dictum eu. Phasellus at varius purus, eget ultricies odio. Proin tincidunt pulvinar quam, et ullamcorper mi ornare in.</p>
+
+                        <p>
+                            <button class="btn btn-primary" href="{{ event.ecomment }}" target="_blank">
+                                <i class='fa fa-fw fa-external-link'></i>
+                                View online public comment
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            {% else %}
+                <p class="small">
+                    <em>Online public comment is not available for this meeting.</em>
+                </p>
+            {% endif %}
+
             <hr />
 
             <div class="row">

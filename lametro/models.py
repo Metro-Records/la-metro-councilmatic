@@ -484,6 +484,13 @@ class LAMetroEvent(Event, LiveMediaMixin):
             else:
                 return doc.url
 
+    @property
+    def ecomment(self):
+        '''
+        TODO: Replace '#' with None when done testing!
+        '''
+        return self.extras.get('ecomment', '#')
+
 
 class LAMetroEventMedia(EventMedia):
 
