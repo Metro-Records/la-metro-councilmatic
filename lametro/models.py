@@ -484,6 +484,10 @@ class LAMetroEvent(Event, LiveMediaMixin):
             else:
                 return doc.url
 
+    @property
+    def ecomment(self):
+        return self.extras.get('ecomment', None)
+
 
 class LAMetroEventMedia(EventMedia):
 
