@@ -54,10 +54,10 @@
                         <p>Now you can submit your comments to the Metro Board of Directors before meetings. Use the link below to comment on Board Reports on the agenda for the meeting of the <strong>{{ event.name }}</strong> on <strong>{{ event.start_time | date:"l, F d, Y" }}</strong>.</p>
 
                         <p>
-                            <button class="btn btn-primary" href="{{ event.ecomment }}" target="_blank">
+                            <a class="btn btn-salmon" href="{{ event.ecomment }}" target="_blank">
                                 <i class='fa fa-fw fa-external-link'></i>
                                 Go to online public comment
-                            </button>
+                            </a>
                         </p>
                     </div>
                 </div>
