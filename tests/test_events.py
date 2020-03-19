@@ -53,8 +53,13 @@ def test_agenda_pdf_form_error():
         assert agenda_pdf_form.is_valid() == False
 
 
-@pytest.mark.parametrize('has_updates', [True, False])
-def test_updates_made(event, has_updates, mocker):
+@pytest.mark.parametrize('has_updates,has_agenda', [
+    (True, True),
+    (True, False),
+    (False, True),
+    (False, False),
+])
+def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
     if has_updates:
         updated_at = LAMetroEvent._time_ago(days=1)
     else:
@@ -67,8 +72,16 @@ def test_updates_made(event, has_updates, mocker):
     mock_update = mocker.patch('lametro.models.LAMetroEvent.updated_at', new_callable=mocker.PropertyMock)
     mock_update.return_value = updated_at
 
-    event = event.build()
-    assert updates_made(event.id) == has_updates
+    event = event.build(start_date=datetime.now().isoformat()[:25])
+
+    if has_agenda:
+        document = event_document.build(note='Agenda')
+    else:
+        document = event_document.build(note='Some document')
+
+    event.documents.add(document)
+
+    assert updates_made(event.id) == (has_updates and has_agenda)
 
 
 @pytest.fixture

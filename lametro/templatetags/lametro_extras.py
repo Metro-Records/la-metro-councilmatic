@@ -132,8 +132,14 @@ def updates_made(event_id):
     "Updated" tag.
     '''
     event = LAMetroEvent.objects.get(id=event_id)
-    three_days_ago = LAMetroEvent._time_ago(days=3)
-    return event.updated_at > three_days_ago
+
+    try:
+        event.documents.get(note__icontains='agenda')
+    except EventDocument.DoesNotExist:
+        return False
+
+    four_days_before_meeting = event.start_time - timedelta(days=4)
+    return event.updated_at >= four_days_before_meeting
 
 @register.filter
 def find_agenda_url(all_documents):
