@@ -72,7 +72,7 @@ def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
     mock_update = mocker.patch('lametro.models.LAMetroEvent.updated_at', new_callable=mocker.PropertyMock)
     mock_update.return_value = updated_at
 
-    event = event.build()
+    event = event.build(start_date=datetime.now().isoformat()[:25])
 
     if has_agenda:
         document = event_document.build(note='Agenda')

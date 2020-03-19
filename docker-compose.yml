@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   app:
-    image: lametro
+    image: lametro:upgrade
     container_name: lametro
     restart: always
     build: .
