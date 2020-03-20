@@ -498,6 +498,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return meetings
 
+    @property
+    def ecomment(self):
+        return self.extras.get('ecomment', None)
+
 
 class EventAgendaItem(EventAgendaItem):
 

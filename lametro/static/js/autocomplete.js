@@ -3,7 +3,7 @@ var SmartLogic = {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
     msInDay = 86400000
-    tokenExpired = (Date.now() - window.localStorage.getItem('ses_issued')) / msInDay >= 14
+    tokenExpired = (Date.now() - window.localStorage.getItem('ses_issued')) / msInDay >= 3
 
     if ( (tokenNeeded || tokenExpired) ) {
       return $.get(

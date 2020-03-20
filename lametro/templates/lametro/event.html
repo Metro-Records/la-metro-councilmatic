@@ -48,6 +48,25 @@
                 {% endif %}
             </p>
 
+            {% if event.ecomment %}
+                <div class="row">
+                    <div class="col-md-7">
+                        <p>Now you can submit your comments to the Metro Board of Directors before meetings. Use the link below to comment on Board Reports on the agenda for the meeting of the <strong>{{ event.name }}</strong> on <strong>{{ event.start_time | date:"l, F d, Y" }}</strong>.</p>
+
+                        <p>
+                            <a class="btn btn-salmon" href="{{ event.ecomment }}" target="_blank">
+                                <i class='fa fa-fw fa-external-link'></i>
+                                Go to online public comment
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            {% else %}
+                <p class="small">
+                    <em>Online public comment is not available for this meeting.</em>
+                </p>
+            {% endif %}
+
             <hr />
 
             <div class="row">
