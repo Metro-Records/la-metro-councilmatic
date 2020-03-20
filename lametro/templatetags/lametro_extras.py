@@ -128,8 +128,8 @@ def short_topic_name(text):
 def updates_made(event_id):
     '''
     If an upcoming event has been updated in any way (changed time, address,
-    document, agenda item, status, etc), in the past three days, then show the
-    "Updated" tag.
+    document, agenda item, status, etc), in a four-day window before the
+    event's scheduled start time.
     '''
     event = LAMetroEvent.objects.get(id=event_id)
 
@@ -139,7 +139,7 @@ def updates_made(event_id):
         return False
 
     four_days_before_meeting = event.start_time - timedelta(days=4)
-    return event.updated_at >= four_days_before_meeting
+    return four_days_before_meeting <= event.updated_at < event.start_time
 
 @register.filter
 def find_agenda_url(all_documents):

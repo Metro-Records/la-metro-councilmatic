@@ -52,12 +52,6 @@ ANALYTICS_TRACKING_CODE = ''
 HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), '..'
                              '/lametro/static/images/')
 
-EXTRA_APPS = ('raven.contrib.django.raven_compat',)
-
-RAVEN_CONFIG = {
-    'dsn': '',
-}
-
 SHOW_TEST_EVENTS = True
 
 SMART_LOGIC_KEY = 'smartlogic api key'
