@@ -12,16 +12,28 @@
           <div class="col-xs-12">
             <!-- Meeting name -->
             <h4>
-              {{  meeting.link_html | safe }}<br/>
+              {% if meeting.status == 'cancelled' %}
+                <strike>{{  meeting.link_html | safe }}</strike> <small><span class="label label-stale">Cancelled</span></small>
+              {% else %}
+                {{  meeting.link_html | safe }}
+              {% endif%}
+              <br/>
               <span class="small text-muted">{{ meeting.description }}</span>
             </h4>
 
             <!-- Meeting info -->
 
             <p class="small text-muted">
-              <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y"}}<br/>
-              <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
-              <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name}}<br />
+              {% if meeting.status == 'cancelled' %}
+                <strike>
+                  <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
+                  <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
+                </strike>
+              {% else %}
+                <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
+                <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
+                <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name }}<br />
+              {% endif %}
             </p>
             {% if meeting.documents.all %}
             <div class="row">
