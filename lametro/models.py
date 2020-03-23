@@ -326,9 +326,7 @@ class LAMetroEvent(Event, LiveMediaMixin):
         Return all meetings in the month of the next board meeting, so that any
         special board meetings are also displayed on the homepage.
         '''
-        # TODO: Add back Board Meeting filter here after testing
-        # >> name__icontains='Board Meeting'
-        board_meetings = cls.objects.filter(start_time__gt=datetime.now(app_timezone))\
+        board_meetings = cls.objects.filter(name__icontains='Board Meeting', start_time__gt=datetime.now(app_timezone))\
                                     .order_by('start_time')
 
         next_meeting = board_meetings.first()

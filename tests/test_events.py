@@ -1,6 +1,7 @@
 import pytest
 import pytz
 from datetime import datetime, timedelta
+from uuid import uuid4
 
 from django.core.urlresolvers import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -8,7 +9,7 @@ import requests
 
 from councilmatic_core.models import EventDocument, Bill, RelatedBill
 
-from lametro.models import LAMetroEvent
+from lametro.models import LAMetroEvent, app_timezone
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
 
@@ -241,3 +242,53 @@ def test_event_minutes_doc(event, event_document):
     minutes_document = event_document.build(**event_document_info)
 
     assert board_meeting.board_event_minutes == minutes_document.url
+
+
+def test_upcoming_board_meetings(event):
+    thirty_seconds_from_now = datetime.now(app_timezone) + timedelta(seconds=30)
+    forty_days_ago = LAMetroEvent._time_ago(days=40)
+    forty_days_from_now = LAMetroEvent._time_from_now(days=40)
+
+    def get_event_id():
+        return 'ocd-event/{}'.format(str(uuid4()))
+
+    # Create a past meeting
+    past_board_meeting = event.build(
+        name='Regular Board Meeting',
+        start_time=forty_days_ago,
+        ocd_id=get_event_id()
+    )
+
+    # Create some meetings for the current month and year
+    upcoming_board_meeting = event.build(
+        name='Regular Board Meeting',
+        start_time=thirty_seconds_from_now,
+        ocd_id=get_event_id()
+    )
+    upcoming_special_board_meeting = event.build(
+        name='Special Board Meeting',
+        start_time=thirty_seconds_from_now,
+        ocd_id=get_event_id()
+    )
+    upcoming_committee_meeting = event.build(
+        name='Committee Meeting',
+        start_time=thirty_seconds_from_now,
+        ocd_id=get_event_id()
+    )
+
+    # Create a future meeting
+    future_board_meeting = event.build(
+        name='Regular Board Meeting',
+        start_time=forty_days_from_now,
+        ocd_id=get_event_id()
+    )
+
+    upcoming_meetings = LAMetroEvent.upcoming_board_meetings()
+
+    assert upcoming_meetings.count() == 2
+
+    for meeting in (upcoming_board_meeting, upcoming_special_board_meeting):
+        assert meeting in upcoming_meetings
+
+    for meeting in (past_board_meeting, upcoming_committee_meeting, future_board_meeting):
+        assert meeting not in upcoming_meetings
