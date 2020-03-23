@@ -322,24 +322,19 @@ class LAMetroEvent(Event, LiveMediaMixin):
 
     @classmethod
     def upcoming_board_meetings(cls):
-        now = datetime.now(app_timezone)
-        this_month = now.month
-        next_month = this_month + 1
-
+        '''
+        Return all meetings in the month of the next board meeting, so that any
+        special board meetings are also displayed on the homepage.
+        '''
         # TODO: Add back Board Meeting filter here after testing
         # >> name__icontains='Board Meeting'
-        board_meetings = cls.objects.filter(start_time__gt=now)
+        board_meetings = cls.objects.filter(start_time__gt=datetime.now(app_timezone))\
+                                    .order_by('start_time')
 
-        if board_meetings.filter(start_time__month=this_month).exists():
-            return board_meetings.filter(start_time__month=this_month)\
-                                 .order_by('start_time')
+        next_meeting = board_meetings.first()
 
-        elif board_meetings.filter(start_time__month=next_month).exists():
-            return board_meetings.filter(start_time__month=next_month)\
-                                 .order_by('start_time')
-
-        else:
-            return board_meetings.order_by('start_time').first()
+        return board_meetings.filter(start_time__month=next_meeting.start_time.month)\
+                             .order_by('start_time')
 
     @staticmethod
     def _time_ago(**kwargs):
