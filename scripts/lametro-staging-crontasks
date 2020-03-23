@@ -3,6 +3,6 @@ APPDIR=/home/datamade/lametro-staging
 PYTHONDIR=/home/datamade/.virtualenvs/lametro-staging/bin/python
 
 # TODO: Remove this after the cut over.
-0 1 * * * datamade cd $APPDIR && $PYTHONDIR manage.py refresh_guid >> /var/log/councilmatic/lametro-refreshguid.log 2&1
+0 1 * * * datamade cd $APPDIR && $PYTHONDIR manage.py refresh_guid >> /var/log/councilmatic/lametro-staging-refreshguid.log 2&1
 
-0 8 * * * datamade /usr/bin/flock -n /tmp/lametro_staging_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py compile_pdfs --db_only >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1 && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 >> /var/log/councilmatic/lametro-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-integrity.log 2>&1'
+0 8 * * * datamade /usr/bin/flock -n /tmp/lametro_staging_dataload.lock -c 'cd $APPDIR && $PYTHONDIR manage.py compile_pdfs --db_only >> /var/log/councilmatic/lametro-staging-compilepdfs.log 2>&1 && $PYTHONDIR manage.py convert_attachment_text >> /var/log/councilmatic/lametro-staging-convertattachments.log 2>&1 && $PYTHONDIR manage.py update_index --batch-size=100 >> /var/log/councilmatic/lametro-staging-updateindex.log 2>&1 && $PYTHONDIR manage.py data_integrity >> /var/log/councilmatic/lametro-staging-integrity.log 2>&1'
