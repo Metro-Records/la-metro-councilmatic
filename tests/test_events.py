@@ -259,7 +259,7 @@ def test_upcoming_board_meetings(event):
         ocd_id=get_event_id()
     )
 
-    # Create some meetings for the current month and year
+    # Create some meetings for the current date, i.e., upcoming meetings
     upcoming_board_meeting = event.build(
         name='Regular Board Meeting',
         start_time=thirty_seconds_from_now,
