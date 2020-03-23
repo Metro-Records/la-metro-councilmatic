@@ -324,7 +324,6 @@ class LAMetroEvent(Event, LiveMediaMixin):
     @classmethod
     def upcoming_board_meeting(cls):
         return cls.objects.filter(start_time__gt=datetime.now(app_timezone), name__icontains='Board Meeting')\
-                          .exclude(status='cancelled')\
                           .order_by('start_time')\
                           .first()
 
