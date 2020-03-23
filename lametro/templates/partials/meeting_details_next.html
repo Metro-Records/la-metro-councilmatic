@@ -3,6 +3,7 @@
 
 <div>
   <div>
+    {% for meeting in upcoming_board_meetings %}
     <div class="row" style="margin-top: 1em;">
       <div class="col-xs-6">
         <img src='/static/images/Gateway03RT.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
@@ -46,16 +47,20 @@
         </div>
       </div>
     </div>
+    {% endfor %}
 
     <div class="row">
       <div class="col-xs-12">
-        <p class="small" style="padding-top: 10px;text-decoration: underline;"><strong>No meetings are in session at this time. The links to watch a meeting live, in English or Spanish, will be posted here once the meeting begins.</strong></p>
+        <p class="small" style="padding-top: 10px;text-decoration: underline;">
+          <strong>No meetings are in session at this time. The links to watch a meeting live, in English or Spanish, will be posted here once the meeting begins.</strong>
+        </p>
 
         <!-- Links to media url and PDF download -->
         {% if not meeting.documents.all %}
-        <p class="small"><em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em></p>
+        <p class="small">
+          <em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em>
+        </p>
         {% endif %}
-
       </div>
     </div>
   </div>

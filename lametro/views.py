@@ -56,7 +56,7 @@ class LAMetroIndexView(IndexView):
 
     def extra_context(self):
         extra = {}
-        extra['upcoming_board_meeting'] = self.event_model.upcoming_board_meeting()
+        extra['upcoming_board_meetings'] = self.event_model.upcoming_board_meetings()[:2]
         extra['current_meeting'] = self.event_model.current_meeting()
         extra['bilingual'] = bool([e for e in extra['current_meeting'] if e.bilingual])
 

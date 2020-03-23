@@ -71,11 +71,9 @@
                     <div class='col-sm-7'>
                         <h2>
                             <span class="non-mobile-only"><i class="fa fa-university" aria-hidden="true"></i></span>
-                            Next Board Meeting
+                            Next Board Meeting{% if upcoming_board_meetings|length > 1 %}s{% endif %}
                         </h2>
-                        {% with meeting=upcoming_board_meeting %}
-                            {% include "partials/meeting_details_next.html" %}
-                        {% endwith %}
+                        {% include "partials/meeting_details_next.html" %}
                     </div>
                     <div class='col-sm-5'>
                         {% include "partials/index_metro_description.html" %}
