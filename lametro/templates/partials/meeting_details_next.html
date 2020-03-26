@@ -3,13 +3,13 @@
 
 <div>
   <div>
-    {% for meeting in upcoming_board_meetings %}
     <div class="row" style="margin-top: 1em;">
-      <div class="col-xs-6">
+      <div class="col-md-6">
         <img src='/static/images/Gateway03RT.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
       </div>
-      <div class="col-xs-6">
+      <div class="col-md-6">
         <div class="row">
+          {% for meeting in upcoming_board_meetings %}
           <div class="col-xs-12">
             <!-- Meeting name -->
             <h4>
@@ -44,10 +44,10 @@
             </div>
             {% endif %}
           </div>
+          {% endfor %}
         </div>
       </div>
     </div>
-    {% endfor %}
 
     <div class="row">
       <div class="col-xs-12">
