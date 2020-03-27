@@ -323,8 +323,10 @@ class LAMetroEvent(Event, LiveMediaMixin):
     @classmethod
     def upcoming_board_meetings(cls):
         '''
-        Return all meetings in the month of the next board meeting, so that any
-        special board meetings are also displayed on the homepage.
+        In rare instances, there are two board meetings in a given month, e.g.,
+        one regular meeting and one special meeting. Display both on the
+        homepage by returning all upcoming board meetings scheduled for the
+        month of the next upcoming meeting.
         '''
         board_meetings = cls.objects.filter(name__icontains='Board Meeting', start_time__gt=datetime.now(app_timezone))\
                                     .order_by('start_time')
