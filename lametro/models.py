@@ -362,12 +362,20 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         proxy = True
 
     @classmethod
-    def upcoming_board_meeting(cls):
-        return cls.objects.filter(start_time__gt=datetime.now(app_timezone), name__icontains='Board Meeting')\
-                          .exclude(status='cancelled')\
-                          .order_by('start_time')\
-                          .first()
+    def upcoming_board_meetings(cls):
+        '''
+        In rare instances, there are two board meetings in a given month, e.g.,
+        one regular meeting and one special meeting. Display both on the
+        homepage by returning all upcoming board meetings scheduled for the
+        month of the next upcoming meeting.
+        '''
+        board_meetings = cls.objects.filter(name__icontains='Board Meeting', start_time__gt=datetime.now(app_timezone))\
+                                    .order_by('start_time')
 
+        next_meeting = board_meetings.first()
+
+        return board_meetings.filter(start_time__month=next_meeting.start_time.month)\
+                             .order_by('start_time')
 
     @staticmethod
     def _time_ago(**kwargs):

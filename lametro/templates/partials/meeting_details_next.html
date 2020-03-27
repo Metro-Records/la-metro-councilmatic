@@ -4,24 +4,37 @@
 <div>
   <div>
     <div class="row" style="margin-top: 1em;">
-      <div class="col-xs-6">
+      <div class="col-md-6">
         <img src='/static/images/Gateway03RT.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
       </div>
-      <div class="col-xs-6">
+      <div class="col-md-6">
         <div class="row">
+          {% for meeting in upcoming_board_meetings %}
           <div class="col-xs-12">
             <!-- Meeting name -->
             <h4>
-              {{  meeting.link_html | safe }}<br/>
+              {% if meeting.status == 'cancelled' %}
+                <strike>{{  meeting.link_html | safe }}</strike> <small><span class="label label-stale">Cancelled</span></small>
+              {% else %}
+                {{  meeting.link_html | safe }}
+              {% endif%}
+              <br/>
               <span class="small text-muted">{{ meeting.description }}</span>
             </h4>
 
             <!-- Meeting info -->
 
             <p class="small text-muted">
-              <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y"}}<br/>
-              <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
-              <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name}}<br />
+              {% if meeting.status == 'cancelled' %}
+                <strike>
+                  <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
+                  <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
+                </strike>
+              {% else %}
+                <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
+                <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
+                <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name }}<br />
+              {% endif %}
             </p>
             {% if meeting.documents.all %}
             <div class="row">
@@ -31,19 +44,23 @@
             </div>
             {% endif %}
           </div>
+          {% endfor %}
         </div>
       </div>
     </div>
 
     <div class="row">
       <div class="col-xs-12">
-        <p class="small" style="padding-top: 10px;text-decoration: underline;"><strong>No meetings are in session at this time. The links to watch a meeting live, in English or Spanish, will be posted here once the meeting begins.</strong></p>
+        <p class="small" style="padding-top: 10px;text-decoration: underline;">
+          <strong>No meetings are in session at this time. The links to watch a meeting live, in English or Spanish, will be posted here once the meeting begins.</strong>
+        </p>
 
         <!-- Links to media url and PDF download -->
         {% if not meeting.documents.all %}
-        <p class="small"><em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em></p>
+        <p class="small">
+          <em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em>
+        </p>
         {% endif %}
-
       </div>
     </div>
   </div>
