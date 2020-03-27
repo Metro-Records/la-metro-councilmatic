@@ -1,15 +1,16 @@
 import pytest
 import pytz
-from datetime import datetime, timedelta
+from datetime import datetime
+from uuid import uuid4
 
-from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
 import requests
 
 from opencivicdata.legislative.models import EventDocument
 from councilmatic_core.models import Bill
 
-from lametro.models import LAMetroEvent
+from lametro.models import LAMetroEvent, app_timezone
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
 
@@ -115,6 +116,7 @@ def concurrent_current_meetings(event):
 
     return board_meeting, construction_meeting
 
+
 def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
     '''
     Test that if an event is streaming, it alone is returned as current.
@@ -137,6 +139,7 @@ def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
     # Assert that we returned the streaming meeting.
     assert current_meetings.get() == live_meeting
 
+
 def test_current_meeting_no_streaming_event(concurrent_current_meetings,
                                             mocker):
     '''
@@ -156,6 +159,7 @@ def test_current_meeting_no_streaming_event(concurrent_current_meetings,
 
     # Test that both meetings are returned.
     assert all(m in current_meetings for m in concurrent_current_meetings)
+
 
 def test_current_meeting_no_streaming_event_late_start(event, mocker):
     '''
@@ -183,6 +187,7 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
     # Assert that we returned the late meeting.
     assert current_meetings.get() == late_current_meeting
 
+
 def test_current_meeting_no_potentially_current(event):
     '''
     Test that if there are no potentially current meetings (scheduled to
@@ -203,3 +208,53 @@ def test_current_meeting_no_potentially_current(event):
 
     # Assert we did not return any current meetings.
     assert not current_meetings
+
+
+def test_upcoming_board_meetings(event):
+    one_minute_from_now = LAMetroEvent._time_from_now(minutes=1).strftime('%Y-%m-%d %H:%M')
+    forty_days_ago = LAMetroEvent._time_ago(days=40).strftime('%Y-%m-%d %H:%M')
+    forty_days_from_now = LAMetroEvent._time_from_now(days=40).strftime('%Y-%m-%d %H:%M')
+
+    def get_event_id():
+        return 'ocd-event/{}'.format(str(uuid4()))
+
+    # Create a past meeting
+    past_board_meeting = event.build(
+        name='Regular Board Meeting',
+        start_date=forty_days_ago,
+        id=get_event_id()
+    )
+
+    # Create some meetings for the current date, i.e., upcoming meetings
+    upcoming_board_meeting = event.build(
+        name='Regular Board Meeting',
+        start_date=one_minute_from_now,
+        id=get_event_id()
+    )
+    upcoming_special_board_meeting = event.build(
+        name='Special Board Meeting',
+        start_date=one_minute_from_now,
+        id=get_event_id()
+    )
+    upcoming_committee_meeting = event.build(
+        name='Committee Meeting',
+        start_date=one_minute_from_now,
+        id=get_event_id()
+    )
+
+    # Create a future meeting
+    future_board_meeting = event.build(
+        name='Regular Board Meeting',
+        start_date=forty_days_from_now,
+        id=get_event_id()
+    )
+
+    upcoming_meetings = LAMetroEvent.upcoming_board_meetings()
+
+    assert upcoming_meetings.count() == 2
+
+    for meeting in (upcoming_board_meeting, upcoming_special_board_meeting):
+        assert meeting in upcoming_meetings
+
+    for meeting in (past_board_meeting, upcoming_committee_meeting, future_board_meeting):
+        assert meeting not in upcoming_meetings
