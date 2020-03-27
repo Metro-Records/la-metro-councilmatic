@@ -1,10 +1,10 @@
 import pytest
 import pytz
-from datetime import datetime, timedelta
+from datetime import datetime
 from uuid import uuid4
 
-from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
 import requests
 
 from opencivicdata.legislative.models import EventDocument
@@ -211,9 +211,9 @@ def test_current_meeting_no_potentially_current(event):
 
 
 def test_upcoming_board_meetings(event):
-    thirty_seconds_from_now = datetime.now(app_timezone) + timedelta(seconds=30)
-    forty_days_ago = LAMetroEvent._time_ago(days=40)
-    forty_days_from_now = LAMetroEvent._time_from_now(days=40)
+    one_minute_from_now = LAMetroEvent._time_from_now(minutes=1).strftime('%Y-%m-%d %H:%M')
+    forty_days_ago = LAMetroEvent._time_ago(days=40).strftime('%Y-%m-%d %H:%M')
+    forty_days_from_now = LAMetroEvent._time_from_now(days=40).strftime('%Y-%m-%d %H:%M')
 
     def get_event_id():
         return 'ocd-event/{}'.format(str(uuid4()))
@@ -221,32 +221,32 @@ def test_upcoming_board_meetings(event):
     # Create a past meeting
     past_board_meeting = event.build(
         name='Regular Board Meeting',
-        start_time=forty_days_ago,
-        ocd_id=get_event_id()
+        start_date=forty_days_ago,
+        id=get_event_id()
     )
 
     # Create some meetings for the current date, i.e., upcoming meetings
     upcoming_board_meeting = event.build(
         name='Regular Board Meeting',
-        start_time=thirty_seconds_from_now,
-        ocd_id=get_event_id()
+        start_date=one_minute_from_now,
+        id=get_event_id()
     )
     upcoming_special_board_meeting = event.build(
         name='Special Board Meeting',
-        start_time=thirty_seconds_from_now,
-        ocd_id=get_event_id()
+        start_date=one_minute_from_now,
+        id=get_event_id()
     )
     upcoming_committee_meeting = event.build(
         name='Committee Meeting',
-        start_time=thirty_seconds_from_now,
-        ocd_id=get_event_id()
+        start_date=one_minute_from_now,
+        id=get_event_id()
     )
 
     # Create a future meeting
     future_board_meeting = event.build(
         name='Regular Board Meeting',
-        start_time=forty_days_from_now,
-        ocd_id=get_event_id()
+        start_date=forty_days_from_now,
+        id=get_event_id()
     )
 
     upcoming_meetings = LAMetroEvent.upcoming_board_meetings()

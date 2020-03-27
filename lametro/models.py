@@ -369,7 +369,8 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         homepage by returning all upcoming board meetings scheduled for the
         month of the next upcoming meeting.
         '''
-        board_meetings = cls.objects.filter(name__icontains='Board Meeting', start_time__gt=datetime.now(app_timezone))\
+        board_meetings = cls.objects.filter(name__icontains='Board Meeting',
+                                            start_time__gt=timezone.now())\
                                     .order_by('start_time')
 
         next_meeting = board_meetings.first()
@@ -377,12 +378,13 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         return board_meetings.filter(start_time__month=next_meeting.start_time.month)\
                              .order_by('start_time')
 
+
     @staticmethod
     def _time_ago(**kwargs):
         '''
         Convenience method for returning localized, negative timedeltas.
         '''
-        return datetime.now(app_timezone) - timedelta(**kwargs)
+        return timezone.now() - relativedelta(**kwargs)
 
 
     @staticmethod
@@ -390,7 +392,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         '''
         Convenience method for returning localized, positive timedeltas.
         '''
-        return datetime.now(app_timezone) + timedelta(**kwargs)
+        return timezone.now() + relativedelta(**kwargs)
 
 
     @classmethod
