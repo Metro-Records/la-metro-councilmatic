@@ -258,7 +258,7 @@ class LAMetroPerson(Person, SourcesMixin):
         if self.slug in settings.MANUAL_HEADSHOTS:
             return '/static/images/' + settings.MANUAL_HEADSHOTS[self.slug]['image']
         elif self.headshot:
-            return '/static/images/' + self.ocd_id + ".jpg"
+            return '/static/images/' + self.id + ".jpg"
         else:
             return '/static/images/headshot_placeholder.png'
 
