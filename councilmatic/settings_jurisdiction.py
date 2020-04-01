@@ -4,7 +4,7 @@
 # These settings are required #
 ###############################
 
-OCD_CITY_COUNCIL_ID = 'ocd-organization/42e23f04-de78-436a-bec5-ab240c1b977c'
+OCD_CITY_COUNCIL_NAME = 'Board of Directors'
 CITY_COUNCIL_NAME = 'Metro'
 OCD_JURISDICTION_IDS = ['ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority']
 LEGISLATIVE_SESSIONS = ['2014', '2015', '2016', '2017', '2018', '2019'] # the last one in this list should be the current legislative session
@@ -38,14 +38,6 @@ SITE_META = {
 
 LEGISTAR_URL = ''           # e.g. 'https://chicago.legistar.com/Legislation.aspx'
 
-
-# this is for the boundaries of municipal districts, to add
-# shapes to posts & ultimately display a map with the council
-# member listing. the boundary set should be the relevant
-# slug from the ocd api's boundary service
-# available boundary sets here: http://ocd.datamade.us/boundary-sets/
-
-BOUNDARY_SET = ['la-metro-supervisory-districts', 'la-metro-committee-districts', 'city-of-la']
 
 MAP_CONFIG = {
     'center': [34.0522, -118.2437],

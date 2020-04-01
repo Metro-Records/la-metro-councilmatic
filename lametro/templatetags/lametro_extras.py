@@ -1,6 +1,6 @@
 from django import template
 from django.template.defaultfilters import stringfilter
-from django.utils.html import strip_entities, strip_tags
+from django.utils.html import strip_tags
 from django.utils import timezone
 
 from haystack.query import SearchQuerySet
@@ -10,32 +10,31 @@ import urllib
 
 from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic_core.models import Person, EventDocument, Bill
+from councilmatic_core.models import Person, Bill
 from councilmatic_core.utils import ExactHighlighter
 
 from lametro.models import LAMetroEvent
 from lametro.utils import format_full_text, parse_subject
 
+from opencivicdata.legislative.models import EventDocument
+
 register = template.Library()
 
 @register.filter
-def call_headshot_url(person_id):
-    person = Person.objects.get(ocd_id=person_id)
-    url = person.headshot_url
-    return url
-
-@register.filter
 def call_link_html(person_id):
-    person = Person.objects.get(ocd_id=person_id)
+    person = Person.objects.get(id=person_id)
     url = person.link_html
     return url
 
 @register.filter
 def format_label(label):
-    label_parts = label.split(', ')
-    formatted_label = '<br />'.join(label_parts)
+    first_part = label.split(', ')[0]
 
-    return formatted_label
+    return first_part
+
+@register.filter
+def comma_to_line_break(text):
+    return '<br />'.join(text.split(', '))
 
 @register.filter
 def format_district(label):
@@ -104,19 +103,6 @@ def clean_role(role_list):
     return role_list[0]
 
 @register.filter
-def clean_label(label_list):
-    label_list = [ label for label in label_list if 'Chair' not in label ]
-    label = label_list[0]
-
-    return label
-
-@register.filter
-def format_string(label_list):
-    label_list = label_list.replace('{', '').replace('}', '').replace('"', '')
-
-    return label_list.split(',')
-
-@register.filter
 def compare_time(event_date):
     if event_date < timezone.now():
         return True
@@ -141,35 +127,35 @@ def short_topic_name(text):
 @register.filter
 def updates_made(event_id):
     '''
-    When Metro finalizes an agenda, they add it to legistar, and we scrape this link, and add it to our DB. Sometimes, Metro might change the date or time of the event - after adding the agenda. When this occurs, a label indicates that event has been updated.
-    This filter determines if an event had been updated after its related EventDocument (i.e., agenda) was last updated.
-    If the below equates as true, then we render a label with the text "Updated", next to the event, on the meetings page.
+    If an upcoming event has been updated in any way (changed time, address,
+    document, agenda item, status, etc), in a four-day window before the
+    event's scheduled start time.
     '''
+    event = LAMetroEvent.objects.get(id=event_id)
+
     try:
-        # Get the most recent updated agenda, if one of those agendas happens to be manually uploaded
-        document = EventDocument.objects.filter(event_id=event_id).latest('updated_at')
+        event.documents.get(note__icontains='agenda')
     except EventDocument.DoesNotExist:
         return False
-    else:
-        event = LAMetroEvent.objects.get(ocd_id=event_id)
-        updated = document.updated_at < event.updated_at
-        return updated
+
+    four_days_before_meeting = event.start_time - timedelta(days=4)
+    return four_days_before_meeting <= event.updated_at < event.start_time
 
 @register.filter
 def find_agenda_url(all_documents):
     '''
     This filter determines how to format the URL link, particularly, in the case of manually uploaded agenda.
     '''
-    valid_urls = [x.url for x in all_documents if (x.note == 'Agenda' or x.note == 'Event Document - Manual upload URL')]
-    pdf_url = [('static/' + x.url) for x in all_documents if x.note == 'Event Document - Manual upload PDF']
+    valid_urls = [url for x in all_documents if (x.note == 'Agenda' or x.note == 'Event Document - Manual upload URL') for url in x.links.all()]
+    pdf_url = [('static/' + url) for x in all_documents if x.note == 'Event Document - Manual upload PDF' for url in x.links.all()]
     valid_urls += pdf_url
 
     return valid_urls[0]
 
 @register.simple_tag(takes_context=True)
-def get_highlighted_attachment_text(context, ocd_id):
-    bill = Bill.objects.get(ocd_id=ocd_id)
-    attachment_text = ' '.join(d.full_text for d in bill.documents.all() if d.full_text)
+def get_highlighted_attachment_text(context, id):
+    bill = Bill.objects.get(id=id)
+    attachment_text = ' '.join(d.extras['full_text'] for d in bill.documents.all() if d.extras.get('full_text'))
 
     highlight = ExactHighlighter(context['query'])
 
@@ -186,20 +172,6 @@ def matches_facet(tag, facet):
     if facet:
         return tag.lower() in [t.lower() for t in facet]
     return False
-
-@register.filter
-def sort_by_index(array, index):
-    '''
-    Sort a list of tuples by an item in that tuple, e.g., sort a facet listing
-    like [(topic, count), (topic, count)].
-
-    Django's dictsort template filter supports this natively >= 1.10, but for
-    now, we're still on Django < 1.10.
-
-    TODO: Transition to dictsort when we upgrade Django. See:
-    https://docs.djangoproject.com/en/1.10/ref/templates/builtins/
-    '''
-    return sorted(array, key=lambda x: x[index])
 
 @register.simple_tag(takes_context=True)
 def hits_first(context, topics, selected_topics):

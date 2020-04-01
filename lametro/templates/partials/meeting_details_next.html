@@ -33,7 +33,7 @@
               {% else %}
                 <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
                 <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
-                <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location_name }}<br />
+                <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name }}<br />
               {% endif %}
             </p>
             {% if meeting.documents.all %}

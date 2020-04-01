@@ -6,12 +6,13 @@
 {% block content %}
 
     {% if legislation %}
+
         <div class="row-fluid">
             <div class="col-sm-12">
                 <h1 class="bill-page-title">
                     <br class="non-mobile-only" />
-                    {% if legislation.ocr_full_text|prepare_title %}
-                        {{ legislation.identifier}} - {{ legislation.ocr_full_text|prepare_title }}
+                    {% if legislation.extras.plain_text|prepare_title %}
+                        {{ legislation.identifier}} - {{ legislation.extras.plain_text|prepare_title }}
                     {% else %}
                         {{ legislation.identifier}}
                     {% endif %}
@@ -28,7 +29,7 @@
                 </h1>
 
                 <p>
-                    <a href='{{legislation.source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
+                    <a href='{{legislation.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
                         <i class='fa fa-fw fa-external-link'></i> View on the {{CITY_VOCAB.SOURCE}} website
                     </a>
                 </p>
@@ -37,7 +38,8 @@
 
         <div class="col-sm-8 no-pad-mobile">
 
-            {% if board_report %}
+            {% if legislation.board_report %}
+	    {% with board_report=legislation.board_report %}
                 <h3>
                     <i class="fa fa-align-justify" aria-hidden="true"></i>
                     Report text
@@ -48,9 +50,9 @@
                 </p>
 
 
-                {% if packet_url and attachments%}
+                {% if legislation.packet.is_ready and attachments%}
                     <p>
-                        <a href="{{packet_url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
+                        <a href="{{legislation.packet.url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
                     </p>
                 {% endif %}
 
@@ -65,15 +67,16 @@
                 </iframe>
 
                 <div class="divider"></div>
-            {% elif legislation.ocr_full_text != "" %}
+	    {% endwith %}
+            {% elif legislation.extras.plain_text != "" %}
                 <h3>
                     <i class='fa fa-fw fa-file-text-o'></i>
                     Report text
                 </h3>
 
                 <div class='panel panel-default'>
-                    <div class='panel-body'>
-                        {{ legislation.ocr_full_text|prepare_title}}
+                  <div class='panel-body'>
+                        {{ legislation.extras.plain_text|prepare_title}}
                     </div>
                 </div>
 
@@ -98,7 +101,7 @@
                             {% for action in actions %}
                                 <tr>
                                     <td class='nowrap text-muted small'>
-                                        <span datetime='{{action.date | format_date_sort }}'>{{action.date|date:'n/d/y'}}</span>
+                                        <span datetime='{{action.date_dt | format_date_sort }}'>{{action.date_dt|date:'n/d/y'}}</span>
                                     </td>
                                     <td class="small">
                                         <span class='text-{{action.label}}'>{{action.description | remove_action_subj}}</span>
@@ -130,7 +133,7 @@
                 <ul>
                     {% for doc in attachments %}
                         <li>
-                            <a href="{{doc.url}}" target="blank">{{ doc.note }}</a>
+                            <a href="{{doc.links.all.0.url}}" target="blank">{{ doc.note }}</a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -149,19 +152,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for bill in related_bills %}
+                          {% for relation in related_bills %}
+                          {% with bill=relation.related_bill %}
                                 <tr>
                                     <td class='text-muted small'>
-                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
+                                      <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
 
-                                        {% if bill.ocr_full_text|prepare_title %}
-                                            - {{ bill.ocr_full_text|prepare_title }}
+                                        {% if bill.extras.plain_text|prepare_title %}
+                                            - {{ bill.extras.plain_text|prepare_title }}
                                         {% endif %}
 
                                         {{bill.inferred_status | inferred_status_label | safe}}
                                     </td>
-                                    <td class='text-muted small' align='right'>{{ bill.get_last_action_date|date:'n/d/Y' }}</td>
+                                    <td class='text-muted small' align='right'>{{ bill.last_action_date|date:'n/d/Y' }}</td>
                                 </tr>
+                            {% endwith %}
                             {% endfor %}
                         </tbody>
                     </table>
@@ -232,7 +237,7 @@
     "alternateName": ["{{ legislation.identifier }}", "{{ legislation.identifier.split|join:'' }}"],
     {% if actions %}"datePublished": "{{actions.0.date|date:'Y-m-d'}}", {% endif %}
     "description": "{{ legislation.description }}",
-    "text": "{% firstof legislation.full_text legislation.ocr_full_text %}"
+    "text": "{% firstof legislation.full_text legislation.extras.plain_text %}"
     }
     </script>
 
@@ -277,7 +282,7 @@
         }
 
         // for reference purposes
-        console.log( "OCD ID: {{legislation.ocd_id}}" )
+        console.log( "OCD ID: {{legislation.id}}" )
 
     </script>
 {% endblock %}
