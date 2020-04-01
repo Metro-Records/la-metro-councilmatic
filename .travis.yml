@@ -1,7 +1,6 @@
 branches:
   only:
   - "/^v0.*$/"
-  - "2.5"
 language: python
 python:
 - '3.5'
@@ -39,4 +38,4 @@ deploy:
     application: la-metro-councilmatic
     deployment_group: staging
     on:
-      branch: 2.5
+      branch: master
