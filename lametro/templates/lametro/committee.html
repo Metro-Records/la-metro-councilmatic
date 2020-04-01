@@ -65,7 +65,7 @@
                             <tr>
                                 <td data-order='{{ membership.index }}'>
                                     <div class="thumbnail-square">
-                                        <img src='{{ membership.person.headshot.url }}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
+                                        <img src='{{ membership.person.headshot_url }}' alt='{{membership.person.name}}' title='{{membership.person.name}}' class='img-responsive img-thumbnail' />
                                     </div>
                                 </td>
                                 <td>
@@ -90,7 +90,7 @@
                     <tr>
                         <td width="12%">
                             <div class="thumbnail-square">
-                                <img src='{{ ceo.headshot.url }}' alt='{{ceo.name}}' title='{{ceo.name}}' class='img-responsive img-thumbnail' />
+                                <img src='{{ ceo.headshot_url }}' alt='{{ceo.name}}' title='{{ceo.name}}' class='img-responsive img-thumbnail' />
                             </div>
                         </td>
                         <td width="22%"><a href="{% url 'lametro:person' ceo.slug %}">{{ ceo.name }}</a></td>

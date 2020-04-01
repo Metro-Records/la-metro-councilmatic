@@ -72,7 +72,7 @@
         <div class="col-sm-4 mobile-only">
             <div class="row">
                 <div class="col-xs-4">
-                    <img src='{{person.headshot.url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail' />
+                    <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail' />
                 </div>
                 <div class="col-xs-8">
                     <p class="small">
@@ -134,7 +134,7 @@
           "@context": "http://schema.org",
           "@type": "Person",
           "email": "{{person.email}}",
-          "image": "{{person.headshot.url}}",
+          "image": "{{person.headshot_url}}",
           {% if person.current_council_seat %}
           "jobTitle": "{{ person.current_council_seat }} Representative",
           {% endif %}
