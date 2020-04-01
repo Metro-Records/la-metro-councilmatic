@@ -83,14 +83,17 @@ def test_bill_manager(bill,
     Tests if the LAMetroBillManager properly filters public and private bills.
     Private bills should not be discoverable, i.e., refresh_from_db should fail.
     '''
+    extras = {'restrict_view': restrict_view}
+
     bill_info = {
         'classification': [bill_type],
-        'restrict_view': restrict_view,
+        'extras': extras,
     }
-    bill = bill.build(**bill_info)
+
+    some_bill = bill.build(**bill_info)
 
     event_related_entity_info = {
-        'bill': bill,
+        'bill': some_bill,
     }
 
     related_entity = event_related_entity.build(**event_related_entity_info)
@@ -103,12 +106,12 @@ def test_bill_manager(bill,
     related_entity.refresh_from_db()
 
     try:
-        bill.refresh_from_db()
+        some_bill.refresh_from_db()
     except ObjectDoesNotExist:
         assert is_public == False
     else:
-        bill_qs_with_manager = LAMetroBill.objects.filter(id=bill.id)
-        assert is_public == (bill in bill_qs_with_manager)
+        bill_qs_with_manager = LAMetroBill.objects.filter(id=some_bill.id)
+        assert is_public == (some_bill in bill_qs_with_manager)
 
 @pytest.mark.django_db
 def test_last_action_date_has_already_occurred(bill, event):

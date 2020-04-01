@@ -66,10 +66,10 @@ class LAMetroBillManager(models.Manager):
         qs = super().get_queryset()
 
         qs = qs.exclude(
-            restrict_view=True
+            extras__restrict_view=True
         ).annotate(board_box=Case(
-            When(bill__extras__local_classification='Board Box', then=True),
-            When(bill__classification__contains=['Board Box'], then=True),
+            When(extras__local_classification='Board Box', then=True),
+            When(classification__contains=['Board Box'], then=True),
             default=False,
             output_field=models.BooleanField()
         )).filter(Q(eventrelatedentity__agenda_item__event__status='passed') | \
