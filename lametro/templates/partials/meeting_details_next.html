@@ -71,7 +71,7 @@
         </p>
         {% endif %}
 
-        {% if not upcoming_board_meetings|all_have_ecomment %}
+        {% if not upcoming_board_meetings|all_have_extra:'ecomment' %}
         <p class="small">
           <em>Online public comment will be available after an agenda is posted and remain open through the duration of the meeting. If you are unable to access online public comment during the expected time frame, please visit: <a href="https://metro.granicusideas.com/meetings" target="_blank">https://metro.granicusideas.com/meetings</a>.</em>
         </p>

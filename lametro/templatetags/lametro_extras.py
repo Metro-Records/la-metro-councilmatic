@@ -192,5 +192,9 @@ def hits_first(context, topics, selected_topics):
     return sorted(t for t in topics if t.lower() in hits) + sorted(t for t in topics if t.lower() not in hits)
 
 @register.filter
-def all_have_ecomment(meetings):
-    return all(m.extras.get('ecomment', None) for m in meetings)
+def all_have_extra(entities, extra):
+    '''
+    Determine whether all entities in a given array have the designated value
+    in their extras.
+    '''
+    return all(e.extras.get(extra, None) for e in entities)
