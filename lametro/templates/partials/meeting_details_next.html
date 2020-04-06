@@ -23,7 +23,6 @@
             </h4>
 
             <!-- Meeting info -->
-
             <p class="small text-muted">
               {% if meeting.status == 'cancelled' %}
                 <strike>
@@ -36,10 +35,20 @@
                 <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name }}<br />
               {% endif %}
             </p>
+
+            <!-- Supplementary links -->
             {% if meeting.documents.all %}
             <div class="row">
               <div class="col-xs-7">
                 <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
+              </div>
+            </div>
+            {% endif %}
+
+            {% if meeting.ecomment %}
+            <div class="row">
+              <div class="col-xs-7">
+                <a class="btn btn-salmon" id="ecomment-link" target="_blank" href="{{ meeting.ecomment }}"><i class="fa fa-fw fa-external-link"></i> Go to public comment</a>
               </div>
             </div>
             {% endif %}
@@ -59,6 +68,12 @@
         {% if not meeting.documents.all %}
         <p class="small">
           <em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em>
+        </p>
+        {% endif %}
+
+        {% if not upcoming_board_meetings|all_have_ecomment %}
+        <p class="small">
+          <em>Online public comment will be available after an agenda is posted and remain open through the duration of the meeting. If you are unable to access online public comment during the expected time frame, please visit: <a href="https://metro.granicusideas.com/meetings" target="_blank">https://metro.granicusideas.com/meetings</a>.</em>
         </p>
         {% endif %}
       </div>

@@ -48,7 +48,7 @@
             <div class="row">
                 <div class="col-md-7">
                     <p>
-                        You can submit your comments to the Metro Board of Directors before meetings. Use the link below to comment on Board Reports on the agenda for the meeting of the <strong>{{ event.name }}</strong> on <strong>{{ event.start_time | date:"l, F d, Y" }}</strong>.
+                        <strong>You can submit your comments to the Metro Board of Directors before this meeting.</strong> Use the link below to comment on board reports on the agenda.
                     </p>
 
                     <p>
@@ -56,20 +56,17 @@
                             <i class='fa fa-fw fa-external-link'></i>
                             Go to online public comment
                         </a>
-                        <br /><br />
                     </p>
                 </div>
-            </div>
+            </div><br />
             {% elif event.status == 'confirmed' %}
             <div class="row">
                 <div class="col-md-7">
-
-                    <p class="small">
-                        Online public comment will be available after the agenda is posted and remain open through the duration of the meeting. If you are unable to access online public comment during the expected time frame, please visit: <a href="https://metro.granicusideas.com/meetings" target="_blank">https://metro.granicusideas.com/meetings</a>.
+                    <p>
+                        <strong>You can submit your comments to the Metro Board of Directors before this meeting.</strong> Online public comment will be available after the agenda is posted and remain open through the duration of the meeting. If you are unable to access online public comment during the expected time frame, please visit: <a href="https://metro.granicusideas.com/meetings" target="_blank">https://metro.granicusideas.com/meetings</a>.
                     </p>
-
                 </div>
-            </div>
+            </div><br />
             {% endif %}
 
             <p class="small">
