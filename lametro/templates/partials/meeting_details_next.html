@@ -45,10 +45,13 @@
             </div>
             {% endif %}
 
-            {% if meeting.ecomment %}
+            {% if meeting.ecomment_url %}
             <div class="row">
               <div class="col-xs-7">
-                <a class="btn btn-salmon" id="ecomment-link" target="_blank" href="{{ meeting.ecomment }}"><i class="fa fa-fw fa-external-link"></i> Go to public comment</a>
+                <a class="btn btn-salmon" target="_blank" href="{{ meeting.ecomment_url }}">
+                  <i class="fa fa-fw fa-external-link"></i>
+                  Go to public comment
+                </a>
               </div>
             </div>
             {% endif %}
@@ -73,7 +76,7 @@
 
         {% if not upcoming_board_meetings|all_have_extra:'ecomment' %}
         <p class="small">
-          <em>Online public comment will be available after an agenda is posted and remain open through the duration of the meeting. If you are unable to access online public comment during the expected time frame, please visit: <a href="https://metro.granicusideas.com/meetings" target="_blank">https://metro.granicusideas.com/meetings</a>.</em>
+          <em>{{ meeting.UPCOMING_ECOMMENT_MESSAGE|safe }}</em>
         </p>
         {% endif %}
       </div>

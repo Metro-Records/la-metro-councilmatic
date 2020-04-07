@@ -21,8 +21,16 @@
                             <p>
                                 {{ meeting.link_html | safe }}<br/>
                                 <span class="small text-muted">{{ meeting.description }}</span>
-                                {% if meeting.documents.all %}
-                                    <a class="" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a><br>
+                                {% if meeting.ecomment_link %}
+                                    <a class="btn btn-teal" href="{{ event.ecomment_url }}" target="_blank">
+                                        <i class='fa fa-fw fa-external-link'></i>
+                                        Go to public comment
+                                    </a><br />
+                                {% elif meeting.documents.all %}
+                                    <a id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'>
+                                        <i class='fa fa-fw fa-download'></i>
+                                        Get Agenda PDF
+                                    </a><br />
                                 {% endif %}
                             </p>
                         {% endfor %}
@@ -72,8 +80,16 @@
                                 </div>
                             {% endif %}
                             <div class="col-sm-12">
-                                {% if current_meeting.first.documents.all %}
-                                    <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{ current_meeting.first.documents.all|find_agenda_url }}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
+                                {% if current_meeting.first.ecomment_link %}
+                                    <a class="btn btn-teal" href="{{ event.ecomment_url }}" target="_blank">
+                                        <i class='fa fa-fw fa-external-link'></i>
+                                        Go to public comment
+                                    </a>
+                                {% elif current_meeting.first.documents.all %}
+                                    <a id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'>
+                                        <i class='fa fa-fw fa-download'></i>
+                                        Get Agenda PDF
+                                    </a>
                                 {% endif %}
                             </div>
                         {% endif %}

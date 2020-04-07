@@ -44,7 +44,7 @@
             will be available.
             {% endcomment %}
 
-            {% if event.ecomment %}
+            {% if event.ecomment_url %}
             <div class="row">
                 <div class="col-md-7">
                     <p>
@@ -52,19 +52,17 @@
                     </p>
 
                     <p>
-                        <a class="btn btn-salmon" href="{{ event.ecomment }}" target="_blank">
+                        <a class="btn btn-salmon" href="{{ event.ecomment_url }}" target="_blank">
                             <i class='fa fa-fw fa-external-link'></i>
-                            Go to online public comment
+                            Go to public comment
                         </a>
                     </p>
                 </div>
             </div><br />
-            {% elif event.status == 'confirmed' %}
+            {% elif event.ecomment_message %}
             <div class="row">
                 <div class="col-md-7">
-                    <p>
-                        <strong>You can submit your comments to the Metro Board of Directors before this meeting.</strong> Online public comment will be available after the agenda is posted and remain open through the duration of the meeting. If you are unable to access online public comment during the expected time frame, please visit: <a href="https://metro.granicusideas.com/meetings" target="_blank">https://metro.granicusideas.com/meetings</a>.
-                    </p>
+                    <p>{{ event.ecomment_message|safe }}</p>
                 </div>
             </div><br />
             {% endif %}

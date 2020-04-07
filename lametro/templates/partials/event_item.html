@@ -35,12 +35,12 @@
     </p>
   </div>
 
-  <div class="col-xs-4">
+  <div class="col-xs-4 text-center">
     <p>
-      {% if event.ecomment %}
-        <a class="btn btn-salmon btn-sm" href="{{ event.ecomment }}" target="_blank">
+      {% if event.ecomment_url %}
+        <a class="btn btn-salmon btn-sm" href="{{ event.ecomment_url }}" target="_blank">
           <i class='fa fa-fw fa-external-link'></i>
-          Online public comment
+          Go to public comment
         </a>
       {% endif %}
     </p>
