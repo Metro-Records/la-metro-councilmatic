@@ -371,11 +371,12 @@ class eCommentMixin(object):
 
     @property
     def ecomment_message(self):
-        if self.status == 'confirmed':
-            return self.UPCOMING_ECOMMENT_MESSAGE
+        if self.status != 'cancelled':
+            if self.start_time >= timezone.now():
+                return self.UPCOMING_ECOMMENT_MESSAGE
 
-        elif self.status == 'passed':
-            return self.PASSED_ECOMMENT_MESSAGE
+            else:
+                return self.PASSED_ECOMMENT_MESSAGE
 
 
 class LAMetroEvent(Event, LiveMediaMixin, eCommentMixin, SourcesMixin):
