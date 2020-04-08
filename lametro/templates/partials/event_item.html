@@ -1,6 +1,6 @@
 <div class="row">
   <br/>
-  <div class="col-xs-4">
+  <div class="col-xs-6 col-md-4">
     {% if event.status == 'cancelled' %}
       <strike>
     {% endif %}
@@ -23,7 +23,7 @@
     {% endif %}
   </div>
 
-  <div class="col-xs-4">
+  <div class="col-xs-6 col-md-4">
     <p>
       {% if event.status == 'cancelled' %}
         <strike>{{ event.link_html | safe }}</strike>
@@ -35,7 +35,7 @@
     </p>
   </div>
 
-  <div class="col-xs-4 text-center">
+  <div class="hidden-xs hidden-sm col-md-4 text-center">
     <p>
       {% if event.ecomment_url %}
         <a class="btn btn-salmon btn-sm" href="{{ event.ecomment_url }}" target="_blank">
