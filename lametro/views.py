@@ -94,6 +94,7 @@ class LABillDetail(BillDetailView):
 
         related_bills = context['legislation']\
             .related_bills\
+            .exclude(related_bill__isnull=True)\
             .annotate(latest_date=Max('related_bill__actions__date'))\
             .order_by('-latest_date')
 
