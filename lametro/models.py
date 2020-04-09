@@ -483,6 +483,10 @@ class LAMetroEvent(Event, LiveMediaMixin, eCommentMixin, SourcesMixin):
 
         Otherwise, return an empty queryset.
         '''
+        # TODO: Remove when ready to merge.
+        last_meeting = cls.objects.filter(documents__isnull=False)[:2]
+        return cls.objects.filter(id__in=[m.id for m in last_meeting])
+
         scheduled_meetings = cls._potentially_current_meetings()
 
         if scheduled_meetings:
