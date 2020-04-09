@@ -29,7 +29,7 @@
                                 </a>
                             {% endif %}
 
-                            {% if meeting.ecomment_link %}
+                            {% if meeting.ecomment_url %}
                                 <a class="btn btn-salmon" href="{{ event.ecomment_url }}" target="_blank">
                                     <i class='fa fa-fw fa-external-link'></i>
                                     Go to public comment
@@ -109,7 +109,7 @@
                             </a>
                         {% endif %}
 
-                        {% if current_meeting.first.ecomment_link %}
+                        {% if current_meeting.first.ecomment_url %}
                             <a class="btn btn-salmon" href="{{ current_meeting.first.ecomment_url }}" target="_blank" style="margin-top: 10px; margin-left: 5px;">
                                 <i class='fa fa-fw fa-external-link'></i>
                                 Go to public comment
