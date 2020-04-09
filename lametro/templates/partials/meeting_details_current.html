@@ -39,22 +39,24 @@
                     </p>
                     <br />
                 {% endfor %}
-            </div>
 
-            <div class="text-center">
-                <p>
-                    <a class="btn btn-link" href="{{ current_meeting.first.GENERIC_ENGLISH_MEDIA_URL }}" target="_blank">
-                        <i class="fa fa-headphones" aria-hidden="true"></i>
-                        Watch in English
-                    </a>
+                <p class="small">These meetings will take place in succession. The broadcast for the second meeting will begin immediately after the first concludes.</p>
 
-                    {% if bilingual %}
-                        <a class="btn btn-link" href="{{ current_meeting.first.GENERIC_SPANISH_MEDIA_URL }}" target="_blank">
+                <div class="text-center">
+                    <p>
+                        <a class="btn btn-link" href="{{ current_meeting.first.GENERIC_ENGLISH_MEDIA_URL }}" target="_blank">
                             <i class="fa fa-headphones" aria-hidden="true"></i>
-                            Ver en Español
+                            Watch in English
                         </a>
-                    {% endif %}
-                </p>
+
+                        {% if bilingual %}
+                            <a class="btn btn-link" href="{{ current_meeting.first.GENERIC_SPANISH_MEDIA_URL }}" target="_blank">
+                                <i class="fa fa-headphones" aria-hidden="true"></i>
+                                Ver en Español
+                            </a>
+                        {% endif %}
+                    </p>
+                </div>
             </div>
 
         {% else %}
