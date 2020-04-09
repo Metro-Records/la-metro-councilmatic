@@ -9,7 +9,14 @@
     <div class="row-fluid">
         <div class="col-sm-12">
             <br/>
-            <p><a href='/events/'><i class="fa fa-angle-double-left" aria-hidden="true"></i> Back to {{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></p>
+            <p>
+                <a href='/events/'>
+                    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                    Back to {{ CITY_VOCAB.EVENTS }} &amp; Agendas
+                </a>
+            </p>
+
+            <!-- Header -->
             <h1>
                 {% if event.status == 'cancelled' %}
                     <strike>{{event.name}}</strike> <small><span class="label label-stale">Cancelled</span></small>
@@ -20,64 +27,81 @@
                 {% for media in event.media.all %}
                     <a class="btn btn-salmon" href="{{ media.links.all.0.url }}" target="_blank"><i class= "fa fa-headphones" aria-hidden="true"></i> {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
                 {% endfor %}
-
             </h1>
-            <p>{{event.description}}</p>
-            <p class="small text-muted">
-                {% if event.status == 'cancelled' %}
-                    <strike>
-                    <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
-                    <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
-                    </strike>
+
+            <div class="row">
+                {% if event.ecomment_url or not event.has_passed %}
+                <div class="col-sm-7">
                 {% else %}
-                    <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
-                    <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
-                    <i class="fa fa-fw fa-map-marker"></i> {{event.location.name}}
+                <div class="col-sm-12">
                 {% endif %}
-            </p>
 
-
-            {% comment %}
-            Online public comment is available for events until their start
-            date. If there is a public comment link, show it. Otherwise, if
-            the meeting has not yet passed, show the message about when it
-            will be available.
-            {% endcomment %}
-
-            {% if event.ecomment_url %}
-            <div class="row">
-                <div class="col-md-7">
-                    <p>
-                        <strong>You can submit your comments to the Metro Board of Directors before this meeting.</strong> Use the link below to comment on board reports on the agenda.
+                    <p>{{event.description}}</p>
+                    <p class="small text-muted">
+                        {% if event.status == 'cancelled' %}
+                            <strike>
+                            <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
+                            <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
+                            </strike>
+                        {% else %}
+                            <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
+                            <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
+                            <i class="fa fa-fw fa-map-marker"></i> {{event.location.name}}
+                        {% endif %}
                     </p>
 
-                    <p>
-                        <a class="btn btn-salmon" href="{{ event.ecomment_url }}" target="_blank">
-                            <i class='fa fa-fw fa-external-link'></i>
-                            Go to public comment
-                        </a>
-                    </p>
-                </div>
-            </div><br />
-            {% elif event.ecomment_message %}
-            <div class="row">
-                <div class="col-md-7">
-                    <p>{{ event.ecomment_message|safe }}</p>
-                </div>
-            </div><br />
-            {% endif %}
+                    {% if event.ecomment_url %}
+                        <p>
+                            <strong>You can submit your comments to the Metro Board of Directors before this meeting.</strong> Use the link below to comment on board reports on the agenda.
+                        </p>
 
-            <p class="small">
-                {% if event.web_source.url %}
-                    {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
-                        Not seeing an agenda? Please use this link:<br>
+                        <p>
+                            <a class="btn btn-salmon" href="{{ event.ecomment_url }}" target="_blank">
+                                <i class='fa fa-fw fa-external-link'></i>
+                                Go to public comment
+                            </a>
+                        </p>
+                    {% elif event.ecomment_message %}
+                        <p>{{ event.ecomment_message|safe }}</p>
                     {% endif %}
-                    <a href='{{event.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
-                        <i class='fa fa-fw fa-external-link'></i>
-                        View on the {{CITY_VOCAB.SOURCE}} website
-                    </a>
+
+                    <p class="small">
+                        {% if event.web_source.url %}
+                            {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
+                                Not seeing an agenda? Please use this link:<br>
+                            {% endif %}
+                            <a href='{{event.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
+                                <i class='fa fa-fw fa-external-link'></i>
+                                View on the {{CITY_VOCAB.SOURCE}} website
+                            </a>
+                        {% endif %}
+                    </p>
+                </div>
+
+                {% if event.ecomment_url or not event.has_passed %}
+                    <div class="col-sm-5">
+                        <h4>Submit public comment remotely</h4>
+                        <p>
+                            <strong>On the web:</strong>
+                            {% if event.ecomment_url %}
+                                <a href="{{ event.ecomment_url }}" target="_blank">
+                                    <i class='fa fa-fw fa-external-link'></i>
+                                    Go to public comment
+                                </a>
+                            {% else %}
+                                <a href="http://boardagendas.metro.net" target="_blank">http://boardagendas.metro.net</a> or <a href="https://metro.granicusideas.com/meetings" target="_blank">https://metro.granicusideas.com/meetings</a>
+                            {% endif %}<br />
+                            <strong>Via email:</strong> <a href="mailto:jacksonm@metro.net">jacksonm@metro.net</a><br />
+                            <strong>By postal mail:</strong> Board Secretary's Office, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
+                        </p>
+
+                        <p>
+                            <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
+                            <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail.</em>
+                        </p>
+                    </div>
                 {% endif %}
-            </p>
+            </div>
 
             <hr />
 

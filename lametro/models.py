@@ -366,17 +366,20 @@ class eCommentMixin(object):
     PASSED_ECOMMENT_MESSAGE = 'Online public comment for this meeting has closed.'
 
     @property
+    def has_passed(self):
+        return self.start_time < timezone.now()
+
+    @property
     def ecomment_url(self):
         return self.extras.get('ecomment', None)
 
     @property
     def ecomment_message(self):
         if self.status != 'cancelled':
-            if self.start_time >= timezone.now():
-                return self.UPCOMING_ECOMMENT_MESSAGE
-
-            else:
+            if self.has_passed:
                 return self.PASSED_ECOMMENT_MESSAGE
+
+            return self.UPCOMING_ECOMMENT_MESSAGE
 
 
 class LAMetroEvent(Event, LiveMediaMixin, eCommentMixin, SourcesMixin):
@@ -515,7 +518,6 @@ class LAMetroEvent(Event, LiveMediaMixin, eCommentMixin, SourcesMixin):
             current_meetings = cls.objects.none()
 
         return current_meetings
-
 
     @classmethod
     def upcoming_committee_meetings(cls):
