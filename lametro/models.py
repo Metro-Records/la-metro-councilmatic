@@ -304,7 +304,6 @@ class LiveMediaMixin(object):
     GENERIC_ENGLISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=3'
     GENERIC_SPANISH_MEDIA_URL = BASE_MEDIA_URL + 'camera_id=2'
 
-
     @property
     def bilingual(self):
         '''
@@ -355,7 +354,35 @@ class LiveMediaMixin(object):
             return None
 
 
-class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
+class eCommentMixin(object):
+    UPCOMING_ECOMMENT_MESSAGE = (
+        'Online public comment will be available after the agenda is '
+        'posted and remain open until the meeting concludes. If you are '
+        'unable to access online public comment during the expected '
+        'time frame, please visit: <a href="https://metro.granicusideas.com/meetings" '
+        'target="_blank">https://metro.granicusideas.com/meetings</a>.'
+    )
+
+    PASSED_ECOMMENT_MESSAGE = 'Online public comment for this meeting has closed.'
+
+    @property
+    def has_passed(self):
+        return self.start_time < timezone.now()
+
+    @property
+    def ecomment_url(self):
+        return self.extras.get('ecomment', None)
+
+    @property
+    def ecomment_message(self):
+        if self.status != 'cancelled':
+            if self.has_passed:
+                return self.PASSED_ECOMMENT_MESSAGE
+
+            return self.UPCOMING_ECOMMENT_MESSAGE
+
+
+class LAMetroEvent(Event, LiveMediaMixin, eCommentMixin, SourcesMixin):
     objects = LAMetroEventManager()
 
     class Meta:
@@ -492,7 +519,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return current_meetings
 
-
     @classmethod
     def upcoming_committee_meetings(cls):
         one_month_from_now = timezone.now() + relativedelta(months=1)
@@ -507,10 +533,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
                                   .order_by('start_time').all()
 
         return meetings
-
-    @property
-    def ecomment(self):
-        return self.extras.get('ecomment', None)
 
 
 class EventAgendaItem(EventAgendaItem):
