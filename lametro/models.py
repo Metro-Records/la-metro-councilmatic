@@ -187,10 +187,14 @@ class LAMetroPerson(Person, SourcesMixin):
         city_council_memberships = self.memberships.filter(**filter_kwarg)
 
         # Select posts denoting membership, i.e., exclude leadership
-        # posts, like 1st Chair
+        # posts, like 1st Chair.
+        # See: https://github.com/opencivicdata/python-opencivicdata/issues/129
         #
-        # see https://github.com/opencivicdata/python-opencivicdata/issues/129
-        primary_memberships = city_council_memberships.filter(Q(role='Board Member') |
+        # N.b., the CEO is not *technically* a member of the board, but their
+        # role is on the membership side of the membership/leadership dichotomy.
+        # See: https://github.com/datamade/la-metro-councilmatic/issues/351
+        primary_memberships = city_council_memberships.filter(Q(role='Chief Executive Officer') |
+                                                              Q(role='Board Member') |
                                                               Q(role='Nonvoting Board Member'))
 
         if primary_memberships.exists():
