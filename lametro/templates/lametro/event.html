@@ -30,7 +30,7 @@
             </h1>
 
             <div class="row">
-                {% if has_agenda %}
+                {% if has_agenda and not event.has_passed %}
                 <div class="col-sm-7">
                 {% else %}
                 <div class="col-sm-12">
@@ -50,7 +50,7 @@
                         {% endif %}
                     </p>
 
-                    {% if event.show_comment %}
+                    {% if event.is_ongoing %}
                         <p>
                             <strong>You can submit your comments to the Metro Board of Directors during this meeting.</strong> Use the link below to comment on board reports on the agenda.
                         </p>
@@ -78,11 +78,11 @@
                     </p>
                 </div>
 
-                {% if has_agenda %}
+                {% if has_agenda and not event.has_passed %}
                     <div class="col-sm-5">
                         <h4>Submit public comment remotely</h4>
                         <p>
-                            {% if event.show_comment %}
+                            {% if event.is_ongoing %}
                                 <strong>On the web:</strong>
                                 <a href="{{ event.ecomment_url }}" target="_blank">
                                     <i class='fa fa-fw fa-external-link'></i>

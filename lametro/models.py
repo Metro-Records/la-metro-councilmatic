@@ -354,8 +354,8 @@ class LiveMediaMixin(object):
             return None
 
 
-class eCommentMixin(object):
-    GENERIC_ECOMMENT_URL = 'https://metro.granicusideas.com/meetings'
+class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
+    GENERIC_ECOMMENT_URL = 'https://metro.granicusideas.com/meetings?scope=past'
 
     UPCOMING_ECOMMENT_MESSAGE = (
         'Online public comment will be available on this page once the meeting '
@@ -364,24 +364,6 @@ class eCommentMixin(object):
 
     PASSED_ECOMMENT_MESSAGE = 'Online public comment for this meeting has closed.'
 
-    @property
-    def has_passed(self):
-        return self.start_time < timezone.now()
-
-    @property
-    def ecomment_url(self):
-        return self.extras.get('ecomment', self.GENERIC_ECOMMENT_URL)
-
-    @property
-    def ecomment_message(self):
-        if self.status != 'cancelled':
-            if self.has_passed:
-                return self.PASSED_ECOMMENT_MESSAGE
-
-            return self.UPCOMING_ECOMMENT_MESSAGE
-
-
-class LAMetroEvent(Event, LiveMediaMixin, eCommentMixin, SourcesMixin):
     objects = LAMetroEventManager()
 
     class Meta:
@@ -535,14 +517,41 @@ class LAMetroEvent(Event, LiveMediaMixin, eCommentMixin, SourcesMixin):
         return meetings
 
 
+    @property
+    def is_ongoing(self):
+        if not hasattr(self, '_is_ongoing'):
+            self._is_ongoing = (
+                self in self._potentially_current_meetings() and
+                self in self._streaming_meeting()
+            )
+
+        return self._is_ongoing
 
 
     @property
-    def show_comment(self):
-        return (
-            self in self._potentially_current_meetings() and
-            (self.ecomment_url or self._streaming_meeting() == self)
-        )
+    def has_passed(self):
+        return self.start_time < timezone.now() and not self.is_ongoing
+
+
+    @property
+    def ecomment_url(self):
+        if self.extras.get('ecomment'):
+            return self.extras['ecomment']
+
+        elif self.is_ongoing:
+            return self.GENERIC_ECOMMENT_URL
+
+
+    @property
+    def ecomment_message(self):
+        if self.status == 'cancelled':
+            return
+
+        elif self.has_passed:
+            return self.PASSED_ECOMMENT_MESSAGE
+
+        else:
+            return self.UPCOMING_ECOMMENT_MESSAGE
 
 
 class EventAgendaItem(EventAgendaItem):
