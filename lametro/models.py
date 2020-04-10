@@ -520,10 +520,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     @property
     def is_ongoing(self):
         if not hasattr(self, '_is_ongoing'):
-            self._is_ongoing = (
-                self in self._potentially_current_meetings() and
-                self in self._streaming_meeting()
-            )
+            self._is_ongoing = self in type(self).current_meeting()
 
         return self._is_ongoing
 
