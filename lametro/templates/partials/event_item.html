@@ -1,6 +1,6 @@
 <div class="row">
   <br/>
-  <div class="col-xs-6 col-md-4">
+  <div class="col-xs-4">
     {% if event.status == 'cancelled' %}
       <strike>
     {% endif %}
@@ -23,7 +23,7 @@
     {% endif %}
   </div>
 
-  <div class="col-xs-6 col-md-4">
+  <div class="col-xs-8">
     <p>
       {% if event.status == 'cancelled' %}
         <strike>{{ event.link_html | safe }}</strike>
@@ -31,17 +31,6 @@
         <br/>
       {% else %}
         {{ event.link_html | safe }}<br/>
-      {% endif %}
-    </p>
-  </div>
-
-  <div class="hidden-xs hidden-sm col-md-4 text-center">
-    <p>
-      {% if event.ecomment_url %}
-        <a class="btn btn-salmon btn-sm" href="{{ event.ecomment_url }}" target="_blank">
-          <i class='fa fa-fw fa-external-link'></i>
-          Go to public comment
-        </a>
       {% endif %}
     </p>
   </div>

@@ -168,7 +168,7 @@ class LAMetroEventDetail(EventDetailView):
             .filter(related_entities__bill__versions__isnull=False)\
             .annotate(int_order=Cast('order', IntegerField()))\
             .order_by('int_order')
-        
+
         # Find agenda link.
         if event.documents.all():
             for document in event.documents.all():
@@ -199,6 +199,10 @@ class LAMetroEventDetail(EventDetailView):
 
         context['related_board_reports'] = agenda_with_board_reports
         context['base_url'] = PIC_BASE_URL # Give JS access to this variable
+
+        context['has_agenda'] = (context.get('agenda_url') or
+                                 context.get('uploaded_agenda_url') or
+                                 context.get('uploaded_agenda_pdf'))
 
         # Render forms if not a POST request
         if 'url_form' not in context:
@@ -442,7 +446,7 @@ class LACommitteesView(CommitteesView):
             .exclude(person=ceo)\
             .filter(end_date_dt__gt=Now(),
                     organization__classification='committee')
-        
+
         qs = LAMetroOrganization.objects\
                  .filter(classification='committee')\
                  .filter(memberships__in=memberships)\
@@ -453,7 +457,7 @@ class LACommitteesView(CommitteesView):
                                           to_attr='current_members'))
 
         return qs
-    
+
 
 
 class LACommitteeDetailView(CommitteeDetailView):
