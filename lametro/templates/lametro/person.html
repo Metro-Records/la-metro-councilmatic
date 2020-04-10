@@ -22,9 +22,9 @@
                 <small>
             {% if person.current_council_seat %}
                 {{ person.current_council_seat.role }}
-	    {% else %}
-	        Former {{ person.latest_council_seat.role }}
-	    {% endif %}
+    	    {% else %}
+    	        Former {{ person.latest_council_seat.role }}
+    	    {% endif %}
             <a href="rss/" title="RSS feed for Sponsored Board Actions by {{person.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
                 </small>
             </h1>

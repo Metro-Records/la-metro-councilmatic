@@ -73,6 +73,9 @@ def appointment_label(label):
     if 'District 7 Director' in label:
         return label
 
+    elif 'Chief Executive Officer' in label:
+        return label
+
     full_label = label.replace("Appointee of", "Appointee of the")
     label_parts = full_label.split(', ')
 
