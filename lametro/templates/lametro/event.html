@@ -30,7 +30,7 @@
             </h1>
 
             <div class="row">
-                {% if event.ecomment_url or not event.has_passed %}
+                {% if has_agenda %}
                 <div class="col-sm-7">
                 {% else %}
                 <div class="col-sm-12">
@@ -50,9 +50,9 @@
                         {% endif %}
                     </p>
 
-                    {% if event.ecomment_url %}
+                    {% if event.show_comment %}
                         <p>
-                            <strong>You can submit your comments to the Metro Board of Directors before this meeting.</strong> Use the link below to comment on board reports on the agenda.
+                            <strong>You can submit your comments to the Metro Board of Directors during this meeting.</strong> Use the link below to comment on board reports on the agenda.
                         </p>
 
                         <p>
@@ -78,18 +78,18 @@
                     </p>
                 </div>
 
-                {% if event.ecomment_url or not event.has_passed %}
+                {% if has_agenda %}
                     <div class="col-sm-5">
                         <h4>Submit public comment remotely</h4>
                         <p>
-                            <strong>On the web:</strong>
-                            {% if event.ecomment_url %}
+                            {% if event.show_comment %}
+                                <strong>On the web:</strong>
                                 <a href="{{ event.ecomment_url }}" target="_blank">
                                     <i class='fa fa-fw fa-external-link'></i>
                                     Go to public comment
                                 </a>
                             {% else %}
-                                <a href="https://metro.granicusideas.com/meetings" target="_blank">https://metro.granicusideas.com/meetings</a>
+                                Online public comment will be available on this page once the meeting begins.
                             {% endif %}<br />
                             <strong>Via email:</strong> <a href="mailto:jacksonm@metro.net">jacksonm@metro.net</a><br />
                             <strong>By postal mail:</strong> Board Secretary's Office, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
@@ -97,7 +97,7 @@
 
                         <p>
                             <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
-                            <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail.</em>
+                            <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail. <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong></em>
                         </p>
                     </div>
                 {% endif %}
@@ -117,7 +117,7 @@
                     {% endif %}
 
                     <!-- Check that the database has an agenda to display -->
-                    {% if agenda_url or uploaded_agenda_url or uploaded_agenda_pdf %}
+                    {% if has_agenda %}
 
                     <!-- An event can have both manually uploaded and auto-imported agendas, i.e., if a Metro Admin uploads an agenda and then import_data runs. Give the Admin an option to delete the manually uploaded agenda, but ONLY if an auto-imported agenda does not exist. -->
                     {% if not agenda_url%}
