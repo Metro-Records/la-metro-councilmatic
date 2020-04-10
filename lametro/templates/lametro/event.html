@@ -82,22 +82,22 @@
                     <div class="col-sm-5">
                         <h4>Submit public comment remotely</h4>
                         <p>
-                            {% if event.is_ongoing %}
-                                <strong>On the web:</strong>
-                                <a href="{{ event.ecomment_url }}" target="_blank">
-                                    <i class='fa fa-fw fa-external-link'></i>
-                                    Go to public comment
-                                </a>
-                            {% else %}
-                                Online public comment will be available on this page once the meeting begins.
-                            {% endif %}<br />
+                        {% if event.is_ongoing %}
+                            <strong>On the web:</strong>
+                            <a href="{{ event.ecomment_url }}" target="_blank">
+                                <i class='fa fa-fw fa-external-link'></i>
+                                Go to public comment
+                            </a>
+                        {% else %}
+                            {{ event.UPCOMING_ECOMMENT_MESSAGE }}
                             <strong>Via email:</strong> <a href="mailto:jacksonm@metro.net">jacksonm@metro.net</a><br />
                             <strong>By postal mail:</strong> Board Secretary's Office, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
-                        </p>
+                        </p><br />
 
                         <p>
                             <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
                             <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail. <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong></em>
+                        {% endif %}
                         </p>
                     </div>
                 {% endif %}
