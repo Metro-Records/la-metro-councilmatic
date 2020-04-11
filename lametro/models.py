@@ -555,11 +555,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             return self.UPCOMING_ECOMMENT_MESSAGE
 
 
-    @property
-    def local_start_time(self):
-        return timezone.localtime(self.start_time)
-
-
 class EventAgendaItem(EventAgendaItem):
 
     class Meta:
