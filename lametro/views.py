@@ -256,7 +256,7 @@ class LAMetroEventsView(EventsView):
         # Did the user set date boundaries?
         start_date_str = self.request.GET.get('from')
         end_date_str   = self.request.GET.get('to')
-        day_grouper    = lambda x: (x.start_time.year, x.start_time.month, x.start_time.day)
+        day_grouper    = lambda x: (x.local_start_time.year, x.local_start_time.month, x.local_start_time.day)
 
         minutes_queryset = EventDocument.objects.filter(note__icontains='minutes')
 
@@ -318,7 +318,7 @@ class LAMetroEventsView(EventsView):
             # Past events
             past_events = LAMetroEvent.objects\
                                       .with_media()\
-                                      .filter(start_time__lt=datetime.datetime.now(app_timezone))\
+                                      .filter(start_time__lt=timezone.now())\
                                       .order_by('-start_time')
 
             past_events = past_events.prefetch_related(Prefetch('documents',
