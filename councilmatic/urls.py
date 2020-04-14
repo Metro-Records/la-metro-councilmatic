@@ -13,7 +13,7 @@ from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LA
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
     LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
     metro_login, metro_logout, delete_submission, LAMetroArchiveSearch, refresh_guid_trigger, \
-    SmartLogicAPI, fetch_topic
+    SmartLogicAPI, fetch_topic, PublicComment
 from lametro.feeds import *
 
 patterns = ([
@@ -34,7 +34,8 @@ patterns = ([
     url(r'^events/$', LAMetroEventsView.as_view(), name='event'),
     url(r'^person/(?P<slug>[^/]+)/rss/$', LAMetroPersonDetailFeed(), name='person_feed'),
     url(r'^google66b34bb6957ad66c.html/$', GoogleView.as_view(), name='google_view'),
-    url(r'^refresh-guid/(.*)$', refresh_guid_trigger, name='refresh_guid')
+    url(r'^refresh-guid/(.*)$', refresh_guid_trigger, name='refresh_guid'),
+    url(r'^public-comment/$', PublicComment.as_view(), name='public_comment'),
 ], settings.APP_NAME)
 
 urlpatterns = [

@@ -36,7 +36,7 @@ from django.db.models import (Max,
                               Q)
 from django.utils import timezone
 from django.utils.text import slugify
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, RedirectView
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render_to_response, redirect
 from django.core import management
@@ -758,3 +758,18 @@ def fetch_topic(request):
     response['subject'] = subject
 
     return JsonResponse(response)
+
+
+class PublicComment(RedirectView):
+    '''
+    Redirect to the public comment link for the current meeting. If there is
+    more than one current meeting, or no current meetings, redirect to the
+    generic public comment URL.
+    '''
+    def get_redirect_url(self, *args, **kwargs):
+        current_meetings = LAMetroEvent.current_meeting()
+
+        if current_meetings.count() == 1:
+            return current_meetings.get().ecomment_url
+
+        return LAMetroEvent.GENERIC_ECOMMENT_URL
