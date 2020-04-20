@@ -209,10 +209,6 @@ class LAMetroPerson(Person, SourcesMixin):
         return ''
 
     @property
-    def latest_council_seat(self):
-        pass
-
-    @property
     def board_office(self):
 
         try:

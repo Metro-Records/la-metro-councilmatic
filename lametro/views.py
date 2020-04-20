@@ -531,7 +531,7 @@ class LAPersonDetailView(PersonDetailView):
         context = super().get_context_data(**kwargs)
         person = context['person']
 
-        council_post = person.current_council_seat.post
+        council_post = person.latest_council_membership.post
 
         context['qualifying_post'] = council_post.acting_label
 
