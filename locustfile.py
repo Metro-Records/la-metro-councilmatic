@@ -7,6 +7,10 @@ class UserBehavior(TaskSet):
         self.client.get('/')
 
     @task
+    def events(self):
+        self.client.get('/events/')
+
+    @task
     def event_detail(self):
         self.client.get('/event/regular-board-meeting-9db63964de28/')
 
