@@ -1,0 +1,11 @@
+version: '2.4'
+
+services:
+  locust:
+    container_name: lametro-locust
+    image: lametro:upgrade
+    volumes:
+      - .:/app
+    ports:
+      - 8089:8089
+    command: locust
