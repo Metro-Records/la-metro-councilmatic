@@ -166,6 +166,23 @@ LA Metro Councilmatic has a basic test suite. If you need to run it, simply run:
 docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
 ```
 
+### Load testing
+
+LA Metro Councilmatic uses [Locust](https://docs.locust.io/en/stable/) for load
+testing. There is a starter script in `locustfile.py` that visits the homepage,
+event listing, and an event detail page at random intervals between 60 and 90
+seconds. This script was derived from user behavior in Google Analytics.
+(If needed, request analytics access from Metro.)
+
+You can run the load tests using the `locust` service in `docker-compose.locust.yml`:
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.locust.yml run --service-ports --rm locust
+```
+
+This will start the Locust web server on http://localhost:8089. For more details,
+see the [Locust documentation](https://docs.locust.io/en/stable/).
+
 ## Errors / Bugs
 
 If something is not behaving intuitively, it is a bug, and should be reported.
