@@ -359,18 +359,22 @@ class LABoardMembersView(CouncilMembersView):
         }
 
         posts = LAMetroPost.objects\
-                    .filter(shape__isnull=False)\
-                    .exclude(label='Appointee of Mayor of the City of Los Angeles')
+                           .filter(shape__isnull=False)\
+                           .exclude(label='Appointee of Mayor of the City of Los Angeles')
 
         for post in posts:
-            council_member = "Vacant"
-            detail_link = ""
             district = post.label
 
-            person = post.memberships.get(end_date_dt__gt=Now()).person
-            if person:
-                council_member = person.name
-                detail_link = person.slug
+            try:
+                current_membership = post.memberships.get(end_date_dt__gt=Now())
+
+            except ObjectDoesNotExist:
+                council_member = 'Vacant'
+                detail_link = ''
+
+            else:
+                council_member = current_membership.person.name
+                detail_link = current_membership.person.slug
 
             feature = {
                 'type': 'Feature',
@@ -392,17 +396,31 @@ class LABoardMembersView(CouncilMembersView):
             if post.division_id == 'ocd-division/country:us/state:ca/place:los_angeles':
                 maps['map_geojson_city']['features'].append(feature)
 
-
         return maps
 
     def get_queryset(self):
-        get_kwarg = {'name': settings.OCD_CITY_COUNCIL_NAME}
+        board = Organization.objects.get(name=settings.OCD_CITY_COUNCIL_NAME)
 
-        return Organization.objects.get(**get_kwarg)\
-            .memberships\
-            .filter(Q(role='Board Member') |
-                    Q(role='Nonvoting Board Member'))\
-            .filter(end_date_dt__gte=Now())
+        memberships = board.memberships.filter(Q(role='Board Member') |
+                                               Q(role='Nonvoting Board Member'))\
+                                       .filter(end_date_dt__gte=Now())
+
+        display_order = {
+            'Chair': 0,
+            'Vice Chair': 1,
+            '1st Chair': 1,
+            '2nd Chair': 2,
+            'Board Member': 3,
+            'Nonvoting Board Member': 4,
+        }
+
+        # Display board leadership first. Person.board_office is null for
+        # members without leadership roles, so fall back to using their
+        # board membership role to decide display order.
+        return sorted(memberships, key=lambda x: (
+            display_order[getattr(x.person.board_office, 'role', x.role)],
+            x.person.name
+        ))
 
     def get_context_data(self, *args, **kwargs):
         context = super(CouncilMembersView, self).get_context_data(**kwargs)

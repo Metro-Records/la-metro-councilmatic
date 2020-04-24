@@ -210,15 +210,13 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def board_office(self):
+        office_roles = ('Chair', '1st Chair', 'Vice Chair', '2nd Chair')
 
         try:
             office_membership = self.memberships\
-                .filter(organization__name=settings.OCD_CITY_COUNCIL_NAME)\
-                .filter(Q(role='Chair') |
-                        Q(role='1st Chair') |
-                        Q(role='2nd Chair') |
-                        Q(role='Vice Chair'))\
-                .get(end_date_dt__gt=Now())
+                                    .filter(organization__name=settings.OCD_CITY_COUNCIL_NAME,
+                                            role__in=office_roles)\
+                                    .get(end_date_dt__gt=Now())
         except Membership.DoesNotExist:
             office_membership = None
 
