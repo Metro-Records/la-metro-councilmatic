@@ -27,7 +27,7 @@
                     {{ membership.person.id | call_link_html | safe }}
                 </td>
 
-                <td data-order='{{ membership.post.label }}'>
+                <td data-order='{{ membership.index }}'>
                     {% firstof membership.person.board_office.role membership.role %}
                     <br/ >
 

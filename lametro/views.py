@@ -414,11 +414,18 @@ class LABoardMembersView(CouncilMembersView):
             'Nonvoting Board Member': 4,
         }
 
+        sortable_memberships = []
+
         # Display board leadership first. Person.board_office is null for
         # members without leadership roles, so fall back to using their
         # board membership role to decide display order.
-        return sorted(memberships, key=lambda x: (
-            display_order[getattr(x.person.board_office, 'role', x.role)],
+        for m in memberships:
+            primary_post = m.person.board_office or m
+            m.index = display_order[primary_post.role]
+            sortable_memberships.append(m)
+
+        return sorted(sortable_memberships, key=lambda x: (
+            x.index,
             x.person.family_name
         ))
 
