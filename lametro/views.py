@@ -419,7 +419,7 @@ class LABoardMembersView(CouncilMembersView):
         # board membership role to decide display order.
         return sorted(memberships, key=lambda x: (
             display_order[getattr(x.person.board_office, 'role', x.role)],
-            x.person.name
+            x.person.family_name
         ))
 
     def get_context_data(self, *args, **kwargs):
