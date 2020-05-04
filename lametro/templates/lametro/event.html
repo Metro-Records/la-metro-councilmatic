@@ -22,11 +22,25 @@
                     <strike>{{event.name}}</strike> <small><span class="label label-stale">Cancelled</span></small>
                 {% else %}
                     {{event.name}}
-                {% endif%}
+                {% endif %}
 
-                {% for media in event.media.all %}
-                    <a class="btn btn-salmon" href="{{ media.links.all.0.url }}" target="_blank"><i class= "fa fa-headphones" aria-hidden="true"></i> {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
-                {% endfor %}
+                {% if event.is_ongoing %}
+                    <a class="btn btn-salmon" href="{{ event.english_live_media_url }}" target="_blank">
+                        <i class="fa fa-headphones" aria-hidden="true"></i>
+                        Watch in English
+                    </a>
+
+                    {% if event.bilingual %}
+                        <a class="btn btn-salmon" href="{{ event.spanish_live_media_url }}" target="_blank">
+                            <i class="fa fa-headphones" aria-hidden="true"></i>
+                            Ver en Español
+                        </a>
+                    {% endif %}
+                {% else %}
+                    {% for media in event.media.all %}
+                        <a class="btn btn-salmon" href="{{ media.links.all.0.url }}" target="_blank"><i class= "fa fa-headphones" aria-hidden="true"></i> {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
+                    {% endfor %}
+                {% endif %}
             </h1>
 
             <div class="row">
