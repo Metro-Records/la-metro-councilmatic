@@ -510,18 +510,25 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @classmethod
     def upcoming_committee_meetings(cls):
-        one_month_from_now = timezone.now() + relativedelta(months=1)
-        meetings = cls.objects.filter(start_time__gt=timezone.now(), start_time__lt=one_month_from_now)\
-                              .exclude(name__icontains='Board Meeting')\
-                              .order_by('start_time').all()
+        '''
+        Show a minimum of five meetings, up to and including the next board
+        meeting.
 
-        if not meetings:
-            two_months_from_now = timezone.now() + relativedelta(months=2)
-            meetings = cls.objects.filter(start_time__gt=timezone.now(), start_time__lt=two_months_from_now)\
-                                  .exclude(name__icontains='Board Meeting')\
-                                  .order_by('start_time').all()
+        NOTE: This property name is a misnomer, inherited from django-councilmatic.
+        '''
+        date_of_next_board_meeting = cls.upcoming_board_meetings().last().start_time
 
-        return meetings
+        # Sometimes there are meetings scheduled for the same time as the
+        # board meeting. Show the board meeting last.
+        meetings = cls.objects.filter(start_time__gt=timezone.now())\
+                              .annotate(is_board_meeting=RawSQL("opencivicdata_event.name like %s", ('%Board Meeting%',)))\
+                              .order_by('start_time', 'is_board_meeting')
+
+        if meetings.filter(start_time__lte=date_of_next_board_meeting).count() >= 5:
+            return meetings.filter(start_time__lte=date_of_next_board_meeting)
+
+        else:
+            return meetings[:5]
 
 
     @property
