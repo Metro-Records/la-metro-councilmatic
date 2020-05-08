@@ -210,13 +210,66 @@ def test_current_meeting_no_potentially_current(event):
     assert not current_meetings
 
 
+def get_event_id():
+        return 'ocd-event/{}'.format(str(uuid4()))
+
+
+@pytest.mark.parametrize('n_before_board', [1, 4, 8])
+def test_upcoming_committee_meetings(event, n_before_board):
+    board_date = LAMetroEvent._time_from_now(days=7).strftime('%Y-%m-%d %H:%M')
+
+    board_meeting = event.build(
+        name='Regular Board Meeting',
+        start_date=board_date,
+        id=get_event_id()
+    )
+
+    before_board_date = LAMetroEvent._time_from_now(days=6).strftime('%Y-%m-%d %H:%M')
+    after_board_date = LAMetroEvent._time_from_now(days=8).strftime('%Y-%m-%d %H:%M')
+
+    # Create ten test meetings.
+    for i in range(1, 11):
+        if i < n_before_board:
+            start_date = before_board_date
+
+        elif i == n_before_board:
+            # Create one meeting with the same start date as the board meeting
+            # so we can test the board meeting is ordered last.
+            start_date = board_date
+
+        else:
+            start_date = after_board_date
+
+        event.build(
+            name='Test Committee',
+            start_date=start_date,
+            id=get_event_id()
+        )
+
+    upcoming_meetings = LAMetroEvent.upcoming_committee_meetings()
+
+    # Expected behavior: Return at minimum five meetings, up to/including the
+    # next board meeting.
+
+    if n_before_board + 1 < 5:
+        # The index of the board meeting should be the cardinal number of
+        # meetings before the board due to zero-indexing, e.g.,
+        # [committee, board, committee, committee, committee]
+        assert upcoming_meetings[n_before_board] == board_meeting
+        expected_count = 5
+
+    else:
+        assert upcoming_meetings.last() == board_meeting
+        expected_count = n_before_board + 1
+
+    assert upcoming_meetings.count() == expected_count
+
+
+
 def test_upcoming_board_meetings(event):
     one_minute_from_now = LAMetroEvent._time_from_now(minutes=1).strftime('%Y-%m-%d %H:%M')
     forty_days_ago = LAMetroEvent._time_ago(days=40).strftime('%Y-%m-%d %H:%M')
     forty_days_from_now = LAMetroEvent._time_from_now(days=40).strftime('%Y-%m-%d %H:%M')
-
-    def get_event_id():
-        return 'ocd-event/{}'.format(str(uuid4()))
 
     # Create a past meeting
     past_board_meeting = event.build(
