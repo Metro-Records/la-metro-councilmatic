@@ -265,7 +265,6 @@ def test_upcoming_committee_meetings(event, n_before_board):
     assert upcoming_meetings.count() == expected_count
 
 
-
 def test_upcoming_board_meetings(event):
     one_minute_from_now = LAMetroEvent._time_from_now(minutes=1).strftime('%Y-%m-%d %H:%M')
     forty_days_ago = LAMetroEvent._time_ago(days=40).strftime('%Y-%m-%d %H:%M')
