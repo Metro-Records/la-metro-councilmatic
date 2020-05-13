@@ -66,23 +66,18 @@ def test_format_full_text(bill, text, subject):
 
     assert format_full_text(full_text) == subject
 
-@pytest.mark.parametrize('restrict_view,bill_type,event_status,has_action,is_public', [
-        (True, 'Board Box', 'passed', False, False),  # private bill
-        (False, 'Board Box', 'passed', False, True),  # board box
-        (False, 'Board Correspondence', 'passed', False, True),  # board correspondence
-        (False, 'Resolution', 'passed', False, True),  # on published agenda
-        (False, 'Resolution', 'cancelled', False, True),  # on published agenda
-        (False, 'Resolution', 'confirmed', False, False),  # not on published agenda
-        (False, 'Resolution', 'passed', True, True),  # has matter history
-        (False, 'Test', 'test', False, False),  # not private, but does not meet conditions for display
+@pytest.mark.parametrize('restrict_view,bill_type,event_status,is_public', [
+        (True, 'Board Box', 'passed', False),
+        (False, 'Board Box', 'passed', True),
+        (False, 'Resolution', 'passed', True),
+        (False, 'Resolution', 'cancelled', True),
+        (False, 'Resolution', 'confirmed', False),
     ])
 def test_bill_manager(bill,
-                      bill_action,
                       event_related_entity,
                       restrict_view,
                       bill_type,
                       event_status,
-                      has_action,
                       is_public):
     '''
     Tests if the LAMetroBillManager properly filters public and private bills.
@@ -96,9 +91,6 @@ def test_bill_manager(bill,
     }
 
     some_bill = bill.build(**bill_info)
-
-    if has_action:
-        bill_action.build(bill=some_bill)
 
     event_related_entity_info = {
         'bill': some_bill,
