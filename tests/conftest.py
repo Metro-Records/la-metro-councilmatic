@@ -12,7 +12,7 @@ from opencivicdata.legislative.models import (
     EventRelatedEntity,
     )
 from opencivicdata.core.models import Jurisdiction, Division
-from opencivicdata.legislative.models import EventDocument
+from opencivicdata.legislative.models import EventDocument, BillAction
 from councilmatic_core.models import Bill, Membership
 from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, \
     LAMetroOrganization, LAMetroSubject
@@ -52,6 +52,30 @@ def bill(db, legislative_session):
             return bill
 
     return BillFactory()
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def bill_action(db, bill, metro_organization):
+    class BillActionFactory():
+        def build(self, **kwargs):
+            bill_action_info = {
+                'organization': metro_organization.build(),
+                'description': 'test action',
+                'date': '2019-11-09',
+                'order': 999,
+            }
+
+            bill_action_info.update(kwargs)
+
+            if not bill_action_info.get('bill'):
+                bill_action_info['bill'] = bill.build()
+
+            bill_action = BillAction.objects.create(**bill_action_info)
+
+            return bill_action
+
+    return BillActionFactory()
 
 @pytest.fixture
 @pytest.mark.django_db
