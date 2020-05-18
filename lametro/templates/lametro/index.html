@@ -17,7 +17,8 @@
                 </p>
                 <form class="search form-search=" action="/search/" method="GET">
                     <div class="input-group site-intro-search">
-                        <input name="q"  id="search-bar" type="text" class="input-lg form-control form-lg" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}">
+                        <!--<input name="q"  id="search-bar" type="text" class="input-lg form-control form-lg" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}">-->
+                        <select class="select2-multiple form-control input-group-lg" id="search-bar" multiple="multiple"></select>
                         <div class='input-group-btn'>
                             <button type="submit" class="btn btn-lg btn-primary">
                                 <i class='fa fa-fw fa-search'></i>
@@ -117,6 +118,7 @@
 {% block extra_js %}
     <script src="{% static 'js/jquery.autocomplete.js' %}"></script>
     <script src="{% static 'js/autocomplete.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
     <script>
 
@@ -142,7 +144,64 @@
             return false;
         });
 
-        autocompleteSearchBar('#search-bar');
+        SmartLogic.getToken();
+
+        var query = {};
+        var searchBar = $('#search-bar')
+
+        function markMatch (text) {
+          var term = searchBar.text();
+
+          console.log(term, text);
+
+          // Find where the match is
+          var match = text.toUpperCase().indexOf(term.toUpperCase());
+          console.log(match)
+
+          var $result = $('<span></span>');
+
+          // If there is no match, move on
+          if (match < 0) {
+            return $result.text(text);
+          }
+
+          // Put in whatever text is before the match
+          $result.text(text.substring(0, match));
+
+          // Mark the match
+          var $match = $('<strong></strong>');
+          $match.text(text.substring(match, match + term.length));
+
+          // Append the matching text
+          $result.append($match);
+
+          // Put in whatever is after the match
+          $result.append(text.substring(match + term.length));
+
+          return $result;
+        }
+
+        $("#search-bar").select2({
+            tags: true,
+            ajax: {
+                url: SmartLogic.buildServiceUrl,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Bearer ' + window.localStorage.getItem('ses_token')
+                },
+                processResults: SmartLogic.transformResponse
+            },
+            templateResult: function (state) {
+              // No need to template the searching text
+              if (state.loading) {
+                return state.text;
+              }
+
+              var term = query.term || '';
+              var $result = markMatch(state.text);
+              return $result;
+            },
+        });
 
         $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'})
     </script>
