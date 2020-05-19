@@ -76,10 +76,13 @@ var SmartLogic = {
   }
 };
 
-function initAutocomplete (searchForm, searchBar) {
+function initAutocomplete (formElement, inputElement) {
+    var $form = $(formElement);
+    var $input = $(inputElement);
+
     SmartLogic.getToken();
 
-    $(searchBar).select2({
+    $input.select2({
         tags: true,
         ajax: {
             url: SmartLogic.buildServiceUrl,
@@ -96,9 +99,14 @@ function initAutocomplete (searchForm, searchBar) {
         },
         containerCssClass: 'input-lg form-control form-lg autocomplete-search',
         minimumInputLength: 3,
+        language: {
+          inputTooShort: function (args) {
+            return 'Enter 3 or more characters to view suggestions.'
+          }
+        }
     });
 
-    $(searchForm).submit(function handleSubmit (e) {
+    $form.on('submit', function handleSubmit (e) {
         e.preventDefault();
 
         var terms = $('#search-bar')
@@ -126,5 +134,21 @@ function initAutocomplete (searchForm, searchBar) {
         }
 
         window.location.href = searchUrl;
+    });
+
+    // Select option and execute search on enter
+    // https://github.com/select2/select2/issues/1456#issuecomment-265457102
+    var submitOnEnter = function (e) {
+        if (e.keyCode === 13) {
+           $form.submit();
+        }
+    };
+
+    $input.on('select2:select', function (e) {
+        $form.off('keyup', '.select2-selection', submitOnEnter);
+    });
+
+    $input.on('select2:opening', function (e) {
+        $form.on('keyup', '.select2-selection', submitOnEnter);
     });
 }
