@@ -94,7 +94,8 @@ function initAutocomplete (searchForm, searchBar) {
             ? state.text
             : SmartLogic.highlightResult(state);
         },
-        containerCssClass: 'input-lg form-control form-lg autocomplete-search'
+        containerCssClass: 'input-lg form-control form-lg autocomplete-search',
+        minimumInputLength: 3,
     });
 
     $(searchForm).submit(function handleSubmit (e) {

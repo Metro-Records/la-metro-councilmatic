@@ -102,6 +102,15 @@
 
     {% block extra_js %}{% endblock %}
 
+    {% comment %}
+        This block is included for reference by our template overrides, e.g.,
+        search/search.html. Extending the extra_js block and calling super()
+        duplicates the extended content. I'm not quite sure why the duplication
+        occurs, but this seems to fix the problem.
+    {% endcomment %}
+
+    {% block uninherited_js %}{% endblock %}
+
     <script type="text/javascript">
         $('label.btn.btn-search-option').click(function toggleRadio(e) {
             // Toggle "active" appearance first, so filtering on active works.
