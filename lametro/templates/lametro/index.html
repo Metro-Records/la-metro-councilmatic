@@ -117,7 +117,7 @@
 {% block extra_js %}
     <script src="{% static 'js/jquery.autocomplete.js' %}"></script>
     <script src="{% static 'js/autocomplete.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.full.min.js"></script>
 
     <script>
 
@@ -163,6 +163,7 @@
                 ? state.text
                 : SmartLogic.highlightResult(state.text);
             },
+            containerCssClass: 'input-lg form-control form-lg autocomplete-search'
         });
 
         $('#search-form').submit(function handleSubmit (e) {
