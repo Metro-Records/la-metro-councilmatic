@@ -1,4 +1,5 @@
 var SmartLogic = {
+  query: {},
   getToken: function () {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
@@ -20,6 +21,7 @@ var SmartLogic = {
     return 'https://cloud.smartlogic.com/svc/0ef5d755-1f43-4a7e-8b06-7591bed8d453/ses/CombinedModel/concepts/' + query.term + '.json?FILTER=AT=System:%20Legistar&stop_cm_after_stage=3&maxResultCount=10';
   },
   transformResponse: function (data, params) {
+    SmartLogic.query = params;
     var results = data.terms
       ? $.map(data.terms, function(d) {
         /* d.term.equivalence is an array of objects. Each object contains
@@ -49,7 +51,7 @@ var SmartLogic = {
           });
         };
 
-        return {'text': '<strong>' + d.term.name + nptLabel + '</strong>', 'id': d.term.id};
+        return {'text': d.term.name + nptLabel, 'id': d.term.id};
       })
       : [];
 
@@ -57,5 +59,14 @@ var SmartLogic = {
       'results': results,
       'pagination': {'more': false}
     };
+  },
+  highlightResult: function (result) {
+    var term = SmartLogic.query.term.trim();
+
+    // Kudos to this thread: https://stackoverflow.com/a/28611416/7142170
+    var match = new RegExp('(' + term + ')', "ig");
+    var highlightedResult = result.replace(match, '<strong class="match-group">$1</strong>');
+
+    return $('<span></span>').append(highlightedResult);
   }
 };

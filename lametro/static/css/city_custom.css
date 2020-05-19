@@ -147,10 +147,11 @@ div#google_translate_element {
 
 .autocomplete-selected { background: #F0F0F0; }
 
-.autocomplete-suggestions strong {
+strong.match-group {
   font-weight: bold;
   color: #EB6864;
 }
+
 .autocomplete-group { padding: 2px 5px; }
 
 .autocomplete-group strong {

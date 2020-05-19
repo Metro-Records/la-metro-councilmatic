@@ -146,41 +146,6 @@
 
         SmartLogic.getToken();
 
-        var query = {};
-        var searchBar = $('#search-bar')
-
-        function markMatch (text) {
-          var term = searchBar.text();
-
-          console.log(term, text);
-
-          // Find where the match is
-          var match = text.toUpperCase().indexOf(term.toUpperCase());
-          console.log(match)
-
-          var $result = $('<span></span>');
-
-          // If there is no match, move on
-          if (match < 0) {
-            return $result.text(text);
-          }
-
-          // Put in whatever text is before the match
-          $result.text(text.substring(0, match));
-
-          // Mark the match
-          var $match = $('<strong></strong>');
-          $match.text(text.substring(match, match + term.length));
-
-          // Append the matching text
-          $result.append($match);
-
-          // Put in whatever is after the match
-          $result.append(text.substring(match + term.length));
-
-          return $result;
-        }
-
         $("#search-bar").select2({
             tags: true,
             ajax: {
@@ -192,14 +157,9 @@
                 processResults: SmartLogic.transformResponse
             },
             templateResult: function (state) {
-              // No need to template the searching text
-              if (state.loading) {
-                return state.text;
-              }
-
-              var term = query.term || '';
-              var $result = markMatch(state.text);
-              return $result;
+              return state.loading
+                ? state.text
+                : SmartLogic.highlightResult(state.text);
             },
         });
 
