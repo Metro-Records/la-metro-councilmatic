@@ -104,12 +104,26 @@ function initAutocomplete (searchForm, searchBar) {
           .select2('data')
           .map(function (el) {return '"' + el.id + '"'});
 
-        var query = terms.join(' AND ');
+        var queryString = terms.join(' AND ');
 
-        var corpus = $(this).find('input[name="search-all"]')[0].checked
+        var corpusString = $(this).find('input[name="search-all"]')[0].checked
             ? 'search-all=on'
             : 'search-reports=on';
 
-        window.location.href = '/search/?q=' + query + '&' + corpus;
+        var extraParams = []
+
+        $.each($(e.target).find('input[type="hidden"]'), function (_, el) {
+          var param = $(el).attr('name') + '=' + $(el).attr('value');
+          extraParams.push(param);
+        });
+
+        var searchUrl = '/search/?q=' + queryString + '&' + corpusString;
+
+        if ( extraParams.length > 0 ) {
+          extraParamString = extraParams.join('&');
+          searchUrl = searchUrl + '&' + extraParamString;
+        }
+
+        window.location.href = searchUrl;
     });
 }
