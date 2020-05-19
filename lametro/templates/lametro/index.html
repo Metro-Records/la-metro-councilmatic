@@ -15,12 +15,11 @@
                     Press enter to perform a keyword search, or select from suggested topics as they appear. <a id="beta-info" class="hover-hand" data-toggle="tooltip" title="<strong>Suggested topics are a new feature.</strong> If you aren't seeing helpful suggestions or have any additional feedback or questions, get in touch with us at <a href='mailto:boardreport@metro.net'>boardreport@metro.net</a>."><i id="beta-info" class="fa fa-info-circle fa-fw"></i></a>
                   </span>
                 </p>
-                <form class="search form-search=" action="/search/" method="GET">
+                <form class="search form-search" id="search-form">
                     <div class="input-group site-intro-search">
-                        <!--<input name="q"  id="search-bar" type="text" class="input-lg form-control form-lg" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}">-->
                         <select class="select2-multiple form-control input-group-lg" id="search-bar" multiple="multiple"></select>
                         <div class='input-group-btn'>
-                            <button type="submit" class="btn btn-lg btn-primary">
+                            <button type="submit" class="btn btn-lg btn-primary" id="search-button">
                                 <i class='fa fa-fw fa-search'></i>
                             </button>
                         </div>
@@ -144,6 +143,9 @@
             return false;
         });
 
+        $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'})
+
+        // Search
         SmartLogic.getToken();
 
         $("#search-bar").select2({
@@ -163,6 +165,22 @@
             },
         });
 
-        $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'})
+        $('#search-form').submit(function handleSubmit (e) {
+            e.preventDefault();
+
+            var terms = [];
+
+            $.each($(this).find('li.select2-selection__choice'), function (_, el) {
+                terms.push('"' + el.title + '"');
+            });
+
+            var query = terms.join(' AND ');
+
+            var corpus = $(this).find('input[name="search-all"]')[0].checked
+                ? 'search-all=on'
+                : 'search-reports=on';
+
+            window.location.href = '/search/?q=' + query + '&' + corpus;
+        });
     </script>
 {% endblock %}
