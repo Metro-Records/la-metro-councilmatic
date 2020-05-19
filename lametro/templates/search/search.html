@@ -11,46 +11,16 @@
     {% endif %}
 {% endblock %}
 
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block content %}
 
     <br/>
     <div class='jumbotron' id='search-jumbotron'>
-        <!-- Add partial, so the title above search can be easily customized for site. -->
         {% include 'partials/search_header.html' %}
-
-        <form method="get" action=".">
-            <div class="input-group site-intro-search">
-
-                {% for facet, selections in selected_facets.items %}
-                    {% for s in selections %}
-                        <input name="selected_facets" type="hidden" class="form-control" value="{{facet}}_exact:{{s}}">
-                    {% endfor %}
-                {% endfor %}
-
-                {% if 'sort_by=date' in request.get_full_path %}
-                    <input name="sort_by" type="hidden" class="form-control" value="date">
-                {% endif %}
-
-                {% if 'sort_by=title' in request.get_full_path %}
-                    <input name="sort_by" type="hidden" class="form-control" value="title">
-                {% endif %}
-
-                {% if 'sort_by=relevance' in request.get_full_path %}
-                    <input name="sort_by" type="hidden" class="form-control" value="relevance">
-                {% endif %}
-
-                {% if 'order_by=asc' in request.get_full_path %}
-                    <input name="order_by" type="hidden" class="form-control" value="asc">
-                {% endif %}
-
-                {% if 'order_by=desc' in request.get_full_path %}
-                    <input name="order_by" type="hidden" class="form-control" value="desc">
-                {% endif %}
-
-                {% with formatted_q=request.GET.q|remove_question %}
-                    {% include 'partials/search_bar.html' %}
-                {% endwith %}
-        </form>
+        {% include 'partials/search_bar.html' %}
     </div>
 
     <div class="row" style="margin-left:unset;">
@@ -284,19 +254,24 @@
 
 {% block extra_js %}
   {{ block.super }}
-  <script src="{% static 'js/jquery.autocomplete.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.full.min.js"></script>
   <script src="{% static 'js/autocomplete.js' %}"></script>
 
   <script>
-    autocompleteSearchBar('#autocomplete-search');
+
+    initAutocomplete('#search-form', '#search-bar');
+
     $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
+
     $('.collapse').on('show.bs.collapse', function(e) {
         var slug = $(this).attr('id');
         $('a[href="#' + slug + '"]').text('Fewer topics');
     });
+
     $('.collapse').on('hide.bs.collapse', function(e) {
         var slug = $(this).attr('id');
         $('a[href="#' + slug + '"]').text('More topics...');
     });
+
   </script>
 {% endblock %}
