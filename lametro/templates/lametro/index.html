@@ -145,43 +145,7 @@
 
         $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'})
 
-        // Search
-        SmartLogic.getToken();
+        initAutocomplete('#search-form', '#search-bar');
 
-        $("#search-bar").select2({
-            tags: true,
-            ajax: {
-                url: SmartLogic.buildServiceUrl,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Bearer ' + window.localStorage.getItem('ses_token')
-                },
-                processResults: SmartLogic.transformResponse
-            },
-            templateResult: function (state) {
-              return state.loading
-                ? state.text
-                : SmartLogic.highlightResult(state.text);
-            },
-            containerCssClass: 'input-lg form-control form-lg autocomplete-search'
-        });
-
-        $('#search-form').submit(function handleSubmit (e) {
-            e.preventDefault();
-
-            var terms = [];
-
-            $.each($(this).find('li.select2-selection__choice'), function (_, el) {
-                terms.push('"' + el.title + '"');
-            });
-
-            var query = terms.join(' AND ');
-
-            var corpus = $(this).find('input[name="search-all"]')[0].checked
-                ? 'search-all=on'
-                : 'search-reports=on';
-
-            window.location.href = '/search/?q=' + query + '&' + corpus;
-        });
     </script>
 {% endblock %}

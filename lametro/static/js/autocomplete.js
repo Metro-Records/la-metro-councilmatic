@@ -51,7 +51,7 @@ var SmartLogic = {
           });
         };
 
-        return {'text': d.term.name + nptLabel, 'id': d.term.id};
+        return {'text': d.term.name + nptLabel, 'id': d.term.name};
       })
       : [];
 
@@ -63,10 +63,53 @@ var SmartLogic = {
   highlightResult: function (result) {
     var term = SmartLogic.query.term.trim();
 
-    // Kudos to this thread: https://stackoverflow.com/a/28611416/7142170
-    var match = new RegExp('(' + term + ')', "ig");
-    var highlightedResult = result.replace(match, '<strong class="match-group">$1</strong>');
+    var escapeRegex = function (string) {
+      return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
 
-    return $('<span></span>').append(highlightedResult);
+    var match = new RegExp('(' + escapeRegex(term) + ')', "ig");
+    var highlightedResult = result.text.replace(match, '<strong class="match-group">$1</strong>');
+
+    return $('<span></span>')
+      .append(highlightedResult)
+      .attr('data-name', result.id);
   }
 };
+
+function initAutocomplete (searchForm, searchBar) {
+    SmartLogic.getToken();
+
+    $(searchBar).select2({
+        tags: true,
+        ajax: {
+            url: SmartLogic.buildServiceUrl,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Bearer ' + window.localStorage.getItem('ses_token')
+            },
+            processResults: SmartLogic.transformResponse
+        },
+        templateResult: function (state) {
+          return state.loading
+            ? state.text
+            : SmartLogic.highlightResult(state);
+        },
+        containerCssClass: 'input-lg form-control form-lg autocomplete-search'
+    });
+
+    $(searchForm).submit(function handleSubmit (e) {
+        e.preventDefault();
+
+        var terms = $('#search-bar')
+          .select2('data')
+          .map(function (el) {return '"' + el.id + '"'});
+
+        var query = terms.join(' AND ');
+
+        var corpus = $(this).find('input[name="search-all"]')[0].checked
+            ? 'search-all=on'
+            : 'search-reports=on';
+
+        window.location.href = '/search/?q=' + query + '&' + corpus;
+    });
+}
