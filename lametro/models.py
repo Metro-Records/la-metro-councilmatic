@@ -13,6 +13,7 @@ from django.utils.functional import cached_property
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
+import django.contrib.postgres.fields as postgres_fields
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager, Membership
 
@@ -744,6 +745,10 @@ class LAMetroSubject(models.Model):
 
     name = models.CharField(max_length=256, unique=True)
     guid = models.CharField(max_length=256, blank=True, null=True)
+    classification = postgres_fields.ArrayField(
+        models.CharField(max_length=255, blank=True, null=True),
+        default=list
+    )
 
     def __str__(self):
         if self.guid is not None:
