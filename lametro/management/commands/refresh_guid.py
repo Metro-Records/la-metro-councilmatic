@@ -10,6 +10,24 @@ from opencivicdata.legislative.models import Bill
 
 
 class Command(BaseCommand):
+    def _get_board_report_types(self):
+        '''
+        TODO: Generate this list dynamically.
+
+        TODO: Refactor this command to handle several different classifications
+        sourced from assorted SES queries.
+        '''
+        return (
+            'Annual reports',
+            'Informational Report',
+            'Police reports',
+            'Technical reports',
+            'Board Correspondence',
+            'Oral Report / Presentation',
+            'Project Status Report',
+            'Environmental Impact Report',
+        )
+
     def handle(self, *args, **options):
 
         scraper = LegistarAPIBillScraper()
@@ -31,20 +49,27 @@ class Command(BaseCommand):
 
         self.stdout.write('Removed {0} stale topics'.format(deleted))
 
-        topics = scraper.topics()
+        board_report_types = self._get_board_report_types()
 
         for_update = []
 
-        for topic in topics:
+        for topic in scraper.topics():
             try:
                 subject = LAMetroSubject.objects.get(name=topic['IndexName'])
             except LAMetroSubject.DoesNotExist:
                 self.stdout.write('Could not find LAMetroSubject with name {}'.format(topic['IndexName']))
             else:
                 subject.guid = topic['api_metadata']
+
+                # TODO: Refactor this to support multiple kinds of report type.
+                if subject.name in board_report_types:
+                    subject.classification.append('Board Report Type')
+                else:
+                    subject.classification = list(filter(lambda x: x != 'Board Report Type', subject.classification))
+
                 for_update.append(subject)
 
-        LAMetroSubject.objects.bulk_update(for_update, ['guid'])
+        LAMetroSubject.objects.bulk_update(for_update, ['guid', 'classification'])
 
         update_count = len(for_update)
         topic_count = LAMetroSubject.objects.count()
