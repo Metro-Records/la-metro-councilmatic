@@ -132,14 +132,11 @@
     <field name="legislative_session" type="text_en" indexed="true" stored="true" multiValued="false" />
     <field name="slug" type="string" indexed="false" stored="true" multiValued="false" />
     <field name="inferred_status" type="text_en" indexed="true" stored="true" multiValued="false" />
-    <field name="bill_type_exact" type="string" indexed="true" stored="true" multiValued="false" />
     <field name="topics" type="text_en" indexed="true" stored="true" multiValued="true" />
     <field name="sponsorships" type="text_en" indexed="true" stored="true" multiValued="true" />
     <field name="topics_exact" type="string" indexed="true" stored="true" multiValued="true" />
     <field name="description" type="text_en" indexed="true" stored="true" multiValued="false" />
     <field name="full_text" type="text_en" indexed="true" stored="true" multiValued="false" />
-    <field name="ocd_id" type="string" indexed="false" stored="true" multiValued="false" />
-    <field name="bill_type" type="text_en" indexed="true" stored="true" multiValued="false" />
     <field name="legislative_session_exact" type="string" indexed="true" stored="true" multiValued="false" />
     <field name="friendly_name" type="text_en" indexed="true" stored="true" multiValued="false" />
     <field name="sort_name" type="text_en" indexed="true" stored="true" multiValued="false" />
@@ -153,6 +150,8 @@
     <field name="attachment_text" type="text_en" indexed="true" stored="false" multiValued="false" />
     <field name="source_url" type="string" indexed="false" stored="true" multiValued="false" />
     <field name="identifier" type="text_en" indexed="true" stored="true" multiValued="false" />
+    <field name="bill_type" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="bill_type_exact" type="string" indexed="true" stored="true" multiValued="true" />
 
     <!-- Dynamic field definitions allow using convention over configuration
     for fields via the specification of patterns to match field names. 

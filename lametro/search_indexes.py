@@ -3,11 +3,12 @@ import re
 from haystack import indexes
 from councilmatic_core.haystack_indexes import BillIndex
 
-from lametro.models import LAMetroBill
+from lametro.models import LAMetroBill, LAMetroSubject
 from lametro.utils import format_full_text, parse_subject
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
     topics = indexes.MultiValueField(faceted=True)
+    bill_type = indexes.MultiValueField(faceted=True)
     attachment_text = indexes.CharField()
     viewable = indexes.BooleanField()
 
@@ -48,3 +49,10 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
                                                                end_year=end_year)
 
         return session
+
+    def prepare_bill_type(self, obj):
+        return list(
+            LAMetroSubject.objects.filter(name__in=obj.subject,
+                                          classification__contains=['Board Report Type'])\
+                                  .values_list('name', flat=True)
+        )
