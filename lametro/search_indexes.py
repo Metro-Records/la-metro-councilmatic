@@ -8,9 +8,13 @@ from lametro.utils import format_full_text, parse_subject
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
     topics = indexes.MultiValueField(faceted=True)
-    bill_type = indexes.MultiValueField(faceted=True)
     attachment_text = indexes.CharField()
     viewable = indexes.BooleanField()
+
+    # Custom Metro facets
+    bill_type = indexes.MultiValueField(faceted=True)
+    lines_and_ways = indexes.MultiValueField(faceted=True)
+    phases = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return LAMetroBill
@@ -51,8 +55,21 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return session
 
     def prepare_bill_type(self, obj):
-        return list(
-            LAMetroSubject.objects.filter(name__in=obj.subject,
-                                          classification__contains=['Board Report Type'])\
-                                  .values_list('name', flat=True)
-        )
+        return self._topics_from_classification(obj, 'Board Report Type')
+
+    def prepare_lines_and_ways(self, obj):
+        return self._topics_from_classification(obj, 'Lines / Ways')
+
+    def prepare_phases(self, obj):
+        return self._topics_from_classification(obj, 'Phases')
+
+    def _topics_from_classification(self, obj, classification):
+        '''
+        Retrieve a list of topics with the given classification.
+        '''
+        topics = LAMetroSubject.objects.filter(
+            name__in=obj.subject,
+            classification__contains=[classification]
+        ).values_list('name', flat=True)
+
+        return list(topics)

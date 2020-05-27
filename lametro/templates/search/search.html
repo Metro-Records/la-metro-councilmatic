@@ -83,24 +83,23 @@
             {% endwith %}
 
 
+            <!-- Lines / Ways -->
+            {% with facet_name='lines_and_ways' facet_label='Lines / Ways' item_list=facets.fields.lines_and_ways selected_list=selected_facets.lines_and_ways %}
+                {% include 'partials/search_filter.html' %}
+            {% endwith %}
+
+            <!-- Phases -->
+            {% with facet_name='phases' facet_label='Phase' item_list=facets.fields.phases selected_list=selected_facets.phases %}
+                {% include 'partials/search_filter.html' %}
+            {% endwith %}
+
+
             <!-- Topic -->
             {% if facets.fields.topics %}
                 {% with facet_name='topics' facet_label='Topic' item_list=facets.fields.topics selected_list=selected_facets.topics %}
                     {% include 'partials/search_filter.html' %}
                 {% endwith %}
             {% endif %}
-
-
-            <!-- Controlling Body -->
-            {% with facet_name='controlling_body' facet_label='Controlling Body' item_list=facets.fields.controlling_body selected_list=selected_facets.controlling_body %}
-                {% include 'partials/search_filter.html' %}
-            {% endwith %}
-
-
-            <!-- Sponsor -->
-            {% with facet_name='sponsorships' facet_label='Sponsor' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
-                {% include 'partials/search_filter.html' %}
-            {% endwith %}
 
 
             <!-- Legislative Session -->
