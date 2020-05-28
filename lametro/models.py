@@ -766,6 +766,15 @@ class LAMetroSubject(models.Model):
     def facet(self):
         '''
         TODO: Refactor if topics can have more than one classification.
+
+        It'd be awesome to be able to access something like: {
+            'classification_name': blah,
+            'classification_facet': 'blah',
+            'classification_icon': 'blah'
+        }
+
+        Maybe there ought to be a standalone Facet model with this information,
+        related to this one by ForeignKey.
         '''
         if self.classification:
             return self.CLASSIFICATION_FACET_LOOKUP.get(self.classification[0], self.DEFAULT_FACET)
