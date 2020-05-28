@@ -1,4 +1,7 @@
+from datetime import date, timedelta, datetime
 import itertools
+import re
+import urllib
 
 from django import template
 from django.template.defaultfilters import stringfilter
@@ -6,9 +9,8 @@ from django.utils.html import strip_tags
 from django.utils import timezone
 
 from haystack.query import SearchQuerySet
-from datetime import date, timedelta, datetime
-import re
-import urllib
+
+from opencivicdata.legislative.models import EventDocument
 
 from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
@@ -18,7 +20,6 @@ from councilmatic_core.utils import ExactHighlighter
 from lametro.models import LAMetroEvent
 from lametro.utils import format_full_text, parse_subject
 
-from opencivicdata.legislative.models import EventDocument
 
 register = template.Library()
 
@@ -178,7 +179,6 @@ def matches_query(tag, request):
 
 @register.filter
 def matches_facet(tag, selected_facets):
-    print(selected_facets)
     return any(tag.lower() in [v.lower() for v in values]
                for _, values in selected_facets.items())
 
@@ -198,9 +198,11 @@ def hits_first(context, topics, selected_facets):
     lower_terms = set(t.lower() for t in terms)
     lower_topics = set(t.lower() for t in topic_names)
 
-    hits = r'({})'.format('|'.join(t for t in lower_topics.intersection(lower_terms)))
+    hits = lower_topics.intersection(lower_terms)
+    hits_pattern = r'({})'.format('|'.join(re.escape(hit) for hit in hits))
 
-    return list(itertools.chain(topics.filter(name__iregex=hits), topics.exclude(name__iregex=hits)))
+    return list(itertools.chain(topics.filter(name__iregex=hits_pattern),
+                                topics.exclude(name__iregex=hits_pattern)))
 
 @register.filter
 def all_have_extra(entities, extra):
