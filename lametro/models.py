@@ -138,6 +138,10 @@ class LAMetroBill(Bill, SourcesMixin):
         return sorted(self.subject)
 
     @property
+    def rich_topics(self):
+        return LAMetroSubject.objects.filter(name__in=self.subject).order_by('name')
+
+    @property
     def board_report(self):
 
         try:
@@ -746,6 +750,8 @@ class LAMetroSubject(models.Model):
         'Phases': 'phases_exact',
     }
 
+    DEFAULT_FACET = 'topics_exact'
+
     class Meta:
         unique_together = ['guid', 'name']
 
@@ -755,6 +761,16 @@ class LAMetroSubject(models.Model):
         models.CharField(max_length=255, blank=True, null=True),
         default=list
     )
+
+    @property
+    def facet(self):
+        '''
+        TODO: Refactor if topics can have more than one classification.
+        '''
+        if self.classification:
+            return self.CLASSIFICATION_FACET_LOOKUP.get(self.classification[0], self.DEFAULT_FACET)
+        else:
+            return self.DEFAULT_FACET
 
     def __str__(self):
         if self.guid is not None:

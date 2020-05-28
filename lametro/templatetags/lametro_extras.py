@@ -1,3 +1,5 @@
+import itertools
+
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.html import strip_tags
@@ -171,11 +173,12 @@ def get_highlighted_attachment_text(context, id):
     return highlight.highlight(attachment_text)
 
 @register.filter
-def matches_query(tag, query):
-    return tag.lower() == query
+def matches_query(tag, request):
+    return tag.lower() == request.GET.get('q', '')
 
 @register.filter
 def matches_facet(tag, selected_facets):
+    print(selected_facets)
     return any(tag.lower() in [v.lower() for v in values]
                for _, values in selected_facets.items())
 
@@ -185,17 +188,19 @@ def hits_first(context, topics, selected_facets):
     Return array of topics, such that topics matching a selected facet or the
     search term are returned first, followed by the remaining tags in ABC order.
     '''
+    topic_names = topics.values_list('name', flat=True)
+
     terms = [context['query']]
 
     for _, values in selected_facets.items():
         terms += values
 
     lower_terms = set(t.lower() for t in terms)
-    lower_topics = set(t.lower() for t in topics)
+    lower_topics = set(t.lower() for t in topic_names)
 
-    hits = list(lower_topics.intersection(lower_terms))
+    hits = r'({})'.format('|'.join(t for t in lower_topics.intersection(lower_terms)))
 
-    return sorted(t for t in topics if t.lower() in hits) + sorted(t for t in topics if t.lower() not in hits)
+    return list(itertools.chain(topics.filter(name__iregex=hits), topics.exclude(name__iregex=hits)))
 
 @register.filter
 def all_have_extra(entities, extra):

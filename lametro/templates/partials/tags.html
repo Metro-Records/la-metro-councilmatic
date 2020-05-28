@@ -15,13 +15,13 @@
 
 <div class="row">
     <div class="col-xs-11">
-    {% if result.object.topics %}
+    {% if result.object.rich_topics %}
         <i class="fa fa-fw fa-tag"></i>
-        {% hits_first result.object.topics selected_facets as tags %}
+        {% hits_first result.object.rich_topics selected_facets as tags %}
         {% for tag in tags|slice:":10" %}
-            {% with "topics_exact:"|add:tag as tag_facet %}
-            <span class="badge{% if tag|matches_query:request.GET.q or tag|matches_facet:selected_facets %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
-                <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag}}</a>
+            {% with tag.facet|add:":"|add:tag.name as tag_facet %}
+            <span class="badge{% if tag.name|matches_query:request or tag.name|matches_facet:selected_facets %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
+                <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag.name}}</a>
             </span>&nbsp;
             {% endwith %}
         {% endfor %}
@@ -31,9 +31,9 @@
             </small>
             <div class="collapse" id="collapse-{{ result.slug }}">
                 {% for tag in tags|slice:"10:" %}
-                    {% with "topics_exact:"|add:tag as tag_facet %}
-                    <span class="badge{% if tag|matches_query:request.GET.q or tag|matches_facet:selected_facets %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
-                        <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag}}</a>
+                    {% with tag.facet|add:":"|add:tag.name as tag_facet %}
+                    <span class="badge{% if tag.name|matches_query:request or tag.name|matches_facet:selected_facets %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
+                        <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{tag.name}}</a>
                     </span>&nbsp;
                     {% endwith %}
                 {% endfor %}
