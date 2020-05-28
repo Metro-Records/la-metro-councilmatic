@@ -111,13 +111,13 @@ function initAutocomplete (formElement, inputElement) {
 
         var terms = $('#search-bar')
           .select2('data')
-          .map(function (el) {return '"' + el.id + '"'});
+          .map(function (el) {return el.id});
 
         var queryString = terms.join(' AND ');
 
         var corpusString = $(this).find('input[name="search-all"]')[0].checked
-            ? 'search-all=on'
-            : 'search-reports=on';
+          ? 'search-all=on'
+          : 'search-reports=on';
 
         var extraParams = []
 
@@ -140,7 +140,7 @@ function initAutocomplete (formElement, inputElement) {
     // https://github.com/select2/select2/issues/1456#issuecomment-265457102
     var submitOnEnter = function (e) {
         if (e.keyCode === 13) {
-           $form.submit();
+          $form.submit();
         }
     };
 

@@ -13,7 +13,8 @@ from collections import namedtuple
 import json as simplejson
 import os
 
-from haystack.inputs import Raw, Exact
+from haystack.backends import SQ
+from haystack.inputs import Exact, AutoQuery
 from haystack.query import SearchQuerySet
 from requests.exceptions import HTTPError
 
@@ -605,17 +606,32 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
 
+    def clean_q(self):
+        q = self.cleaned_data['q']
+        return ' AND '.join('({})'.format(term.strip()) for term in q.split('AND'))
+
     def search(self):
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
 
         if self.search_corpus == 'all':
             # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
-            sqs = sqs.filter_or(attachment_text=Raw(self.cleaned_data['q']))
+            sqs = sqs.filter_or(attachment_text=AutoQuery(self.cleaned_data['q']))
+
+        parentheses = re.compile(r'(\(|\))')
+
+        terms = [re.sub(parentheses, '', term) for term in self.cleaned_data['q'].split(' AND ')]
 
         if self.result_type == 'keyword':
-            sqs = sqs.exclude(topics__iexact=Exact(self.cleaned_data['q']))
+            for term in terms:
+                sqs = sqs.exclude(topics__iexact=Exact(term))
+
         elif self.result_type == 'topic':
-            sqs = sqs.filter(topics__iexact=Exact(self.cleaned_data['q']))
+            tag_filter = SQ()
+
+            for term in terms:
+                tag_filter |= SQ(topics__contains=Exact(term))
+
+            sqs = sqs.filter(tag_filter)
 
         return sqs
 
