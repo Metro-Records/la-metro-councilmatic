@@ -740,6 +740,12 @@ class EventPacket(Packet):
 
 
 class LAMetroSubject(models.Model):
+    CLASSIFICATION_FACET_LOOKUP = {
+        'Board Report Type': 'bill_type_exact',
+        'Lines / Ways': 'lines_and_ways_exact',
+        'Phases': 'phases_exact',
+    }
+
     class Meta:
         unique_together = ['guid', 'name']
 
@@ -749,6 +755,16 @@ class LAMetroSubject(models.Model):
         models.CharField(max_length=255, blank=True, null=True),
         default=list
     )
+
+    @property
+    def facet(self):
+        '''
+        TODO: Can a topic have more than one classification?
+        '''
+        if self.classification:
+            return self.CLASSIFICATION_FACET_LOOKUP[self.classification[0]]
+        else:
+            return 'topics_exact'
 
     def __str__(self):
         if self.guid is not None:
