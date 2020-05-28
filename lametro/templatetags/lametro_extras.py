@@ -171,27 +171,24 @@ def get_highlighted_attachment_text(context, id):
     return highlight.highlight(attachment_text)
 
 @register.filter
-def matches_query(tag, request):
-    if request.GET.get('q'):
-        return tag.lower() == request.GET.get('q').lower()
-    return False
+def matches_query(tag, query):
+    return tag.lower() == query
 
 @register.filter
-def matches_facet(tag, facet):
-    if facet:
-        return tag.lower() in [t.lower() for t in facet]
-    return False
+def matches_facet(tag, selected_facets):
+    return any(tag.lower() in [v.lower() for v in values]
+               for _, values in selected_facets.items())
 
 @register.simple_tag(takes_context=True)
-def hits_first(context, topics, selected_topics):
+def hits_first(context, topics, selected_facets):
     '''
     Return array of topics, such that topics matching a selected facet or the
     search term are returned first, followed by the remaining tags in ABC order.
     '''
     terms = [context['query']]
 
-    if selected_topics:
-        terms += selected_topics
+    for _, values in selected_facets.items():
+        terms += values
 
     lower_terms = set(t.lower() for t in terms)
     lower_topics = set(t.lower() for t in topics)

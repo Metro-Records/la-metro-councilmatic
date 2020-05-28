@@ -756,16 +756,6 @@ class LAMetroSubject(models.Model):
         default=list
     )
 
-    @property
-    def facet(self):
-        '''
-        TODO: Can a topic have more than one classification?
-        '''
-        if self.classification:
-            return self.CLASSIFICATION_FACET_LOOKUP[self.classification[0]]
-        else:
-            return 'topics_exact'
-
     def __str__(self):
         if self.guid is not None:
             return '{0} ({1})'.format(self.name, self.guid)
