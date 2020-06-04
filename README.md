@@ -137,7 +137,7 @@ Did everything work as expected? Great - now onto the production site.
 
 Make sure your changes are deployed to the production server (i.e. you've cut a release with your changes).
 
-1. Look at the times cron tasks are run (specified in [`scripts/lametro-crontasks`](https://github.com/datamade/la-metro-councilmatic/blob/master/scripts/lametro-crontasks)), and plan to rebuild the index inbetween those times. Rebuilding the index will take a few minutes, so plan accordingly.
+1. Look at the times scheduled tasks are run (specified in [the `la-metro-dashboard` repo](https://github.com/datamade/la-metro-dashboard/tree/master/dags)), and plan to rebuild the index inbetween those times. Rebuilding the index will take a few minutes, so plan accordingly.
 
 2. As above: shell into the server, go to the `lametro` repo, then remove and rebuild the Solr container.
     ```bash
