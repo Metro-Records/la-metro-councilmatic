@@ -110,7 +110,7 @@ class Command(BaseCommand, ClassificationMixin):
 
                 subject.guid = topic['api_metadata']
                 subject.classification = self.classifications.get(subject.name,
-                                                                  self.CLASSIFICATION_MAP['Topic'])
+                                                                  self.CLASSIFICATION_MAP['Subjects'])
 
                 self.stdout.write('Classification: {}'.format(subject.classification))
 
