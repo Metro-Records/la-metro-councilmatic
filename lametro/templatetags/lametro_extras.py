@@ -123,8 +123,8 @@ def parse_agenda_item(text):
 
 @register.filter
 def short_topic_name(text):
-    if len(text) > 40:
-        blurb = text[:40]
+    if len(text) > 50:
+        blurb = text[:50]
         blurb = blurb[:blurb.rfind(' ')] + ' ...'
         return blurb
     else:

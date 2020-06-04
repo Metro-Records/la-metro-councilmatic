@@ -91,14 +91,26 @@
             {% else %}
                 {% for name, count in item_list %}
                     {% if count %}
-                        {% include 'partials/search_filter_item.html' %}
+                        <li class="small">
+                            {% if name in selected_list %}
+                                  <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name|title }}">
+                                    <strong>{{ name | short_topic_name }}</strong>
+                                </a>
+                                <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
+                                   <i class="fa fa-times"></i>
+                                </a>
+                            {% else %}
+                                  <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name|title }}">
+                                       {{ name | short_topic_name }}
+                                </a>
+                            {% endif %}
+
+                            <span class="badge badge-facet pull-right">{{ count }}</span>
+                        </li>
                     {% endif %}
                 {% endfor %}
             {% endif %}
-
-
             </ul>
-
         </div>
     </div>
 
