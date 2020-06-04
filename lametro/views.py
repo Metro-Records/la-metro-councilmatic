@@ -609,7 +609,9 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
     def search(self):
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
 
-        if self.cleaned_data['q'] and self.search_corpus == 'all':
+        has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
+
+        if has_query and self.search_corpus == 'all':
             # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
             sqs = sqs.filter_or(attachment_text=Raw(self.cleaned_data['q']))
 

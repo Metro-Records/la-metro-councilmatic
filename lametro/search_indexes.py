@@ -36,9 +36,6 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         else:
             return obj.bill_type
 
-    def prepare_topics(self, obj):
-        return obj.topics
-
     def prepare_attachment_text(self, obj):
         return ' '.join(
             d.extras['full_text'] for d in obj.documents.all()
@@ -54,14 +51,17 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
         return session
 
+    def prepare_topics(self, obj):
+        return self._topics_from_classification(obj, 'topics_exact')
+
     def prepare_bill_type(self, obj):
-        return self._topics_from_classification(obj, 'Board Report Type')
+        return self._topics_from_classification(obj, 'bill_type_exact')
 
     def prepare_lines_and_ways(self, obj):
-        return self._topics_from_classification(obj, 'Lines / Ways')
+        return self._topics_from_classification(obj, 'lines_and_ways_exact')
 
     def prepare_phases(self, obj):
-        return self._topics_from_classification(obj, 'Phases')
+        return self._topics_from_classification(obj, 'phases_exact')
 
     def _topics_from_classification(self, obj, classification):
         '''
@@ -69,7 +69,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         '''
         topics = LAMetroSubject.objects.filter(
             name__in=obj.subject,
-            classification__contains=[classification]
+            classification=classification
         ).values_list('name', flat=True)
 
         return list(topics)

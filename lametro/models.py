@@ -744,42 +744,24 @@ class EventPacket(Packet):
 
 
 class LAMetroSubject(models.Model):
-    CLASSIFICATION_FACET_LOOKUP = {
-        'Board Report Type': 'bill_type_exact',
-        'Lines / Ways': 'lines_and_ways_exact',
-        'Phases': 'phases_exact',
-    }
 
-    DEFAULT_FACET = 'topics_exact'
+    CLASSIFICATION_CHOICES = [
+        ('bill_type_exact', 'Board Report Type'),
+        ('lines_and_ways_exact', 'Lines / Ways'),
+        ('phases_exact', 'Phases'),
+        ('topics_exact', 'Subjects'),
+    ]
 
     class Meta:
         unique_together = ['guid', 'name']
 
     name = models.CharField(max_length=256, unique=True)
     guid = models.CharField(max_length=256, blank=True, null=True)
-    classification = postgres_fields.ArrayField(
-        models.CharField(max_length=255, blank=True, null=True),
-        default=list
+    classification = models.CharField(
+        max_length=256,
+        default='topics_exact',
+        choices=CLASSIFICATION_CHOICES
     )
-
-    @property
-    def facet(self):
-        '''
-        TODO: Refactor if topics can have more than one classification.
-
-        It'd be awesome to be able to access something like: {
-            'classification_name': blah,
-            'classification_facet': 'blah',
-            'classification_icon': 'blah'
-        }
-
-        Maybe there ought to be a standalone Facet model with this information,
-        related to this one by ForeignKey.
-        '''
-        if self.classification:
-            return self.CLASSIFICATION_FACET_LOOKUP.get(self.classification[0], self.DEFAULT_FACET)
-        else:
-            return self.DEFAULT_FACET
 
     def __str__(self):
         if self.guid is not None:
