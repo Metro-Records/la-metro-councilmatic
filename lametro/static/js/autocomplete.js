@@ -113,6 +113,14 @@ function initAutocomplete (formElement, inputElement) {
           .select2('data')
           .map(function (el) {return el.id});
 
+        // Grab the input text
+        var pendingTerm = $("#search-bar").data("select2").selection.$search[0].value;
+
+        // If there aren't selected terms, search for the pending term
+        if ( terms.length === 0 && pendingTerm !== undefined ) {
+          terms = [pendingTerm];
+        }
+
         var queryString = terms.join(' AND ');
 
         var corpusString = $(this).find('input[name="search-all"]')[0].checked
