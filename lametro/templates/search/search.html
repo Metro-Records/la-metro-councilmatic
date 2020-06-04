@@ -94,9 +94,9 @@
             {% endwith %}
 
 
-            <!-- Topic -->
+            <!-- Subject -->
             {% if facets.fields.topics %}
-                {% with facet_name='topics' facet_label='Topic' item_list=facets.fields.topics selected_list=selected_facets.topics %}
+                {% with facet_name='topics' facet_label='Subject' item_list=facets.fields.topics selected_list=selected_facets.topics %}
                     {% include 'partials/search_filter.html' %}
                 {% endwith %}
             {% endif %}
