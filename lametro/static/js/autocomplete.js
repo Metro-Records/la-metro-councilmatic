@@ -22,6 +22,7 @@ var SmartLogic = {
   },
   transformResponse: function (data, params) {
     SmartLogic.query = params;
+
     var results = data.terms
       ? $.map(data.terms, function(d) {
         /* d.term.equivalence is an array of objects. Each object contains
@@ -55,12 +56,27 @@ var SmartLogic = {
       })
       : [];
 
+    // Only show the suggested group if there are suggestions
+    var groupedResults = results.length > 0
+      ? [{
+        'text': 'Suggested query terms',
+        'children': results
+      }]
+      : [];
+
     return {
-      'results': results,
+      'results': groupedResults,
       'pagination': {'more': false}
     };
   },
   highlightResult: function (result) {
+    // Return the first result with a set prefix, no highlight
+    if ( result.newTag === true ) {
+      return $('<span></span>')
+        .append('<strong>What you typed: </strong>' + result.text)
+        .attr('data-name', result.id)
+    };
+
     var term = SmartLogic.query.term.trim();
 
     var escapeRegex = function (string) {
@@ -102,6 +118,19 @@ function initAutocomplete (formElement, inputElement) {
         language: {
           inputTooShort: function (args) {
             return 'Enter 3 or more characters to view suggestions.'
+          }
+        },
+        createTag: function (params) {
+          var term = $.trim(params.term);
+
+          if (term === '') {
+            return null;
+          }
+
+          return {
+            id: term,
+            text: term,
+            newTag: true
           }
         }
     });
