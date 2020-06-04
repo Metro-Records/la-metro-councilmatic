@@ -146,7 +146,7 @@ function initAutocomplete (formElement, inputElement) {
         var pendingTerm = $("#search-bar").data("select2").selection.$search[0].value;
 
         // If there aren't selected terms, search for the pending term
-        if ( terms.length === 0 && pendingTerm !== undefined ) {
+        if ( terms.length === 0 && pendingTerm !== '' ) {
           terms = [pendingTerm];
         }
 
@@ -156,7 +156,7 @@ function initAutocomplete (formElement, inputElement) {
           ? 'search-all=on'
           : 'search-reports=on';
 
-        var extraParams = []
+        var extraParams = [];
 
         $.each($(e.target).find('input[type="hidden"]'), function (_, el) {
           var param = $(el).attr('name') + '=' + $(el).attr('value');

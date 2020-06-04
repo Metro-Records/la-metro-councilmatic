@@ -266,11 +266,15 @@
             return el.replace(/&quot;/g, '');
         });
 
-    $.each(initialTerms, function (_, term) {
-        var option =  $('<option selected></option>').text(term);
-        $('#search-bar').append(option);
-        $('#search-bar').trigger('change');
-    });
+    var emptyQuery = initialTerms.length === 1 && initialTerms[0] === '';
+
+    if ( !emptyQuery ) {
+        $.each(initialTerms, function (_, term) {
+            var option =  $('<option selected></option>').text(term);
+            $('#search-bar').append(option);
+            $('#search-bar').trigger('change');
+        });
+    };
 
     $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
 

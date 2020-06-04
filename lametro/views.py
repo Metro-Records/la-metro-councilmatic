@@ -608,18 +608,26 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
     def clean_q(self):
         q = self.cleaned_data['q']
-        return ' AND '.join('({})'.format(term.strip()) for term in q.split('AND'))
+        if q:
+            return ' AND '.join('({})'.format(term.strip()) for term in q.split('AND'))
+        else:
+            return ''
 
     def search(self):
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
 
-        if self.search_corpus == 'all':
+        has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
+
+        if has_query and self.search_corpus == 'all':
             # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
             sqs = sqs.filter_or(attachment_text=AutoQuery(self.cleaned_data['q']))
 
         parentheses = re.compile(r'(\(|\))')
 
-        terms = [re.sub(parentheses, '', term) for term in self.cleaned_data['q'].split(' AND ')]
+        if has_query:
+            terms = [re.sub(parentheses, '', term) for term in self.cleaned_data['q'].split(' AND ')]
+        else:
+            terms = []
 
         if self.result_type == 'keyword':
             for term in terms:
