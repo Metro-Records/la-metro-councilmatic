@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lametrosubject',
             name='classification',
-            field=models.CharField(choices=[('bill_type_exact', 'Board Report Type'), ('lines_and_ways_exact', 'Lines / Ways'), ('phases_exact', 'Phases'), ('topics_exact', 'Topic')], default='topics_exact', max_length=256),
+            field=models.CharField(choices=[('bill_type_exact', 'Board Report Type'), ('lines_and_ways_exact', 'Lines / Ways'), ('phases_exact', 'Phases'), ('topics_exact', 'Subject')], default='topics_exact', max_length=256),
         ),
     ]
