@@ -1,0 +1,26 @@
+{% load extras %}
+{% load lametro_extras %}
+
+{% for name, count in facets.fields|get_item:facet_name %}
+    {% if count %}
+        {% if name in selected_list %}
+            <li class="small">
+                <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}"><strong>{{ name | short_topic_name }}</strong></a>
+                <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
+                   <i class="fa fa-times"></i>
+                </a>
+                <span class="badge badge-facet pull-right">{{ count }}</span>
+            </li>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+{% for name, count in facets.fields|get_item:facet_name|dictsort:0 %}
+    {% if count %}
+        {% if name not in selected_list %}
+            <li class="small">
+                <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name | short_topic_name }}</a>
+                <span class="badge badge-facet pull-right">{{ count }}</span>
+            </li>
+        {% endif %}
+    {% endif %}
+{% endfor %}
