@@ -199,7 +199,7 @@ def hits_first(context, topics, selected_facets):
     lower_topics = set(t.lower() for t in topic_names)
 
     hits = lower_topics.intersection(lower_terms)
-    hits_pattern = r'({})'.format('|'.join(re.escape(hit) for hit in hits))
+    hits_pattern = r'^({})$'.format('|'.join(re.escape(hit) for hit in hits))
 
     return list(itertools.chain(topics.filter(name__iregex=hits_pattern),
                                 topics.exclude(name__iregex=hits_pattern)))
