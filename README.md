@@ -91,12 +91,6 @@ Then, rebuild your index.
 docker-compose run --rm app python manage.py rebuild_index --batch-size=25
 ```
 
-Finally, prepare for deployment: move your new schema to `solr_scripts`.
-
-```
-cp solr_configs/conf/schema.xml solr_scripts/schema.xml
-```
-
 ### On the Server
 
 The Dockerized versions of Solr on the server need your attention, too. Follow these steps.

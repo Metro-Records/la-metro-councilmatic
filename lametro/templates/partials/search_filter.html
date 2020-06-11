@@ -23,7 +23,7 @@
         </div>
         <div class="panel-body {% if facet_name in selected_facets %}panel-show{% endif %} collapse" id="filter-{{facet_name}}">
             <ul class="search-facet-list">
-            {% if facet_name in 'topics,lines_and_ways,phases,bill_type' %}
+            {% if facet_name in 'topics,lines_and_ways,phase,bill_type,project,location,significant_date,motion_by' %}
 
                 {% include 'partials/ordered_search_filter_items.html' %}
 

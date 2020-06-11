@@ -14,7 +14,11 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     # Custom Metro facets
     bill_type = indexes.MultiValueField(faceted=True)
     lines_and_ways = indexes.MultiValueField(faceted=True)
-    phases = indexes.MultiValueField(faceted=True)
+    phase = indexes.MultiValueField(faceted=True)
+    project = indexes.MultiValueField(faceted=True)
+    location = indexes.MultiValueField(faceted=True)
+    significant_date = indexes.MultiValueField(faceted=True)
+    motion_by = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return LAMetroBill
@@ -60,8 +64,20 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     def prepare_lines_and_ways(self, obj):
         return self._topics_from_classification(obj, 'lines_and_ways_exact')
 
-    def prepare_phases(self, obj):
-        return self._topics_from_classification(obj, 'phases_exact')
+    def prepare_phase(self, obj):
+        return self._topics_from_classification(obj, 'phase_exact')
+
+    def prepare_project(self, obj):
+        return self._topics_from_classification(obj, 'project_exact')
+
+    def prepare_location(self, obj):
+        return self._topics_from_classification(obj, 'location_exact')
+
+    def prepare_significant_date(self, obj):
+        return self._topics_from_classification(obj, 'significant_date_exact')
+
+    def prepare_motion_by(self, obj):
+        return self._topics_from_classification(obj, 'motion_by_exact')
 
     def _topics_from_classification(self, obj, classification):
         '''

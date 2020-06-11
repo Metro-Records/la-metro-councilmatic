@@ -748,8 +748,12 @@ class LAMetroSubject(models.Model):
     CLASSIFICATION_CHOICES = [
         ('bill_type_exact', 'Board Report Type'),
         ('lines_and_ways_exact', 'Lines / Ways'),
-        ('phases_exact', 'Phases'),
-        ('topics_exact', 'Subjects'),
+        ('phase_exact', 'Phase'),
+        ('project_exact', 'Project'),
+        ('location_exact', 'Location'),
+        ('significant_date_exact', 'Significant Date'),
+        ('motion_by_exact', 'Motion By'),
+        ('topics_exact', 'Subject'),
     ]
 
     class Meta:

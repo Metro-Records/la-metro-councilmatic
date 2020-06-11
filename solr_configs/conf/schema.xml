@@ -156,8 +156,16 @@
     <field name="bill_type_exact" type="string" indexed="true" stored="true" multiValued="true" />
     <field name="lines_and_ways" type="text_en" indexed="true" stored="true" multiValued="true" />
     <field name="lines_and_ways_exact" type="string" indexed="true" stored="true" multiValued="true" />
-    <field name="phases" type="text_en" indexed="true" stored="true" multiValued="true" />
-    <field name="phases_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="phase" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="phase_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="project" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="project_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="location" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="location_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="significant_date" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="significant_date_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="motion_by" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="motion_by_exact" type="string" indexed="true" stored="true" multiValued="true" />
 
     <!-- Dynamic field definitions allow using convention over configuration
     for fields via the specification of patterns to match field names. 
