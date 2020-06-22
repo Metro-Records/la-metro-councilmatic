@@ -33,7 +33,7 @@ class ClassificationMixin:
                 **{term: self.CLASSIFICATION_MAP['Project'] for term in self.get_projects()},
                 **{term: self.CLASSIFICATION_MAP['Location'] for term in self.get_locations()},
                 **{term: self.CLASSIFICATION_MAP['Significant Date'] for term in self.get_significant_dates()},
-                **{term: self.CLASSIFICATION_MAP['Motion By'] for term in self.get_motion_by()},
+                **{term.replace(u'\u200b', ''): self.CLASSIFICATION_MAP['Motion By'] for term in self.get_motion_by()},
             }
         return self._classifications
 
