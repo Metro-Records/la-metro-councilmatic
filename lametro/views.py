@@ -641,7 +641,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                               .facet('topics')\
                               .facet('legislative_session', sort='index')\
                               .facet('lines_and_ways')\
-                              .facet('phases')\
+                              .facet('phase')\
                               .highlight(**{'hl.fl': 'text,attachment_text'})
 
         data = None

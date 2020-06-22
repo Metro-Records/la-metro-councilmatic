@@ -1,7 +1,7 @@
 {% load extras %}
 {% load lametro_extras %}
 
-{% for name, count in facets.fields|get_item:facet_name %}
+{% for name, count in item_list %}
     {% if count %}
         {% if name in selected_list %}
             <li class="small">
@@ -14,7 +14,7 @@
         {% endif %}
     {% endif %}
 {% endfor %}
-{% for name, count in facets.fields|get_item:facet_name|dictsort:0 %}
+{% for name, count in item_list|dictsort:0 %}
     {% if count %}
         {% if name not in selected_list %}
             <li class="small">
