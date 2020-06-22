@@ -639,9 +639,12 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                               .facet('sponsorships', sort='index')\
                               .facet('inferred_status')\
                               .facet('topics')\
-                              .facet('legislative_session', sort='index')\
                               .facet('lines_and_ways')\
                               .facet('phase')\
+                              .facet('project')\
+                              .facet('motion_by')\
+                              .facet('significant_date')\
+                              .facet('legislative_session', sort='index')\
                               .highlight(**{'hl.fl': 'text,attachment_text'})
 
         data = None
