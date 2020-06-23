@@ -36,10 +36,6 @@ class ClassificationMixin:
                 **{term.replace(u'\u200b', ''): self.CLASSIFICATION_MAP['Motion By'] for term in self.get_motion_by()},
             }
 
-
-        import pprint
-        pprint.pprint(self._classifications)
-
         return self._classifications
 
     def _get_flat_terms(self, term_json):
@@ -94,7 +90,7 @@ class ClassificationMixin:
 
     def get_locations(self):
         self.stdout.write('Getting locations')
-        terms = self.smartlogic.terms('CL=Location')['terms']
+        terms = self.smartlogic.terms('CL=All Locations')['terms']
         return self._get_flat_terms(terms)
 
     def get_significant_dates(self):
