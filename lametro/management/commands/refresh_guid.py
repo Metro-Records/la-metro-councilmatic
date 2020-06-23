@@ -95,7 +95,7 @@ class ClassificationMixin:
 
     def get_significant_dates(self):
         self.stdout.write('Getting significant dates')
-        terms = self.smartlogic.terms('CL=Significant Dates')['terms']
+        terms = self.smartlogic.terms('CL=Date')['terms']
         return self._get_flat_terms(terms)
 
     def get_motion_by(self):
