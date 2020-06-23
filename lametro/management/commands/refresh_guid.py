@@ -35,6 +35,11 @@ class ClassificationMixin:
                 **{term: self.CLASSIFICATION_MAP['Significant Date'] for term in self.get_significant_dates()},
                 **{term.replace(u'\u200b', ''): self.CLASSIFICATION_MAP['Motion By'] for term in self.get_motion_by()},
             }
+
+
+        import pprint
+        pprint.pprint(self._classifications)
+
         return self._classifications
 
     def _get_flat_terms(self, term_json):
