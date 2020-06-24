@@ -177,17 +177,21 @@
             {% if legislation.topics %}
             <br>
               <h3><i class="fa fa-tag" aria-hidden="true"></i> Topics</h3>
-              <ul>
-                {% for topic in legislation.topics %}
-                  {% with "topics_exact:"|add:topic as tag_facet %}
-                    <li>
-                        <a href="{% search_with_querystring request selected_facets=tag_facet %}">
-                          {{ topic }}
-                        </a>
-                    </li>
-                  {% endwith %}
+                {% regroup legislation.rich_topics|dictsort:'get_classification_display' by get_classification_display as topics_list %}
+                {% for facet in topics_list %}
+                    <h4>{{ facet.grouper }}</h4>
+                    <ul>
+                    {% for topic in facet.list %}
+                        {% with topic.classification|add:":"|add:topic.name as tag_facet %}
+                        <li>
+                            <a href="{% search_with_querystring request selected_facets=tag_facet %}">
+                              {{ topic.name }}
+                            </a>
+                        </li>
+                        {% endwith %}
+                    {% endfor %}
+                    </ul>
                 {% endfor %}
-              </ul>
             {% endif %}
         </div>
 

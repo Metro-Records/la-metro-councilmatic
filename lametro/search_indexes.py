@@ -3,13 +3,22 @@ import re
 from haystack import indexes
 from councilmatic_core.haystack_indexes import BillIndex
 
-from lametro.models import LAMetroBill
+from lametro.models import LAMetroBill, LAMetroSubject
 from lametro.utils import format_full_text, parse_subject
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
     topics = indexes.MultiValueField(faceted=True)
     attachment_text = indexes.CharField()
     viewable = indexes.BooleanField()
+
+    # Custom Metro facets
+    bill_type = indexes.MultiValueField(faceted=True)
+    lines_and_ways = indexes.MultiValueField(faceted=True)
+    phase = indexes.MultiValueField(faceted=True)
+    project = indexes.MultiValueField(faceted=True)
+    location = indexes.MultiValueField(faceted=True)
+    significant_date = indexes.MultiValueField(faceted=True)
+    motion_by = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return LAMetroBill
@@ -31,9 +40,6 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         else:
             return obj.bill_type
 
-    def prepare_topics(self, obj):
-        return obj.topics
-
     def prepare_attachment_text(self, obj):
         return ' '.join(
             d.extras['full_text'] for d in obj.documents.all()
@@ -48,3 +54,38 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
                                                                end_year=end_year)
 
         return session
+
+    def prepare_topics(self, obj):
+        return self._topics_from_classification(obj, 'topics_exact')
+
+    def prepare_bill_type(self, obj):
+        return self._topics_from_classification(obj, 'bill_type_exact')
+
+    def prepare_lines_and_ways(self, obj):
+        return self._topics_from_classification(obj, 'lines_and_ways_exact')
+
+    def prepare_phase(self, obj):
+        return self._topics_from_classification(obj, 'phase_exact')
+
+    def prepare_project(self, obj):
+        return self._topics_from_classification(obj, 'project_exact')
+
+    def prepare_location(self, obj):
+        return self._topics_from_classification(obj, 'location_exact')
+
+    def prepare_significant_date(self, obj):
+        return self._topics_from_classification(obj, 'significant_date_exact')
+
+    def prepare_motion_by(self, obj):
+        return self._topics_from_classification(obj, 'motion_by_exact')
+
+    def _topics_from_classification(self, obj, classification):
+        '''
+        Retrieve a list of topics with the given classification.
+        '''
+        topics = LAMetroSubject.objects.filter(
+            name__in=obj.subject,
+            classification=classification
+        ).values_list('name', flat=True)
+
+        return list(topics)
