@@ -55,7 +55,6 @@ from opencivicdata.core.models import PersonLink
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
     LAMetroEvent, LAMetroOrganization, LAMetroSubject
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
-from lametro.smartlogic import SmartLogic
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL, SMART_LOGIC_KEY, \
@@ -609,9 +608,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
     def search(self):
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
 
-        has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
-
-        if has_query and self.search_corpus == 'all':
+        if self.search_corpus == 'all':
             # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
             sqs = sqs.filter_or(attachment_text=Raw(self.cleaned_data['q']))
 
@@ -639,11 +636,6 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                               .facet('sponsorships', sort='index')\
                               .facet('inferred_status')\
                               .facet('topics')\
-                              .facet('lines_and_ways')\
-                              .facet('phase')\
-                              .facet('project')\
-                              .facet('motion_by')\
-                              .facet('significant_date')\
                               .facet('legislative_session', sort='index')\
                               .highlight(**{'hl.fl': 'text,attachment_text'})
 
@@ -739,16 +731,37 @@ class SmartLogicAPI(ListView):
         try:
             return JsonResponse(context['object_list'])
         except json.JSONDecodeError:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Could not retrieve SmartLogic token'
-            }, status=500)
+            return JsonResponse({ 'status': 'false', 'message': 'No topic found' }, status=500)
 
     def get_queryset(self, *args, **kwargs):
         '''
-        Return a SmartLogic authentication token.
+        Hit the SmartLogic endpoint. Tokens expire in two weeks, so if we get
+        an authentication-related status code, refresh the token and try again
+        once before failing out.
         '''
-        return SmartLogic(SMART_LOGIC_KEY).token()
+        return self._generate_token()
+
+    def _generate_token(self):
+        '''
+        Get a JSON Web Token from the SmartLogic API.
+        '''
+        url = 'https://cloud.smartlogic.com/token'
+        params = {'grant_type': 'apikey', 'key': self.api_key}
+
+        try:
+            response = requests.post(url, data=params, timeout=3)
+        except HTTPError as e:
+            print('Could not authenticate with SmartLogic: {}'.format(e))
+            return None
+
+        try:
+            return json.loads(response.content.decode('utf-8'))
+        except json.JSONDecodeError:
+            '''
+            Occasionally we are returned a 200 response with the html of a SmartLogic page.
+            We handle the json.JSONDecodeError that causes here.
+            '''
+            raise
 
 
 def fetch_topic(request):
