@@ -46,32 +46,59 @@
                 {% include 'partials/search_filter.html' %}
             {% endwith %}
 
-
             <!-- Legislation Type -->
             {% with facet_name='bill_type' facet_label='Legislation Type' item_list=facets.fields.bill_type selected_list=selected_facets.bill_type %}
                 {% include 'partials/search_filter.html' %}
             {% endwith %}
 
-
-            <!-- Topic -->
-            {% if facets.fields.topics %}
-                {% with facet_name='topics' facet_label='Topic' item_list=facets.fields.topics selected_list=selected_facets.topics %}
+            <!-- Lines / Ways -->
+            {% if facets.fields.lines_and_ways %}
+                {% with facet_name='lines_and_ways' facet_label='Lines / Ways' item_list=facets.fields.lines_and_ways selected_list=selected_facets.lines_and_ways %}
                     {% include 'partials/search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
+            <!-- Phase -->
+            {% if facets.fields.phase %}
+                {% with facet_name='phase' facet_label='Phase' item_list=facets.fields.phase selected_list=selected_facets.phase %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
 
-            <!-- Controlling Body -->
-            {% with facet_name='controlling_body' facet_label='Controlling Body' item_list=facets.fields.controlling_body selected_list=selected_facets.controlling_body %}
-                {% include 'partials/search_filter.html' %}
-            {% endwith %}
+            <!-- Project -->
+            {% if facets.fields.project %}
+                {% with facet_name='project' facet_label='Project' item_list=facets.fields.project selected_list=selected_facets.project %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
 
+            <!-- Location -->
+            {% if facets.fields.location %}
+                {% with facet_name='location' facet_label='Location' item_list=facets.fields.location selected_list=selected_facets.location %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
 
-            <!-- Sponsor -->
-            {% with facet_name='sponsorships' facet_label='Sponsor' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
-                {% include 'partials/search_filter.html' %}
-            {% endwith %}
+            <!-- Significant Date -->
+            {% if facets.fields.significant_date %}
+                {% with facet_name='significant_date' facet_label='Significant Date' item_list=facets.fields.significant_date selected_list=selected_facets.significant_date %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
 
+            <!-- Motion By -->
+            {% if facets.fields.motion_by %}
+                {% with facet_name='motion_by' facet_label='Motion By' item_list=facets.fields.motion_by selected_list=selected_facets.motion_by %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
+
+            <!-- Subject -->
+            {% if facets.fields.topics %}
+                {% with facet_name='topics' facet_label='Subject' item_list=facets.fields.topics selected_list=selected_facets.topics %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
 
             <!-- Legislative Session -->
             {% if facets.fields.legislative_session %}
@@ -84,8 +111,6 @@
 
                 {% endif %}
             {% endif %}
-
-
 
             <div class="divider"></div>
         </div>

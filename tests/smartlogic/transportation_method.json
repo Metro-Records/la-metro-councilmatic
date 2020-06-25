@@ -1,0 +1,291 @@
+{
+  "parameters" : {
+    "filter" : "CL=Transportation Method",
+    "q" : "*:*",
+    "fl" : "* score [child limit=10000 parentFilter=\"(content_type:concept OR content_type:concept_scheme)\" childFilter=content_type:related_concept] [child limit=10000 parentFilter=\"(content_type:concept OR content_type:concept_scheme)\" childFilter=content_type:ordered_related_concept] [child limit=10000 parentFilter=\"(content_type:concept OR content_type:concept_scheme)\" childFilter=content_type:related_concept_scheme] [child limit=10000 parentFilter=\"(content_type:concept OR content_type:concept_scheme)\" childFilter=content_type:facet] [child limit=10000 parentFilter=\"(content_type:concept OR content_type:concept_scheme)\" childFilter=content_type:path_element]",
+    "language" : "\"en\", \"en\", \"en\"",
+    "sort" : "name_en_pl asc",
+    "fq" : "\"class_name_en:Transportation\\ Method\", \"content_type:concept_scheme content_type:concept\"",
+    "rows" : "100000",
+    "version" : "3",
+    "wt" : "sesConceptsJSON",
+    "structure" : "JSON",
+    "command" : "term"
+  },
+  "terms" : [ {
+    "term" : {
+      "name" : "Bus",
+      "displayName" : "Bus",
+      "id" : "513d3180-1ca5-42cb-a6bd-d315f57388e8",
+      "uri" : "http://words.metro.net/source-trb#Bus",
+      "classes" : [ "Transportation Method" ],
+      "weight" : "1.0",
+      "facets" : [ {
+        "name" : "Lines and Ways",
+        "freq" : 0,
+        "id" : "69059d58-b2e5-4f5f-9b3b-f84f772df9b1"
+      } ],
+      "freq" : "0",
+      "documents" : "0",
+      "createdDate" : "2018-12-10T19:00:38+0000",
+      "lastUpdatedDate" : "2019-04-23T23:15:43+0000",
+      "equivalence" : [ {
+        "qty" : "1",
+        "name" : "Use For",
+        "fields" : [ {
+          "field" : {
+            "name" : "Coach"
+          }
+        } ]
+      } ],
+      "hierarchy" : [ {
+        "qty" : "1",
+        "name" : "Broader Term",
+        "fields" : [ {
+          "field" : {
+            "classes" : [ "Concept Scheme" ],
+            "name" : "Lines and Ways",
+            "freq" : 0,
+            "id" : "69059d58-b2e5-4f5f-9b3b-f84f772df9b1"
+          }
+        } ]
+      }, {
+        "qty" : "2",
+        "name" : "Narrower Term",
+        "fields" : [ {
+          "field" : {
+            "classes" : [ "Concept" ],
+            "name" : "Bus Ways",
+            "freq" : 0,
+            "id" : "4935f296-b43b-486b-9cba-e7c653c9b5f8"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Concept" ],
+            "name" : "Metro Bus Lines",
+            "freq" : 0,
+            "id" : "e7fc1011-3754-4757-befa-09b5c8e1cb7c"
+          }
+        } ]
+      } ],
+      "associated" : [ {
+        "qty" : "1",
+        "name" : "Related To",
+        "fields" : [ {
+          "field" : {
+            "classes" : [ "Source TRT" ],
+            "name" : "Buses",
+            "freq" : 0,
+            "id" : "af29b854-ed8b-4c61-9529-c1239498268c"
+          }
+        } ]
+      }, {
+        "qty" : "1",
+        "name" : "has source",
+        "fields" : [ {
+          "field" : {
+            "classes" : [ "Concept" ],
+            "name" : "(Source) TRB",
+            "freq" : 0,
+            "id" : "7f3dbff2-e4a0-48ad-b79c-0b40982f1d6f"
+          }
+        } ]
+      }, {
+        "qty" : "1",
+        "name" : "is in domain of",
+        "fields" : [ {
+          "field" : {
+            "classes" : [ "Concept" ],
+            "name" : "(Dept) Planning",
+            "freq" : 0,
+            "id" : "718109bc-0ce8-429a-b98e-944e338c2101"
+          }
+        } ]
+      } ],
+      "paths" : [ {
+        "path" : [ {
+          "field" : {
+            "classes" : [ "Concept Scheme" ],
+            "name" : "Lines and Ways",
+            "freq" : 0,
+            "id" : "69059d58-b2e5-4f5f-9b3b-f84f772df9b1"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Transportation Method" ],
+            "name" : "Bus",
+            "freq" : 0,
+            "id" : "513d3180-1ca5-42cb-a6bd-d315f57388e8"
+          }
+        } ],
+        "name" : "Narrower Term"
+      } ],
+      "metadata" : {
+        "definition" : [ "A self-propelled, rubber-tired road vehicle designed to carry a substantial number of passengers (i.e. 10 or more), commonly operated on streets and highways. A bus has enough headroom to allow passengers (unless they are exceptionally tall) to stand upright after entering, and its body can typically accommodate at least 16 adult passenger seats (various legal definitions may differ slightly as to minimum capacity.) Propulsion may be by gasoline, diesel fuel, alternative fuels, or electric motor. (TRB)", "<p><span style=\"color: rgb(0, 0, 0);background-color: rgb(255, 255, 255);float: none;\">Historically, old-timers in the transit industry use &#34;coach&#34; for this word.</span><br/></p>" ],
+        "URI" : "http://words.metro.net/source-trb#Bus"
+      }
+    }
+  }, {
+    "term" : {
+      "name" : "Metro Rail",
+      "displayName" : "Metro Rail",
+      "id" : "f4b081c5-2afc-4f6e-b726-a3d8df7936f0",
+      "uri" : "http://words.metro.net/source-metro#MetroRail",
+      "classes" : [ "Source Metro", "Transportation Method" ],
+      "weight" : "1.0",
+      "facets" : [ {
+        "name" : "Metro Taxonomy",
+        "freq" : 0,
+        "id" : "c4623f6e-83be-4cb5-aaa8-51ae3a7435d1"
+      } ],
+      "freq" : "0",
+      "documents" : "0",
+      "createdDate" : "2018-12-06T19:44:14+0000",
+      "lastUpdatedDate" : "2019-05-16T22:31:17+0000",
+      "equivalence" : [ ],
+      "hierarchy" : [ {
+        "qty" : "1",
+        "name" : "Broader Term",
+        "fields" : [ {
+          "field" : {
+            "classes" : [ "Concept Scheme" ],
+            "name" : "Metro Taxonomy",
+            "freq" : 0,
+            "id" : "c4623f6e-83be-4cb5-aaa8-51ae3a7435d1"
+          }
+        } ]
+      } ],
+      "associated" : [ ],
+      "paths" : [ {
+        "path" : [ {
+          "field" : {
+            "classes" : [ "Concept Scheme" ],
+            "name" : "Metro Taxonomy",
+            "freq" : 0,
+            "id" : "c4623f6e-83be-4cb5-aaa8-51ae3a7435d1"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Source Metro", "Transportation Method" ],
+            "name" : "Metro Rail",
+            "freq" : 0,
+            "id" : "f4b081c5-2afc-4f6e-b726-a3d8df7936f0"
+          }
+        } ],
+        "name" : "Narrower Term"
+      } ],
+      "metadata" : {
+        "definition" : [ "Metro's electrified light rail and subway transit system." ],
+        "URI" : "http://words.metro.net/source-metro#MetroRail"
+      }
+    }
+  }, {
+    "term" : {
+      "name" : "Rail",
+      "displayName" : "Rail",
+      "id" : "63dad3d6-46a1-4906-80c4-0b21950c860d",
+      "uri" : "http://words.metro.net/source-metro#Rail",
+      "classes" : [ "Transportation Method" ],
+      "weight" : "1.0",
+      "facets" : [ {
+        "name" : "Lines and Ways",
+        "freq" : 0,
+        "id" : "69059d58-b2e5-4f5f-9b3b-f84f772df9b1"
+      } ],
+      "freq" : "0",
+      "documents" : "0",
+      "createdDate" : "2018-12-06T19:44:14+0000",
+      "lastUpdatedDate" : "2019-05-16T22:31:17+0000",
+      "equivalence" : [ ],
+      "hierarchy" : [ {
+        "qty" : "1",
+        "name" : "Broader Term",
+        "fields" : [ {
+          "field" : {
+            "classes" : [ "Concept Scheme" ],
+            "name" : "Lines and Ways",
+            "freq" : 0,
+            "id" : "69059d58-b2e5-4f5f-9b3b-f84f772df9b1"
+          }
+        } ]
+      }, {
+        "qty" : "7",
+        "name" : "Narrower Term",
+        "fields" : [ {
+          "field" : {
+            "classes" : [ "Rail Line" ],
+            "name" : "Metro Blue Line",
+            "freq" : 0,
+            "id" : "79c50726-5487-4fd2-bb9e-d1818a73402e"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Rail Line" ],
+            "name" : "Metro Crenshaw Line",
+            "freq" : 0,
+            "id" : "4bd56c9e-9726-4d9b-8cb3-b5a2b26f6341"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Rail Line", "Source Metro" ],
+            "name" : "Metro Exposition Line",
+            "freq" : 0,
+            "id" : "3a59e2ce-f562-4f3c-b98b-9b53b39ea2df"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Rail Line" ],
+            "name" : "Metro Gold Line",
+            "freq" : 0,
+            "id" : "91589be5-4476-49cd-8577-176a50a1e6c0"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Rail Line" ],
+            "name" : "Metro Green Line",
+            "freq" : 0,
+            "id" : "182c60ea-33bc-41ac-a146-f5ca1d5ce511"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Rail Line", "Source Metro" ],
+            "name" : "Metro Purple Line",
+            "freq" : 0,
+            "id" : "ca373f34-b80c-4e3b-be04-b82fc7312ca9"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Rail Line" ],
+            "name" : "Metro Red Line",
+            "freq" : 0,
+            "id" : "1031d836-2d8b-4c20-b3c1-1487f0d503e6"
+          }
+        } ]
+      } ],
+      "associated" : [ ],
+      "paths" : [ {
+        "path" : [ {
+          "field" : {
+            "classes" : [ "Concept Scheme" ],
+            "name" : "Lines and Ways",
+            "freq" : 0,
+            "id" : "69059d58-b2e5-4f5f-9b3b-f84f772df9b1"
+          }
+        }, {
+          "field" : {
+            "classes" : [ "Transportation Method" ],
+            "name" : "Rail",
+            "freq" : 0,
+            "id" : "63dad3d6-46a1-4906-80c4-0b21950c860d"
+          }
+        } ],
+        "name" : "Narrower Term"
+      } ],
+      "metadata" : {
+        "definition" : [ "The longitudinal steel beams of the track structure upon which railroad wheels run. Rail is designated by weight per yard of length." ],
+        "URI" : "http://words.metro.net/source-metro#Rail"
+      }
+    }
+  } ],
+  "total" : "3"
+}

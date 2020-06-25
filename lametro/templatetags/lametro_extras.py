@@ -1,12 +1,16 @@
+from datetime import date, timedelta, datetime
+import itertools
+import re
+import urllib
+
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.html import strip_tags
 from django.utils import timezone
 
 from haystack.query import SearchQuerySet
-from datetime import date, timedelta, datetime
-import re
-import urllib
+
+from opencivicdata.legislative.models import EventDocument
 
 from councilmatic.settings_jurisdiction import *
 from councilmatic.settings import PIC_BASE_URL
@@ -16,7 +20,6 @@ from councilmatic_core.utils import ExactHighlighter
 from lametro.models import LAMetroEvent
 from lametro.utils import format_full_text, parse_subject
 
-from opencivicdata.legislative.models import EventDocument
 
 register = template.Library()
 
@@ -120,8 +123,8 @@ def parse_agenda_item(text):
 
 @register.filter
 def short_topic_name(text):
-    if len(text) > 40:
-        blurb = text[:40]
+    if len(text) > 50:
+        blurb = text[:50]
         blurb = blurb[:blurb.rfind(' ')] + ' ...'
         return blurb
     else:
@@ -172,33 +175,34 @@ def get_highlighted_attachment_text(context, id):
 
 @register.filter
 def matches_query(tag, request):
-    if request.GET.get('q'):
-        return tag.lower() == request.GET.get('q').lower()
-    return False
+    return tag.lower() == request.GET.get('q', '')
 
 @register.filter
-def matches_facet(tag, facet):
-    if facet:
-        return tag.lower() in [t.lower() for t in facet]
-    return False
+def matches_facet(tag, selected_facets):
+    return any(tag.lower() in [v.lower() for v in values]
+               for _, values in selected_facets.items())
 
 @register.simple_tag(takes_context=True)
-def hits_first(context, topics, selected_topics):
+def hits_first(context, topics, selected_facets):
     '''
     Return array of topics, such that topics matching a selected facet or the
     search term are returned first, followed by the remaining tags in ABC order.
     '''
+    topic_names = topics.values_list('name', flat=True)
+
     terms = [context['query']]
 
-    if selected_topics:
-        terms += selected_topics
+    for _, values in selected_facets.items():
+        terms += values
 
     lower_terms = set(t.lower() for t in terms)
-    lower_topics = set(t.lower() for t in topics)
+    lower_topics = set(t.lower() for t in topic_names)
 
-    hits = list(lower_topics.intersection(lower_terms))
+    hits = lower_topics.intersection(lower_terms)
+    hits_pattern = r'^({})$'.format('|'.join(re.escape(hit) for hit in hits))
 
-    return sorted(t for t in topics if t.lower() in hits) + sorted(t for t in topics if t.lower() not in hits)
+    return list(itertools.chain(topics.filter(name__iregex=hits_pattern),
+                                topics.exclude(name__iregex=hits_pattern)))
 
 @register.filter
 def all_have_extra(entities, extra):
