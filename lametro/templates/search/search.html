@@ -21,6 +21,13 @@
     <div class='jumbotron' id='search-jumbotron'>
         {% include 'partials/search_header.html' %}
         {% include 'partials/search_bar.html' %}
+        <div id="related-terms">
+            <h4>Related terms</h4>
+            <div class="row">
+                <div class="col-md-6" id="rt-col-0"></div>
+                <div class="col-md-6" id="rt-col-1"></div>
+            </div>
+        </div>
     </div>
 
     <div class="row" style="margin-left:unset;">
@@ -306,6 +313,8 @@
             $('#search-bar').append(option);
             $('#search-bar').trigger('change');
         });
+
+        showRelatedTerms(initialTerms);
     };
 
     $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});

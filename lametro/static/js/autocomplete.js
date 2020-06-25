@@ -1,5 +1,6 @@
 var SmartLogic = {
   query: {},
+  baseUrl: 'https://cloud.smartlogic.com/svc/0dcee7c7-1667-4164-81e5-c16e46f2f74c/ses/CombinedModel/concepts/',
   getToken: function () {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
@@ -18,7 +19,13 @@ var SmartLogic = {
     };
   },
   buildServiceUrl: function (query) {
-    return 'https://cloud.smartlogic.com/svc/0dcee7c7-1667-4164-81e5-c16e46f2f74c/ses/CombinedModel/concepts/' + query.term + '.json?FILTER=AT=System:%20Legistar&stop_cm_after_stage=3&maxResultCount=10';
+    var queryLocation = query.term + '.json';
+    var stop = query.stop_cm_after_stage ? query.stop_cm_after_stage : '3';
+    var maxResults = query.maxResultCount ? query.maxResultCount : '10';
+
+    return SmartLogic.baseUrl + queryLocation
+        + '?FILTER=AT=System:%20Legistar&stop_cm_after_stage=' + stop
+        + '&maxResultCount=' + maxResults;
   },
   transformResponse: function (data, params) {
     SmartLogic.query = params;
@@ -209,4 +216,39 @@ function initAutocomplete (formElement, inputElement) {
     $input.on('select2:opening', function (e) {
         $form.on('keyup', '.select2-selection', submitOnEnter);
     });
+}
+
+function showRelatedTerms (termArray) {
+    $.each(termArray, function (idx, term) {
+        var url = SmartLogic.buildServiceUrl({
+            'term': term,
+            'stop_cm_after_stage': 1,
+            'maxResultCount': 5,
+        });
+
+        $.ajax({
+            url: url,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Bearer ' + window.localStorage.getItem('ses_token')
+            }
+        }).then(function(response) {
+            var relatedTerms;
+
+            if ( response.total === '1' ) {
+                relatedTerms = response.terms[0].term.associated[0].fields.map(function (el) {
+                    return {'name': el.field.name, 'id': el.field.id}
+                });
+            } else {
+                relatedTerms = response.terms.map(function (el) {
+                    return {'name': el.term.name, 'id': el.term.id}
+                });
+            };
+
+            $.each(relatedTerms, function (idx, term) {
+                var link = $('<a />').attr('href', '/search/?q=' + term.name).text(term.name);
+                $('#rt-col-' + idx % 2).append(link).append('<br />');
+            })
+        });
+    })
 }
