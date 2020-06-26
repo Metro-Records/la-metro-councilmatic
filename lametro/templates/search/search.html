@@ -72,9 +72,16 @@
                 {% endwith %}
             {% endif %}
 
-            <!-- Location -->
-            {% if facets.fields.location %}
-                {% with facet_name='location' facet_label='Location' item_list=facets.fields.location selected_list=selected_facets.location %}
+            <!-- Metro Location -->
+            {% if facets.fields.metro_location %}
+                {% with facet_name='metro_location' facet_label='Metro Location' item_list=facets.fields.metro_location selected_list=selected_facets.metro_location %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
+
+            <!-- Geographic / Admin Location -->
+            {% if facets.fields.geo_admin_location %}
+                {% with facet_name='geo_admin_location' facet_label='Geographic / Administrative Location' item_list=facets.fields.geo_admin_location selected_list=selected_facets.geo_admin_location %}
                     {% include 'partials/search_filter.html' %}
                 {% endwith %}
             {% endif %}

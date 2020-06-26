@@ -160,8 +160,10 @@
     <field name="phase_exact" type="string" indexed="true" stored="true" multiValued="true" />
     <field name="project" type="text_en" indexed="true" stored="true" multiValued="true" />
     <field name="project_exact" type="string" indexed="true" stored="true" multiValued="true" />
-    <field name="location" type="text_en" indexed="true" stored="true" multiValued="true" />
-    <field name="location_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="metro_location" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="metro_location_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="geo_admin_location" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="geo_admin_location_exact" type="string" indexed="true" stored="true" multiValued="true" />
     <field name="significant_date" type="text_en" indexed="true" stored="true" multiValued="true" />
     <field name="significant_date_exact" type="string" indexed="true" stored="true" multiValued="true" />
     <field name="motion_by" type="text_en" indexed="true" stored="true" multiValued="true" />

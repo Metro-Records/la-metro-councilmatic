@@ -13,9 +13,7 @@ from lametro.smartlogic import SmartLogic
 
 
 class ClassificationMixin:
-    '''
-    TODO: Add geographic/administrative location facet
-    '''
+
     DEFAULT_FACET = 'topics_exact'
 
     FACET_CLASSES = {
@@ -40,7 +38,7 @@ class ClassificationMixin:
             'Grant Project',
             'Other Working Project',
         ),
-        'location_exact': (
+        'metro_location_exact': (
             'All Transportation Locations',
             'Alignment',
             'Division',
@@ -52,6 +50,22 @@ class ClassificationMixin:
             'Surplus, Temporary And Miscellaneous Property',
             'Terminal',
             'Transportation Location',
+        ),
+        'geo_admin_location_exact': (
+            'All Location',
+            'Administrative Division',
+            'Electoral Districts',
+            'Sector',
+            'Corridor',
+            'Geographic Location',
+            'City',
+            'Country',
+            'County',
+            'Neighborhood',
+            'State',
+            'Unincorporated Area',
+            'Point of Interest',
+            'Subregion',
         ),
         'significant_date_exact': (
             'Dates',
@@ -80,9 +94,13 @@ class ClassificationMixin:
     def get_subjects_from_classes(self, facet_name, classes):
         self.stdout.write('Getting {}'.format(facet_name))
 
-        for cls in classes:
-            response = self.smartlogic.terms('CL={}'.format(cls))
-            yield from (t['term']['name'] for t in response['terms'])
+        # Per Steve from SmartLogic, "multiple filters can be combined into an
+        # OR type filter". So, string all classes together to query for terms
+        # belonging to any of them.
+        _filter = '&'.join('CL={}'.format(cls) for cls in classes)
+        response = self.smartlogic.terms(_filter)
+
+        yield from (t['term']['name'] for t in response['terms'])
 
 
 class Command(BaseCommand, ClassificationMixin):

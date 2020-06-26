@@ -659,14 +659,16 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
         sqs = SearchQuerySet().facet('bill_type', sort='index')\
                               .facet('sponsorships', sort='index')\
+                              .facet('legislative_session', sort='index')\
                               .facet('inferred_status')\
                               .facet('topics')\
                               .facet('lines_and_ways')\
                               .facet('phase')\
                               .facet('project')\
+                              .facet('metro_location')\
+                              .facet('geo_admin_location')\
                               .facet('motion_by')\
                               .facet('significant_date')\
-                              .facet('legislative_session', sort='index')\
                               .highlight(**{'hl.fl': 'text,attachment_text'})
 
         data = None
