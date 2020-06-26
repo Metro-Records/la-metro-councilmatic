@@ -1,3 +1,4 @@
+from collections import ChainMap
 from itertools import chain
 
 from django.core.management.base import BaseCommand
@@ -12,9 +13,52 @@ from lametro.smartlogic import SmartLogic
 
 
 class ClassificationMixin:
+    '''
+    TODO: Add geographic/administrative location facet
+    '''
+    DEFAULT_FACET = 'topics_exact'
 
-    CLASSIFICATION_MAP = {
-        label: value for value, label in LAMetroSubject.CLASSIFICATION_CHOICES
+    FACET_CLASSES = {
+        'bill_type_exact': (
+            'Board Report Type',
+        ),
+        'lines_and_ways_exact': (
+            'Transportation Method',
+            'Bus Line',
+            'Bus Way',
+            'Rail Line',
+        ),
+        'phase_exact': (
+            'Transportation Phase',
+        ),
+        'project_exact': (
+            'Project',
+            'Project Development',
+            'Project Finance',
+            'Capital Project',
+            'Construction Project',
+            'Grant Project',
+            'Other Working Project',
+        ),
+        'location_exact': (
+            'All Transportation Locations',
+            'Alignment',
+            'Division',
+            'Employee Parking Lot',
+            'Pank ‘n’ Ride',
+            'Radio Station',
+            'Route',
+            'Station',
+            'Surplus, Temporary And Miscellaneous Property',
+            'Terminal',
+            'Transportation Location',
+        ),
+        'significant_date_exact': (
+            'Dates',
+        ),
+        'motion_by_exact': (
+            'Board Member',
+        ),
     }
 
     @property
@@ -26,82 +70,19 @@ class ClassificationMixin:
     @property
     def classifications(self):
         if not hasattr(self, '_classifications'):
-            self._classifications = {
-                **{term: self.CLASSIFICATION_MAP['Board Report Type'] for term in self.get_board_report_types()},
-                **{term: self.CLASSIFICATION_MAP['Lines / Ways'] for term in self.get_lines_ways()},
-                **{term: self.CLASSIFICATION_MAP['Phase'] for term in self.get_phases()},
-                **{term: self.CLASSIFICATION_MAP['Project'] for term in self.get_projects()},
-                **{term: self.CLASSIFICATION_MAP['Location'] for term in self.get_locations()},
-                **{term: self.CLASSIFICATION_MAP['Significant Date'] for term in self.get_significant_dates()},
-                **{term.replace(u'\u200b', ''): self.CLASSIFICATION_MAP['Motion By'] for term in self.get_motion_by()},
-            }
+            self._classifications = ChainMap(*[
+                {subject: facet for subject in list(self.get_subjects_from_classes(facet, classes))}
+                for facet, classes in self.FACET_CLASSES.items()
+            ])
 
         return self._classifications
 
-    def _get_flat_terms(self, term_json):
-        return [t['term']['name'] for t in term_json]
+    def get_subjects_from_classes(self, facet_name, classes):
+        self.stdout.write('Getting {}'.format(facet_name))
 
-    def _get_nested_terms(self, term_json):
-        terms = []
-
-        for term in term_json:
-            term = term['term']
-
-            try:
-                narrower_terms, = [term_dict for term_dict in term['hierarchy']
-                                   if term_dict['name'] == 'Narrower Term']
-            except ValueError:
-                continue
-            else:
-                nt = []
-
-                for term in narrower_terms['fields']:
-                    term = term['field']
-
-                    if 'Concept' in term['classes']:
-                        related_concepts = self.smartlogic.terms('DE={}'.format(term['id']))
-                        nt += [t['term']['name'] for t in related_concepts['terms']]
-                    else:
-                        nt.append(term['name'])
-
-                terms += nt
-
-        return terms
-
-    def get_board_report_types(self):
-        self.stdout.write('Getting board report types')
-        terms = self.smartlogic.terms('CL=Board Report Type')['terms']
-        return self._get_flat_terms(terms)
-
-    def get_lines_ways(self):
-        self.stdout.write('Getting lines and ways')
-        terms = self.smartlogic.terms('CL=Transportation Method')['terms']
-        return self._get_nested_terms(terms)
-
-    def get_phases(self):
-        self.stdout.write('Getting phases')
-        terms = self.smartlogic.terms('CL=Transportation Phase')['terms']
-        return self._get_flat_terms(terms)
-
-    def get_projects(self):
-        self.stdout.write('Getting projects')
-        terms = self.smartlogic.terms('CL=Project')['terms']
-        return self._get_flat_terms(terms)
-
-    def get_locations(self):
-        self.stdout.write('Getting locations')
-        terms = self.smartlogic.terms('CL=All Locations')['terms']
-        return self._get_flat_terms(terms)
-
-    def get_significant_dates(self):
-        self.stdout.write('Getting significant dates')
-        terms = self.smartlogic.terms('CL=Date')['terms']
-        return self._get_flat_terms(terms)
-
-    def get_motion_by(self):
-        self.stdout.write('Getting motion by')
-        terms = self.smartlogic.terms('CL=Board Member')['terms']
-        return self._get_flat_terms(terms)
+        for cls in classes:
+            response = self.smartlogic.terms('CL={}'.format(cls))
+            yield from (t['term']['name'] for t in response['terms'])
 
 
 class Command(BaseCommand, ClassificationMixin):
@@ -126,7 +107,7 @@ class Command(BaseCommand, ClassificationMixin):
         # unique on name. Ignore conflicts so we can bulk create instances
         # without querying for or introducing duplicates.
         LAMetroSubject.objects.bulk_create([
-            LAMetroSubject(name=s, classification=self.CLASSIFICATION_MAP['Subject']) for s in current_topics
+            LAMetroSubject(name=s, classification=self.DEFAULT_FACET) for s in current_topics
         ], ignore_conflicts=True)
 
         for_update = []
@@ -144,7 +125,7 @@ class Command(BaseCommand, ClassificationMixin):
 
                 subject.guid = topic['api_metadata']
                 subject.classification = self.classifications.get(subject.name,
-                                                                  self.CLASSIFICATION_MAP['Subject'])
+                                                                  self.DEFAULT_FACET)
 
                 self.stdout.write('Classification: {}'.format(subject.classification))
 
