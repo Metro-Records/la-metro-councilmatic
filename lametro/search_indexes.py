@@ -16,7 +16,8 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     lines_and_ways = indexes.MultiValueField(faceted=True)
     phase = indexes.MultiValueField(faceted=True)
     project = indexes.MultiValueField(faceted=True)
-    location = indexes.MultiValueField(faceted=True)
+    metro_location = indexes.MultiValueField(faceted=True)
+    geo_admin_location = indexes.MultiValueField(faceted=True)
     significant_date = indexes.MultiValueField(faceted=True)
     motion_by = indexes.MultiValueField(faceted=True)
 
@@ -70,8 +71,11 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     def prepare_project(self, obj):
         return self._topics_from_classification(obj, 'project_exact')
 
-    def prepare_location(self, obj):
-        return self._topics_from_classification(obj, 'location_exact')
+    def prepare_metro_location(self, obj):
+        return self._topics_from_classification(obj, 'metro_location_exact')
+
+    def prepare_geo_admin_location(self, obj):
+        return self._topics_from_classification(obj, 'geo_admin_location_exact')
 
     def prepare_significant_date(self, obj):
         return self._topics_from_classification(obj, 'significant_date_exact')

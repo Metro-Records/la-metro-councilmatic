@@ -35,10 +35,10 @@ class SmartLogic(object):
         data = {'grant_type': 'apikey', 'key': self.api_key}
         return self.endpoint('post', 'token', data=data)
 
-    def terms(self, _filter):
+    def terms(self, params):
         return self.endpoint(
             'post',
             self.SERVICE_URL + 'terms.json',
-            params={'FILTER': _filter},
+            params=params,
             headers=self.auth_headers
         )

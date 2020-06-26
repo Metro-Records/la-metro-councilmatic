@@ -97,8 +97,13 @@ class ClassificationMixin:
         # Per Steve from SmartLogic, "multiple filters can be combined into an
         # OR type filter". So, string all classes together to query for terms
         # belonging to any of them.
-        _filter = '&'.join('CL={}'.format(cls) for cls in classes)
-        response = self.smartlogic.terms(_filter)
+        #
+        # Use an array of tuples instead of a dictionary, because each param
+        # uses the FILTER key (and dictionaries can't contain duplicate keys).
+        params = [('FILTER', 'CL={}'.format(cls)) for cls in classes]
+        params.append(('FILTER', 'AT=System: Legistar'))
+
+        response = self.smartlogic.terms(params)
 
         yield from (t['term']['name'] for t in response['terms'])
 
