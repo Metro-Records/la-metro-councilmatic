@@ -95,6 +95,7 @@ var SmartLogic = {
 function initAutocomplete (formElement, inputElement) {
     var $form = $(formElement);
     var $input = $(inputElement);
+    var currentQuery;
 
     SmartLogic.getToken();
 
@@ -133,6 +134,26 @@ function initAutocomplete (formElement, inputElement) {
             newTag: true
           }
         }
+    }).on('select2:closing', function(e) {
+        /* By default, Select2 clears input when the user clicks inside the
+           search bar or the input loses focus. We want to retain that input.
+           I adapted this solution from this comment:
+           https://github.com/select2/select2/issues/3902#issuecomment-206658823 */
+
+        // Grab the input value before closing the menu.
+        currentQuery = $('.select2-search input').prop('value');
+    }).on('select2:close', function(e) {
+        // Once the menu has closed, add back the input value.
+        $('.select2-search input').val(currentQuery).trigger('change');
+    }).on('select2:open', function(e) {
+        // When the menu reopens (or regains focus), initialize a search with
+        // the input value.
+        $('.select2-search input').trigger('input');
+    }).on('select2:select', function(e) {
+        // When a user selects a value, clear the existing input value. (This
+        // basically preserves normal select behavior with the above measures
+        // to preserve pending input between selections.)
+        $('.select2-search input').val('').trigger('change');
     });
 
     $form.on('submit', function handleSubmit (e) {
@@ -143,11 +164,11 @@ function initAutocomplete (formElement, inputElement) {
           .map(function (el) {return el.id});
 
         // Grab the input text
-        var pendingTerm = $("#search-bar").data("select2").selection.$search[0].value;
+        var pendingTerm = $('.select2-search input').prop('value');
 
-        // If there aren't selected terms, search for the pending term
-        if ( terms.length === 0 && pendingTerm !== '' ) {
-          terms = [pendingTerm];
+        // If there's a pending term, add it to the query
+        if ( pendingTerm !== '' ) {
+          terms.push(pendingTerm);
         }
 
         var queryString = terms.join(' AND ');
