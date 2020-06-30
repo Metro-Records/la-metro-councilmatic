@@ -775,23 +775,17 @@ class SmartLogicAPI(ListView):
         return SmartLogic(SMART_LOGIC_KEY).token()
 
 
-def fetch_topic(request):
-    guid = request.GET['guid']
+def fetch_subjects(request):
+    related_terms = request.GET.getlist('related_terms[]')
+    subjects = list(LAMetroSubject.objects.filter(name__in=related_terms).values_list('name', flat=True))
 
-    response = {}
-    response['guid'] = guid
+    print(request.GET, related_terms)
 
-    try:
-        subject_guid = LAMetroSubject.objects.get(guid=guid)
-        subject = subject_guid.name
-        response['subject_safe'] = urllib.parse.quote(subject)
-        response['status_code'] = 200
-    except ObjectDoesNotExist:
-        subject = ''
-        subject_safe = ''
-        response['status_code'] = 404
-
-    response['subject'] = subject
+    response = {
+        'status_code': 200,
+        'related_terms': related_terms,
+        'subjects': subjects,
+    }
 
     return JsonResponse(response)
 

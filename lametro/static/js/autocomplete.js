@@ -219,36 +219,94 @@ function initAutocomplete (formElement, inputElement) {
 }
 
 function showRelatedTerms (termArray) {
-    $.each(termArray, function (idx, term) {
-        var url = SmartLogic.buildServiceUrl({
-            'term': term,
-            'stop_cm_after_stage': 1,
-            'maxResultCount': 5,
-        });
+    var relatedTerms = [];
 
-        $.ajax({
-            url: url,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Bearer ' + window.localStorage.getItem('ses_token')
-            }
-        }).then(function(response) {
-            var relatedTerms;
+    if ( termArray.length === 0 ) {
+        return;
+    }
 
-            if ( response.total === '1' ) {
-                relatedTerms = response.terms[0].term.associated[0].fields.map(function (el) {
-                    return {'name': el.field.name, 'id': el.field.id}
-                });
-            } else {
-                relatedTerms = response.terms.map(function (el) {
-                    return {'name': el.term.name, 'id': el.term.id}
-                });
-            };
+    // Execute all related terms Ajax requests before proceeding:
+    // https://stackoverflow.com/a/5627301/7142170
+    $.when.apply(
+        $, termArray.map(getRelatedTerms)
+    ).then(function () {
+        // arguments is a magic variable containing all arguments passed to
+        // this function (since we have an indeterminate number of Ajax
+        // requests to deal with).
+        if ( termArray.length === 1 ) {
+            var response = arguments[0];
+            relatedTerms = parseRelatedTerms(response);
+        } else {
+            $.each(arguments, function (_, arg) {
+                // arg is a three tuple containing the response, Ajax status, and Ajax object
+                var response = arg[0];
+                relatedTerms = relatedTerms.concat(parseRelatedTerms(response));
+            });
+        };
 
-            $.each(relatedTerms, function (idx, term) {
-                var link = $('<a />').attr('href', '/search/?q=' + term.name).text(term.name);
-                $('#rt-col-' + idx % 2).append(link).append('<br />');
-            })
-        });
+        $.when(
+            getSubjectsFromTerms(relatedTerms)
+        ).then(function (response) {
+            renderRelatedTerms(response);
+        })
     })
+}
+
+function getRelatedTerms (term) {
+    console.log('Retrieving terms related to ' + term);
+
+    var url = SmartLogic.buildServiceUrl({
+        'term': term,
+        'stop_cm_after_stage': 1,
+        'maxResultCount': 5,
+    });
+
+    return $.ajax({
+        url: url,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + window.localStorage.getItem('ses_token')
+        }
+    })
+}
+
+function parseRelatedTerms (response) {
+    console.log(response)
+    if ( response.total === '1' ) {
+        // If there is only one term, then the supplied term exactly
+        // matches a term in SES. Display associated terms, if any.
+        return response.terms[0].term.associated.length
+            ? response.terms[0].term.associated[0].fields.map(function (el) {
+                return {'name': el.field.name, 'id': el.field.id}
+            })
+            : [];
+    } else {
+        // If there is more than one term, then the supplied term
+        // does not exactly match a term in SES. Display all results
+        // (limited to at most 5 by our query.)
+        return response.terms.map(function (el) {
+            return {'name': el.term.name, 'id': el.term.id}
+        });
+    };
+}
+
+function getSubjectsFromTerms (terms) {
+    var termNames = terms.map(function(el) {return el.name});
+
+    return $.ajax({
+        url: '/subjects/',
+        data: {related_terms: termNames}
+    })
+}
+
+function renderRelatedTerms (response) {
+    if ( response.status_code == 200 && response.subjects.length > 0 ) {
+        $('#related-terms').removeClass('hidden');
+
+        $.each(response.subjects, function (idx, subject) {
+            // TODO: Should this be a text search or a facet search?
+            var link = $('<a />').attr('href', '/search/?q=' + subject).text(subject);
+            $('#related-terms').append(link).append('<br />');
+        });
+    };
 }
