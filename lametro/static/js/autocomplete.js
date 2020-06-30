@@ -225,20 +225,23 @@ function showRelatedTerms (termArray) {
         return;
     }
 
-    // Execute all related terms Ajax requests before proceeding:
+    // Execute all Ajax requests before proceeding:
     // https://stackoverflow.com/a/5627301/7142170
     $.when.apply(
         $, termArray.map(getRelatedTerms)
     ).then(function () {
         // arguments is a magic variable containing all arguments passed to
-        // this function (since we have an indeterminate number of Ajax
-        // requests to deal with).
+        // this function. This is helpful, because we have an indeterminate
+        // number of Ajax requests to deal with.
+        //
+        // If there is only one request, then args is an array with three items:
+        // the response, status, and Ajax object. If there is more than one,
+        // then args is an array of these arrays.
         if ( termArray.length === 1 ) {
             var response = arguments[0];
             relatedTerms = parseRelatedTerms(response);
         } else {
             $.each(arguments, function (_, arg) {
-                // arg is a three tuple containing the response, Ajax status, and Ajax object
                 var response = arg[0];
                 relatedTerms = relatedTerms.concat(parseRelatedTerms(response));
             });
@@ -271,7 +274,6 @@ function getRelatedTerms (term) {
 }
 
 function parseRelatedTerms (response) {
-    console.log(response)
     if ( response.total === '1' ) {
         // If there is only one term, then the supplied term exactly
         // matches a term in SES. Display associated terms, if any.
