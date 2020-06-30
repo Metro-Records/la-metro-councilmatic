@@ -13,6 +13,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='lametrosubject',
             name='classification',
-            field=models.CharField(choices=[('bill_type_exact', 'Board Report Type'), ('lines_and_ways_exact', 'Lines / Ways'), ('phase_exact', 'Phase'), ('project_exact', 'Project'), ('location_exact', 'Location'), ('significant_date_exact', 'Significant Date'), ('motion_by_exact', 'Motion By'), ('topics_exact', 'Subject')], default='topics_exact', max_length=256),
+            field=models.CharField(choices=[
+                ('bill_type_exact', 'Board Report Type'),
+                ('lines_and_ways_exact', 'Lines / Ways'),
+                ('phase_exact', 'Phase'),
+                ('project_exact', 'Project'),
+                ('metro_location_exact', 'Metro Location'),
+                ('geo_admin_location_exact', 'Geographic / Administrative Location'),
+                ('significant_date_exact', 'Significant Date'),
+                ('motion_by_exact', 'Motion By'),
+                ('topics_exact', 'Subject')
+            ], default='topics_exact', max_length=256),
         ),
     ]
