@@ -13,6 +13,7 @@ from django.utils.functional import cached_property
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
+import django.contrib.postgres.fields as postgres_fields
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager, Membership
 
@@ -135,6 +136,10 @@ class LAMetroBill(Bill, SourcesMixin):
     @property
     def topics(self):
         return sorted(self.subject)
+
+    @property
+    def rich_topics(self):
+        return LAMetroSubject.objects.filter(name__in=self.subject).order_by('name')
 
     @property
     def board_report(self):
@@ -739,11 +744,29 @@ class EventPacket(Packet):
 
 
 class LAMetroSubject(models.Model):
+
+    CLASSIFICATION_CHOICES = [
+        ('bill_type_exact', 'Board Report Type'),
+        ('lines_and_ways_exact', 'Lines / Ways'),
+        ('phase_exact', 'Phase'),
+        ('project_exact', 'Project'),
+        ('metro_location_exact', 'Metro Location'),
+        ('geo_admin_location_exact', 'Geographic / Administrative Location'),
+        ('significant_date_exact', 'Significant Date'),
+        ('motion_by_exact', 'Motion By'),
+        ('topics_exact', 'Subject'),
+    ]
+
     class Meta:
         unique_together = ['guid', 'name']
 
     name = models.CharField(max_length=256, unique=True)
     guid = models.CharField(max_length=256, blank=True, null=True)
+    classification = models.CharField(
+        max_length=256,
+        default='topics_exact',
+        choices=CLASSIFICATION_CHOICES
+    )
 
     def __str__(self):
         if self.guid is not None:
