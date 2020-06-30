@@ -175,7 +175,8 @@ def get_highlighted_attachment_text(context, id):
 
 @register.filter
 def matches_query(tag, request):
-    return tag.lower() == request.GET.get('q', '')
+    # request.GET['q'] looks like "token AND token AND token"
+    return tag.lower() in [token.lower() for token in request.GET.get('q', '').split(' AND ')]
 
 @register.filter
 def matches_facet(tag, selected_facets):
@@ -190,7 +191,8 @@ def hits_first(context, topics, selected_facets):
     '''
     topic_names = topics.values_list('name', flat=True)
 
-    terms = [context['query']]
+    # context['query'] looks like "(token) AND (token) AND (token)"
+    terms = [token.lstrip('(').rstrip(')') for token in context['query'].split(' AND ')]
 
     for _, values in selected_facets.items():
         terms += values
