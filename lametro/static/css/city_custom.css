@@ -133,29 +133,26 @@ div#google_translate_element {
 #ceo-table td { vertical-align: middle; }
 
 /* Styling for autocomplete */
-.autocomplete-suggestions {
-  border: 1px solid #999;
-  background: #FFF;
-  overflow: auto;
+.autocomplete-search {
+    background-color: rgba(255,255,255,.85);
+    border: 1px solid #aaaaaa!important;
+    color: #777;
+    box-shadow: none;
+    padding: 10px;
 }
 
-.autocomplete-suggestion {
-  padding: 2px 5px;
-  white-space: nowrap;
-  overflow: hidden;
+.select2-container--default .select2-selection--multiple {
+    background-color: rgba(255,255,255,.85);
 }
 
-.autocomplete-selected { background: #F0F0F0; }
-
-.autocomplete-suggestions strong {
-  font-weight: bold;
-  color: #EB6864;
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #e8e7e9;
+    color: #777;
 }
-.autocomplete-group { padding: 2px 5px; }
 
-.autocomplete-group strong {
-  display: block;
-  border-bottom: 1px solid #000;
+strong.match-group {
+    font-weight: bold;
+    color: #EB6864;
 }
 
 /* Labels for statues */

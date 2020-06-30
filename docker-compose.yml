@@ -42,7 +42,7 @@ services:
     container_name: lametro-solr
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
-      - lametro-solr-data:/opt/solr/server/solr/mycores
+      - lametro-solr-data:/opt/solr/server/solr/lametro/
     command: sh -c 'solr-create -c lametro -d /la-metro-councilmatic_configs'
     ports:
       - 8986:8983

@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block title %}Home{% endblock %}
+
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block full_content %}
     <div class="container-fluid" id="section-photo">
         <div class="row-fluid">
@@ -12,27 +17,12 @@
                 </p>
                 <p>
                   <span class="text-bg">
-                    Press enter to perform a keyword search, or select from suggested topics as they appear. <a id="beta-info" class="hover-hand" data-toggle="tooltip" title="<strong>Suggested topics are a new feature.</strong> If you aren't seeing helpful suggestions or have any additional feedback or questions, get in touch with us at <a href='mailto:boardreport@metro.net'>boardreport@metro.net</a>."><i id="beta-info" class="fa fa-info-circle fa-fw"></i></a>
+                    Begin typing in the search bar to add a keyword or pick a suggested topic as they appear. Press enter to perform a search for your selected terms. <a id="beta-info" class="hover-hand" data-toggle="tooltip" title="<strong>Suggested topics are a new feature.</strong> If you aren't seeing helpful suggestions or have any additional feedback or questions, get in touch with us at <a href='mailto:boardreport@metro.net'>boardreport@metro.net</a>."><i id="beta-info" class="fa fa-info-circle fa-fw"></i></a>
                   </span>
                 </p>
-                <form class="search form-search=" action="/search/" method="GET">
-                    <div class="input-group site-intro-search">
-                        <input name="q"  id="search-bar" type="text" class="input-lg form-control form-lg" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}">
-                        <div class='input-group-btn'>
-                            <button type="submit" class="btn btn-lg btn-primary">
-                                <i class='fa fa-fw fa-search'></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-primary btn-search-option active">
-                            <input type="radio" autocomplete="off" name="search-all" checked> Search reports and attachments
-                        </label>
-                        <label class="btn btn-primary btn-search-option">
-                            <input type="radio" name="search-reports" autocomplete="off"> Search reports only
-                        </label>
-                    </div>
-                </form><br />
+                <div class="site-intro-search">
+                    {% include 'partials/search_bar.html' %}
+                </div>
                 <p class="archive-link"><a href="{% url 'lametro:archive-search' %}">Search the Metro Board Archive from 1952-2015 (Board Boxes 1994-Present)</a></p>
             </div>
         </div>
@@ -115,10 +105,12 @@
 
 
 {% block extra_js %}
-    <script src="{% static 'js/jquery.autocomplete.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.full.min.js"></script>
     <script src="{% static 'js/autocomplete.js' %}"></script>
 
     <script>
+
+        initAutocomplete('#search-form', '#search-bar');
 
         function collapseActivity(){
             $(".list-item:gt(4)").hide();
@@ -142,8 +134,7 @@
             return false;
         });
 
-        autocompleteSearchBar('#search-bar');
+        $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
 
-        $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'})
     </script>
 {% endblock %}

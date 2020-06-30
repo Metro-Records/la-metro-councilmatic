@@ -13,11 +13,11 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300italic' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.journal.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/dataTables.bootstrap.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/city_custom.css' %}" />
 
     {% block extra_css %}{% endblock %}
 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/city_custom.css' %}" />
 </head>
 <body>
 
@@ -90,7 +90,6 @@
     <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.autocomplete.js' %}"></script>
 
     <script type="text/javascript">
         function googleTranslateElementInit() {
@@ -102,6 +101,15 @@
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     {% block extra_js %}{% endblock %}
+
+    {% comment %}
+        This block is included for reference by our template overrides, e.g.,
+        search/search.html. Extending the extra_js block and calling super()
+        duplicates the extended content. I'm not quite sure why the duplication
+        occurs, but this seems to fix the problem.
+    {% endcomment %}
+
+    {% block uninherited_js %}{% endblock %}
 
     <script type="text/javascript">
         $('label.btn.btn-search-option').click(function toggleRadio(e) {

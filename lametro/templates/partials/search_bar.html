@@ -1,24 +1,47 @@
-{% load static %}
+<form class="search form-search" id="search-form">
+    <div class="input-group" style="margin-bottom: 15px;">
+        <select class="select2-multiple form-control input-group-lg" id="search-bar" multiple="multiple"></select>
+        <div class="input-group-btn">
+            <button type="submit" class="btn btn-lg btn-primary" id="search-button">
+                <i class="fa fa-fw fa-search"></i>
+            </button>
+        </div>
+    </div>
 
-  <input name="q" id="autocomplete-search" type="text" class="input-lg form-control" placeholder="{{ SEARCH_PLACEHOLDER_TEXT }}" value="{{ formatted_q }}">
-  <div class="input-group-btn">
-      <button type="submit" class="btn btn-lg btn-primary">
-          <i class="fa fa-fw fa-search"></i>
-      </button>
-  </div>
-</div> <!-- end input-group -->
+    <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-primary btn-search-option{% if 'search-reports' not in request.GET %} active{% endif %}">
+            <input type="radio" autocomplete="off" name="search-all"{% if 'search-reports' not in request.GET %} checked{% endif %}> Search reports and attachments
+        </label>
+        <label class="btn btn-primary btn-search-option{% if 'search-reports' in request.GET %} active{% endif %}">
+            <input type="radio" autocomplete="off" name="search-reports"{% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
+        </label>
+    </div>
 
-{% comment %}
-Make search-all if search-reports is not a query param, rather than
-if search-all is, so it is active by default, i.e., if someone comes to
-the search page with neither search-reports nor search-all in the query
-string.
-{% endcomment %}
-<div class="btn-group" data-toggle="buttons">
-    <label class="btn btn-primary btn-search-option{% if 'search-reports' not in request.GET %} active{% endif %}">
-        <input type="radio" autocomplete="off" name="search-all"{% if 'search-reports' not in request.GET %} checked{% endif %}> Search reports and attachments
-    </label>
-    <label class="btn btn-primary btn-search-option{% if 'search-reports' in request.GET %} active{% endif %}">
-        <input type="radio" name="search-reports" autocomplete="off" {% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
-    </label>
-</div>
+    <div class="input-group">
+        {% for facet, selections in selected_facets.items %}
+            {% for s in selections %}
+                <input name="selected_facets" type="hidden" class="form-control" value="{{facet}}_exact:{{s}}">
+            {% endfor %}
+        {% endfor %}
+
+        {% if 'sort_by=date' in request.get_full_path %}
+            <input name="sort_by" type="hidden" class="form-control" value="date">
+        {% endif %}
+
+        {% if 'sort_by=title' in request.get_full_path %}
+            <input name="sort_by" type="hidden" class="form-control" value="title">
+        {% endif %}
+
+        {% if 'sort_by=relevance' in request.get_full_path %}
+            <input name="sort_by" type="hidden" class="form-control" value="relevance">
+        {% endif %}
+
+        {% if 'order_by=asc' in request.get_full_path %}
+            <input name="order_by" type="hidden" class="form-control" value="asc">
+        {% endif %}
+
+        {% if 'order_by=desc' in request.get_full_path %}
+            <input name="order_by" type="hidden" class="form-control" value="desc">
+        {% endif %}
+    </div>
+</form>
