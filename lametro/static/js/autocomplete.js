@@ -223,7 +223,7 @@ function showRelatedTerms (termArray) {
 
     if ( termArray.length === 0 ) {
         return;
-    }
+    };
 
     // Execute all Ajax requests before proceeding:
     // https://stackoverflow.com/a/5627301/7142170
@@ -251,7 +251,7 @@ function showRelatedTerms (termArray) {
             getSubjectsFromTerms(relatedTerms)
         ).then(function (response) {
             renderRelatedTerms(response);
-        })
+        });
     })
 }
 
@@ -270,7 +270,7 @@ function getRelatedTerms (term) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Bearer ' + window.localStorage.getItem('ses_token')
         }
-    })
+    });
 }
 
 function parseRelatedTerms (response) {
@@ -298,7 +298,7 @@ function getSubjectsFromTerms (terms) {
     return $.ajax({
         url: '/subjects/',
         data: {related_terms: termNames}
-    })
+    });
 }
 
 function renderRelatedTerms (response) {
