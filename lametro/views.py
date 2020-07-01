@@ -659,7 +659,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
 
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
-        form_kwargs['search_corpus'] = 'all' if self.request.GET.get('search-all') else 'bills'
+        form_kwargs['search_corpus'] = 'bills' if self.request.GET.get('search-reports') else 'all'
         form_kwargs['result_type'] = self.request.GET.get('result_type', 'all')
 
         sqs = SearchQuerySet().facet('bill_type', sort='index')\
