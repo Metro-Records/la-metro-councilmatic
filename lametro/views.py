@@ -630,16 +630,16 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         else:
             terms = []
 
+        tag_filter = SQ()
+
+        for term in terms:
+            for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES:
+                tag_filter |= SQ(**{'{}__icontains'.format(facet): Exact(term)})
+
         if self.result_type == 'keyword':
-            for term in terms:
-                sqs = sqs.exclude(topics__iexact=Exact(term))
+            sqs = sqs.exclude(tag_filter)
 
         elif self.result_type == 'topic':
-            tag_filter = SQ()
-
-            for term in terms:
-                tag_filter |= SQ(topics__contains=Exact(term))
-
             sqs = sqs.filter(tag_filter)
 
         return sqs
