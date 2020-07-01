@@ -219,11 +219,11 @@ function initAutocomplete (formElement, inputElement) {
 }
 
 function showRelatedTerms (termArray) {
-    var relatedTerms = [];
-
     if ( termArray.length === 0 ) {
         return;
     };
+
+    var relatedTerms = [];
 
     // Execute all Ajax requests before proceeding:
     // https://stackoverflow.com/a/5627301/7142170

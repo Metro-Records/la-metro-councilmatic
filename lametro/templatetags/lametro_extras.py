@@ -213,3 +213,8 @@ def all_have_extra(entities, extra):
     in their extras.
     '''
     return all(e.extras.get(extra, None) for e in entities)
+
+
+@register.filter
+def get_list(querydict, key):
+    return querydict.getlist(key)

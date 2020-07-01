@@ -1,7 +1,6 @@
 {% extends "search/search.html" %}
 
-{% load staticfiles %}
-{% load extras %}
+{% load staticfiles extras lametro_extras %}
 
 {% block title %}
     {% if request.GET.q %}
@@ -296,23 +295,27 @@
 
     initAutocomplete('#search-form', '#search-bar');
 
-    var initialTerms = '{{ request.GET.q }}'
+    var queryTerms = '{{ request.GET.q }}'
         .split(' AND ')
-        .map(function (el) {
-            return el.replace(/&quot;/g, '');
-        });
+        .reduce(function (terms, query) {
+            var formattedQuery = query.replace(/&quot;/g, '');
+            formattedQuery ? terms.push(formattedQuery) : $.noop();
+            return terms;
+        }, []);
 
-    var emptyQuery = initialTerms.length === 1 && initialTerms[0] === '';
+    // Add initial query terms to the search bar.
+    $.each(queryTerms, function (_, term) {
+        var option =  $('<option selected></option>').text(term);
+        $('#search-bar').append(option);
+        $('#search-bar').trigger('change');
+    });
 
-    if ( !emptyQuery ) {
-        $.each(initialTerms, function (_, term) {
-            var option =  $('<option selected></option>').text(term);
-            $('#search-bar').append(option);
-            $('#search-bar').trigger('change');
-        });
+    var selectedFacets = {{ request.GET|get_list:"selected_facets"|safe }};
+    var facetTerms = selectedFacets.map(function (facet) {
+        return facet.split(':')[1]
+    });
 
-        showRelatedTerms(initialTerms);
-    };
+    showRelatedTerms(queryTerms.concat(facetTerms));
 
     $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
 
