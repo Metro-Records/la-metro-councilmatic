@@ -310,10 +310,18 @@
         $('#search-bar').trigger('change');
     });
 
+    var topicFacets = {{ topic_facets|safe }};
     var selectedFacets = {{ request.GET|get_list:"selected_facets"|safe }};
-    var facetTerms = selectedFacets.map(function (facet) {
-        return facet.split(':')[1]
-    });
+
+    var facetTerms = selectedFacets.reduce(function (terms, facet) {
+        var splitFacet = facet.split(':');
+        var facetName = splitFacet[0];
+        var facetValue = splitFacet[1];
+
+        topicFacets.includes(facetName) ? terms.push(facetValue) : $.noop();
+
+        return terms;
+    }, []);
 
     showRelatedTerms(queryTerms.concat(facetTerms));
 

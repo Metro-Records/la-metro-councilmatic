@@ -650,6 +650,11 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         kwargs['form_class'] = LAMetroCouncilmaticSearchForm
         super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
 
+    def extra_context(self):
+        extra_context = super().extra_context()
+        extra_context['topic_facets'] = [facet for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES]
+        return extra_context
+
     def build_form(self, form_kwargs={}):
         form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
 
@@ -778,8 +783,6 @@ class SmartLogicAPI(ListView):
 def fetch_subjects(request):
     related_terms = request.GET.getlist('related_terms[]')
     subjects = list(LAMetroSubject.objects.filter(name__in=related_terms).values_list('name', flat=True))
-
-    print(request.GET, related_terms)
 
     response = {
         'status_code': 200,
