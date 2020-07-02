@@ -609,6 +609,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
     def clean_q(self):
         q = self.cleaned_data['q']
+
         if q:
             return ' AND '.join('({})'.format(term.strip()) for term in q.split('AND'))
         else:
@@ -623,16 +624,17 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
             sqs = sqs.filter_or(attachment_text=AutoQuery(self.cleaned_data['q']))
 
-        parentheses = re.compile(r'(\(|\))')
-
         if has_query:
-            terms = [re.sub(parentheses, '', term) for term in self.cleaned_data['q'].split(' AND ')]
+            # We add parentheses around each term in self.cleaned_data['q'],
+            # but those interfere with keyword/text result filtering. Use the
+            # original data to get terms for result type.
+            result_type_terms = [term.strip() for term in self.data['q'].split(' AND ')]
         else:
-            terms = []
+            result_type_terms = []
 
         tag_filter = SQ()
 
-        for term in terms:
+        for term in result_type_terms:
             for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES:
                 tag_filter |= SQ(**{'{}__icontains'.format(facet): Exact(term)})
 

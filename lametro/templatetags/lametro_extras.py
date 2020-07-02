@@ -191,8 +191,15 @@ def hits_first(context, topics, selected_facets):
     '''
     topic_names = topics.values_list('name', flat=True)
 
-    # context['query'] looks like "(token) AND (token) AND (token)"
-    terms = [token.lstrip('(').rstrip(')') for token in context['query'].split(' AND ')]
+    # context['query'] looks like "(token) AND (token) AND (token)". Sometimes,
+    # tokens end with parentheses, e.g., "(Coronavirus (COVID-19))". Using a
+    # solution like rstrip() removes both of the closing parentheses, which
+    # interferes with hits. To strip the enclosing parentheses, but leave the
+    # others in tact, remove the first opening parenthesis, reverse the string,
+    # remove the first closing parenthesis, then put the string back in the
+    # right order.
+    terms = [token.replace('(', '', 1)[::-1].replace(')', '', 1)[::-1]
+             for token in context['query'].split(' AND ')]
 
     for _, values in selected_facets.items():
         terms += values
