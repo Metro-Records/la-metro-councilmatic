@@ -627,8 +627,9 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         if has_query:
             # We add parentheses around each term in self.cleaned_data['q'],
             # but those interfere with keyword/text result filtering. Use the
-            # original data to get terms for result type.
-            result_type_terms = [term.strip() for term in self.data['q'].split(' AND ')]
+            # original data to get terms for result type. Also escape double
+            # quotes.
+            result_type_terms = [term.strip().replace('"', '\\"') for term in self.data['q'].split(' AND ')]
         else:
             result_type_terms = []
 

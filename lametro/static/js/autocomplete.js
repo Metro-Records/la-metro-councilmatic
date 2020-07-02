@@ -176,7 +176,7 @@ function initAutocomplete (formElement, inputElement) {
         // If there's a pending term, add it to the query
         if ( pendingTerm !== '' ) {
           terms.push(pendingTerm);
-        }
+        };
 
         var queryString = terms.join(' AND ');
 
@@ -196,7 +196,7 @@ function initAutocomplete (formElement, inputElement) {
         if ( extraParams.length > 0 ) {
           extraParamString = extraParams.join('&');
           searchUrl = searchUrl + '&' + extraParamString;
-        }
+        };
 
         window.location.href = searchUrl;
     });
