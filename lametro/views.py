@@ -609,6 +609,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
     def clean_q(self):
         q = self.cleaned_data['q']
+
         if q:
             return ' AND '.join('({})'.format(term.strip()) for term in q.split('AND'))
         else:
@@ -623,23 +624,25 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
             sqs = sqs.filter_or(attachment_text=AutoQuery(self.cleaned_data['q']))
 
-        parentheses = re.compile(r'(\(|\))')
-
         if has_query:
-            terms = [re.sub(parentheses, '', term) for term in self.cleaned_data['q'].split(' AND ')]
+            # We add parentheses around each term in self.cleaned_data['q'],
+            # but those interfere with keyword/text result filtering. Use the
+            # original data to get terms for result type. Also escape double
+            # quotes.
+            result_type_terms = [term.strip().replace('"', '\\"') for term in self.data['q'].split(' AND ')]
         else:
-            terms = []
+            result_type_terms = []
+
+        tag_filter = SQ()
+
+        for term in result_type_terms:
+            for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES:
+                tag_filter |= SQ(**{'{}__icontains'.format(facet): Exact(term)})
 
         if self.result_type == 'keyword':
-            for term in terms:
-                sqs = sqs.exclude(topics__iexact=Exact(term))
+            sqs = sqs.exclude(tag_filter)
 
         elif self.result_type == 'topic':
-            tag_filter = SQ()
-
-            for term in terms:
-                tag_filter |= SQ(topics__contains=Exact(term))
-
             sqs = sqs.filter(tag_filter)
 
         return sqs
@@ -650,11 +653,16 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         kwargs['form_class'] = LAMetroCouncilmaticSearchForm
         super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
 
+    def extra_context(self):
+        extra_context = super().extra_context()
+        extra_context['topic_facets'] = [facet for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES]
+        return extra_context
+
     def build_form(self, form_kwargs={}):
         form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
 
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
-        form_kwargs['search_corpus'] = 'all' if self.request.GET.get('search-all') else 'bills'
+        form_kwargs['search_corpus'] = 'bills' if self.request.GET.get('search-reports') else 'all'
         form_kwargs['result_type'] = self.request.GET.get('result_type', 'all')
 
         sqs = SearchQuerySet().facet('bill_type', sort='index')\
@@ -775,23 +783,15 @@ class SmartLogicAPI(ListView):
         return SmartLogic(SMART_LOGIC_KEY).token()
 
 
-def fetch_topic(request):
-    guid = request.GET['guid']
+def fetch_subjects(request):
+    related_terms = request.GET.getlist('related_terms[]')
+    subjects = list(LAMetroSubject.objects.filter(name__in=related_terms).values_list('name', flat=True))
 
-    response = {}
-    response['guid'] = guid
-
-    try:
-        subject_guid = LAMetroSubject.objects.get(guid=guid)
-        subject = subject_guid.name
-        response['subject_safe'] = urllib.parse.quote(subject)
-        response['status_code'] = 200
-    except ObjectDoesNotExist:
-        subject = ''
-        subject_safe = ''
-        response['status_code'] = 404
-
-    response['subject'] = subject
+    response = {
+        'status_code': 200,
+        'related_terms': related_terms,
+        'subjects': subjects,
+    }
 
     return JsonResponse(response)
 

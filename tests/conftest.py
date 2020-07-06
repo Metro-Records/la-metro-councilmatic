@@ -264,7 +264,7 @@ def subject(db, bill):
 
 @pytest.fixture
 @pytest.mark.django_db
-def subject_guid(db, subject):
+def metro_subject(db, subject):
     class LAMetroSubjectFactory():
         def build(self, **kwargs):
 

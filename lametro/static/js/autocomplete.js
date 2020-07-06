@@ -1,5 +1,6 @@
 var SmartLogic = {
   query: {},
+  baseUrl: 'https://cloud.smartlogic.com/svc/0dcee7c7-1667-4164-81e5-c16e46f2f74c/ses/CombinedModel/concepts/',
   getToken: function () {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
@@ -18,7 +19,13 @@ var SmartLogic = {
     };
   },
   buildServiceUrl: function (query) {
-    return 'https://cloud.smartlogic.com/svc/0dcee7c7-1667-4164-81e5-c16e46f2f74c/ses/CombinedModel/concepts/' + query.term + '.json?FILTER=AT=System:%20Legistar&stop_cm_after_stage=3&maxResultCount=10';
+    var queryLocation = query.term + '.json';
+    var stop = query.stop_cm_after_stage ? query.stop_cm_after_stage : '3';
+    var maxResults = query.maxResultCount ? query.maxResultCount : '10';
+
+    return SmartLogic.baseUrl + queryLocation
+        + '?FILTER=AT=System:%20Legistar&stop_cm_after_stage=' + stop
+        + '&maxResultCount=' + maxResults;
   },
   transformResponse: function (data, params) {
     SmartLogic.query = params;
@@ -169,7 +176,7 @@ function initAutocomplete (formElement, inputElement) {
         // If there's a pending term, add it to the query
         if ( pendingTerm !== '' ) {
           terms.push(pendingTerm);
-        }
+        };
 
         var queryString = terms.join(' AND ');
 
@@ -189,7 +196,7 @@ function initAutocomplete (formElement, inputElement) {
         if ( extraParams.length > 0 ) {
           extraParamString = extraParams.join('&');
           searchUrl = searchUrl + '&' + extraParamString;
-        }
+        };
 
         window.location.href = searchUrl;
     });
@@ -209,4 +216,98 @@ function initAutocomplete (formElement, inputElement) {
     $input.on('select2:opening', function (e) {
         $form.on('keyup', '.select2-selection', submitOnEnter);
     });
+}
+
+function showRelatedTerms (termArray) {
+    if ( termArray.length === 0 ) {
+        return;
+    };
+
+    var relatedTerms = [];
+
+    // Execute all Ajax requests before proceeding:
+    // https://stackoverflow.com/a/5627301/7142170
+    $.when.apply(
+        $, termArray.map(getRelatedTerms)
+    ).then(function () {
+        // arguments is a magic variable containing all arguments passed to
+        // this function. This is helpful, because we have an indeterminate
+        // number of Ajax requests to deal with.
+        //
+        // If there is only one request, then args is an array with three items:
+        // the response, status, and Ajax object. If there is more than one,
+        // then args is an array of these arrays.
+        if ( termArray.length === 1 ) {
+            var response = arguments[0];
+            relatedTerms = parseRelatedTerms(response);
+        } else {
+            $.each(arguments, function (_, arg) {
+                var response = arg[0];
+                relatedTerms = relatedTerms.concat(parseRelatedTerms(response));
+            });
+        };
+
+        $.when(
+            getSubjectsFromTerms(relatedTerms)
+        ).then(function (response) {
+            renderRelatedTerms(response);
+        });
+    })
+}
+
+function getRelatedTerms (term) {
+    console.log('Retrieving terms related to ' + term);
+
+    var url = SmartLogic.buildServiceUrl({
+        'term': term,
+        'stop_cm_after_stage': 1,
+        'maxResultCount': 5,
+    });
+
+    return $.ajax({
+        url: url,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + window.localStorage.getItem('ses_token')
+        }
+    });
+}
+
+function parseRelatedTerms (response) {
+    if ( response.total === '1' ) {
+        // If there is only one term, then the supplied term exactly
+        // matches a term in SES. Display associated terms, if any.
+        return response.terms[0].term.associated.length
+            ? response.terms[0].term.associated[0].fields.map(function (el) {
+                return {'name': el.field.name, 'id': el.field.id}
+            })
+            : [];
+    } else {
+        // If there is more than one term, then the supplied term
+        // does not exactly match a term in SES. Display all results
+        // (limited to at most 5 by our query.)
+        return response.terms.map(function (el) {
+            return {'name': el.term.name, 'id': el.term.id}
+        });
+    };
+}
+
+function getSubjectsFromTerms (terms) {
+    var termNames = terms.map(function(el) {return el.name});
+
+    return $.ajax({
+        url: '/subjects/',
+        data: {related_terms: termNames}
+    });
+}
+
+function renderRelatedTerms (response) {
+    if ( response.status_code == 200 && response.subjects.length > 0 ) {
+        $('#related-terms').removeClass('hidden');
+
+        $.each(response.subjects, function (idx, subject) {
+            var link = $('<a />').attr('href', '/search/?q=' + subject).text(subject);
+            $('#related-terms').append(link).append('<br />');
+        });
+    };
 }
