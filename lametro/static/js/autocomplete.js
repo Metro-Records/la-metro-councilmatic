@@ -306,7 +306,6 @@ function renderRelatedTerms (response) {
         $('#related-terms').removeClass('hidden');
 
         $.each(response.subjects, function (idx, subject) {
-            // TODO: Should this be a text search or a facet search?
             var link = $('<a />').attr('href', '/search/?q=' + subject).text(subject);
             $('#related-terms').append(link).append('<br />');
         });
