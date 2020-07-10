@@ -16,6 +16,7 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
+COPY councilmatic/settings_deployment.py.example /app/councilmatic/settings_deployment.py
 
 RUN DATABASE_URL='' python manage.py collectstatic --noinput
 
