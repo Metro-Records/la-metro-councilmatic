@@ -69,7 +69,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <a href="{% url 'lametro:person' membership.person.slug %}">{{ membership.person.name }}</a>
+                                    {% if membership.person.latest_council_membership %}
+                                        <a href="{% url 'lametro:person' membership.person.slug %}">{{ membership.person.name }}</a>
+                                    {% else %}
+                                        {{ membership.person.name }}
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {{ membership.extras | clean_membership_extras }} {{ membership.person.latest_council_membership.post.label | format_label }}
