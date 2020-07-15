@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
 import django.contrib.postgres.fields as postgres_fields
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager, Membership
 
@@ -259,11 +260,13 @@ class LAMetroPerson(Person, SourcesMixin):
     @property
     def headshot_url(self):
         if self.slug in settings.MANUAL_HEADSHOTS:
-            return '/static/images/' + settings.MANUAL_HEADSHOTS[self.slug]['image']
+            image_url = 'images/' + settings.MANUAL_HEADSHOTS[self.slug]['image']
         elif self.headshot:
-            return self.headshot.url
+            image_url = self.headshot.url
         else:
-            return '/static/images/headshot_placeholder.png'
+            image_url = 'images/headshot_placeholder.png'
+
+        return static(image_url)
 
 
 class LAMetroEventManager(EventManager):
