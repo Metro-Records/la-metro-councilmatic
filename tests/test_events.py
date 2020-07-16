@@ -4,7 +4,6 @@ from datetime import datetime
 from uuid import uuid4
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
 import requests
 
 from opencivicdata.legislative.models import EventDocument
@@ -89,32 +88,6 @@ def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
         updated_at = LAMetroEvent._time_from_now(days=3)
         mock_update.return_value = updated_at
         assert updates_made(event.id) == (has_updates and has_agenda)
-
-
-@pytest.fixture
-def concurrent_current_meetings(event):
-    '''
-    Two meetings scheduled to begin in the next five minutes.
-    '''
-    board_meeting_info = {
-        'id': 'ocd-event/ef33b22d-b166-458f-b254-b81f656ffc09',
-        'name': 'Regular Board Meeting',
-        'start_date': LAMetroEvent._time_from_now(minutes=3)\
-            .replace(second=0, microsecond=0)\
-            .isoformat(),
-    }
-    board_meeting = event.build(**board_meeting_info)
-
-    construction_meeting_info = {
-        'id': 'ocd-event/FEC6A621-F5C7-4A88-B2FB-5F6E14FE0E35',
-        'name': 'Construction Committee',
-        'start_date': LAMetroEvent._time_from_now(minutes=3)\
-            .replace(second=0, microsecond=0)\
-            .isoformat(),
-    }
-    construction_meeting = event.build(**construction_meeting_info)
-
-    return board_meeting, construction_meeting
 
 
 def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
@@ -310,49 +283,3 @@ def test_upcoming_board_meetings(event):
 
     for meeting in (past_board_meeting, upcoming_committee_meeting, future_board_meeting):
         assert meeting not in upcoming_meetings
-
-
-def _test_redirect(response, expected_location):
-    redirect, = response.redirect_chain
-
-    redirect_url, redirect_status_code = redirect
-
-    assert redirect_status_code == 302
-    assert redirect_url == expected_location
-
-
-@pytest.mark.django_db
-def test_public_comment_endpoint_no_meeting(client):
-    response = client.get(reverse('lametro:public_comment'), follow=True)
-    _test_redirect(response, LAMetroEvent.GENERIC_ECOMMENT_URL)
-
-
-@pytest.mark.django_db
-def test_public_comment_endpoint_one_meeting(concurrent_current_meetings, mocker, client):
-    dummy_guid = 'a super special guid'
-    ecomment_url = 'https://ecomment.url'
-
-    # Add dummy GUID to one of our events.
-    live_meeting, _ = concurrent_current_meetings
-
-    live_meeting.extras = {
-        'guid': dummy_guid.upper(),  # GUIDs in the Legistar API are all caps.
-        'ecomment': ecomment_url,
-    }
-
-    live_meeting.save()
-
-    # Patch running events endpoint to return our dummy GUID.
-    mock_response = mocker.MagicMock(spec=requests.Response)
-    mock_response.json.return_value = [dummy_guid]  # GUIDs in running events endpoint are all lowercase.
-
-    mocker.patch('lametro.models.requests.get', return_value=mock_response)
-
-    response = client.get(reverse('lametro:public_comment'), follow=True)
-    _test_redirect(response, ecomment_url)
-
-
-@pytest.mark.django_db
-def test_public_comment_endpoint_concurrent_meetings(concurrent_current_meetings, client):
-    response = client.get(reverse('lametro:public_comment'), follow=True)
-    _test_redirect(response, LAMetroEvent.GENERIC_ECOMMENT_URL)

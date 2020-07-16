@@ -42,6 +42,7 @@ CACHES = {
 
 # Set this to flush the cache at /flush-cache/{FLUSH_KEY}
 FLUSH_KEY = 'super secret junk'
+API_KEY = 'test api key'
 
 # Set this to allow Disqus comments to render
 DISQUS_SHORTNAME = None
