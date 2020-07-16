@@ -408,7 +408,9 @@ class LABoardMembersView(CouncilMembersView):
             'Chair': 0,
             'Vice Chair': 1,
             '1st Chair': 1,
+            '1st Vice Chair': 1,
             '2nd Chair': 2,
+            '2nd Vice Chair': 2,
             'Board Member': 3,
             'Nonvoting Board Member': 4,
         }
