@@ -9,6 +9,7 @@ from django.views.generic import ListView, RedirectView
 from haystack.query import SearchQuerySet
 
 from lametro.models import LAMetroBill, LAMetroEvent, LAMetroSubject
+from lametro.smartlogic import SmartLogic
 
 
 class SmartLogicAPI(ListView):

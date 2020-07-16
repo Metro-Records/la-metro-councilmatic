@@ -54,7 +54,6 @@ from opencivicdata.core.models import PersonLink
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
     LAMetroEvent, LAMetroOrganization, LAMetroSubject
 from lametro.forms import AgendaUrlForm, AgendaPdfForm
-from lametro.smartlogic import SmartLogic
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
