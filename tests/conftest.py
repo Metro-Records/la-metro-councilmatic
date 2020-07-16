@@ -42,6 +42,7 @@ def bill(db, legislative_session):
                 'slug': '2017-0686',
                 'classification': ['Report'],
                 'legislative_session': legislative_session,
+                'extras': {'restrict_view': False},
             }
 
             bill_info.update(kwargs)
@@ -290,3 +291,28 @@ def metro_subject(db, subject):
             return subject
 
     return LAMetroSubjectFactory()
+
+@pytest.fixture
+def concurrent_current_meetings(event):
+    '''
+    Two meetings scheduled to begin in the next five minutes.
+    '''
+    board_meeting_info = {
+        'id': 'ocd-event/ef33b22d-b166-458f-b254-b81f656ffc09',
+        'name': 'Regular Board Meeting',
+        'start_date': LAMetroEvent._time_from_now(minutes=3)\
+            .replace(second=0, microsecond=0)\
+            .isoformat(),
+    }
+    board_meeting = event.build(**board_meeting_info)
+
+    construction_meeting_info = {
+        'id': 'ocd-event/FEC6A621-F5C7-4A88-B2FB-5F6E14FE0E35',
+        'name': 'Construction Committee',
+        'start_date': LAMetroEvent._time_from_now(minutes=3)\
+            .replace(second=0, microsecond=0)\
+            .isoformat(),
+    }
+    construction_meeting = event.build(**construction_meeting_info)
+
+    return board_meeting, construction_meeting

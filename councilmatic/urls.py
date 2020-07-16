@@ -9,11 +9,13 @@ from haystack.query import SearchQuerySet, EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
 from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
+
+from lametro.api import SmartLogicAPI, PublicComment, refresh_guid_trigger, \
+    fetch_subjects, fetch_object_counts
 from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
     LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
-    metro_login, metro_logout, delete_submission, LAMetroArchiveSearch, refresh_guid_trigger, \
-    SmartLogicAPI, fetch_subjects, PublicComment
+    metro_login, metro_logout, delete_submission, LAMetroArchiveSearch
 from lametro.feeds import *
 
 patterns = ([
@@ -34,7 +36,6 @@ patterns = ([
     url(r'^events/$', LAMetroEventsView.as_view(), name='event'),
     url(r'^person/(?P<slug>[^/]+)/rss/$', LAMetroPersonDetailFeed(), name='person_feed'),
     url(r'^google66b34bb6957ad66c.html/$', GoogleView.as_view(), name='google_view'),
-    url(r'^refresh-guid/(.*)$', refresh_guid_trigger, name='refresh_guid'),
     url(r'^public-comment/$', PublicComment.as_view(), name='public_comment'),
 ], settings.APP_NAME)
 
@@ -44,7 +45,9 @@ urlpatterns = [
     url(r'^metro-login/$', metro_login, name='metro_login'),
     url(r'^metro-logout/$', metro_logout, name='metro_logout'),
     url(r'^ses-token/$', SmartLogicAPI.as_view(), name='ses_token'),
+    url(r'^refresh-guid/(.*)$', refresh_guid_trigger, name='refresh_guid'),
     url(r'^subjects/$', fetch_subjects, name='subjects'),
+    url(r'^object-counts/(.*)$', fetch_object_counts, name='object_counts'),
     url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
     url(r'', include('councilmatic_core.urls')),
 ]

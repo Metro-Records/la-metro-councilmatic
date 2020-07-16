@@ -10,7 +10,6 @@ from dateutil import parser
 import requests
 import sqlalchemy as sa
 from collections import namedtuple
-import json as simplejson
 import os
 
 from haystack.backends import SQ
@@ -37,13 +36,12 @@ from django.db.models import (Max,
                               Q)
 from django.utils import timezone
 from django.utils.text import slugify
-from django.views.generic import TemplateView, ListView, RedirectView
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound, JsonResponse
+from django.views.generic import TemplateView
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
 from django.shortcuts import render_to_response, redirect
 from django.core import management
 from django.core.serializers import serialize
 from django.views.generic import View
-from django.views.decorators.csrf import csrf_exempt
 
 from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
@@ -59,8 +57,7 @@ from lametro.forms import AgendaUrlForm, AgendaPdfForm
 from lametro.smartlogic import SmartLogic
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
-from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL, SMART_LOGIC_KEY, \
-    SMART_LOGIC_ENVIRONMENT
+from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
 
@@ -743,69 +740,3 @@ def metro_login(request):
 def metro_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
-
-
-@csrf_exempt
-def refresh_guid_trigger(request, refresh_key):
-    try:
-        if refresh_key == settings.REFRESH_KEY:
-            management.call_command('refresh_guid')
-            return HttpResponse(200)
-        else:
-            print('You do not have the correct refresh_key to access this.')
-    except AttributeError:
-        print('You need a refresh_key in your local deployment settings files to access this.')
-    return HttpResponse(403)
-
-
-class SmartLogicAPI(ListView):
-    api_key = SMART_LOGIC_KEY
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def render_to_response(self, context):
-        '''
-        Return response as JSON.
-        '''
-        try:
-            return JsonResponse(context['object_list'])
-        except json.JSONDecodeError:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Could not retrieve SmartLogic token'
-            }, status=500)
-
-    def get_queryset(self, *args, **kwargs):
-        '''
-        Return a SmartLogic authentication token.
-        '''
-        return SmartLogic(SMART_LOGIC_KEY).token()
-
-
-def fetch_subjects(request):
-    related_terms = request.GET.getlist('related_terms[]')
-    subjects = list(LAMetroSubject.objects.filter(name__in=related_terms).values_list('name', flat=True))
-
-    response = {
-        'status_code': 200,
-        'related_terms': related_terms,
-        'subjects': subjects,
-    }
-
-    return JsonResponse(response)
-
-
-class PublicComment(RedirectView):
-    '''
-    Redirect to the public comment link for the current meeting. If there is
-    more than one current meeting, or no current meetings, redirect to the
-    generic public comment URL.
-    '''
-    def get_redirect_url(self, *args, **kwargs):
-        current_meetings = LAMetroEvent.current_meeting()
-
-        if current_meetings.count() == 1:
-            return current_meetings.get().ecomment_url
-
-        return LAMetroEvent.GENERIC_ECOMMENT_URL
