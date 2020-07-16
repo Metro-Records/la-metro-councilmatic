@@ -216,7 +216,7 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def board_office(self):
-        office_roles = ('Chair', '1st Chair', 'Vice Chair', '2nd Chair')
+        office_roles = ('Chair', '1st Chair', 'Vice Chair', '1st Vice Chair', '2nd Chair', '2nd Vice Chair')
 
         try:
             office_membership = self.memberships\
