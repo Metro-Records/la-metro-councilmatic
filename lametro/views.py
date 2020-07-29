@@ -15,7 +15,6 @@ import os
 from haystack.backends import SQ
 from haystack.inputs import Exact, AutoQuery
 from haystack.query import SearchQuerySet
-from requests.exceptions import HTTPError
 
 import pytz
 
