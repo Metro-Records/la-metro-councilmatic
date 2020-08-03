@@ -740,8 +740,15 @@ class EventPacket(Packet):
 
         for item in agenda_items:
             for entity in item.related_entities.filter(bill__isnull=False):
-                bill_packet = BillPacket(bill=entity.bill)
-                related.extend(bill_packet.related_files)
+                try:
+                    related_bill = entity.bill
+                except LAMetroBill.DoesNotExist:
+                    # If this exception occurs, the related bill is private.
+                    # Skip it.
+                    continue
+                else:
+                    bill_packet = BillPacket(bill=related_bill)
+                    related.extend(bill_packet.related_files)
 
         return related
 
