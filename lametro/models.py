@@ -744,12 +744,12 @@ class EventPacket(Packet):
                     related_bill = entity.bill
                 except LAMetroBill.DoesNotExist:
                     # We configure event agenda items to return LAMetroBill
-                    # objects. Sometimes, agendas items concern bills that do
+                    # objects. Sometimes, agenda items concern bills that do
                     # not meet criteria for display, e.g., the bill is private
                     # or it does not appear on a published agenda. (See the
                     # LAMetroBill manager for an exhaustive list of display
                     # criteria.) In this case, trying to access the bill via
-                    # the event related entity will raise this exception. Skip
+                    # the event agenda item will raise this exception. Skip
                     # adding those documents to the event packet.
                     continue
                 else:
