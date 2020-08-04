@@ -743,8 +743,14 @@ class EventPacket(Packet):
                 try:
                     related_bill = entity.bill
                 except LAMetroBill.DoesNotExist:
-                    # If this exception occurs, the related bill is private.
-                    # Skip it.
+                    # We configure event agenda items to return LAMetroBill
+                    # objects. Sometimes, agendas items concern bills that do
+                    # not meet criteria for display, e.g., the bill is private
+                    # or it does not appear on a published agenda. (See the
+                    # LAMetroBill manager for an exhaustive list of display
+                    # criteria.) In this case, trying to access the bill via
+                    # the event related entity will raise this exception. Skip
+                    # adding those documents to the event packet.
                     continue
                 else:
                     bill_packet = BillPacket(bill=related_bill)
