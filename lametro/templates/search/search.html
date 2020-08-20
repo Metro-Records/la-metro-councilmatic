@@ -311,17 +311,12 @@
     });
 
     var topicFacets = {{ topic_facets|safe }};
-    var selectedFacets = {{ request.GET|get_list:"selected_facets"|safe }};
+    var selectedFacets = JSON.parse($('#selected-facets').text());
 
-    var facetTerms = selectedFacets.reduce(function (terms, facet) {
-        var splitFacet = facet.split(':');
-        var facetName = splitFacet[0];
-        var facetValue = splitFacet[1];
-
-        topicFacets.includes(facetName) ? terms.push(facetValue) : $.noop();
-
-        return terms;
-    }, []);
+    var facetTerms = [];
+    $.each(selectedFacets, function(facetName, facetValue) {
+        topicFacets.includes(facetName) ? facetTerms.push(facetValue) : $.noop();
+    })
 
     showRelatedTerms(queryTerms.concat(facetTerms));
 
