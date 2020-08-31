@@ -226,21 +226,6 @@ def get_list(querydict, key):
     return querydict.getlist(key)
 
 @register.filter
-def get_event_occured(action):
-    try:
-        event = LAMetroEvent.objects.get(participants__entity_type='organization',\
-                                        participants__entity_name=action.organization, \
-                                        start_time__date=action.date.date())
-    except MultipleObjectsReturned:
-        bill = action.bill()
-        event = LAMetroEvent.objects.get(participants__entity_type='organization',\
-                                        participants__entity_name=action.organization, \
-                                        start_time__date=action.date.date()) \
-                                        .get(agenda_items__bill=bill)
-
-    return event
-
-@register.filter
 def get_action_event(action):
     bill = action.bill
     event = LAMetroEvent.objects.filter(participants__entity_type='organization',\
