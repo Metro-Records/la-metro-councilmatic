@@ -34,40 +34,46 @@ When the command exits (`-d`) or your logs indicate that your app is up and runn
 
 Every hour, DataMade scrapes the Legistar Web API and makes the results available on the Open Civic Data API, which hosts standardized data patterns about government organizations, people, legislation, and events. Metro Board Reports relies upon this data.
 
-The django-councilmatic app comes with an `import_data` management command, which populates your database with content loaded from the OCD API. You can explore the nitty-gritty of this code [here](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/import_data.py).
-
-Run the `import_data` command, which may take a few minutes to an hour, depending on how much data you need to import. You can read more on how to limit the amount of data you import [in the wiki](https://github.com/datamade/la-metro-councilmatic/wiki/Commands-to-know#importing-data-to-councilmatic).
+To import data, simply run:
 
 ```bash
-# Run the command in the background (-d) inside an application container.
-# Remove the container when the command exits (--rm).
-docker-compose run --rm -d app python manage.py import_data
+docker-compose run --rm scrapers
 ```
 
-For long-running data imports, you can view the logs like:
+This may take a few minutes to an hour, depending on the volume of recent
+updates.
+
+Once it's finished, head over to http://localhost:8001 to view your shiny new app!
+
+### Optional: Populate the search index
+
+If you wish to use search in your local install, you need a SmartLogic API
+key. Initiated DataMade staff may decrypt application secrets for use:
 
 ```bash
-docker ps  # Look for the container named like la-metro-councilmatic_app_run_<SOME_ID>
-docker-compose logs -f la-metro-councilmatic_app_run_<SOME_ID>
+blackbox_cat configs/settings_deployment.staging.py
 ```
 
-By default, the `import_data` command carefully looks at the OCD API; it is a smart management command. If you already have bills loaded, it will not look at everything on the API - it will look at the most recently updated bill in your database, see when that bill was last updated on the OCD API, and then look through everything on the API that was updated after that point.
+Grab the `SMARTLOGIC_API_KEY` value from the decrypted settings, and swap it
+into your local `councilmatic/settings_deployment.py` file.
 
-If you'd like to load things that are older than what you currently have loaded, you can run the import_data management command with a `--delete` option, which removes everything from your database before loading.
-
-Next, add your shiny new data to your search index with the `rebuild_index` command from Haystack.
+Then, run the `refresh_guid` management command to grab the appropriate
+classifications for topics in the database.
 
 ```bash
-docker-compose run --rm app python manage.py rebuild_index --batch-size=25
+python manage.py refresh_guid
 ```
 
-Once you've imported the data and added it to your index, create the cache, then you're all set!
+Finally, add data to your search index with the `update_index` command from
+Haystack.
+
 
 ```bash
-docker-compose run --rm app python manage.py createcachetable
+docker-compose run --rm app python manage.py update_index
 ```
 
-Head over to http://localhost:8000 to view the app.
+When the command exits, your search index has been filled. (You can view the
+Solr admin panel at http://localhost:8987/solr.)
 
 ## Making changes to the Solr schema
 
