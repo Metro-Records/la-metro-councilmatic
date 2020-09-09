@@ -583,6 +583,16 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         else:
             return self.UPCOMING_ECOMMENT_MESSAGE
 
+    @property
+    def actions_and_agendas(self):
+        agendas = self.agenda.all()
+
+        event_related_entities = [agenda.related_entities for agenda in agendas]
+        bills_with_event = [entity.bill for entity in event_related_entities]
+        actions = [councilmatic_core.models.BillAction.objects.filter(bill) for bill in bills_with_event]
+
+        return agendas + actions
+
 
 class EventAgendaItem(EventAgendaItem):
 
