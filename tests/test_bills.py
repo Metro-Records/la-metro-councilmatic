@@ -134,4 +134,4 @@ def test_last_action_date_has_already_occurred(bill, event):
     last_action_date = some_bill.councilmatic_bill.get_last_action_date()
 
     # Assert the last action matches the event that has already occurred.
-    assert last_action_date.date() == two_weeks_ago.date()
+    assert last_action_date == two_weeks_ago.date()
