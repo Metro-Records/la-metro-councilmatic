@@ -94,6 +94,25 @@
 
                 {% if has_agenda and not event.has_passed %}
                     <div class="col-sm-5">
+                        {% if event.is_ongoing %}
+                            <h4>Participant Instructions</h4>
+
+                            <p>The conference begins at {{event.start_time | date:"g:i a"}} Pacific Time on {{event.start_time | date:"F n, Y"}}; you may join the conference 5 minutes prior.</p>
+
+                            <p>
+                                <strong>Dial-in:</strong> 888-251-2949 or 215-861-0694<br/>
+                                <strong>English Access Code:</strong> 8231160#<br/>
+                                <strong>Spanish Access Code:</strong> 4544724#
+                            </p>
+
+                            <p>
+                                Need an international dial-in number? <a href="#" target="_blank">Please click here.</a>
+
+                            <p>
+                                Need assistance with your audio? Please dial 888-796-6118.
+                            </p><br />
+                        {% endif %}
+
                         <h4>Submit public comment remotely</h4>
                         {% if event.is_ongoing %}
 
