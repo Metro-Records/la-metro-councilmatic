@@ -64,19 +64,21 @@
                         {% endif %}
                     </p>
 
-                    {% if event.is_ongoing %}
-                        <p>
-                            <strong>You can submit your comments to the Metro Board of Directors during this meeting.</strong> Use the link below to comment on board reports on the agenda.
-                        </p>
+                    {% if USING_ECOMMENT %}
+                        {% if event.is_ongoing %}
+                            <p>
+                                <strong>You can submit your comments to the Metro Board of Directors during this meeting.</strong> Use the link below to comment on board reports on the agenda.
+                            </p>
 
-                        <p>
-                            <a class="btn btn-salmon" href="{{ event.ecomment_url }}" target="_blank">
-                                <i class='fa fa-fw fa-external-link'></i>
-                                Go to public comment
-                            </a>
-                        </p>
-                    {% elif event.ecomment_message %}
-                        <p>{{ event.ecomment_message|safe }}</p>
+                            <p>
+                                <a class="btn btn-salmon" href="{{ event.ecomment_url }}" target="_blank">
+                                    <i class='fa fa-fw fa-external-link'></i>
+                                    Go to public comment
+                                </a>
+                            </p>
+                        {% elif event.ecomment_message %}
+                            <p>{{ event.ecomment_message|safe }}</p>
+                        {% endif %}
                     {% endif %}
 
                     <p class="small">
@@ -113,39 +115,41 @@
                             </p><br />
                         {% endif %}
 
-                        <h4>Submit public comment remotely</h4>
-                        {% if event.is_ongoing %}
+                        {% if USING_ECOMMENT %}
+                            <h4>Submit public comment remotely</h4>
+                            {% if event.is_ongoing %}
 
-                            <p>
-                                <strong>On the web:</strong>
-                                <a href="{{ event.ecomment_url }}" target="_blank">
-                                    <i class='fa fa-fw fa-external-link'></i>
-                                    Go to public comment
-                                </a>
-                            </p>
-
-                        {% else %}
-
-                            <p>
-                                <strong>During the meeting</strong><br />
                                 <p>
-                                    {{ event.UPCOMING_ECOMMENT_MESSAGE }}
+                                    <strong>On the web:</strong>
+                                    <a href="{{ event.ecomment_url }}" target="_blank">
+                                        <i class='fa fa-fw fa-external-link'></i>
+                                        Go to public comment
+                                    </a>
                                 </p>
-                            </p>
 
-                            <p>
-                                <strong>Before the meeting</strong><br />
+                            {% else %}
+
                                 <p>
-                                    <strong>Via email:</strong> <a href="mailto:jacksonm@metro.net">jacksonm@metro.net</a><br />
-                                    <strong>By postal mail:</strong> Board Secretary's Office, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
+                                    <strong>During the meeting</strong><br />
+                                    <p>
+                                        {{ event.UPCOMING_ECOMMENT_MESSAGE }}
+                                    </p>
                                 </p>
-                            </p>
 
-                            <p>
-                                <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
-                                <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail. <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong></em>
-                            </p>
+                                <p>
+                                    <strong>Before the meeting</strong><br />
+                                    <p>
+                                        <strong>Via email:</strong> <a href="mailto:jacksonm@metro.net">jacksonm@metro.net</a><br />
+                                        <strong>By postal mail:</strong> Board Secretary's Office, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
+                                    </p>
+                                </p>
 
+                                <p>
+                                    <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
+                                    <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail. <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong></em>
+                                </p>
+
+                            {% endif %}
                         {% endif %}
                     </div>
                 {% endif %}

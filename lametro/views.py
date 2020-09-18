@@ -207,6 +207,9 @@ class LAMetroEventDetail(EventDetailView):
         if 'pdf_form' not in context:
             context['pdf_form'] = AgendaPdfForm()
 
+
+        context['USING_ECOMMENT'] = settings.USING_ECOMMENT
+
         return context
 
 
