@@ -31,7 +31,7 @@
                                 </p>
                             {% endif %}
 
-                            {% if meeting.is_ongoing %}
+                            {% if meeting.is_ongoing and USING_ECOMMENT %}
                                 <p>
                                     <a class="btn btn-salmon" href="{{ event.ecomment_url }}" target="_blank">
                                         <i class='fa fa-fw fa-external-link'></i>
@@ -113,10 +113,12 @@
                             </a>
                         {% endif %}
 
-                        <a class="btn btn-salmon" href="{{ current_meeting.first.ecomment_url }}" target="_blank" style="margin-top: 10px; margin-left: 5px;">
-                            <i class='fa fa-fw fa-external-link'></i>
-                            Go to public comment
-                        </a>
+                        {% if USING_ECOMMENT %}
+                            <a class="btn btn-salmon" href="{{ current_meeting.first.ecomment_url }}" target="_blank" style="margin-top: 10px; margin-left: 5px;">
+                                <i class='fa fa-fw fa-external-link'></i>
+                                Go to public comment
+                            </a>
+                        {% endif %}
                     </p>
                 </div>
             </div>
