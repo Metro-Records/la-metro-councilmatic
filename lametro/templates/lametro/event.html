@@ -108,16 +108,22 @@
                             </p>
 
                             <p>
-                                Need an international dial-in number? <a href="#" target="_blank">Please click here.</a>
+                                Need an international dial-in number? <a href="https://www.teleconference.att.com/servlet/glbAccess?process=0&accessCode=8231160&accessNumber=8882512949&brand=att" target="_blank"><i class='fa fa-fw fa-external-link'></i> Please click here.</a>
+                            </p>
 
                             <p>
                                 Need assistance with your audio? Please dial 888-796-6118.
-                            </p><br />
-                        {% endif %}
+                            </p>
 
-                        {% if USING_ECOMMENT %}
-                            <h4>Submit public comment remotely</h4>
-                            {% if event.is_ongoing %}
+                            <p>
+                                <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
+                                <em>When you call in to comment, you will be able to hear the live stream of the meeting while you wait to comment. <strong>If you are also listening to the meeting on another device, please lower the volume on the second device to avoid feedback and ensure you can be heard clearly.</strong></em>
+                            </p>
+
+                            <br />
+
+                            {% if USING_ECOMMENT %}
+                                <h4>Submit public comment remotely</h4>
 
                                 <p>
                                     <strong>On the web:</strong>
@@ -126,30 +132,33 @@
                                         Go to public comment
                                     </a>
                                 </p>
+                            {% endif %}
+                        {% else %}
+                            <h4>Submit public comment remotely</h4>
 
-                            {% else %}
-
+                            {% if USING_ECOMMENT %}
                                 <p>
                                     <strong>During the meeting</strong><br />
+
                                     <p>
                                         {{ event.UPCOMING_ECOMMENT_MESSAGE }}
                                     </p>
                                 </p>
-
-                                <p>
-                                    <strong>Before the meeting</strong><br />
-                                    <p>
-                                        <strong>Via email:</strong> <a href="mailto:jacksonm@metro.net">jacksonm@metro.net</a><br />
-                                        <strong>By postal mail:</strong> Board Secretary's Office, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
-                                    </p>
-                                </p>
-
-                                <p>
-                                    <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
-                                    <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail. <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong></em>
-                                </p>
-
                             {% endif %}
+
+                            <p>
+                                <strong>Before the meeting</strong><br />
+
+                                <p>
+                                    <strong>Via email:</strong> <a href="mailto:jacksonm@metro.net">jacksonm@metro.net</a><br />
+                                    <strong>By postal mail:</strong> Board Secretary's Office, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
+                                </p>
+                            </p>
+
+                            <p>
+                                <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
+                                <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail. <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong></em>
+                            </p>
                         {% endif %}
                     </div>
                 {% endif %}
