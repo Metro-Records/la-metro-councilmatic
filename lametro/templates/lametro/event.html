@@ -96,19 +96,21 @@
 
                 {% if has_agenda and not event.has_passed %}
                     <div class="col-sm-5">
-                        {% if event.is_ongoing %}
-                            <h4>Participant Instructions</h4>
+                        <h4>Submit public comment remotely</h4>
 
-                            <p>The conference begins at {{event.start_time | date:"g:i a"}} Pacific Time on {{event.start_time | date:"F j, Y"}}; you may join the conference 5 minutes prior.</p>
+                        <p>
+                            <strong>During the meeting</strong>
+                        </p>
+
+                        {% if event.is_upcoming or event.is_ongoing %}
+                            <strong>By phone:</strong>
+
+                            <p>You may join the public comment participation call 5 minutes prior to the start of the meeting.</p>
 
                             <p>
                                 <strong>Dial-in:</strong> 888-251-2949 or 215-861-0694<br/>
                                 <strong>English Access Code:</strong> 8231160#<br/>
                                 <strong>Spanish Access Code:</strong> 4544724#
-                            </p>
-
-                            <p>
-                                Need an international dial-in number? <a href="https://www.teleconference.att.com/servlet/glbAccess?process=0&accessCode=8231160&accessNumber=8882512949&brand=att" target="_blank"><i class='fa fa-fw fa-external-link'></i> Please click here.</a>
                             </p>
 
                             <p>
@@ -122,9 +124,7 @@
 
                             <br />
 
-                            {% if USING_ECOMMENT %}
-                                <h4>Submit public comment remotely</h4>
-
+                            {% if event.is_ongoing and USING_ECOMMENT %}
                                 <p>
                                     <strong>On the web:</strong>
                                     <a href="{{ event.ecomment_url }}" target="_blank">
@@ -134,15 +134,13 @@
                                 </p>
                             {% endif %}
                         {% else %}
-                            <h4>Submit public comment remotely</h4>
+                            <p>
+                                Dial-in information to submit public comment by phone will become available on this page the evening before the meeting.
+                            </p>
 
                             {% if USING_ECOMMENT %}
                                 <p>
-                                    <strong>During the meeting</strong><br />
-
-                                    <p>
-                                        {{ event.UPCOMING_ECOMMENT_MESSAGE }}
-                                    </p>
+                                    {{ event.UPCOMING_ECOMMENT_MESSAGE }}
                                 </p>
                             {% endif %}
 
