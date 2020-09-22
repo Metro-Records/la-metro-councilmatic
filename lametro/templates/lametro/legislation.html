@@ -5,6 +5,8 @@
 {% block title %}{{ legislation.friendly_name }}{% endblock %}
 {% block content %}
 
+    <p>{{ bill.actions_and_agendas }}</p>
+
     {% if legislation %}
 
         <div class="row-fluid">
@@ -110,16 +112,7 @@
                                             {{action.related_organization.link_html|safe}}
                                         {% endif %}
                                     </td>
-                                    <td class="small">
-                                      {% with action|get_action_event as action_event %}
-                                        {% if action_event.status == 'cancelled' %}<strike>{% endif %}
-                                        {{ action_event.link_html|safe }}
-
-                                        {% if action_event.status == 'cancelled' %}
-                                      </strike><small>&nbsp;<span class="label label-stale">Cancelled</span></small>
-                                        {% endif %}
-                                      {% endwith %}
-                                    </td>
+                                   
                                 </tr>
                             {% endfor %}
                         </tbody>

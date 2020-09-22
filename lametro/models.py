@@ -153,6 +153,64 @@ class LAMetroBill(Bill, SourcesMixin):
 
         return br
 
+    # @property
+    # def actions_and_agendas(self):
+    #     agendas = self.agenda.all()
+
+    #     event_related_entities = [agenda.related_entities for agenda in agendas]
+    #     bills_with_event = [entity.bill for entity in event_related_entities]
+    #     actions = [councilmatic_core.models.BillAction.objects.filter(bill) for bill in bills_with_event]
+
+    #     return agendas + actions
+
+    @property
+    def actions_and_agendas(self):
+        '''
+        Return list of dictionaries, each representing an action or an agenda on
+        which the given bill appears, in the format:
+
+        {
+            'date': <datetime>,
+            'description': <str>,
+            'event': <LAMetroEvent>,
+        }
+        '''
+        actions = self.actions.all()
+        events = LAMetroEvent.objects.filter(agenda__related_entities__bill=self)
+
+        data = []
+
+        for action in actions:
+            # Get the event associated with the action – that is, the event where
+            # the date and organization of the action match the event, and the bill
+            # appears on the agenda. See Jasmine's `get_action_event` template tag
+            # to get started!
+
+            import pdb
+            event = LAMetroEvent.objects.filter(\
+                participants__entity_type='organization',\
+                participants__name=action.organization,
+                start_time__date=action.date)
+                #.get(agenda_items__bill=action.bill)
+
+            pdb.set_trace()
+            
+            # Build the dict
+            # action_dict = {
+
+            # }
+            
+            # Append it to data
+
+    #     for event in events:
+    #         # Build the dict (Use a description of "SCHEDULED")
+    #         #
+    #         # Append it to the data
+
+    #     # Sort data by date
+
+        return data
+
 
 class RelatedBill(RelatedBill):
 
@@ -562,16 +620,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         else:
             return self.UPCOMING_ECOMMENT_MESSAGE
-
-    @property
-    def actions_and_agendas(self):
-        agendas = self.agenda.all()
-
-        event_related_entities = [agenda.related_entities for agenda in agendas]
-        bills_with_event = [entity.bill for entity in event_related_entities]
-        actions = [councilmatic_core.models.BillAction.objects.filter(bill) for bill in bills_with_event]
-
-        return agendas + actions
 
 
 class EventAgendaItem(EventAgendaItem):
