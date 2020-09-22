@@ -96,9 +96,7 @@ class LABillDetail(BillDetailView):
             .annotate(latest_date=Max('related_bill__actions__date'))\
             .order_by('-latest_date')
 
-        context['related_bills'] = related_bills
-        
-        context['events'] = self.get_object().actions_and_agendas
+        context['bill'] = item
 
         return context
 

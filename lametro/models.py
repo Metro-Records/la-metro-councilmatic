@@ -172,34 +172,33 @@ class LAMetroBill(Bill, SourcesMixin):
         data = []
 
         for action in actions:
+            # Get the event associated with the action – that is, the event where
+            # the date and organization of the action match the event, and the bill
+            # appears on the agenda. See Jasmine's `get_action_event` template tag
+            # to get started!
+
+            import pdb
             event = LAMetroEvent.objects.filter(\
                 participants__entity_type='organization',\
                 participants__name=action.organization,
                 start_time__date=action.date)
+                #.get(agenda_items__bill=action.bill)
 
+            pdb.set_trace()
             
-            action_dict = {
-                'date': action.date_dt.date(),
-                'description': action.description,
-                'event': event,
-                'organization': action.organization
-            }
+            # Build the dict
+            # action_dict = {
+
+            # }
             
-            data.append(action_dict)
+            # Append it to data
 
-        for event in events:
-            # Use a description of "SCHEDULED"
-            related_entity = self.eventrelatedentity_set.get(agenda_item__event=event)
-            event_dict = {
-                'date': event.start_time.date(),
-                'description': "SCHEDULED",
-                'event': event,
-                'organization': related_entity.organization
-            }
+    #     for event in events:
+    #         # Build the dict (Use a description of "SCHEDULED")
+    #         #
+    #         # Append it to the data
 
-            data.append(event_dict)
-
-        sorted_data = sorted(data, key=lambda x: x['date'])
+    #     # Sort data by date
 
         return data
 
@@ -631,16 +630,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         else:
             return self.UPCOMING_ECOMMENT_MESSAGE
-
-    @property
-    def actions_and_agendas(self):
-        agendas = self.agenda.all()
-
-        event_related_entities = [agenda.related_entities for agenda in agendas]
-        bills_with_event = [entity.bill for entity in event_related_entities]
-        actions = [councilmatic_core.models.BillAction.objects.filter(bill) for bill in bills_with_event]
-
-        return agendas + actions
 
 
 class EventAgendaItem(EventAgendaItem):
