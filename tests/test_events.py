@@ -294,7 +294,7 @@ def test_event_is_upcoming(event, mocker):
     _event = event.build(start_date=in_an_hour.strftime('%Y-%m-%d %H:%M'))
 
     # Get event from queryset so it has the start_time annotation from the manager
-    upcoming_event = LAMetroEvent.objects.get(id=_event.id)
+    test_event = LAMetroEvent.objects.get(id=_event.id)
 
     # Create three timestamps to test upcoming at three points in time...
     yesterday = (in_an_hour - timedelta(days=1)).date()
@@ -324,12 +324,19 @@ def test_event_is_upcoming(event, mocker):
 
     mock_timezone.return_value = yesterday_afternoon
 
-    assert not upcoming_event.is_upcoming
+    assert not test_event.is_upcoming
 
     mock_timezone.return_value = yesterday_evening
 
-    assert upcoming_event.is_upcoming
+    assert test_event.is_upcoming
+
+    test_event.status = 'cancelled'
+    test_event.save()
+
+    assert not test_event.is_upcoming
+
+    test_event.status = 'confirmed'
 
     mock_timezone.return_value = tomorrow_morning
 
-    assert not upcoming_event.is_upcoming
+    assert not test_event.is_upcoming

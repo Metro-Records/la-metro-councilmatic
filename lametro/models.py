@@ -545,7 +545,9 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             17, 0, tzinfo=pytz.timezone(settings.TIME_ZONE)
         )
 
-        return timezone.now() >= evening_before and not any([self.is_ongoing, self.has_passed])
+        return self.status != 'cancelled' \
+            and timezone.now() >= evening_before \
+            and not any([self.is_ongoing, self.has_passed])
 
 
     @property
