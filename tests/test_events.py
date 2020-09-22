@@ -330,12 +330,14 @@ def test_event_is_upcoming(event, mocker):
 
     assert test_event.is_upcoming
 
+    # Test that cancelled meetings are not upcoming, even during the window
     test_event.status = 'cancelled'
     test_event.save()
 
     assert not test_event.is_upcoming
 
     test_event.status = 'confirmed'
+    test_event.save()
 
     mock_timezone.return_value = tomorrow_morning
 
