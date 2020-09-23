@@ -177,28 +177,35 @@ class LAMetroBill(Bill, SourcesMixin):
             # appears on the agenda. See Jasmine's `get_action_event` template tag
             # to get started!
 
-            import pdb
             event = LAMetroEvent.objects.filter(\
                 participants__entity_type='organization',\
                 participants__name=action.organization,
                 start_time__date=action.date)
-                #.get(agenda_items__bill=action.bill)
 
-            pdb.set_trace()
             
-            # Build the dict
-            # action_dict = {
-
-            # }
+            action_dict = {
+                'date': action.date_dt.date(),
+                'description': action.description,
+                'event': event
+            }
             
-            # Append it to data
+            data.append(action_dict)
 
-    #     for event in events:
-    #         # Build the dict (Use a description of "SCHEDULED")
-    #         #
-    #         # Append it to the data
 
-    #     # Sort data by date
+        for event in events:
+            # Use a description of "SCHEDULED"
+            event_dict = {
+                'date': event.start_time.date(),
+                'description': "SCHEDULED",
+                'event': event
+            }
+
+            data.append(event_dict)
+
+        sorted_data = sorted(data, key=lambda x: x['date'])
+        
+        import pdb
+        pdb.set_trace()
 
         return data
 
