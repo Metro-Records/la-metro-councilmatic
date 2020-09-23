@@ -73,6 +73,7 @@ class LAMetroIndexView(IndexView):
         extra['upcoming_board_meetings'] = self.event_model.upcoming_board_meetings()[:2]
         extra['current_meeting'] = self.event_model.current_meeting()
         extra['bilingual'] = bool([e for e in extra['current_meeting'] if e.bilingual])
+        extra['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
         return extra
 
@@ -206,6 +207,9 @@ class LAMetroEventDetail(EventDetailView):
             context['url_form'] = AgendaUrlForm()
         if 'pdf_form' not in context:
             context['pdf_form'] = AgendaPdfForm()
+
+
+        context['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
         return context
 

@@ -306,3 +306,6 @@ EXTRA_TITLES = {
 }
 
 USING_NOTIFICATIONS = False
+
+# Set this to True to show online public comment links while meetings are ongoing
+USING_ECOMMENT = False

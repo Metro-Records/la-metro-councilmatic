@@ -531,6 +531,26 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
 
     @property
+    def is_upcoming(self):
+        '''
+        An event is upcoming starting at 5 p.m. the evening before its start
+        time and ending once the meeting begins.
+        '''
+        day_before = (
+            self.start_time - timedelta(days=1)
+        ).date()
+
+        evening_before = datetime(
+            day_before.year, day_before.month, day_before.day,
+            17, 0, tzinfo=pytz.timezone(settings.TIME_ZONE)
+        )
+
+        return self.status != 'cancelled' \
+            and timezone.now() >= evening_before \
+            and not any([self.is_ongoing, self.has_passed])
+
+
+    @property
     def is_ongoing(self):
         if not hasattr(self, '_is_ongoing'):
             self._is_ongoing = self in type(self).current_meeting()

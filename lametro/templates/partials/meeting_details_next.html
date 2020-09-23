@@ -63,7 +63,7 @@
         </p>
         {% endif %}
 
-        {% if not upcoming_board_meetings|all_have_extra:'ecomment' %}
+        {% if not upcoming_board_meetings|all_have_extra:'ecomment' and USING_ECOMMENT %}
         <p class="small">
           <em>{{ upcoming_board_meetings.first.UPCOMING_ECOMMENT_MESSAGE|safe }}</em>
         </p>
