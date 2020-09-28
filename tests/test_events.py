@@ -301,21 +301,18 @@ def test_event_is_upcoming(event, mocker):
     tomorrow = (in_an_hour + timedelta(days=1)).date()
 
     # Before the upcoming window
-    yesterday_afternoon = datetime(
-        yesterday.year, yesterday.month, yesterday.day,
-        12, 0, tzinfo=pytz.timezone(settings.TIME_ZONE)
+    yesterday_afternoon = LAMetroEvent._as_local_time(
+        datetime(yesterday.year, yesterday.month, yesterday.day, 12, 0)
     )
 
     # During the upcoming window
-    yesterday_evening = datetime(
-        yesterday.year, yesterday.month, yesterday.day,
-        17, 0, tzinfo=pytz.timezone(settings.TIME_ZONE)
+    yesterday_evening = LAMetroEvent._as_local_time(
+        datetime(yesterday.year, yesterday.month, yesterday.day, 17, 0)
     )
 
     # After the upcoming window
-    tomorrow_morning = datetime(
-        tomorrow.year, tomorrow.month, tomorrow.day,
-        9, 0, tzinfo=pytz.timezone(settings.TIME_ZONE)
+    tomorrow_morning = LAMetroEvent._as_local_time(
+        datetime(tomorrow.year, tomorrow.month, tomorrow.day, 9, 0)
     )
 
     # Mock timezone.now() to return each of the generated timestamps and test
