@@ -409,23 +409,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         return timezone.now() + relativedelta(**kwargs)
 
 
-    @staticmethod
-    def _as_local_time(dt):
-        '''
-        Convenience method that accepts a datetime object and returns a datetime
-        object of the same date and time, with the configured timezone attached.
-        '''
-        # Convert the provided datetime to the local time zone, then retrieve
-        # the tzinfo object. This is so we get the correct daylight / standard
-        # timezone object, depending on the provided date.
-        tzinfo = dt.astimezone(pytz.timezone(settings.TIME_ZONE)).tzinfo
-
-        # Create a new datetime object with the appropriate tzinfo.
-        return datetime(
-            dt.year, dt.month, dt.day, dt.hour, dt.minute, tzinfo=tzinfo
-        )
-
-
     @classmethod
     def _potentially_current_meetings(cls):
         '''
@@ -550,17 +533,19 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     @property
     def is_upcoming(self):
         '''
-        An event is upcoming starting at 5 p.m. the evening before its start
-        time and ending once the meeting begins.
+        An event is upcoming starting at 5 p.m. local time the evening before
+        its start time and ending once the meeting begins.
         '''
+        local_now = app_timezone.localize(datetime.now())
+
         day_before = (self.start_time - timedelta(days=1)).date()
 
-        evening_before = self._as_local_time(
+        local_evening_before = app_timezone.localize(
             datetime(day_before.year, day_before.month, day_before.day, 17, 0)
         )
 
         return self.status != 'cancelled' \
-            and timezone.now() >= evening_before \
+            and local_now >= local_evening_before \
             and not any([self.is_ongoing, self.has_passed])
 
 
