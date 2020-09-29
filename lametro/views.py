@@ -85,7 +85,6 @@ class LABillDetail(BillDetailView):
         context['actions'] = self.get_object().actions.all().order_by('-order')
         context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
 
-        item = context['legislation']
         actions = self.get_object().actions.all()
         organization_lst = [action.organization for action in actions]
         context['sponsorships'] = set(organization_lst)
@@ -96,7 +95,9 @@ class LABillDetail(BillDetailView):
             .annotate(latest_date=Max('related_bill__actions__date'))\
             .order_by('-latest_date')
 
-        context['bill'] = item
+        context['related_bills'] = related_bills
+        
+        context['events'] = self.get_object().actions_and_agendas
 
         return context
 
