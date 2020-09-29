@@ -172,11 +172,6 @@ class LAMetroBill(Bill, SourcesMixin):
         data = []
 
         for action in actions:
-            # Get the event associated with the action – that is, the event where
-            # the date and organization of the action match the event, and the bill
-            # appears on the agenda. See Jasmine's `get_action_event` template tag
-            # to get started!
-
             event = LAMetroEvent.objects.filter(\
                 participants__entity_type='organization',\
                 participants__name=action.organization,
@@ -186,26 +181,25 @@ class LAMetroBill(Bill, SourcesMixin):
             action_dict = {
                 'date': action.date_dt.date(),
                 'description': action.description,
-                'event': event
+                'event': event,
+                'organization': action.organization
             }
             
             data.append(action_dict)
 
-
         for event in events:
             # Use a description of "SCHEDULED"
+            related_entity = self.eventrelatedentity_set.get(agenda_item__event=event)
             event_dict = {
                 'date': event.start_time.date(),
                 'description': "SCHEDULED",
-                'event': event
+                'event': event,
+                'organization': related_entity.organization
             }
 
             data.append(event_dict)
 
         sorted_data = sorted(data, key=lambda x: x['date'])
-        
-        import pdb
-        pdb.set_trace()
 
         return data
 
