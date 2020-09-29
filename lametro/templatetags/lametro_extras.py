@@ -224,13 +224,3 @@ def all_have_extra(entities, extra):
 @register.filter
 def get_list(querydict, key):
     return querydict.getlist(key)
-
-@register.filter
-def get_action_event(action):
-    bill = action.bill
-    event = LAMetroEvent.objects.filter(participants__entity_type='organization',\
-                                        participants__entity_name=action.organization, \
-                                        start_time__date=action.date.date()) \
-                                        .get(agenda_items__bill=action._bill)
-
-    return event
