@@ -5,8 +5,6 @@
 {% block title %}{{ legislation.friendly_name }}{% endblock %}
 {% block content %}
 
-    <p>{{ bill.actions_and_agendas }}</p>
-
     {% if legislation %}
 
         <div class="row-fluid">
@@ -87,31 +85,40 @@
 
             <div class="divider"></div>
 
-            {% if actions %}
+            {% if events %}
                 <h3 class="no-pad-bottom"><i class='fa fa-fw fa-list-ul'></i> History</h3>
+                <p>{{ events }}</p>
+                <p>{{ legislation }}</p>
                 <div class="table-responsive">
                     <table class='table table-responsive' id='committee-actions'>
                         <thead>
                             <tr>
                                 <th>Date</th>
                                 <th>Action</th>
-                                <th>Meeting</th>
+                                <th>Committee</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for action in actions %}
+                            {% for event in events %}
                                 <tr>
                                     <td class='nowrap text-muted small'>
-                                        <span datetime='{{action.date_dt | format_date_sort }}'>{{action.date_dt|date:'n/d/y'}}</span>
+                                        <span datetime='{{event.date}}'>{{event.date}}</span>
                                     </td>
                                     <td class="small">
-                                        <span class='text-{{action.label}}'>{{action.description | remove_action_subj}}</span>
+                                        <span class='text-default'>{{event.description}}</span>
                                         {% if action.related_organization %}
                                             to
                                             {{action.related_organization.link_html|safe}}
                                         {% endif %}
                                     </td>
-                                   
+                                    <td class="small">
+                                        {% if action_event.status == 'cancelled' %}<strike>{% endif %} 
+                                        {{ event.organization.link_html|safe }} 
+  
+                                        {% if action_event.status == 'cancelled' %} 
+                                        </strike><small>&nbsp;<span class="label label-stale">Cancelled</span></small> 
+                                    {% endif %} 
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
