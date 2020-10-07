@@ -6,6 +6,7 @@ from uuid import uuid4
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from django.utils import timezone
+from freezegun import freeze_time
 import requests
 
 from opencivicdata.legislative.models import EventDocument
@@ -288,7 +289,7 @@ def test_upcoming_board_meetings(event):
 
 
 def test_event_is_upcoming(event, mocker):
-    in_an_hour = timezone.now() + timedelta(hours=1)
+    in_an_hour = datetime.now() + timedelta(hours=1)
 
     # Build an event that starts in an hour
     _event = event.build(start_date=in_an_hour.strftime('%Y-%m-%d %H:%M'))
@@ -301,44 +302,28 @@ def test_event_is_upcoming(event, mocker):
     tomorrow = (in_an_hour + timedelta(days=1)).date()
 
     # Before the upcoming window
-    yesterday_afternoon = datetime(
-        yesterday.year, yesterday.month, yesterday.day,
-        12, 0, tzinfo=pytz.timezone(settings.TIME_ZONE)
-    )
+    yesterday_afternoon = datetime(yesterday.year, yesterday.month, yesterday.day, 12, 0)
 
     # During the upcoming window
-    yesterday_evening = datetime(
-        yesterday.year, yesterday.month, yesterday.day,
-        17, 0, tzinfo=pytz.timezone(settings.TIME_ZONE)
-    )
+    yesterday_evening = datetime(yesterday.year, yesterday.month, yesterday.day, 17, 0)
 
     # After the upcoming window
-    tomorrow_morning = datetime(
-        tomorrow.year, tomorrow.month, tomorrow.day,
-        9, 0, tzinfo=pytz.timezone(settings.TIME_ZONE)
-    )
+    tomorrow_morning = datetime(tomorrow.year, tomorrow.month, tomorrow.day, 9, 0)
 
-    # Mock timezone.now() to return each of the generated timestamps and test
-    # that is_upcoming returns the expected value in each instance
-    mock_timezone = mocker.patch('django.utils.timezone.now')
+    with freeze_time(yesterday_afternoon):
+        assert not test_event.is_upcoming
 
-    mock_timezone.return_value = yesterday_afternoon
+    with freeze_time(yesterday_evening):
+        assert test_event.is_upcoming
 
-    assert not test_event.is_upcoming
+        # Test that cancelled meetings are not upcoming, even during the window
+        test_event.status = 'cancelled'
+        test_event.save()
 
-    mock_timezone.return_value = yesterday_evening
+        assert not test_event.is_upcoming
 
-    assert test_event.is_upcoming
+        test_event.status = 'confirmed'
+        test_event.save()
 
-    # Test that cancelled meetings are not upcoming, even during the window
-    test_event.status = 'cancelled'
-    test_event.save()
-
-    assert not test_event.is_upcoming
-
-    test_event.status = 'confirmed'
-    test_event.save()
-
-    mock_timezone.return_value = tomorrow_morning
-
-    assert not test_event.is_upcoming
+    with freeze_time(tomorrow_morning):
+        assert not test_event.is_upcoming
