@@ -98,33 +98,67 @@
                 <p>{{ member_bio | safe }}</p><br />
             {% endif %}
 
+            <ul class="nav nav-pills">
+                <li role="presentation" {% if request.GET.view == 'committees'  or request.GET.view == None %}class='active' {% endif %}>    <a href="/person/{{person.slug}}/?view=committees">
+                        <span class="small-pill">
+                            <i class='fa fa-fw fa-group'></i>
+                            Committees
+                        </span>
+                    </a>
+                </li>
+                <li role="presentation" {% if request.GET.view == 'bills' %}class='active' {% endif %}>
+                    <a href="/person/{{person.slug}}/?view=bills">
+                        <span class="small-pill">
+                            <i class='fa fa-fw fa-files-o'></i>
+                            Board Reports
+                        </span>
+                    </a>
+                </li>
+            </ul>
 
-            {% if memberships_list %}
-            <h3>
-                <i class='fa fa-fw fa-group'></i> Committees
-            </h3>
+            {% if request.GET.view == 'bills' %}
+                <h3>
+                    <i class='fa fa-fw fa-files-o'></i>
+                    Board Reports
+                </h3>
+                <p>Board reports considered by committees of which {{person.name}} is a member</p><br/>
 
-            <div class="table-responsive">
-                <table class='table table-responsive'>
-                    <thead>
-                        <tr>
-                            <th>Member of</th>
-                            <th>Position</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for membership in memberships_list %}
+                {% for legislation in sponsored_legislation %}
+
+                    {% include "partials/legislation_item.html" %}
+
+                {% endfor %}
+
+            {% elif request.GET.view == 'committees' or request.GET.view == None %}
+
+                <h3>
+                    <i class='fa fa-fw fa-group'></i>
+                    Committees
+                </h3>
+
+                <div class="table-responsive">
+                    <table class='table table-responsive'>
+                        <thead>
                             <tr>
-                                <td>
-                                    <a href="{% url 'lametro:committee' membership.organization.slug %}">{{membership.organization}}</a>
-                                </td>
-                                <td>{{membership.role}}</td>
+                                <th>Member of</th>
+                                <th>Position</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {% for membership in memberships_list %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'lametro:committee' membership.organization.slug %}">{{membership.organization}}</a>
+                                    </td>
+                                    <td>{{membership.role}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
             {% endif %}
+
         </div>
     </div>
     {% endif %}
