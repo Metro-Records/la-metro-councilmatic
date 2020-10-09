@@ -179,7 +179,7 @@ class LAMetroBill(Bill, SourcesMixin):
 
             
             action_dict = {
-                'date': action.date_dt.date(),
+                'date': action.date_dt,
                 'description': action.description,
                 'event': event,
                 'organization': action.organization
