@@ -106,8 +106,8 @@
                         </span>
                     </a>
                 </li>
-                <li role="presentation" {% if request.GET.view == 'bills' %}class='active' {% endif %}>
-                    <a href="/person/{{person.slug}}/?view=bills">
+                <li role="presentation" {% if request.GET.view == 'board-reports' %}class='active' {% endif %}>
+                    <a href="/person/{{person.slug}}/?view=board-reports">
                         <span class="small-pill">
                             <i class='fa fa-fw fa-files-o'></i>
                             Board Reports
@@ -116,25 +116,14 @@
                 </li>
             </ul>
 
-            {% if request.GET.view == 'bills' %}
-                <h3>
-                    <i class='fa fa-fw fa-files-o'></i>
-                    Board Reports
-                </h3>
-                <p>Board reports considered by committees of which {{person.name}} is a member</p><br/>
-
-                {% for legislation in sponsored_legislation %}
-
-                    {% include "partials/legislation_item.html" %}
-
-                {% endfor %}
-
-            {% elif request.GET.view == 'committees' or request.GET.view == None %}
+            {% if request.GET.view == 'committees' or request.GET.view == None %}
 
                 <h3>
                     <i class='fa fa-fw fa-group'></i>
                     Committees
                 </h3>
+
+                <p>Committees to which {{person.name}} belongs</p><br />
 
                 <div class="table-responsive">
                     <table class='table table-responsive'>
@@ -142,6 +131,7 @@
                             <tr>
                                 <th>Member of</th>
                                 <th>Position</th>
+                                <th>Committee actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -151,11 +141,28 @@
                                         <a href="{% url 'lametro:committee' membership.organization.slug %}">{{membership.organization}}</a>
                                     </td>
                                     <td>{{membership.role}}</td>
+                                    <td>
+                                        <a href="/search/?q=&selected_facets=sponsorships_exact:{{membership.organization.name}}">View board reports &raquo;</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+
+            {% elif request.GET.view == 'board-reports' %}
+                <h3>
+                    <i class='fa fa-fw fa-files-o'></i>
+                    Board Reports
+                </h3>
+
+                <p>Board reports acted upon most recently by committees to which {{person.name}} belongs</p><br />
+
+                {% for legislation in sponsored_legislation %}
+
+                    {% include "partials/legislation_item.html" %}
+
+                {% endfor %}
 
             {% endif %}
 

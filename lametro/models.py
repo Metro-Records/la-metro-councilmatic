@@ -1,9 +1,9 @@
-import pytz
-import re
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-import requests
+import pytz
+import re
 
+import requests
 from django.conf import settings
 from django.db import models, connection
 from django.db.models.expressions import RawSQL
@@ -15,14 +15,16 @@ from django.db.models import Max, Min, Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
 import django.contrib.postgres.fields as postgres_fields
 from django.contrib.staticfiles.templatetags.staticfiles import static
-
-from councilmatic_core.models import Bill, Event, Post, Person, Organization, EventManager, Membership
+from opencivicdata.legislative.models import EventMedia, EventDocument, \
+    EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill, \
+    BillVersion
+from proxy_overrides.related import ProxyForeignKey
 
 import councilmatic_core.models
+from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
+    EventManager, Membership
 
-from opencivicdata.legislative.models import EventMedia, EventDocument, EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill, BillVersion
-
-from proxy_overrides.related import ProxyForeignKey
+from lametro.utils import format_full_text, parse_subject
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -91,8 +93,19 @@ class LAMetroBill(Bill, SourcesMixin):
     # LA METRO CUSTOMIZATION
     @property
     def friendly_name(self):
-        nums_only = self.identifier.split(' ')[-1]
-        return self.bill_type + ' ' + nums_only
+        full_text = self.extras.get('plain_text')
+
+        results = None
+
+        if full_text:
+            results = format_full_text(full_text)
+
+        if results:
+            title = parse_subject(results)
+        else:
+            title = self.bill_type
+
+        return '{0} - {1}'.format(self.identifier, title.upper())
 
     # LA METRO CUSTOMIZATION
     @property
@@ -231,7 +244,7 @@ class LAMetroPerson(Person, SourcesMixin):
     @cached_property
     def committee_sponsorships(self):
         '''
-        This property returns a list of ten bills, which have recent actions
+        This property returns a list of five bills, which have recent actions
         from the organizations that the person has memberships in.
 
         Organizations do not include the Board of Directors.
@@ -241,7 +254,7 @@ class LAMetroPerson(Person, SourcesMixin):
             .filter(actions__organization__classification='committee',
                     actions__organization__memberships__in=self.current_memberships)\
             .order_by('-actions__date')\
-            .distinct()[:10]
+            .distinct()[:5]
 
         return qs
 
