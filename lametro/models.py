@@ -189,12 +189,12 @@ class LAMetroBill(Bill, SourcesMixin):
 
         for event in events:
             # Use a description of "SCHEDULED"
-            related_entity = self.eventrelatedentity_set.get(agenda_item__event=event)
+            org = event.participants.first()
             event_dict = {
                 'date': event.start_time.date(),
                 'description': "SCHEDULED",
                 'event': event,
-                'organization': related_entity.organization
+                'organization': org
             }
 
             data.append(event_dict)

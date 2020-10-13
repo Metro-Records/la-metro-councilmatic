@@ -24,7 +24,6 @@
                     {% if legislation.inferred_status %}
                         {{ legislation.inferred_status | inferred_status_label | safe }}
                     {% endif %}
-                <a href="rss/" title="RSS feed for Legislation {{legislation.friendly_name}}" target="_blank"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
 
                 </h1>
 
@@ -86,7 +85,7 @@
 
             <div class="divider"></div>
 
-            {% if events %}
+            {% if actions %}
                 <h3 class="no-pad-bottom"><i class='fa fa-fw fa-list-ul'></i> History</h3>
                 <div class="table-responsive">
                     <table class='table table-responsive' id='committee-actions'>
@@ -94,22 +93,23 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Action</th>
-                                <th>Committee</th>
+                                <th>Meeting</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for action in events %}
+                            {% for action in actions %}
                                 <tr>
                                     <td class='nowrap text-muted small'>
-                                        <span datetime='{{action.date}}'>{{action.date}}</span>
+                                        <span datetime='{{action.date}}'>{{action.date|date:'n/d/y'}}</span>
                                     </td>
                                     <td class="small">
                                         <span class='text-default'>{{action.description}}</span>
                                     </td>
                                     <td class="small">
-                                            {{ action.organization.link_html|safe }}
-                                        {% if action.description == 'CANCELLED' %}
-                                            </strike><small>&nbsp;<span class="label label-stale">Cancelled</span></small>
+                                        {% if action.event.status == 'cancelled' %}<strike>{% endif %}
+                                        {{ action.event.link_html|safe }}
+                                        {% if action.event.status == 'cancelled' %}</strike>
+                                            <small>&nbsp;<span class="label label-stale">{{ action.event.status }}</span></small>
                                         {% endif %}
                                     </td>
                                 </tr>
