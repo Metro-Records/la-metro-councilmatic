@@ -99,7 +99,7 @@ class LABillDetail(BillDetailView):
 
         context['related_bills'] = related_bills
 
-        context['events'] = bill.actions_and_agendas
+        context['actions'] = bill.actions_and_agendas
 
         return context
 
