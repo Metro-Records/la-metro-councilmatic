@@ -83,11 +83,11 @@ class LABillDetail(BillDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        bill = self.get_object()
+        context['actions'] = self.get_object().actions.all().order_by('-order')
+        context['attachments'] = self.get_object().attachments.all().order_by(Lower('note'))
 
-        context['attachments'] = bill.attachments.all().order_by(Lower('note'))
-
-        actions = bill.actions.all()
+        item = context['legislation']
+        actions = self.get_object().actions.all()
         organization_lst = [action.organization for action in actions]
         context['sponsorships'] = set(organization_lst)
 
@@ -98,8 +98,6 @@ class LABillDetail(BillDetailView):
             .order_by('-latest_date')
 
         context['related_bills'] = related_bills
-
-        context['actions'] = bill.actions_and_agendas
 
         return context
 
