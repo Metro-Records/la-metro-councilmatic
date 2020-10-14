@@ -172,7 +172,7 @@ class LAMetroBill(Bill, SourcesMixin):
         data = []
 
         for action in actions:
-            event = LAMetroEvent.objects.filter(\
+            event = LAMetroEvent.objects.get(\
                 participants__entity_type='organization',\
                 participants__name=action.organization,
                 start_time__date=action.date)
@@ -201,7 +201,7 @@ class LAMetroBill(Bill, SourcesMixin):
 
         sorted_data = sorted(data, key=lambda x: x['date'])
 
-        return data
+        return sorted_data
 
 
 class RelatedBill(RelatedBill):
