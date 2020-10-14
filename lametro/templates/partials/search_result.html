@@ -4,10 +4,7 @@
 
 <p>
     <a class="small" href="{% url 'lametro:bill_detail' r.object.slug %}">
-        {{ r.object.identifier}}
-        {% if r.sort_name %}
-            - {{r.sort_name|upper}}
-        {% endif %}
+        {{ r.object.friendly_name }}
     </a>
     {% if r.object.inferred_status %}{{ r.object.inferred_status | inferred_status_label | safe }}{% endif %}
 </p>
