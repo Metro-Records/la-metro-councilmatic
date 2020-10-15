@@ -205,14 +205,22 @@ class LAMetroBill(Bill, SourcesMixin):
             org = event.participants.first()
             event_dict = {
                 'date': event.start_time.date(),
-                'description': "SCHEDULED",
+                'description': 'SCHEDULED',
                 'event': event,
                 'organization': org
             }
 
             data.append(event_dict)
 
-        sorted_data = sorted(data, key=lambda x: x['date'])
+        scheduled_first = []
+        for d in data:
+            if d['description'] == 'SCHEDULED':
+                scheduled_first.append(d)
+        for d in data:
+            if d['description'] != 'SCHEDULED':
+                scheduled_first.append(d)
+
+        sorted_data = sorted(scheduled_first, key=lambda x: x['date'])
 
         return sorted_data
 
