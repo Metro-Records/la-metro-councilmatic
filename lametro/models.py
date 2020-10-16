@@ -212,15 +212,10 @@ class LAMetroBill(Bill, SourcesMixin):
 
             data.append(event_dict)
 
-        scheduled_first = []
-        for d in data:
-            if d['description'] == 'SCHEDULED':
-                scheduled_first.append(d)
-        for d in data:
-            if d['description'] != 'SCHEDULED':
-                scheduled_first.append(d)
-
-        sorted_data = sorted(scheduled_first, key=lambda x: x['date'])
+        sorted_data = sorted(data, key=lambda x: (x['date'], x['description'].upper() if x['description'] == 'SCHEDULED' else x['description'].lower()))
+        
+        import pdb
+        pdb.set_trace()
 
         return sorted_data
 
