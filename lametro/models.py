@@ -212,11 +212,9 @@ class LAMetroBill(Bill, SourcesMixin):
 
             data.append(event_dict)
 
+        # Sort actions by date, and list SCHEDULED actions before other actions on that date
         sorted_data = sorted(data, key=lambda x:(x['date'],\
             x['description'].upper() if x['description'] == 'SCHEDULED' else x['description'].lower()))
-        
-        import pdb
-        pdb.set_trace()
 
         return sorted_data
 
