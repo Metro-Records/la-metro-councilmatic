@@ -213,6 +213,7 @@ class LAMetroBill(Bill, SourcesMixin):
             data.append(event_dict)
 
         # Sort actions by date, and list SCHEDULED actions before other actions on that date
+        # SCHEDULED descriptions are kept uppercase to use ascii-betical sorting
         sorted_data = sorted(data, key=lambda x:(x['date'],\
             x['description'].upper() if x['description'] == 'SCHEDULED' else x['description'].lower()))
 
