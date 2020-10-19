@@ -629,7 +629,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
                 sqs = sqs.filter_or(attachment_filter)
 
         if has_query:
-            result_type_terms = [term.strip().replace('"', '') for term in self.data['q'].split(' AND ')]
+            result_type_terms = [term.strip().replace('"', '') for term in self.cleaned_data['q'].split(' AND ')]
         else:
             result_type_terms = []
 
@@ -637,7 +637,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         for term in result_type_terms:
             for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES:
-                tag_filter |= SQ(**{'{}__icontains'.format(facet): Exact(term)})
+                tag_filter |= SQ(**{'{}__icontains'.format(facet): Raw(term)})
 
         if self.result_type == 'keyword':
             sqs = sqs.exclude(tag_filter)
