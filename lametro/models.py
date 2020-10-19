@@ -166,6 +166,59 @@ class LAMetroBill(Bill, SourcesMixin):
 
         return br
 
+    @property
+    def actions_and_agendas(self):
+        '''
+        Return list of dictionaries, each representing an action or an agenda on
+        which the given bill appears, in the format:
+
+        {
+            'date': <datetime>,
+            'description': <str>,
+            'event': <LAMetroEvent>,
+            'organization': <Organization>
+        }
+        '''
+        actions = self.actions.all()
+        events = LAMetroEvent.objects.filter(agenda__related_entities__bill=self)
+
+        data = []
+
+        for action in actions:
+            event = LAMetroEvent.objects.get(\
+                participants__entity_type='organization',\
+                participants__name=action.organization,
+                start_time__date=action.date)
+
+            
+            action_dict = {
+                'date': action.date_dt,
+                'description': action.description,
+                'event': event,
+                'organization': action.organization
+            }
+            
+            data.append(action_dict)
+
+        for event in events:
+            # Use a description of "SCHEDULED"
+            org = event.participants.first()
+            event_dict = {
+                'date': event.start_time.date(),
+                'description': 'SCHEDULED',
+                'event': event,
+                'organization': org
+            }
+
+            data.append(event_dict)
+
+        # Sort actions by date, and list SCHEDULED actions before other actions on that date
+        # SCHEDULED descriptions are kept uppercase to use ascii-betical sorting
+        sorted_data = sorted(data, key=lambda x:(x['date'],\
+            x['description'].upper() if x['description'] == 'SCHEDULED' else x['description'].lower()))
+
+        return sorted_data
+
 
 class RelatedBill(RelatedBill):
 
