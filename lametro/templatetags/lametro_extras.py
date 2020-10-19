@@ -176,7 +176,7 @@ def get_highlighted_attachment_text(context, id):
 @register.filter
 def matches_query(tag, request):
     # request.GET['q'] looks like "token AND token AND token"
-    return tag.lower() in [token.lower() for token in request.GET.get('q', '').split(' AND ')]
+    return tag.lower() in [token.lower().replace('"', '') for token in request.GET.get('q', '').split(' AND ')]
 
 @register.filter
 def matches_facet(tag, selected_facets):
@@ -198,7 +198,7 @@ def hits_first(context, topics, selected_facets):
     # others in tact, remove the first opening parenthesis, reverse the string,
     # remove the first closing parenthesis, then put the string back in the
     # right order.
-    terms = [token.replace('(', '', 1)[::-1].replace(')', '', 1)[::-1]
+    terms = [token.replace('(', '', 1)[::-1].replace(')', '', 1)[::-1].replace('"', '')
              for token in context['query'].split(' AND ')]
 
     for _, values in selected_facets.items():

@@ -13,7 +13,7 @@ from collections import namedtuple
 import os
 
 from haystack.backends import SQ
-from haystack.inputs import Exact, AutoQuery
+from haystack.inputs import Exact, Raw
 from haystack.query import SearchQuerySet
 
 import pytz
@@ -610,29 +610,26 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
 
-    def clean_q(self):
-        q = self.cleaned_data['q']
-
-        if q:
-            return ' AND '.join('({})'.format(term.strip()) for term in q.split('AND'))
-        else:
-            return ''
-
     def search(self):
-        sqs = super(LAMetroCouncilmaticSearchForm, self).search()
+        sqs = self.searchqueryset
 
         has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
 
-        if has_query and self.search_corpus == 'all':
-            # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
-            sqs = sqs.filter_or(attachment_text=AutoQuery(self.cleaned_data['q']))
+        if has_query:
+            report_filter = SQ()
+            attachment_filter = SQ()
+
+            for token in self.cleaned_data['q'].split(' AND '):
+                report_filter &= SQ(text=Raw(token))
+                attachment_filter &= SQ(attachment_text=Raw(token))
+
+            sqs = sqs.filter(report_filter)
+
+            if self.search_corpus == 'all':
+                sqs = sqs.filter_or(attachment_filter)
 
         if has_query:
-            # We add parentheses around each term in self.cleaned_data['q'],
-            # but those interfere with keyword/text result filtering. Use the
-            # original data to get terms for result type. Also escape double
-            # quotes.
-            result_type_terms = [term.strip().replace('"', '\\"') for term in self.data['q'].split(' AND ')]
+            result_type_terms = [term.strip().replace('"', '') for term in self.data['q'].split(' AND ')]
         else:
             result_type_terms = []
 
