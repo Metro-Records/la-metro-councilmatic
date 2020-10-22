@@ -637,7 +637,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         for term in result_type_terms:
             for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES:
-                tag_filter |= SQ(**{'{}__icontains'.format(facet): Raw(term)})
+                tag_filter |= SQ(**{'{}__iexact'.format(facet): Raw(term)})
 
         if self.result_type == 'keyword':
             sqs = sqs.exclude(tag_filter)
