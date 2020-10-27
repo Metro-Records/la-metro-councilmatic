@@ -633,17 +633,19 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         else:
             result_type_terms = []
 
-        tag_filter = SQ()
+        tag_filter = Q()
 
         for term in result_type_terms:
-            for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES:
-                tag_filter |= SQ(**{'{}__iexact'.format(facet): Raw(term)})
+            tag_filter |= Q(**{'subject__iexact': term})
+
+        tagged_results = LAMetroBill.objects.filter(tag_filter)\
+                                            .values_list('id', flat=True)
 
         if self.result_type == 'keyword':
-            sqs = sqs.exclude(tag_filter)
+            sqs = sqs.exclude(id__in=tagged_results)
 
         elif self.result_type == 'topic':
-            sqs = sqs.filter(tag_filter)
+            sqs = sqs.filter(id__in=tagged_results)
 
         return sqs
 
