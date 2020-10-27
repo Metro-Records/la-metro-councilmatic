@@ -20,6 +20,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     geo_admin_location = indexes.MultiValueField(faceted=True)
     significant_date = indexes.MultiValueField(faceted=True)
     motion_by = indexes.MultiValueField(faceted=True)
+    plan_program_policy = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return LAMetroBill
@@ -82,6 +83,9 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
     def prepare_motion_by(self, obj):
         return self._topics_from_classification(obj, 'motion_by_exact')
+
+    def prepare_plan_program_policy(self, obj):
+        return self._topics_from_classification(obj, 'plan_program_policy_exact')
 
     def _topics_from_classification(self, obj, classification):
         '''

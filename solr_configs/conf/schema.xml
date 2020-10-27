@@ -168,6 +168,8 @@
     <field name="significant_date_exact" type="string" indexed="true" stored="true" multiValued="true" />
     <field name="motion_by" type="text_en" indexed="true" stored="true" multiValued="true" />
     <field name="motion_by_exact" type="string" indexed="true" stored="true" multiValued="true" />
+    <field name="plan_program_policy" type="text_en" indexed="true" stored="true" multiValued="true" />
+    <field name="plan_program_policy_exact" type="string" indexed="true" stored="true" multiValued="true" />
 
     <!-- Dynamic field definitions allow using convention over configuration
     for fields via the specification of patterns to match field names. 
