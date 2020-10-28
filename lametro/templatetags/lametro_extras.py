@@ -176,12 +176,28 @@ def get_highlighted_attachment_text(context, id):
 @register.filter
 def matches_query(tag, request):
     # request.GET['q'] looks like "token AND token AND token"
-    return tag.lower() in [token.lower().replace('"', '') for token in request.GET.get('q', '').split(' AND ')]
+    terms = [
+        token.lower().replace('"', '')
+        for token in request.GET.get('q', '').split(' AND ')
+        if token
+    ]
+
+    exactly_matches = tag.lower() in terms
+    partially_matches = any(term in tag.lower() for term in terms)
+
+    return exactly_matches or partially_matches
 
 @register.filter
 def matches_facet(tag, selected_facets):
-    return any(tag.lower() in [v.lower() for v in values]
-               for _, values in selected_facets.items())
+    facet_values = []
+
+    for values in selected_facets.values():
+        facet_values += [v.lower() for v in values]
+
+    exactly_matches = tag.lower() in facet_values
+    partially_matches = any(value in tag.lower() for value in facet_values)
+
+    return exactly_matches or partially_matches
 
 @register.simple_tag(takes_context=True)
 def hits_first(context, topics, selected_facets):
@@ -199,16 +215,13 @@ def hits_first(context, topics, selected_facets):
     # remove the first closing parenthesis, then put the string back in the
     # right order.
     terms = [token.replace('(', '', 1)[::-1].replace(')', '', 1)[::-1].replace('"', '')
-             for token in context['query'].split(' AND ')]
+             for token in context['query'].split(' AND ') if token]
 
     for _, values in selected_facets.items():
         terms += values
 
     lower_terms = set(t.lower() for t in terms)
-    lower_topics = set(t.lower() for t in topic_names)
-
-    hits = lower_topics.intersection(lower_terms)
-    hits_pattern = r'^({})$'.format('|'.join(re.escape(hit) for hit in hits))
+    hits_pattern = r'({})'.format('|'.join(re.escape(term) for term in lower_terms))
 
     return list(itertools.chain(topics.filter(name__iregex=hits_pattern),
                                 topics.exclude(name__iregex=hits_pattern)))

@@ -610,35 +610,34 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
 
-    def search(self):
-        sqs = self.searchqueryset
+    def _full_text_search(self, sqs):
+        report_filter = SQ()
+        attachment_filter = SQ()
 
-        has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
+        for token in self.cleaned_data['q'].split(' AND '):
+            report_filter &= SQ(text=Raw(token))
+            attachment_filter &= SQ(attachment_text=Raw(token))
 
-        if has_query:
-            report_filter = SQ()
-            attachment_filter = SQ()
+        sqs = sqs.filter(report_filter)
 
-            for token in self.cleaned_data['q'].split(' AND '):
-                report_filter &= SQ(text=Raw(token))
-                attachment_filter &= SQ(attachment_text=Raw(token))
+        if self.search_corpus == 'all':
+            sqs = sqs.filter_or(attachment_filter)
 
-            sqs = sqs.filter(report_filter)
+        return sqs
 
-            if self.search_corpus == 'all':
-                sqs = sqs.filter_or(attachment_filter)
+    def _topic_search(self, sqs):
+        terms = [
+            term.strip().replace('"', '')
+            for term in self.cleaned_data['q'].split(' AND ')
+            if term
+        ]
 
-        if has_query:
-            result_type_terms = [term.strip().replace('"', '') for term in self.cleaned_data['q'].split(' AND ')]
-        else:
-            result_type_terms = []
+        topic_filter = Q()
 
-        tag_filter = Q()
+        for term in terms:
+            topic_filter |= Q(**{'subject__icontains': term})
 
-        for term in result_type_terms:
-            tag_filter |= Q(**{'subject__iexact': term})
-
-        tagged_results = LAMetroBill.objects.filter(tag_filter)\
+        tagged_results = LAMetroBill.objects.filter(topic_filter)\
                                             .values_list('id', flat=True)
 
         if self.result_type == 'keyword':
@@ -646,6 +645,20 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         elif self.result_type == 'topic':
             sqs = sqs.filter(id__in=tagged_results)
+
+        return sqs
+
+    def _identifier_search(self, sqs):
+        pass
+
+    def search(self):
+        sqs = super(LAMetroCouncilmaticSearchForm, self).search()
+
+        has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
+
+        if has_query:
+            sqs = self._full_text_search(sqs)
+            sqs = self._topic_search(sqs)
 
         return sqs
 
