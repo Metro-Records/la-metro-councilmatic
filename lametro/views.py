@@ -13,7 +13,7 @@ from collections import namedtuple
 import os
 
 from haystack.backends import SQ
-from haystack.inputs import Exact, AutoQuery
+from haystack.inputs import Exact, Raw
 from haystack.query import SearchQuerySet
 
 import pytz
@@ -610,43 +610,55 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
 
-    def clean_q(self):
-        q = self.cleaned_data['q']
+    def _full_text_search(self, sqs):
+        report_filter = SQ()
+        attachment_filter = SQ()
 
-        if q:
-            return ' AND '.join('({})'.format(term.strip()) for term in q.split('AND'))
-        else:
-            return ''
+        for token in self.cleaned_data['q'].split(' AND '):
+            report_filter &= SQ(text=Raw(token))
+            attachment_filter &= SQ(attachment_text=Raw(token))
+
+        sqs = sqs.filter(report_filter)
+
+        if self.search_corpus == 'all':
+            sqs = sqs.filter_or(attachment_filter)
+
+        return sqs
+
+    def _topic_search(self, sqs):
+        terms = [
+            term.strip().replace('"', '')
+            for term in self.cleaned_data['q'].split(' AND ')
+            if term
+        ]
+
+        topic_filter = Q()
+
+        for term in terms:
+            topic_filter |= Q(**{'subject__icontains': term})
+
+        tagged_results = LAMetroBill.objects.filter(topic_filter)\
+                                            .values_list('id', flat=True)
+
+        if self.result_type == 'keyword':
+            sqs = sqs.exclude(id__in=tagged_results)
+
+        elif self.result_type == 'topic':
+            sqs = sqs.filter(id__in=tagged_results)
+
+        return sqs
+
+    def _identifier_search(self, sqs):
+        pass
 
     def search(self):
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
 
         has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
 
-        if has_query and self.search_corpus == 'all':
-            # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
-            sqs = sqs.filter_or(attachment_text=AutoQuery(self.cleaned_data['q']))
-
         if has_query:
-            # We add parentheses around each term in self.cleaned_data['q'],
-            # but those interfere with keyword/text result filtering. Use the
-            # original data to get terms for result type. Also escape double
-            # quotes.
-            result_type_terms = [term.strip().replace('"', '\\"') for term in self.data['q'].split(' AND ')]
-        else:
-            result_type_terms = []
-
-        tag_filter = SQ()
-
-        for term in result_type_terms:
-            for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES:
-                tag_filter |= SQ(**{'{}__icontains'.format(facet): Exact(term)})
-
-        if self.result_type == 'keyword':
-            sqs = sqs.exclude(tag_filter)
-
-        elif self.result_type == 'topic':
-            sqs = sqs.filter(tag_filter)
+            sqs = self._full_text_search(sqs)
+            sqs = self._topic_search(sqs)
 
         return sqs
 
