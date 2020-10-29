@@ -617,7 +617,7 @@ class IdentifierBoostSearchQuery(SolrSearchQuery):
         if identifiers:
             kwargs.update({
                 'defType': 'edismax',
-                'bq': '+'.join('identifier:{}^2.0'.format(i) for i in identifiers),
+                'bq': '+'.join('identifier:"{}"^2.0'.format(i) for i in identifiers),
             })
 
         return super().run(spelling_query, **kwargs)
