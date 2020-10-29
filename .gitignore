@@ -35,3 +35,4 @@ debug.log
 /configs/settings_deployment.staging.py
 
 *.csv
+.gnupg/

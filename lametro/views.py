@@ -13,6 +13,7 @@ from collections import namedtuple
 import os
 
 from haystack.backends import SQ
+from haystack.backends.solr_backend import SolrSearchQuery
 from haystack.inputs import Exact, Raw
 from haystack.query import SearchQuerySet
 
@@ -601,6 +602,27 @@ class LAPersonDetailView(PersonDetailView):
         return context
 
 
+class IdentifierBoostSearchQuery(SolrSearchQuery):
+
+    def run(self, spelling_query=None, **kwargs):
+        '''
+        If the search contains identifiers, boost results with matching
+        identifiers.
+
+        Reference:
+        https://medium.com/@pablocastelnovo/if-they-match-i-want-them-to-be-always-first-boosting-documents-in-apache-solr-with-the-boost-362abd36476c
+        '''
+        identifiers = set(re.findall('\d{4}-\d{4}', self.build_query()))
+
+        if identifiers:
+            kwargs.update({
+                'defType': 'edismax',
+                'bq': '+'.join('identifier:{}^2.0'.format(i) for i in identifiers),
+            })
+
+        return super().run(spelling_query, **kwargs)
+
+
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
     def __init__(self, *args, **kwargs):
         if kwargs.get('search_corpus'):
@@ -635,7 +657,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         topic_filter = Q()
 
         for term in terms:
-            topic_filter |= Q(**{'subject__icontains': term})
+            topic_filter |= Q(subject__icontains=term)
 
         tagged_results = LAMetroBill.objects.filter(topic_filter)\
                                             .values_list('id', flat=True)
@@ -647,9 +669,6 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             sqs = sqs.filter(id__in=tagged_results)
 
         return sqs
-
-    def _identifier_search(self, sqs):
-        pass
 
     def search(self):
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
@@ -680,19 +699,21 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         form_kwargs['search_corpus'] = 'bills' if self.request.GET.get('search-reports') else 'all'
         form_kwargs['result_type'] = self.request.GET.get('result_type', 'all')
 
-        sqs = SearchQuerySet().facet('bill_type', sort='index')\
-                              .facet('sponsorships', sort='index')\
-                              .facet('legislative_session', sort='index')\
-                              .facet('inferred_status')\
-                              .facet('topics')\
-                              .facet('lines_and_ways')\
-                              .facet('phase')\
-                              .facet('project')\
-                              .facet('metro_location')\
-                              .facet('geo_admin_location')\
-                              .facet('motion_by')\
-                              .facet('significant_date')\
-                              .highlight(**{'hl.fl': 'text,attachment_text'})
+        sqs = SearchQuerySet(
+            query=IdentifierBoostSearchQuery('default')
+        ).facet('bill_type', sort='index')\
+         .facet('sponsorships', sort='index')\
+         .facet('legislative_session', sort='index')\
+         .facet('inferred_status')\
+         .facet('topics')\
+         .facet('lines_and_ways')\
+         .facet('phase')\
+         .facet('project')\
+         .facet('metro_location')\
+         .facet('geo_admin_location')\
+         .facet('motion_by')\
+         .facet('significant_date')\
+         .highlight(**{'hl.fl': 'text,attachment_text'})
 
         data = None
         kwargs = {
