@@ -680,6 +680,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                               .facet('geo_admin_location')\
                               .facet('motion_by')\
                               .facet('significant_date')\
+                              .facet('plan_program_policy')\
                               .highlight(**{'hl.fl': 'text,attachment_text'})
 
         data = None
