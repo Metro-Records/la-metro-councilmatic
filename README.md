@@ -86,6 +86,7 @@ First, remove your Solr container.
 ```
 # remove your existing metro containers
 docker-compose down
+docker volume rm la-metro-councilmatic_lametro-solr-data
 
 # build the containers anew
 docker-compose up -d
