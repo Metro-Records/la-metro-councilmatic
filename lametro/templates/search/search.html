@@ -305,7 +305,7 @@
     var queryTerms = '{{ request.GET.q }}'
         .split(' AND ')
         .reduce(function (terms, query) {
-            var formattedQuery = query.replace(/&quot;/g, '"');
+            var formattedQuery = query.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
             formattedQuery ? terms.push(formattedQuery) : $.noop();
             return terms;
         }, []);

@@ -13,7 +13,8 @@ from collections import namedtuple
 import os
 
 from haystack.backends import SQ
-from haystack.inputs import Exact, AutoQuery
+from haystack.backends.solr_backend import SolrSearchQuery
+from haystack.inputs import Exact, Raw
 from haystack.query import SearchQuerySet
 
 import pytz
@@ -601,6 +602,27 @@ class LAPersonDetailView(PersonDetailView):
         return context
 
 
+class IdentifierBoostSearchQuery(SolrSearchQuery):
+
+    def run(self, spelling_query=None, **kwargs):
+        '''
+        If the search contains identifiers, boost results with matching
+        identifiers.
+
+        Reference:
+        https://medium.com/@pablocastelnovo/if-they-match-i-want-them-to-be-always-first-boosting-documents-in-apache-solr-with-the-boost-362abd36476c
+        '''
+        identifiers = set(re.findall('\d{4}-\d{4}', self.build_query()))
+
+        if identifiers:
+            kwargs.update({
+                'defType': 'edismax',
+                'bq': '+'.join('identifier:"{}"^2.0'.format(i) for i in identifiers),
+            })
+
+        return super().run(spelling_query, **kwargs)
+
+
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
     def __init__(self, *args, **kwargs):
         if kwargs.get('search_corpus'):
@@ -610,43 +632,52 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
 
-    def clean_q(self):
-        q = self.cleaned_data['q']
+    def _full_text_search(self, sqs):
+        report_filter = SQ()
+        attachment_filter = SQ()
 
-        if q:
-            return ' AND '.join('({})'.format(term.strip()) for term in q.split('AND'))
-        else:
-            return ''
+        for token in self.cleaned_data['q'].split(' AND '):
+            report_filter &= SQ(text=Raw(token))
+            attachment_filter &= SQ(attachment_text=Raw(token))
+
+        sqs = sqs.filter(report_filter)
+
+        if self.search_corpus == 'all':
+            sqs = sqs.filter_or(attachment_filter)
+
+        return sqs
+
+    def _topic_search(self, sqs):
+        terms = [
+            term.strip().replace('"', '')
+            for term in self.cleaned_data['q'].split(' AND ')
+            if term
+        ]
+
+        topic_filter = Q()
+
+        for term in terms:
+            topic_filter |= Q(subject__icontains=term)
+
+        tagged_results = LAMetroBill.objects.filter(topic_filter)\
+                                            .values_list('id', flat=True)
+
+        if self.result_type == 'keyword':
+            sqs = sqs.exclude(id__in=tagged_results)
+
+        elif self.result_type == 'topic':
+            sqs = sqs.filter(id__in=tagged_results)
+
+        return sqs
 
     def search(self):
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
 
         has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
 
-        if has_query and self.search_corpus == 'all':
-            # Don't auto-escape my query! https://django-haystack.readthedocs.io/en/v2.4.1/searchqueryset_api.html#SearchQuerySet.filter
-            sqs = sqs.filter_or(attachment_text=AutoQuery(self.cleaned_data['q']))
-
         if has_query:
-            # We add parentheses around each term in self.cleaned_data['q'],
-            # but those interfere with keyword/text result filtering. Use the
-            # original data to get terms for result type. Also escape double
-            # quotes.
-            result_type_terms = [term.strip().replace('"', '\\"') for term in self.data['q'].split(' AND ')]
-        else:
-            result_type_terms = []
-
-        tag_filter = SQ()
-
-        for term in result_type_terms:
-            for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES:
-                tag_filter |= SQ(**{'{}__icontains'.format(facet): Exact(term)})
-
-        if self.result_type == 'keyword':
-            sqs = sqs.exclude(tag_filter)
-
-        elif self.result_type == 'topic':
-            sqs = sqs.filter(tag_filter)
+            sqs = self._full_text_search(sqs)
+            sqs = self._topic_search(sqs)
 
         return sqs
 
@@ -668,20 +699,22 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         form_kwargs['search_corpus'] = 'bills' if self.request.GET.get('search-reports') else 'all'
         form_kwargs['result_type'] = self.request.GET.get('result_type', 'all')
 
-        sqs = SearchQuerySet().facet('bill_type', sort='index')\
-                              .facet('sponsorships', sort='index')\
-                              .facet('legislative_session', sort='index')\
-                              .facet('inferred_status')\
-                              .facet('topics')\
-                              .facet('lines_and_ways')\
-                              .facet('phase')\
-                              .facet('project')\
-                              .facet('metro_location')\
-                              .facet('geo_admin_location')\
-                              .facet('motion_by')\
-                              .facet('significant_date')\
-                              .facet('plan_program_policy')\
-                              .highlight(**{'hl.fl': 'text,attachment_text'})
+        sqs = SearchQuerySet(
+            query=IdentifierBoostSearchQuery('default')
+        ).facet('bill_type', sort='index')\
+         .facet('sponsorships', sort='index')\
+         .facet('legislative_session', sort='index')\
+         .facet('inferred_status')\
+         .facet('topics')\
+         .facet('lines_and_ways')\
+         .facet('phase')\
+         .facet('project')\
+         .facet('metro_location')\
+         .facet('geo_admin_location')\
+         .facet('motion_by')\
+         .facet('significant_date')\
+         .facet('plan_program_policy')\
+         .highlight(**{'hl.fl': 'text,attachment_text'})
 
         data = None
         kwargs = {
