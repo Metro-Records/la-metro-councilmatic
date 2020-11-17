@@ -118,6 +118,13 @@
                 {% endif %}
             {% endif %}
 
+            <!-- Plan, Program, or Policy -->
+            {% if facets.fields.plan_program_policy %}
+                {% with facet_name='plan_program_policy' facet_label='Plan, Program, or Policy' item_list=facets.fields.plan_program_policy selected_list=selected_facets.plan_program_policy %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
+
             <div class="divider"></div>
 
             <div id="related-terms" class="hidden">

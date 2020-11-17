@@ -73,6 +73,11 @@ class ClassificationMixin:
         'motion_by_exact': (
             'Board Member',
         ),
+        'plan_program_policy_exact': (
+            'Plan',
+            'Program',
+            'Policy'
+        ),
     }
 
     @property
