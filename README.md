@@ -120,7 +120,7 @@ The Dockerized versions of Solr on the server need your attention, too. Follow t
     sudo docker rm lametro-staging-solr
 
     # -d is the daemon flag
-    sudo docker-compose up -d solr-staging
+    sudo docker-compose -f docker-compose.deployment.yml up -d solr-staging
     ```
 
 4. Log in as the datamade user.
@@ -130,7 +130,9 @@ The Dockerized versions of Solr on the server need your attention, too. Follow t
 
 5. Rebuild the index for the staging server:
     ```bash
-    workon lametro-staging
+    source ~/.virtualenvs/lametro-staging/bin/activate
+    cd lametro-staging
+    python manage.py refresh_guid # run this command if there is a new facet based on the topics
     python manage.py rebuild_index --batch-size=200
     ```
 
