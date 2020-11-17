@@ -83,7 +83,7 @@ Did you make a change to the schema file that Solr uses to make its magic (`solr
 
 First, remove your Solr container.
 
-```
+```bash
 # remove your existing metro containers
 docker-compose down
 docker volume rm la-metro-councilmatic_lametro-solr-data
@@ -150,12 +150,14 @@ Make sure your changes are deployed to the production server (i.e. you've cut a 
     sudo docker stop lametro-production-solr
     sudo docker rm lametro-production-solr
 
-    sudo docker-compose up -d solr-production
+    sudo docker-compose -f docker-compose.deployment.yml up -d solr-production
     ```
 
 3. Switch to the datamade user and rebuild the index.
     ```bash
-    workon lametro
+    source ~/.virtualenvs/lametro/bin/activate
+    cd lametro
+    python manage.py refresh_guid # run this command if there is a new facet based on the topics
     python manage.py rebuild_index --batch-size=200
     ```
 
