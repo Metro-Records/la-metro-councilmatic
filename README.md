@@ -128,7 +128,7 @@ is working as expected – on production.
     sudo docker-compose -f docker-compose.deployment.yml up -d ${SOLR_CONTAINER}
     ```
 
-3. Solr will only apply changes to the schema and config upon core creation, so
+4. Solr will only apply changes to the schema and config upon core creation, so
 consult the Solr logs to confirm the core was remade.
     ```bash
     # Staging Solr service: solr-staging
@@ -163,12 +163,17 @@ consult the Solr logs to confirm the core was remade.
     sudo docker exec ${SOLR_CONTAINER} solr-create -c ${SOLR_CORE} -d /la-metro-councilmatic_configs
     ```
 
-4. Switch to the `datamade` user.
+    Note that we remove and recreate the core, rather than the blunt force
+    option of removing the Docker volume containg the Solr data, because the
+    staging and production Solr containers use the same volume, so removing it
+    would wipe out both indexes at once.
+
+5. Switch to the `datamade` user.
     ```bash
     sudo su - datamade
     ```
 
-5. Rebuild the index:
+6. Rebuild the index:
     ```bash
     # Staging and production virtual environments are named after the corresponding project directory
     source ~/.virtualenvs/${PROJECT_DIRECTORY}/bin/activate
