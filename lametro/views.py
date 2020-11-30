@@ -564,14 +564,20 @@ class LAPersonDetailView(PersonDetailView):
 
         council_post = person.latest_council_membership.post
 
-        context['qualifying_post'] = council_post.acting_label
+        try:
+            context['qualifying_post'] = council_post.acting_label
+        except AttributeError:
+            context['qualifying_post'] = None
 
-        if council_post.shape:
-            context['map_geojson'] = serialize('geojson',
-                                               [council_post],
-                                               geometry_field='shape',
-                                               fields=())
-        else:
+        try:
+            if council_post.shape:
+                context['map_geojson'] = serialize('geojson',
+                                                   [council_post],
+                                                   geometry_field='shape',
+                                                   fields=())
+            else:
+                context['map_geojson'] = None
+        except AttributeError:
             context['map_geojson'] = None
 
         if person.committee_sponsorships:
