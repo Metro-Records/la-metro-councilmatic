@@ -275,6 +275,7 @@ MANUAL_HEADSHOTS = {
     'shirley-choate-03b7445fec78': {'source': '', 'image': 'manual-headshots/shirley-choate.jpg' },
     'phil-washington-2daf84e096e2': {'source': '', 'image': 'manual-headshots/phil-washington.jpg'},
     'john-bulinski-184f9b0a3cc7': {'source': '', 'image': 'manual-headshots/john-bulinski.jpg'},
+    'tony-tavares-a81515b1c413': {'source': '', 'image': 'manual-headshots/tony-tavares.jpg'},
 }
 
 MEMBER_BIOS = {
