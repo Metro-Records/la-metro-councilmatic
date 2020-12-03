@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-    tags:
-      - v0.*
+      - deploy
   pull_request:
     branches:
       - master
