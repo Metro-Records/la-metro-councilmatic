@@ -26,5 +26,8 @@ hooks:
       runas: root
 
 branch_config:
+  hcg/gh-actions-spike:
+    deploymentGroupName: staging
+
   master:
     deploymentGroupName: staging
