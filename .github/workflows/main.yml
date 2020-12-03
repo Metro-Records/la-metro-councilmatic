@@ -24,10 +24,11 @@ jobs:
     steps:
         - uses: aws-actions/configure-aws-credentials@v1
           with:
-            application: la-metro-councilmatic
             aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws-region: us-east-1
         - uses: actions/checkout@v2
         - id: deploy
           uses: webfactory/create-aws-codedeploy-deployment@v0.2.1
+          with:
+            application: la-metro-councilmatic
