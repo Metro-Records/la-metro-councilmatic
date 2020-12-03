@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - master
-      - deploy
+    tags:
+      - v0.*
   pull_request:
     branches:
       - master
@@ -14,23 +15,19 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Build containers and run tests
         run: docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
 
   deploy:
     runs-on: ubuntu-latest
     steps:
-        -   uses: aws-actions/configure-aws-credentials@v1
-            with:
-                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                aws-region: us-east-1
-        -   uses: actions/checkout@v2
-        -   id: deploy
-            uses: webfactory/create-aws-codedeploy-deployment@v0.2.1
-#        -   uses: peter-evans/commit-comment@v1
-#            with:
-#                token: ${{ secrets.GITHUB_TOKEN }}
-#                body: |
-#                    @${{ github.actor }} this was deployed as [${{ steps.deploy.outputs.deploymentId }}](https://console.aws.amazon.com/codesuite/codedeploy/deployments/${{ steps.deploy.outputs.deploymentId }}?region=eu-central-1) to group `${{ steps.deploy.outputs.deploymentGroupName }}`.
+        - uses: aws-actions/configure-aws-credentials@v1
+          with:
+            application: la-metro-councilmatic
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-east-1
+        - uses: actions/checkout@v2
+        - id: deploy
+          uses: webfactory/create-aws-codedeploy-deployment@v0.2.1
