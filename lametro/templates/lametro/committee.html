@@ -31,8 +31,15 @@
                 </h4>
                 <br>
                 {% for event in committee.recent_events %}
-                    <p class='event-listing'>
-                        {{event.start_time | date:'n/d/Y' }} - {{event.link_html | safe}}
+                    <p class="event-listing">
+                    {% if event.status == 'cancelled' %}
+                        <strike>
+                            {{ event.start_time | date:'n/d/Y' }} - {{ event.link_html | safe }}
+                        </strike>
+                        <span class="label label-stale">Cancelled</span>
+                    {% else %}
+                        {{ event.start_time | date:'n/d/Y' }} - {{ event.link_html | safe}}
+                    {% endif %}
                     </p>
                 {% endfor %}
                 <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
