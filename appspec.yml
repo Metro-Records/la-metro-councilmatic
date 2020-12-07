@@ -26,6 +26,9 @@ hooks:
       runas: root
 
 branch_config:
+  hec/feature/render-pdf-with-object:
+    deploymentGroupName: staging
+
   master:
     deploymentGroupName: staging
 
