@@ -75,6 +75,29 @@ docker-compose run --rm app python manage.py update_index
 When the command exits, your search index has been filled. (You can view the
 Solr admin panel at http://localhost:8987/solr.)
 
+## Running arbitrary scrapes
+Occasionally, after a while without running an event scrape, you may find that your local app is broken. If this happens, make sure you have events in your database that are scheduled for the future, as the app queries for upcoming events in order to render the landing page.
+
+1. Make sure there are future events scheduled in Legistar. Go to the [LA Metro Legistar page](https://metro.legistar.com/Calendar.aspx) and open up the time filter for "All Years".
+
+2. If you notice that there are future events in Legistar, run a small windowed event scrape:
+
+```bash
+docker-compose run --rm scrapers pupa update lametro events window=0.05 --rpm=0
+```
+
+This will bring in a few upcoming events, and your app will be able to load the landing page.
+
+## Scraping specific bill
+It's sometimes helpful to make sure you have a specific bill in your database for debugging. Here's how you can scrape a bill you need:
+
+1. Go to the Legistar Web API at the following URL: http://webapi.legistar.com/v1/metro/matters/?$filter=MatterFile%20eq%20%27<bill_identifier>%27 and find the `<MatterId>` of the bill. The identifier should be in XXXX-XXXX format, and the `MatterId` is a 4 digit number.
+
+2. Run the following command in your shell:
+```bash
+docker-compose run --rm scrapers pupa update lametro bills matter_ids=<bill_matter_id> --rpm=0
+```
+
 ## Making changes to the Solr schema
 
 Did you make a change to the schema file that Solr uses to make its magic (`solr_configs/conf/schema.xml`)? Did you add a new field or adjust how Solr indexes data? If so, you need to take a few steps – locally and on the server.

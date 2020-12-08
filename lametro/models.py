@@ -54,14 +54,21 @@ class LAMetroBillManager(models.Manager):
         N.b., the scrapers contain logic for populating the restrict_view field:
         https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/bills.py
 
-        (2) Does the Bill have a classification of "Board Box"? Then, show it.
+        (2) Does the Bill have a classification of "Board Box" or "Board
+        Correspondence"? Then, show it.
 
         (3) Is the Bill on a published agenda, i.e., an event with the
         status of "passed" or "cancelled"? Then, show it.
 
-        NOTE! A single bill can appear on multiple event agendas.
-        We thus call 'distinct' on the below query, otherwise
-        the queryset would contain duplicate bills.
+        (4) Sometimes motions are made during meetings that were not submitted
+        in advance, i.e., they do not appear on the published agenda. They will
+        be entered as matter history, which we translate to bill actions. Does
+        the bill have any associated actions? Then, show it.
+        https://github.com/datamade/la-metro-councilmatic/issues/477
+
+        NOTE! A single bill can appear on multiple event agendas. We thus call
+        'distinct' on the below query, otherwise the queryset would contain
+        duplicate bills.
 
         WARNING! Be sure to use LAMetroBill, rather than the base Bill class,
         when getting bill querysets. Otherwise restricted view bills
@@ -69,16 +76,26 @@ class LAMetroBillManager(models.Manager):
         '''
         qs = super().get_queryset()
 
+        on_published_agenda = (
+            Q(eventrelatedentity__agenda_item__event__status='passed') |
+            Q(eventrelatedentity__agenda_item__event__status='cancelled')
+        )
+        is_board_box = Q(board_box=True)
+        has_minutes_history = (
+            Q(actions__isnull=False) &
+            Q(extras__local_classification='Motion / Motion Response')
+        )
+
         qs = qs.exclude(
             extras__restrict_view=True
         ).annotate(board_box=Case(
-            When(extras__local_classification='Board Box', then=True),
+            When(extras__local_classification__in=('Board Box', 'Board Correspondence'), then=True),
             When(classification__contains=['Board Box'], then=True),
+            When(classification__contains=['Board Correspondence'], then=True),
             default=False,
             output_field=models.BooleanField()
-        )).filter(Q(eventrelatedentity__agenda_item__event__status='passed') | \
-                  Q(eventrelatedentity__agenda_item__event__status='cancelled') | \
-                  Q(board_box=True)
+        )).filter(
+            on_published_agenda | is_board_box | has_minutes_history
         ).distinct()
 
         return qs
@@ -190,14 +207,13 @@ class LAMetroBill(Bill, SourcesMixin):
                 participants__name=action.organization,
                 start_time__date=action.date)
 
-            
             action_dict = {
                 'date': action.date_dt,
                 'description': action.description,
                 'event': event,
                 'organization': action.organization
             }
-            
+
             data.append(action_dict)
 
         for event in events:
