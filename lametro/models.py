@@ -76,24 +76,27 @@ class LAMetroBillManager(models.Manager):
         '''
         qs = super().get_queryset()
 
-        on_published_agenda = (Q(eventrelatedentity__agenda_item__event__status='passed') | Q(eventrelatedentity__agenda_item__event__status='cancelled'))
+        on_published_agenda = (
+            Q(eventrelatedentity__agenda_item__event__status='passed') |
+            Q(eventrelatedentity__agenda_item__event__status='cancelled')
+        )
         is_board_box = Q(board_box=True)
-        has_minutes_history = (Q(actions__isnull=False) & Q(extras__local_classification='Motion / Motion Response'))
+        has_minutes_history = (
+            Q(actions__isnull=False) &
+            Q(extras__local_classification='Motion / Motion Response')
+        )
 
         qs = qs.exclude(
             extras__restrict_view=True
-        )
-        
-        qs = qs.annotate(board_box=Case(
+        ).annotate(board_box=Case(
             When(extras__local_classification__in=('Board Box', 'Board Correspondence'), then=True),
             When(classification__contains=['Board Box'], then=True),
             When(classification__contains=['Board Correspondence'], then=True),
             default=False,
             output_field=models.BooleanField()
-        ))
-        qs = qs.filter(on_published_agenda | is_board_box | has_minutes_history
-        )
-        qs = qs.distinct()
+        )).filter(
+            on_published_agenda | is_board_box | has_minutes_history
+        ).distinct()
 
         return qs
 
@@ -204,14 +207,13 @@ class LAMetroBill(Bill, SourcesMixin):
                 participants__name=action.organization,
                 start_time__date=action.date)
 
-            
             action_dict = {
                 'date': action.date_dt,
                 'description': action.description,
                 'event': event,
                 'organization': action.organization
             }
-            
+
             data.append(action_dict)
 
         for event in events:
