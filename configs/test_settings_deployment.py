@@ -1,8 +1,6 @@
 # These are all the settings that are specific to a deployment
-
 import os
 
-import dj_database_url
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -19,8 +17,16 @@ DEBUG = True
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-DATABASES = {'default': dj_database_url.config(default='postgis://travis:/travis')}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'lametro',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': 5432,
+    }
+}
 
 HAYSTACK_CONNECTIONS = {
     'default': {
