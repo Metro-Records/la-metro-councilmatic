@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgis/postgis:10-2.4
+        image: postgis/postgis:10-2.5
         env:
           POSTGRES_DB: lametro
           POSTGRES_PASSWORD: postgres
