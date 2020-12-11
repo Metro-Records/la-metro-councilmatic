@@ -42,7 +42,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Test with pytest
-      run: pytest -sv
+      run: |
+        mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
+        pytest -sv
 
   deploy:
     needs: test
