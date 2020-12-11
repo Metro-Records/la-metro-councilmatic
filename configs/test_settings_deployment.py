@@ -1,6 +1,8 @@
 # These are all the settings that are specific to a deployment
 import os
 
+import dj_database_url
+
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -17,25 +19,37 @@ DEBUG = True
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'lametro',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': 5432,
+if os.getenv('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(default=os.environ['DATABASE_URL']),
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',
+            'NAME': 'lametro',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'localhost',
+            'PORT': 5432,
+        },
+    }
 
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        #'URL': 'http://127.0.0.1:8983/solr'
-        # ...or for multicore...
-        'URL': os.environ.get('SOLR_URL') or 'http://127.0.0.1:8983/solr/lametro',
-    },
-}
+if os.getenv('SOLR_URL'):
+    HAYSTACK_CONNECTIONS = {
+        'default': {
+            'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+            #'URL': 'http://127.0.0.1:8983/solr'
+            # ...or for multicore...
+            'URL': os.environ['SOLR_URL'],
+        },
+    }
+else:
+    HAYSTACK_CONNECTIONS = {
+        'default': {
+            'ENGINE': 'haystack.backends.simple_backend.SimpleEngine'
+        },
+    }
 
 # Remember to run python manage.py createcachetable so this will work!
 # developers, set your BACKEND to 'django.core.cache.backends.dummy.DummyCache'
