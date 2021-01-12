@@ -127,7 +127,7 @@
 
             <!-- Meetings -->
             {% if facets.fields.sponsorships %}
-                {% with facet_name='sponsorships' facet_label='Meetings' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
+                {% with facet_name='sponsorships' facet_label='Meeting' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
                     {% include 'partials/search_filter.html' %}
                 {% endwith %}
             {% endif %}
