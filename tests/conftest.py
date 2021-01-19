@@ -226,7 +226,7 @@ def metro_organization(db):
 
             organization_info = {
                 'id': 'ocd-organization/' + uid,
-                'name': 'Planning and Programming Committee',
+                'name': 'Planning and Programming Committee ' + uid,
                 'slug': 'planning-and-programming-committee-' + get_uid_chunk(uid),
             }
 
