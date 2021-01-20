@@ -82,8 +82,6 @@ def test_sponsorships(bill,
             'organization': org2
         }
     ]
-    import pdb
-    pdb.set_trace()
     mock_actions_and_agendas = mocker.patch('lametro.models.LAMetroBill.actions_and_agendas',\
                                             new_callable=mocker.PropertyMock,\
                                             return_value=actions_and_agendas)
