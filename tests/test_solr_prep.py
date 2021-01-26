@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 
 from lametro.search_indexes import LAMetroBillIndex
 
@@ -29,3 +30,41 @@ def test_legislative_session(bill,
     indexed_data = index.prepare(bill)
 
     assert indexed_data['legislative_session'] == prepared_session
+
+def test_sponsorships(bill, 
+                      metro_organization,
+                      event,
+                      mocker):
+    bill = bill.build()
+
+    org1 = metro_organization.build()
+    org2 = metro_organization.build()
+    event1 = event.build()
+    actions_and_agendas = [
+        {
+            'date': datetime.now(),
+            'description': 'org1 description',
+            'event': event1,
+            'organization': org1
+        },
+        {
+            'date': datetime.now(),
+            'description': 'org2 descripton',
+            'event': event1,
+            'organization': org2
+        },
+        {
+            'date': datetime.now(),
+            'description': 'org2 descripton',
+            'event': event1,
+            'organization': org2
+        }
+    ]
+    mock_actions_and_agendas = mocker.patch('lametro.models.LAMetroBill.actions_and_agendas',\
+                                            new_callable=mocker.PropertyMock,\
+                                            return_value=actions_and_agendas)
+
+    index = LAMetroBillIndex()
+    indexed_data = index.prepare(bill)
+
+    assert indexed_data['sponsorships'] == {org1.name, org2.name}
