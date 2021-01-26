@@ -32,7 +32,6 @@ def test_legislative_session(bill,
     assert indexed_data['legislative_session'] == prepared_session
 
 def test_sponsorships(bill, 
-                      legislative_session,
                       metro_organization,
                       event,
                       mocker):
