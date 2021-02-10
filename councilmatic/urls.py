@@ -15,7 +15,7 @@ from lametro.api import SmartLogicAPI, PublicComment, refresh_guid_trigger, \
 from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
     LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
-    metro_login, metro_logout, delete_submission, LAMetroArchiveSearch
+    metro_login, metro_logout, delete_submission, delete_event, LAMetroArchiveSearch
 from lametro.feeds import *
 
 patterns = ([
@@ -49,6 +49,7 @@ urlpatterns = [
     url(r'^subjects/$', fetch_subjects, name='subjects'),
     url(r'^object-counts/(.*)$', fetch_object_counts, name='object_counts'),
     url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
+    url(r'^delete-event/(?P<event_slug>[^/]+)/$', delete_event, name='delete_event'),
     url(r'', include('councilmatic_core.urls')),
 ]
 

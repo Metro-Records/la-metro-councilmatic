@@ -160,6 +160,12 @@ class LAMetroEventDetail(EventDetailView):
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
 
+        event_gid = event.api_source.url.split('/')[-1]
+        response = requests.get('https://metro.legistar.com/MeetingDetail.aspx?LEGID={}&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94'.format(event_gid))
+        # response = requests.get('https://metro.legistar.com/MeetingDetail.aspx?LEGID=3&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94')
+        string_in_content = response.content.find(b'This record no longer exists. It might have been deleted.')
+        context['event_in_legistar'] = not bool(string_in_content)
+
         try:
             context['minutes'] = event.documents.get(note__icontains='minutes')
         except EventDocument.DoesNotExist:
@@ -214,6 +220,9 @@ class LAMetroEventDetail(EventDetailView):
 
         context['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
+        import pdb
+        pdb.set_trace()
+
         return context
 
 
@@ -249,6 +258,22 @@ def delete_submission(request, event_slug):
         e.delete()
 
     return HttpResponseRedirect('/event/%s' % event_slug)
+
+
+def delete_event(request, event_slug):
+    # event = LAMetroEvent.objects.get(slug=event_slug)
+    # event_doc = EventDocument.objects.filter(event_id=event.id, note__icontains='Manual upload')
+
+    # for e in event_doc:
+    #     # Remove stored PDF from Metro app.
+    #     if 'Manual upload PDF' in e.note:
+    #         try:
+    #             os.remove('lametro/static/%s' % e.links.get().url )
+    #         except OSError:
+    #             pass
+    #     e.delete()
+
+    return HttpResponseRedirect('/events/')
 
 
 class LAMetroEventsView(EventsView):
