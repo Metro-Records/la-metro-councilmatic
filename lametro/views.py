@@ -255,18 +255,8 @@ def delete_submission(request, event_slug):
 
 
 def delete_event(request, event_slug):
-    # event = LAMetroEvent.objects.get(slug=event_slug)
-    # event_doc = EventDocument.objects.filter(event_id=event.id, note__icontains='Manual upload')
-
-    # for e in event_doc:
-    #     # Remove stored PDF from Metro app.
-    #     if 'Manual upload PDF' in e.note:
-    #         try:
-    #             os.remove('lametro/static/%s' % e.links.get().url )
-    #         except OSError:
-    #             pass
-    #     e.delete()
-
+    event = LAMetroEvent.objects.get(slug=event_slug)
+    event.delete()
     return HttpResponseRedirect('/events/')
 
 
