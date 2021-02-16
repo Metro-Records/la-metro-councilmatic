@@ -159,12 +159,9 @@ class LAMetroEventDetail(EventDetailView):
         if self.request.user.is_authenticated:
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
-
-        event_gid = event.api_source.url.split('/')[-1]
-        response = requests.get('https://metro.legistar.com/MeetingDetail.aspx?LEGID={}&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94'.format(event_gid))
-        # response = requests.get('https://metro.legistar.com/MeetingDetail.aspx?LEGID=3&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94')
-        string_in_content = response.content.find(b'This record no longer exists. It might have been deleted.')
-        context['event_in_legistar'] = not bool(string_in_content)
+            # GET the event URL; allow admin to delete event if 404
+            response = requests.get(event.api_source.url)
+            context['event_ok'] = True if response.status_code == 200 else False
 
         try:
             context['minutes'] = event.documents.get(note__icontains='minutes')
@@ -219,9 +216,6 @@ class LAMetroEventDetail(EventDetailView):
 
 
         context['USING_ECOMMENT'] = settings.USING_ECOMMENT
-
-        import pdb
-        pdb.set_trace()
 
         return context
 

@@ -41,6 +41,14 @@
                         <a class="btn btn-salmon" href="{{ media.links.all.0.url }}" target="_blank"><i class= "fa fa-headphones" aria-hidden="true"></i> {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
                     {% endfor %}
                 {% endif %}
+                {% if user.is_authenticated %}
+                    {% if event_ok %}
+                        <h1>Event's ok!</h1>
+                    {% else %}
+                        <h1>Event's not ok</h1>
+                    {% endif %}
+                {% endif %}
+
             </h1>
 
             <div class="row">
