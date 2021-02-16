@@ -8,6 +8,7 @@ from django.conf import settings
 from django.utils import timezone
 from freezegun import freeze_time
 import requests
+import requests_mock
 
 from opencivicdata.legislative.models import EventDocument
 from councilmatic_core.models import Bill
@@ -327,3 +328,19 @@ def test_event_is_upcoming(event, mocker):
 
     with freeze_time(tomorrow_morning):
         assert not test_event.is_upcoming
+
+
+def test_delete_duplicate_event(event, requests_mock):
+    # create 1 event with a fake api_source and use requests_mock to come up with 2 different responses (an ok and a 404)
+    e = event.build()
+    event_url = 'http://webapi.legistar.com/v1/metro/events/0000'
+    with requests_mock.Mocker() as m:
+        success = m.get(event_url, status_code=200)
+        failure = m.get(event_url, status_code=404)
+
+        import pdb
+        pdb.set_trace()
+        assert True
+    # assertion: template generated with 404 response has the delete event button
+    # ping the url attached to the button and then…
+    # assertion: event no longer exists
