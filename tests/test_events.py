@@ -6,14 +6,17 @@ from uuid import uuid4
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from django.utils import timezone
+from django.urls import reverse
 from freezegun import freeze_time
 import requests
 import requests_mock
+from unittest.mock import patch
 
 from opencivicdata.legislative.models import EventDocument
 from councilmatic_core.models import Bill
 
 from lametro.models import LAMetroEvent, app_timezone
+from lametro.views import LAMetroEventDetail
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
 
@@ -330,15 +333,22 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
 
-def test_delete_duplicate_event(event):
+def test_delete_duplicate_event(event, client):
     # create 1 event with a fake api_source and use requests_mock to come up with 2 different responses (an ok and a 404)
     e = event.build()
-    event_url = 'http://webapi.legistar.com/v1/metro/events/0000'
+    slug = e.slug.int
+    # event_template = reverse('events', args=[slug]) # this is throwing a NoReverseMatch error despite my double checking the url pattern name
+    event_url = 'http://webapi.legistar.com/v1/metro/events/{slug}'
     with requests_mock.Mocker() as m:
         success = m.get(event_url, status_code=200)
         failure = m.get(event_url, status_code=404)
-        
+
+        success_mock = patch('LAMetroEventDetail.get_context_data', new_callable=success)
+
+        success_response = client.get('event/{slug}')
+        # import pdb
+        # pdb.set_trace()
+        # assertion: template generated with 404 response has the delete event button
         assert True
-    # assertion: template generated with 404 response has the delete event button
     # ping the url attached to the button and then…
     # assertion: event no longer exists
