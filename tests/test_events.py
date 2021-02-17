@@ -330,16 +330,14 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
 
-def test_delete_duplicate_event(event, requests_mock):
+def test_delete_duplicate_event(event):
     # create 1 event with a fake api_source and use requests_mock to come up with 2 different responses (an ok and a 404)
     e = event.build()
     event_url = 'http://webapi.legistar.com/v1/metro/events/0000'
     with requests_mock.Mocker() as m:
         success = m.get(event_url, status_code=200)
         failure = m.get(event_url, status_code=404)
-
-        import pdb
-        pdb.set_trace()
+        
         assert True
     # assertion: template generated with 404 response has the delete event button
     # ping the url attached to the button and then…
