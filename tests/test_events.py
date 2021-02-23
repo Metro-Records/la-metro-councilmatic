@@ -333,19 +333,26 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
 
-def test_delete_duplicate_event(event, client):
+def test_delete_duplicate_event(event, client, mocker):
     # create 1 event with a fake api_source and use requests_mock to come up with 2 different responses (an ok and a 404)
     e = event.build()
     slug = e.slug.int
-    # event_template = reverse('events', args=[slug]) # this is throwing a NoReverseMatch error despite my double checking the url pattern name
-    event_url = 'http://webapi.legistar.com/v1/metro/events/{slug}'
+    event_template = reverse('lametro:events', args=[slug])
+    api_source = 'http://webapi.legistar.com/v1/metro/events/{slug}'
     with requests_mock.Mocker() as m:
-        success = m.get(event_url, status_code=200)
-        failure = m.get(event_url, status_code=404)
+        success = m.get(api_source, status_code=200)
+        failure = m.get(api_source, status_code=404)
 
-        success_mock = patch('LAMetroEventDetail.get_context_data', new_callable=success)
+        success_mock = mocker.patch('LAMetroEventDetail.get_context_data.context', new_callable=mocker.PropertyMock)
+        # success_mock = mocker.patch(event_template, new_callable=mocker.PropertyMock)
+        success_mock.context['event_ok'] = True
 
-        success_response = client.get('event/{slug}')
+    # with requests_mock.Mocker() as outer_mock:
+    #     outer_mock.get(event_template)
+    #     with requests_mock.Mocker(real_http=True) as middle_mock:
+    #         with requests_mock.Mocker() as inner_mock:
+    #             inner_mock.get(url, real_http=True)
+    #             print(requests.get(url).text)  
         # import pdb
         # pdb.set_trace()
         # assertion: template generated with 404 response has the delete event button
