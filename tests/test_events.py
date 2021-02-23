@@ -1,5 +1,6 @@
 import pytest
 import pytz
+import re
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -333,29 +334,37 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
 
-def test_delete_duplicate_event(event, client, mocker):
+def test_delete_button_shows(event, client, django_user_model, mocker):
     # create 1 event with a fake api_source and use requests_mock to come up with 2 different responses (an ok and a 404)
     e = event.build()
-    slug = e.slug.int
-    event_template = reverse('lametro:events', args=[slug])
-    api_source = 'http://webapi.legistar.com/v1/metro/events/{slug}'
-    with requests_mock.Mocker() as m:
-        success = m.get(api_source, status_code=200)
-        failure = m.get(api_source, status_code=404)
+    event_template = reverse('lametro:events', args=[e.slug])
+    api_source = f'http://webapi.legistar.com/v1/metro/events/{e.slug}'
+    
+    mock_source = mocker.MagicMock()
+    mock_source.url = api_source
+    mock_api_source = mocker.patch('lametro.models.LAMetroEvent.api_source', new_callable=mocker.PropertyMock, return_value=mock_source)
 
-        success_mock = mocker.patch('LAMetroEventDetail.get_context_data.context', new_callable=mocker.PropertyMock)
-        # success_mock = mocker.patch(event_template, new_callable=mocker.PropertyMock)
-        success_mock.context['event_ok'] = True
+    username = 'admin'
+    password = 'administrativepw'
+    user = django_user_model.objects.create_user(username=username, password=password)
+    client.force_login(user)
 
-    # with requests_mock.Mocker() as outer_mock:
-    #     outer_mock.get(event_template)
-    #     with requests_mock.Mocker(real_http=True) as middle_mock:
-    #         with requests_mock.Mocker() as inner_mock:
-    #             inner_mock.get(url, real_http=True)
-    #             print(requests.get(url).text)  
-        # import pdb
-        # pdb.set_trace()
-        # assertion: template generated with 404 response has the delete event button
-        assert True
+    with requests_mock.Mocker() as m: 
+        cal_matcher = re.compile('https://metro.legistar.com/calendar.aspx')
+        m.get(cal_matcher, status_code=200)
+
+        source_matcher = re.compile(api_source)
+        success = m.get(source_matcher, status_code=200)
+        success_response = client.get(event_template)
+
+        failure = m.get(source_matcher, status_code=404)
+        failure_response = client.get(event_template)
+
+
+        assert 'This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.' not in success_response.content.decode('utf-8')
+        assert 'This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.' in failure_response.content.decode('utf-8')
+
     # ping the url attached to the button and then…
     # assertion: event no longer exists
+
+# def test_delete_duplicate_events():
