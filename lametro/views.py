@@ -76,6 +76,10 @@ class LAMetroIndexView(IndexView):
         extra['bilingual'] = bool([e for e in extra['current_meeting'] if e.bilingual])
         extra['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
+        upcoming = extra['upcoming_board_meetings']
+        today = timezone.now().date()
+        extra['todays_meetings'] = [e for e in upcoming if e.start_date == today]
+
         return extra
 
 class LABillDetail(BillDetailView):
