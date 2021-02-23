@@ -360,11 +360,18 @@ def test_delete_button_shows(event, client, django_user_model, mocker):
         failure = m.get(source_matcher, status_code=404)
         failure_response = client.get(event_template)
 
-
         assert 'This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.' not in success_response.content.decode('utf-8')
         assert 'This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.' in failure_response.content.decode('utf-8')
 
-    # ping the url attached to the button and then…
-    # assertion: event no longer exists
 
-# def test_delete_duplicate_events():
+@pytest.mark.django_db
+def test_delete_event(event, client):
+    e = event.build()
+    e.save()
+    event_in_db = LAMetroEvent.objects.filter(id=e.id)
+    assert event_in_db.exists()
+
+    delete_event = reverse('delete_event', args=[e.slug])
+    response = client.get(delete_event)
+    event_in_db = LAMetroEvent.objects.filter(id=e.id)
+    assert not event_in_db.exists()
