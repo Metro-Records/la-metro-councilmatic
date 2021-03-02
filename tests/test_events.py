@@ -334,7 +334,7 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
 
-def test_delete_button_shows(event, client, django_user_model, mocker):
+def test_delete_button_shows(event, admin_client, django_user_model, mocker):
     # create 1 event with a fake api_source and use requests_mock to come up with 2 different responses (an ok and a 404)
     e = event.build()
     event_template = reverse('lametro:events', args=[e.slug])
@@ -344,34 +344,36 @@ def test_delete_button_shows(event, client, django_user_model, mocker):
     mock_source.url = api_source
     mock_api_source = mocker.patch('lametro.models.LAMetroEvent.api_source', new_callable=mocker.PropertyMock, return_value=mock_source)
 
-    username = 'admin'
-    password = 'administrativepw'
-    user = django_user_model.objects.create_user(username=username, password=password)
-    client.force_login(user)
-
     with requests_mock.Mocker() as m: 
         cal_matcher = re.compile('https://metro.legistar.com/calendar.aspx')
         m.get(cal_matcher, status_code=200)
 
         source_matcher = re.compile(api_source)
         success = m.get(source_matcher, status_code=200)
-        success_response = client.get(event_template)
+        success_response = admin_client.get(event_template)
 
         failure = m.get(source_matcher, status_code=404)
-        failure_response = client.get(event_template)
+        failure_response = admin_client.get(event_template)
 
-        assert 'This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.' not in success_response.content.decode('utf-8')
-        assert 'This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.' in failure_response.content.decode('utf-8')
+        text = 'This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.'
+        assert text not in success_response.content.decode('utf-8')
+        assert text in failure_response.content.decode('utf-8')
 
 
 @pytest.mark.django_db
-def test_delete_event(event, client):
+def test_delete_event(event, client, admin_client):
     e = event.build()
     e.save()
     event_in_db = LAMetroEvent.objects.filter(id=e.id)
     assert event_in_db.exists()
 
     delete_event = reverse('delete_event', args=[e.slug])
-    response = client.get(delete_event)
+
+    user_response = client.get(delete_event)
+    assert user_response.url != '/events/'
+
+    admin_response = admin_client.get(delete_event)
+    assert admin_response.url == '/events/'
+
     event_in_db = LAMetroEvent.objects.filter(id=e.id)
     assert not event_in_db.exists()
