@@ -23,6 +23,7 @@ from django.db import transaction, connection, connections
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
@@ -238,6 +239,7 @@ def handle_uploaded_agenda(agenda, event):
     management.call_command('collectstatic', '--noinput')
 
 
+@login_required
 def delete_submission(request, event_slug):
     event = LAMetroEvent.objects.get(slug=event_slug)
     event_doc = EventDocument.objects.filter(event_id=event.id, note__icontains='Manual upload')
@@ -254,6 +256,7 @@ def delete_submission(request, event_slug):
     return HttpResponseRedirect('/event/%s' % event_slug)
 
 
+@login_required
 def delete_event(request, event_slug):
     event = LAMetroEvent.objects.get(slug=event_slug)
     event.delete()
