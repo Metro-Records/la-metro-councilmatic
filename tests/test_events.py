@@ -372,6 +372,7 @@ def test_delete_event(event, client, admin_client):
 
     user_response = client.get(delete_event)
     assert user_response.url != admin_redirect_url
+    assert event_in_db.exists()
 
     admin_response = admin_client.get(delete_event)
     assert admin_response.url == admin_redirect_url
