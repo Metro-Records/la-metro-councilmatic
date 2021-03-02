@@ -162,7 +162,7 @@ class LAMetroEventDetail(EventDetailView):
             context['legistar_ok'] = r.ok
             # GET the event URL; allow admin to delete event if 404
             response = requests.get(event.api_source.url)
-            context['event_ok'] = True if response.status_code == 200 else False
+            context['event_ok'] = response.ok
 
         try:
             context['minutes'] = event.documents.get(note__icontains='minutes')
