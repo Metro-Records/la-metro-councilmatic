@@ -369,8 +369,6 @@ def test_delete_event(event, client, admin_client):
 
     delete_event = reverse('delete_event', args=[e.slug])
     admin_redirect_url = reverse('lametro:event')
-    import pdb
-    pdb.set_trace()
 
     user_response = client.get(delete_event)
     assert user_response.url != admin_redirect_url
