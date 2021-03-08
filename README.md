@@ -223,7 +223,7 @@ new member that were created without a post.
     from lametro.models import Person
     Person.objects.get(family_name='<MEMBER LAST NAME>').memberships.filter(organization__name='Board of Directors', post__isnull=True).delete()
     ```
-3. Add the new member's headshot to the `static/images/manual-headshots`
+3. Add the new member's headshot to the `lametro/static/images/manual-headshots`
 directory, then update the `MANUAL_HEADSHOTS` object in `councilmatic/settings_jurisdiction.py`. **Be sure to key the headshot off the person slug
 from the production site.**
     - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
