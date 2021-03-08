@@ -215,8 +215,8 @@ changes you need to make so they appear correctly on the site.
 
 1. Add the new member to the `VOTING_POSTS` object in the Metro person scraper,
 then merge and [follow the steps to deploy your change](https://github.com/datamade/scrapers-us-municipal/#deploying-changes).
-  - Example: https://github.com/opencivicdata/scrapers-us-municipal/pull/337
-  - Tip: Run `docker-compose run --rm scrapers pupa import lametro people --rpm=0` to capture the change locally.
+    - Example: https://github.com/opencivicdata/scrapers-us-municipal/pull/337
+    - Tip: Run `docker-compose run --rm scrapers pupa import lametro people --rpm=0` to capture the change locally.
 2. After the revised person scrape runs, remove any board memberships for the
 new member that were created without a post.
     ```python
