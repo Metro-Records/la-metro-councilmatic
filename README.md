@@ -232,7 +232,8 @@ from the production site.**
     - Tip: Replace newlines in the provided bio with `<br /><br />`.
 
 Since you keyed the changes off the production person slug, they won't be
-visible locally or on the staging site. To confirm your changes worked:
+visible locally or on the staging site. To confirm your changes worked, deploy
+them to production, then:
 
 - View [the Board of Directors](https://boardagendas.metro.net/board-members/)
 listing and confirm the new member is listed with the correct post, e.g.,
