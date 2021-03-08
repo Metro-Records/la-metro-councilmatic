@@ -207,6 +207,45 @@ consult the Solr logs to confirm the core was remade.
 Nice! The production server should have the newly edited schema and freshly
 built index, ready to search, filter, and facet.
 
+## Adding a new board member
+
+Hooray! A new member has been elected or appointed to the Board of Directors.
+Metro will provide a headshot and bio for the new member. There are a few
+changes you need to make so they appear correctly on the site.
+
+1. Add the new member to the `VOTING_POSTS` object in the Metro person scraper,
+then merge and [follow the steps to deploy your change](https://github.com/datamade/scrapers-us-municipal/#deploying-changes).
+  - Example: https://github.com/opencivicdata/scrapers-us-municipal/pull/337
+  - Tip: Run `docker-compose run --rm scrapers pupa import lametro people --rpm=0` to capture the change locally.
+2. After the revised person scrape runs, remove any board memberships for the
+new member that were created without a post.
+    ```python
+    from lametro.models import Person
+    Person.objects.get(family_name='<MEMBER LAST NAME>').memberships.filter(organization__name='Board of Directors', post__isnull=True).delete()
+    ```
+3. Add the new member's headshot to the `static/images/manual-headshots`
+directory, then update the `MANUAL_HEADSHOTS` object in `councilmatic/settings_jurisdiction.py`. **Be sure to key the headshot off the person slug
+from the production site.**
+    - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
+4. Add the new member's bio to the `MEMBER_BIOS` object in `councilmatic/settings_jurisdiction.py`, again **using the person slug from production.**
+    - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
+    - Tip: Replace newlines in the provided bio with `<br /><br />`.
+
+Since you keyed the changes off the production person slug, they won't be
+visible locally or on the staging site. To confirm your changes worked:
+
+- View [the Board of Directors](https://boardagendas.metro.net/board-members/)
+listing and confirm the new member is listed with the correct post, e.g.,
+`Los Angeles Country Board Supervisor, District 1`.
+    - If you only see `Board Member`, the new member's post has not been added.
+    Double check that you updated the `VOTING_POSTS` object in the person
+    scraper (e.g., does the member's name as it appears in the API match the
+    key you added?), that your changes to the scraper have been deployed, and
+    that a person scrape has been run since the deployment.
+- View the new member's detail page and confirm that their headshot and bio
+appear as expected, and without any formatting issues.
+
+
 ## A note on tests
 
 LA Metro Councilmatic has a basic test suite. If you need to run it, simply run:
@@ -246,4 +285,4 @@ Report it here: https://github.com/datamade/la-metro-councilmatic/issues
 
 ## Copyright
 
-Copyright (c) 2019 DataMade. Released under the [MIT License](https://github.com/datamade/la-metro-councilmatic/blob/master/LICENSE).
+Copyright (c) 2021 DataMade. Released under the [MIT License](https://github.com/datamade/la-metro-councilmatic/blob/master/LICENSE).
