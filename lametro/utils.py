@@ -41,9 +41,9 @@ def parse_subject(text):
         return text.strip()
 
 def get_identifier(obj_or_string):
-    # obj_or_string is the ocd-bill string or an instance of a bill
-    # return id always
-    # id == ocd-bill string
+    if isinstance(obj_or_string, string):
+        return obj_or_string
+    return bill.id
 
     # to test:
     # run update_index locally
