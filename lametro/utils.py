@@ -8,8 +8,6 @@ from lxml.etree import tostring
 from django.conf import settings
 from django.utils import timezone
 
-from councilmatic_core.models import Organization, Event
-
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 def format_full_text(full_text):
@@ -41,11 +39,6 @@ def parse_subject(text):
         return text.strip()
 
 def get_identifier(obj_or_string):
-    if isinstance(obj_or_string, string):
+    if isinstance(obj_or_string, str):
         return obj_or_string
-    return bill.id
-
-    # to test:
-    # run update_index locally
-    # delete a bill in a django shell
-    # run update_index --remove locally so that this method runs
+    return obj_or_string.id
