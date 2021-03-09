@@ -39,3 +39,13 @@ def format_full_text(full_text):
 def parse_subject(text):
     if ('[PROJECT OR SERVICE NAME]' not in text) and ('[DESCRIPTION]' not in text) and ('[CONTRACT NUMBER]' not in text):
         return text.strip()
+
+def get_identifier(obj_or_string):
+    # obj_or_string is the ocd-bill string or an instance of a bill
+    # return id always
+    # id == ocd-bill string
+
+    # to test:
+    # run update_index locally
+    # delete a bill in a django shell
+    # run update_index --remove locally so that this method runs
