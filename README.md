@@ -213,23 +213,31 @@ Hooray! A new member has been elected or appointed to the Board of Directors.
 Metro will provide a headshot and bio for the new member. There are a few
 changes you need to make so they appear correctly on the site.
 
-1. Add the new member to the `VOTING_POSTS` object in the Metro person scraper,
-then merge and [follow the steps to deploy your change](https://github.com/datamade/scrapers-us-municipal/#deploying-changes).
+**N.b., these changes can be made in any order.**
+
+### Update the scraper
+
+- Add the new member to the `VOTING_POSTS` object [in the Metro person scraper](https://github.com/opencivicdata/scrapers-us-municipal/). Once your PR is reviewed, merge your changes, pull them into [our scrapers fork](https://github.com/datamade/scrapers-us-municipal/), and [follow the steps to deploy your change](https://github.com/datamade/scrapers-us-municipal/#deploying-changes).
     - Example: https://github.com/opencivicdata/scrapers-us-municipal/pull/337
-    - Tip: Run `docker-compose run --rm scrapers pupa import lametro people --rpm=0` to capture the change locally.
-2. After the revised person scrape runs, remove any board memberships for the
+    - Tip: Once your scraper change is deployed. Run `docker-compose run --rm scrapers pupa import lametro people --rpm=0` to capture the change locally.
+- After the revised person scrape runs, remove any board memberships for the
 new member that were created without a post.
     ```python
     from lametro.models import Person
     Person.objects.get(family_name='<MEMBER LAST NAME>').memberships.filter(organization__name='Board of Directors', post__isnull=True).delete()
     ```
-3. Add the new member's headshot to the `lametro/static/images/manual-headshots`
+
+### Update the Metro app
+
+- Add the new member's headshot to the `lametro/static/images/manual-headshots`
 directory, then update the `MANUAL_HEADSHOTS` object in `councilmatic/settings_jurisdiction.py`. **Be sure to key the headshot off the person slug
 from the production site.**
     - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
-4. Add the new member's bio to the `MEMBER_BIOS` object in `councilmatic/settings_jurisdiction.py`, again **using the person slug from production.**
+- Add the new member's bio to the `MEMBER_BIOS` object in `councilmatic/settings_jurisdiction.py`, again **using the person slug from production.**
     - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
     - Tip: Replace newlines in the provided bio with `<br /><br />`.
+
+### Check your work
 
 Since you keyed the changes off the production person slug, they won't be
 visible locally or on the staging site. To confirm your changes worked, deploy
@@ -245,7 +253,6 @@ listing and confirm the new member is listed with the correct post, e.g.,
     that a person scrape has been run since the deployment.
 - View the new member's detail page and confirm that their headshot and bio
 appear as expected, and without any formatting issues.
-
 
 ## A note on tests
 
