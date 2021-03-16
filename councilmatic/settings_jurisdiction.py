@@ -277,7 +277,7 @@ MANUAL_HEADSHOTS = {
     'john-bulinski-184f9b0a3cc7': {'source': '', 'image': 'manual-headshots/john-bulinski.jpg'},
     'tony-tavares-a81515b1c413': {'source': '', 'image': 'manual-headshots/tony-tavares.jpg'},
     'holly-mitchell-68d838612b17': {'source': '', 'image': 'manual-headshots/holly-mitchell.jpg'},
-    'fernando-dutra-19bb1bb05d11': {'source': '', 'image': 'manual-headshots/fernand-dutra.png'},
+    'fernando-dutra-19bb1bb05d11': {'source': '', 'image': 'manual-headshots/fernando-dutra.png'},
     'tim-sandoval-387c30ca1882': {'source': '', 'image': 'manual-headshots/tim-sandoval.jpeg'}
 }
 
