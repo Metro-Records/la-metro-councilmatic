@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+import logging
 import pytz
 import re
 
@@ -28,6 +29,7 @@ from lametro.utils import format_full_text, parse_subject
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
+logger = logging.getLogger(__name__)
 
 class SourcesMixin(object):
 
@@ -202,10 +204,17 @@ class LAMetroBill(Bill, SourcesMixin):
         data = []
 
         for action in actions:
-            event = LAMetroEvent.objects.get(\
-                participants__entity_type='organization',\
-                participants__name=action.organization,
-                start_time__date=action.date)
+            try:
+                event = LAMetroEvent.objects.get(\
+                    participants__entity_type='organization',\
+                    participants__name=action.organization,
+                    start_time__date=action.date)
+            except LAMetroEvent.DoesNotExist:
+                logger.warn(
+                    'Could not find event corresponding to action on Board ' +
+                    'Report {0} by {1} on {2}'.format(self.identifier, action.organization, action.date)
+                )
+                event = None
 
             action_dict = {
                 'date': action.date_dt,
