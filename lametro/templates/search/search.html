@@ -40,16 +40,42 @@
                 </p>
             {% endif %}
 
-            <!-- Legislation Status -->
-            {% with facet_name='inferred_status' facet_label='Status' item_list=facets.fields.inferred_status selected_list=selected_facets.inferred_status %}
-                {% include 'partials/search_filter.html' %}
-            {% endwith %}
+            <!---------- REPORT DETAILS ------------>
+            <h5>Report Details</h5>
+            <!-- Meetings -->
+            {% if facets.fields.sponsorships %}
+                {% with facet_name='sponsorships' facet_label='Meeting' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
+
+            <!-- Significant Date -->
+            {% if facets.fields.significant_date %}
+                {% with facet_name='significant_date' facet_label='Significant Date' item_list=facets.fields.significant_date selected_list=selected_facets.significant_date %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
 
             <!-- Legislation Type -->
             {% with facet_name='bill_type' facet_label='Legislation Type' item_list=facets.fields.bill_type selected_list=selected_facets.bill_type %}
                 {% include 'partials/search_filter.html' %}
             {% endwith %}
 
+
+            <!-- Motion By -->
+            {% if facets.fields.motion_by %}
+                {% with facet_name='motion_by' facet_label='Motion By' item_list=facets.fields.motion_by selected_list=selected_facets.motion_by %}
+                    {% include 'partials/search_filter.html' %}
+                {% endwith %}
+            {% endif %}
+
+            <!-- Legislation Status -->
+            {% with facet_name='inferred_status' facet_label='Status' item_list=facets.fields.inferred_status selected_list=selected_facets.inferred_status %}
+                {% include 'partials/search_filter.html' %}
+            {% endwith %}
+
+            <!---------- REPORT KEYWORDS ------------>
+            <h5>Report Keywords</h5>
             <!-- Lines / Ways -->
             {% if facets.fields.lines_and_ways %}
                 {% with facet_name='lines_and_ways' facet_label='Lines / Ways' item_list=facets.fields.lines_and_ways selected_list=selected_facets.lines_and_ways %}
@@ -71,9 +97,9 @@
                 {% endwith %}
             {% endif %}
 
-            <!-- Metro Location -->
-            {% if facets.fields.metro_location %}
-                {% with facet_name='metro_location' facet_label='Metro Location' item_list=facets.fields.metro_location selected_list=selected_facets.metro_location %}
+            <!-- Plan, Program, or Policy -->
+            {% if facets.fields.plan_program_policy %}
+                {% with facet_name='plan_program_policy' facet_label='Plan, Program, or Policy' item_list=facets.fields.plan_program_policy selected_list=selected_facets.plan_program_policy %}
                     {% include 'partials/search_filter.html' %}
                 {% endwith %}
             {% endif %}
@@ -85,16 +111,9 @@
                 {% endwith %}
             {% endif %}
 
-            <!-- Significant Date -->
-            {% if facets.fields.significant_date %}
-                {% with facet_name='significant_date' facet_label='Significant Date' item_list=facets.fields.significant_date selected_list=selected_facets.significant_date %}
-                    {% include 'partials/search_filter.html' %}
-                {% endwith %}
-            {% endif %}
-
-            <!-- Motion By -->
-            {% if facets.fields.motion_by %}
-                {% with facet_name='motion_by' facet_label='Motion By' item_list=facets.fields.motion_by selected_list=selected_facets.motion_by %}
+            <!-- Metro Location -->
+            {% if facets.fields.metro_location %}
+                {% with facet_name='metro_location' facet_label='Metro Location' item_list=facets.fields.metro_location selected_list=selected_facets.metro_location %}
                     {% include 'partials/search_filter.html' %}
                 {% endwith %}
             {% endif %}
@@ -102,32 +121,6 @@
             <!-- Subject -->
             {% if facets.fields.topics %}
                 {% with facet_name='topics' facet_label='Subject' item_list=facets.fields.topics selected_list=selected_facets.topics %}
-                    {% include 'partials/search_filter.html' %}
-                {% endwith %}
-            {% endif %}
-
-            <!-- Legislative Session -->
-            {% if facets.fields.legislative_session %}
-                <!-- only show leg sesh filter pane if there is more than one leg sesh to select from -->
-                {% if facets.fields.legislative_session|length > 1 %}
-
-                    {% with facet_name='legislative_session' facet_label='Legislative Session' item_list=facets.fields.legislative_session selected_list=selected_facets.legislative_session %}
-                        {% include 'partials/search_filter.html' %}
-                    {% endwith %}
-
-                {% endif %}
-            {% endif %}
-
-            <!-- Plan, Program, or Policy -->
-            {% if facets.fields.plan_program_policy %}
-                {% with facet_name='plan_program_policy' facet_label='Plan, Program, or Policy' item_list=facets.fields.plan_program_policy selected_list=selected_facets.plan_program_policy %}
-                    {% include 'partials/search_filter.html' %}
-                {% endwith %}
-            {% endif %}
-
-            <!-- Meetings -->
-            {% if facets.fields.sponsorships %}
-                {% with facet_name='sponsorships' facet_label='Meeting' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
                     {% include 'partials/search_filter.html' %}
                 {% endwith %}
             {% endif %}
