@@ -56,11 +56,22 @@
                 {% endwith %}
             {% endif %}
 
+            <!-- Legislative Session -->
+            {% if facets.fields.legislative_session %}
+                <!-- only show leg sesh filter pane if there is more than one leg sesh to select from -->
+                {% if facets.fields.legislative_session|length > 1 %}
+
+                    {% with facet_name='legislative_session' facet_label='Legislative Session' item_list=facets.fields.legislative_session selected_list=selected_facets.legislative_session %}
+                        {% include 'partials/search_filter.html' %}
+                    {% endwith %}
+
+                {% endif %}
+            {% endif %}
+
             <!-- Legislation Type -->
             {% with facet_name='bill_type' facet_label='Legislation Type' item_list=facets.fields.bill_type selected_list=selected_facets.bill_type %}
                 {% include 'partials/search_filter.html' %}
             {% endwith %}
-
 
             <!-- Motion By -->
             {% if facets.fields.motion_by %}
