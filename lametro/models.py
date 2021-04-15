@@ -210,11 +210,11 @@ class LAMetroBill(Bill, SourcesMixin):
                     participants__name=action.organization,
                     start_time__date=action.date)
             except LAMetroEvent.DoesNotExist:
-                logger.warn(
+                logger.warning(
                     'Could not find event corresponding to action on Board ' +
                     'Report {0} by {1} on {2}'.format(self.identifier, action.organization, action.date)
                 )
-                event = None
+                continue
 
             action_dict = {
                 'date': action.date_dt,
