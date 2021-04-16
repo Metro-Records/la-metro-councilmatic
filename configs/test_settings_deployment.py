@@ -1,5 +1,6 @@
 # These are all the settings that are specific to a deployment
 import os
+import sys
 
 import dj_database_url
 
@@ -77,3 +78,33 @@ SHOW_TEST_EVENTS = True
 
 SMART_LOGIC_KEY = 'smartlogic api key'
 SMART_LOGIC_ENVIRONMENT = '0ef5d755-1f43-4a7e-8b06-7591bed8d453'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '[%(asctime)s][%(levelname)s] %(name)s '
+                      '%(filename)s:%(funcName)s:%(lineno)d | %(message)s',
+            'datefmt': '%H:%M:%S',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+            'stream': sys.stdout
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO'
+    },
+    'loggers': {
+        'lametro': {
+            'handlers': ['console'],
+            'propagate': True,
+        },
+    }
+}

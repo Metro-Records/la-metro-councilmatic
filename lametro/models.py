@@ -207,7 +207,7 @@ class LAMetroBill(Bill, SourcesMixin):
             try:
                 event = LAMetroEvent.objects.get(\
                     participants__entity_type='organization',\
-                    participants__name=action.organization,
+                    participants__organization=action.organization,
                     start_time__date=action.date)
             except LAMetroEvent.DoesNotExist:
                 logger.warning(
@@ -227,7 +227,8 @@ class LAMetroBill(Bill, SourcesMixin):
 
         for event in events:
             # Use a description of "SCHEDULED"
-            org = event.participants.first()
+            org = LAMetroOrganization.objects.get(id=event.participants.first().organization_id)
+
             event_dict = {
                 'date': event.start_time.date(),
                 'description': 'SCHEDULED',

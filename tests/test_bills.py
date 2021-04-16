@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
+import logging
 from uuid import uuid4
 
 import pytest
@@ -7,7 +8,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 
-from opencivicdata.legislative.models import EventAgendaItem, RelatedBill
+from opencivicdata.legislative.models import EventAgendaItem, RelatedBill, \
+    EventParticipant, EventRelatedEntity
 from councilmatic_core.models import Bill, Event
 from lametro.models import LAMetroBill
 from lametro.utils import format_full_text, parse_subject
@@ -143,3 +145,62 @@ def test_last_action_date_has_already_occurred(bill, event):
 
     # Assert the last action matches the event that has already occurred.
     assert last_action_date == two_weeks_ago.date()
+
+@pytest.mark.django_db
+def test_actions_and_agendas(bill, event, bill_action, event_agenda_item, caplog, event_related_entity):
+    caplog.set_level(logging.WARNING)
+
+    # create a bill with no actions or agendas and confirm actions and agendas
+    # is an empty list
+    some_bill = bill.build()
+
+    assert some_bill.actions_and_agendas == []
+
+    # add action w/o event and confirm error is logged
+    some_action = bill_action.build(bill=some_bill)
+
+    assert some_bill.actions_and_agendas == []
+    assert len(caplog.records) == 1
+
+    record, = caplog.records
+
+    assert 'Could not find event corresponding to action' in record.message
+
+    # add event to action and confirm action appears
+    action_org = some_action.organization
+    action_date = some_action.date
+    some_event = event.build(name=action_org.name,
+                             start_date='{} 12:00'.format(action_date))
+
+    EventParticipant.objects.create(name=action_org.name,
+                                    organization=action_org,
+                                    entity_type='organization',
+                                    event=some_event)
+
+    aaa = some_bill.actions_and_agendas
+
+    assert len(aaa) == 1
+
+    expected_action, = aaa
+
+    assert expected_action['organization'] == action_org
+    assert expected_action['event'] == some_event
+    assert expected_action['date'] == datetime.strptime(some_action.date, '%Y-%m-%d')\
+                                              .date()
+    assert expected_action['description'] == some_action.description
+
+    # add bill to event agenda and confirm it appears
+    some_agenda_item = event_agenda_item.build(event=some_event)
+    event_related_entity.build(agenda_item=some_agenda_item, bill=some_bill)
+
+    aaa = some_bill.actions_and_agendas
+
+    assert len(aaa) == 2
+
+    expected_agenda = aaa[0]  # agenda should appear first
+
+    assert expected_agenda['organization'] == action_org
+    assert expected_agenda['event'] == some_event
+    assert expected_agenda['date'] == datetime.strptime(some_action.date, '%Y-%m-%d')\
+                                              .date()
+    assert expected_agenda['description'] == 'SCHEDULED'
