@@ -226,12 +226,20 @@ class LAMetroBill(Bill, SourcesMixin):
             data.append(action_dict)
 
         for event in events:
-            # Use a description of "SCHEDULED"
-            org = LAMetroOrganization.objects.get(id=event.participants.first().organization_id)
+            try:
+                # Attempt to return Metro org object.
+                org = LAMetroOrganization.objects.get(
+                    id=event.participants.first().organization_id
+                )
+            except LAMetroOrganization.DoesNotExist:
+                # If a corresponding org does not exist, e.g., in the case of
+                # appearing on the agenda of a public hearing, do not return an
+                # organization.
+                org = None
 
             event_dict = {
                 'date': event.start_time.date(),
-                'description': 'SCHEDULED',
+                'description': 'SCHEDULED',  # Use a description of "SCHEDULED"
                 'event': event,
                 'organization': org
             }
