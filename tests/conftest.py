@@ -141,12 +141,12 @@ def event(db, jurisdiction):
 def event_agenda_item(db, event):
     class EventAgendaItemFactory():
         def build(self, **kwargs):
-            named_event = event.build()
-
             event_agenda_item_info = {
-                'event_id': named_event.id,
                 'order': 1,
             }
+
+            if not kwargs.get('event'):
+                kwargs['event'] = event.build()
 
             event_agenda_item_info.update(kwargs)
 
@@ -162,11 +162,10 @@ def event_agenda_item(db, event):
 def event_related_entity(db, event_agenda_item):
     class EventRelatedEntityFactory():
         def build(self, **kwargs):
-            agenda_item = event_agenda_item.build()
+            event_related_entity_info = {}
 
-            event_related_entity_info = {
-                'agenda_item': agenda_item
-            }
+            if not kwargs.get('agenda_item'):
+                kwargs['agenda_item'] = event_agenda_item.build()
 
             event_related_entity_info.update(kwargs)
 
