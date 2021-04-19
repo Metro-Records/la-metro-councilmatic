@@ -58,6 +58,12 @@ def test_sponsorships(bill,
             'description': 'org2 descripton',
             'event': event1,
             'organization': org2
+        },
+        {
+            'date': datetime.now(),
+            'description': 'SCHEDULED',
+            'event': event1,
+            'organization': None
         }
     ]
     mock_actions_and_agendas = mocker.patch('lametro.models.LAMetroBill.actions_and_agendas',\
