@@ -206,7 +206,7 @@ def test_actions_and_agendas(bill,
                                  start_date='{} 12:00'.format(action_date),
                                  id='ocd-event/public-hearing')
 
-        EventParticipant.objects.create(event=some_event)
+        some_participant = EventParticipant.objects.create(event=some_event)
         some_agenda_item = event_agenda_item.build(event=some_event)
 
     event_related_entity.build(agenda_item=some_agenda_item, bill=some_bill)
@@ -220,7 +220,7 @@ def test_actions_and_agendas(bill,
     if event_has_related_org:
         assert expected_agenda['organization'] == action_org
     else:
-        assert expected_agenda['organization'] == None
+        assert expected_agenda['organization'] == some_participant
 
     assert expected_agenda['event'] == some_event
     assert expected_agenda['date'] == datetime.strptime(some_action.date, '%Y-%m-%d')\

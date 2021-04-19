@@ -29,11 +29,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return None
 
     def prepare_sponsorships(self, obj):
-        orgs_list = [
-            action['organization'].name
-            for action in obj.actions_and_agendas
-            if action['organization']
-        ]
+        orgs_list = [action['organization'].name for action in obj.actions_and_agendas]
         return set(orgs_list)
 
     def prepare_sort_name(self, obj):

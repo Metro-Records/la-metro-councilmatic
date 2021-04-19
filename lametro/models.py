@@ -235,7 +235,7 @@ class LAMetroBill(Bill, SourcesMixin):
                 # If a corresponding org does not exist, e.g., in the case of
                 # appearing on the agenda of a public hearing, do not return an
                 # organization.
-                org = None
+                org = event.participants.first()
 
             event_dict = {
                 'date': event.start_time.date(),
