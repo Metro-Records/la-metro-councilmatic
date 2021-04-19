@@ -1,6 +1,8 @@
 import pytest
 from datetime import datetime
 
+from opencivicdata.legislative.models import EventParticipant
+
 from lametro.search_indexes import LAMetroBillIndex
 
 @pytest.mark.parametrize('session_identifier,prepared_session', [
@@ -34,12 +36,14 @@ def test_legislative_session(bill,
 def test_sponsorships(bill, 
                       metro_organization,
                       event,
+                      event_related_entity,
                       mocker):
     bill = bill.build()
 
     org1 = metro_organization.build()
     org2 = metro_organization.build()
     event1 = event.build()
+    event1_participant = EventParticipant.objects.create(event=event1, name='Public Hearing')
     actions_and_agendas = [
         {
             'date': datetime.now(),
@@ -58,6 +62,12 @@ def test_sponsorships(bill,
             'description': 'org2 descripton',
             'event': event1,
             'organization': org2
+        },
+        {
+            'date': datetime.now(),
+            'description': 'SCHEDULED',
+            'event': event1,
+            'organization': event1_participant
         }
     ]
     mock_actions_and_agendas = mocker.patch('lametro.models.LAMetroBill.actions_and_agendas',\
@@ -67,4 +77,4 @@ def test_sponsorships(bill,
     index = LAMetroBillIndex()
     indexed_data = index.prepare(bill)
 
-    assert indexed_data['sponsorships'] == {org1.name, org2.name}
+    assert indexed_data['sponsorships'] == {org1.name, org2.name, 'Public Hearing'}

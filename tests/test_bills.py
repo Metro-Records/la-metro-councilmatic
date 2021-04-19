@@ -146,8 +146,16 @@ def test_last_action_date_has_already_occurred(bill, event):
     # Assert the last action matches the event that has already occurred.
     assert last_action_date == two_weeks_ago.date()
 
+@pytest.mark.parametrize('event_has_related_org', [True, False])
 @pytest.mark.django_db
-def test_actions_and_agendas(bill, event, bill_action, event_agenda_item, caplog, event_related_entity):
+def test_actions_and_agendas(bill,
+                             bill_action,
+                             event,
+                             event_agenda_item,
+                             event_related_entity,
+                             caplog,
+                             event_has_related_org):
+
     caplog.set_level(logging.WARNING)
 
     # create a bill with no actions or agendas and confirm actions and agendas
@@ -190,7 +198,17 @@ def test_actions_and_agendas(bill, event, bill_action, event_agenda_item, caplog
     assert expected_action['description'] == some_action.description
 
     # add bill to event agenda and confirm it appears
-    some_agenda_item = event_agenda_item.build(event=some_event)
+    if event_has_related_org:
+        some_agenda_item = event_agenda_item.build(event=some_event)
+
+    else:
+        some_event = event.build(name='Public Hearing',
+                                 start_date='{} 12:00'.format(action_date),
+                                 id='ocd-event/public-hearing')
+
+        some_participant = EventParticipant.objects.create(event=some_event)
+        some_agenda_item = event_agenda_item.build(event=some_event)
+
     event_related_entity.build(agenda_item=some_agenda_item, bill=some_bill)
 
     aaa = some_bill.actions_and_agendas
@@ -199,7 +217,11 @@ def test_actions_and_agendas(bill, event, bill_action, event_agenda_item, caplog
 
     expected_agenda = aaa[0]  # agenda should appear first
 
-    assert expected_agenda['organization'] == action_org
+    if event_has_related_org:
+        assert expected_agenda['organization'] == action_org
+    else:
+        assert expected_agenda['organization'] == some_participant
+
     assert expected_agenda['event'] == some_event
     assert expected_agenda['date'] == datetime.strptime(some_action.date, '%Y-%m-%d')\
                                               .date()
