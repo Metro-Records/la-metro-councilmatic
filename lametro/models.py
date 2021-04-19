@@ -233,8 +233,8 @@ class LAMetroBill(Bill, SourcesMixin):
                 )
             except LAMetroOrganization.DoesNotExist:
                 # If a corresponding org does not exist, e.g., in the case of
-                # appearing on the agenda of a public hearing, do not return an
-                # organization.
+                # appearing on the agenda of a public hearing, return the event
+                # participant object.
                 org = event.participants.first()
 
             event_dict = {
