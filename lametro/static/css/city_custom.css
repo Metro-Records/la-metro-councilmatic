@@ -45,6 +45,7 @@ h1, .h1 {
     background-repeat: no-repeat;
     background-position: center center;
     min-height: 380px;
+    height: unset;
 }
 
 #section-intro {
