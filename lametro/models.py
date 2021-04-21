@@ -664,6 +664,14 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         else:
             return self.UPCOMING_ECOMMENT_MESSAGE
 
+    @property
+    def todays_meetings(cls):
+        now = app_timezone.localize(datetime.now())
+
+        end_of_day = app.timezone.localize(datetime(now.year, now.month, now.day, 17, 0))
+
+        return cls.objects.filter(start_time__gte=now, start_time__lte=end_of_day)
+
 
 class EventAgendaItem(EventAgendaItem):
 
