@@ -327,3 +327,9 @@ def test_event_is_upcoming(event, mocker):
 
     with freeze_time(tomorrow_morning):
         assert not test_event.is_upcoming
+
+def test_todays_meetings(event):
+    # create event for some day
+    e = event.build()
+    # use `freeze_time` to fake it is day before & make sure created event does not show up
+    # use `freeze_time` to fake it is day of event & make sure event shows up

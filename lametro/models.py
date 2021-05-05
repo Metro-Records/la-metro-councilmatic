@@ -664,11 +664,12 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         else:
             return self.UPCOMING_ECOMMENT_MESSAGE
 
-    @property
+
+    @classmethod
     def todays_meetings(cls):
         today_la = app_timezone.localize(datetime.now()).replace(hour=0, minute=0, second=0, microsecond=0)
 
-        today_utc = today.astimezone(pytz.utc)
+        today_utc = today_la.astimezone(pytz.utc)
         tomorrow_utc = today_utc + timedelta(days=1)
 
         return cls.objects.filter(start_time__gte=today_utc, start_time__lt=tomorrow_utc)

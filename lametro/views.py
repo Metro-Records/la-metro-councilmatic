@@ -77,8 +77,10 @@ class LAMetroIndexView(IndexView):
         extra['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
         upcoming = extra['upcoming_board_meetings']
-        today = timezone.now().date()
-        extra['todays_meetings'] = [e for e in upcoming if e.start_date == today]
+        extra['todays_meetings'] = self.event_model.todays_meetings()
+
+        import pdb
+        pdb.set_trace()
 
         return extra
 
