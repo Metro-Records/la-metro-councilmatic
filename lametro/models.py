@@ -669,7 +669,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
         tomorrow = today + timezone.timedelta(day=1)
 
-        return cls.objects.filter(start_time__gte=, start_time__lt=tomorrow)
+        return cls.objects.filter(start_time__gte=today, start_time__lt=tomorrow)
 
 
 class EventAgendaItem(EventAgendaItem):
