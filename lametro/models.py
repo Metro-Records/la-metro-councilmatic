@@ -666,10 +666,12 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def todays_meetings(cls):
-        today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        tomorrow = today + timezone.timedelta(day=1)
+        today_la = app_timezone.localize(datetime.now()).replace(hour=0, minute=0, second=0, microsecond=0)
 
-        return cls.objects.filter(start_time__gte=today, start_time__lt=tomorrow)
+        today_utc = today.astimezone(pytz.utc)
+        tomorrow_utc = today_utc + timedelta(days=1)
+
+        return cls.objects.filter(start_time__gte=today_utc, start_time__lt=tomorrow_utc)
 
 
 class EventAgendaItem(EventAgendaItem):
