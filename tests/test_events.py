@@ -330,12 +330,15 @@ def test_event_is_upcoming(event, mocker):
 
 def test_todays_meetings(event):
     # create event for some day
-    event_time = app_timezone.localize(datetime(2020, 3, 15, 12, 0, 0, 0)) # March 15, 2020 at noon LA time
-    e = event.build(start_time=event_time)
+    event_time = app_timezone.localize(datetime(2020, 3, 15, 15, 0, 0, 0)) # March 15, 2020 at 3pm LA time
 
-    day_before = app.timezone.localize(event_time - timedelta(days=1))
+    time_string = event_time.strftime('%Y-%m-%d %H:%M')
+
+    e = event.build(start_date=time_string)
+
+    day_before = event_time - timedelta(days=1)
     with freeze_time(day_before):
-        todays_meetings = LAMetroEvent.todays_meetings()
         assert e not in LAMetroEvent.todays_meetings()
 
-    # use `freeze_time` to fake it is day of event & make sure event shows up
+    with freeze_time(event_time):
+        assert e in LAMetroEvent.todays_meetings()
