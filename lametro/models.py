@@ -674,6 +674,17 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return cls.objects.filter(start_time__gte=today_utc, start_time__lt=tomorrow_utc)
 
+    @property
+    def display_status(self):
+        if self.has_passed:
+            return 'Concluded'
+        elif self.is_ongoing:
+            return 'In progress'
+        elif self.status == 'cancelled':
+            return 'Cancelled'
+        else:
+            return 'Upcoming'
+
 
 class EventAgendaItem(EventAgendaItem):
 

@@ -79,9 +79,6 @@ class LAMetroIndexView(IndexView):
         upcoming = extra['upcoming_board_meetings']
         extra['todays_meetings'] = self.event_model.todays_meetings()
 
-        import pdb
-        pdb.set_trace()
-
         return extra
 
 class LABillDetail(BillDetailView):
