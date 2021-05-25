@@ -333,7 +333,7 @@ def test_event_is_upcoming(event, mocker):
     with freeze_time(tomorrow_morning):
         assert not test_event.is_upcoming
 
-<<<<<<< HEAD
+
 def test_todays_meetings(event):
     # create event for some day
     event_time = app_timezone.localize(datetime(2020, 3, 15, 15, 0, 0, 0)) # March 15, 2020 at 3pm LA time
@@ -348,7 +348,7 @@ def test_todays_meetings(event):
 
     with freeze_time(event_time):
         assert e in LAMetroEvent.todays_meetings()
-=======
+
 
 def test_delete_button_shows(event, admin_client, django_user_model, mocker):
     # create 1 event with a fake api_source and use requests_mock to come up with 2 different responses (an ok and a 404)
@@ -395,4 +395,3 @@ def test_delete_event(event, client, admin_client):
 
     event_in_db = LAMetroEvent.objects.filter(id=e.id)
     assert not event_in_db.exists()
->>>>>>> master
