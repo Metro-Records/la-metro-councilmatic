@@ -683,6 +683,27 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             return self.UPCOMING_ECOMMENT_MESSAGE
 
 
+    @classmethod
+    def todays_meetings(cls):
+        today_la = app_timezone.localize(datetime.now()).replace(hour=0, minute=0, second=0, microsecond=0)
+
+        today_utc = today_la.astimezone(pytz.utc)
+        tomorrow_utc = today_utc + timedelta(days=1)
+
+        return cls.objects.filter(start_time__gte=today_utc, start_time__lt=tomorrow_utc)
+
+    @property
+    def display_status(self):
+        if self.has_passed:
+            return 'Concluded'
+        elif self.is_ongoing:
+            return 'In progress'
+        elif self.status == 'cancelled':
+            return 'Cancelled'
+        else:
+            return 'Upcoming'
+
+
 class EventAgendaItem(EventAgendaItem):
 
     class Meta:

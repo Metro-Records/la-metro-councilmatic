@@ -77,6 +77,8 @@ class LAMetroIndexView(IndexView):
         extra['bilingual'] = bool([e for e in extra['current_meeting'] if e.bilingual])
         extra['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
+        extra['todays_meetings'] = self.event_model.todays_meetings().order_by('start_date')
+
         return extra
 
 class LABillDetail(BillDetailView):

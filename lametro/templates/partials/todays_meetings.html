@@ -1,0 +1,27 @@
+<h3>Today's Meetings</h3>
+    {% for meeting in todays_meetings %}
+    {% if meeting.display_status == 'cancelled' %}
+        <strike>{{  meeting.link_html | safe }}</strike> <small><span class="label label-stale">Cancelled</span></small>
+    {% else %}
+        {{  meeting.link_html | safe }} <small>
+            {% if meeting.display_status == 'Concluded' %}<span class="label label-stale">
+            {% elif meeting.display_status == 'In progress' %}<span class="label label-primary">
+            {% elif meeting.display_status == 'Upcoming' %}<span class="label label-info">
+            {% endif %}
+            {{ meeting.display_status }}</span></small>
+    {% endif %}
+    <p class="small text-muted">
+    {% if meeting.status == 'cancelled' %}
+        <strike>
+          <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
+          <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
+        </strike>
+        {% else %}
+        <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
+        <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
+        {% if meeting.display_status == 'Upcoming' or meeting.display_status == 'In progress' %}
+        <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name }}<br />
+        {% endif %}
+    {% endif %}
+    </p>
+    {% endfor %}
