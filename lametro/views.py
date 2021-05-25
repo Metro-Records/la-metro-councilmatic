@@ -23,6 +23,7 @@ from django.db import transaction, connection, connections
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
@@ -161,6 +162,9 @@ class LAMetroEventDetail(EventDetailView):
         if self.request.user.is_authenticated:
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
+            # GET the event URL; allow admin to delete event if 404
+            response = requests.get(event.api_source.url)
+            context['event_ok'] = response.ok
 
         try:
             context['minutes'] = event.documents.get(note__icontains='minutes')
@@ -237,6 +241,7 @@ def handle_uploaded_agenda(agenda, event):
     management.call_command('collectstatic', '--noinput')
 
 
+@login_required
 def delete_submission(request, event_slug):
     event = LAMetroEvent.objects.get(slug=event_slug)
     event_doc = EventDocument.objects.filter(event_id=event.id, note__icontains='Manual upload')
@@ -251,6 +256,13 @@ def delete_submission(request, event_slug):
         e.delete()
 
     return HttpResponseRedirect('/event/%s' % event_slug)
+
+
+@login_required
+def delete_event(request, event_slug):
+    event = LAMetroEvent.objects.get(slug=event_slug)
+    event.delete()
+    return HttpResponseRedirect('/events/')
 
 
 class LAMetroEventsView(EventsView):

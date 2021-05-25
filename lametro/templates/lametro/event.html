@@ -41,6 +41,15 @@
                         <a class="btn btn-salmon" href="{{ media.links.all.0.url }}" target="_blank"><i class= "fa fa-headphones" aria-hidden="true"></i> {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
                     {% endfor %}
                 {% endif %}
+                {% if user.is_authenticated %}
+                    {% if not event_ok %}
+                    <div class="well">
+                        <p>This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.</p>
+                        <a href="{% url 'delete_event' event.slug %}" class='btn btn-teal'><i class="fa fa-times" aria-hidden="true"></i>Delete Event</a>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
             </h1>
 
             <div class="row">
@@ -151,7 +160,7 @@
                                 <strong>Before the meeting</strong><br />
 
                                 <p>
-                                    <strong>Via email:</strong> <a href="mailto:jacksonm@metro.net">jacksonm@metro.net</a><br />
+                                    <strong>Via email:</strong> <a href="mailto:goinsc@metro.net">goinsc@metro.net</a><br />
                                     <strong>By postal mail:</strong> Board Secretary's Office, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
                                 </p>
                             </p>

@@ -205,6 +205,9 @@ def hits_first(context, topics, selected_facets):
     Return array of topics, such that topics matching a selected facet or the
     search term are returned first, followed by the remaining tags in ABC order.
     '''
+    if isinstance(topics, list):
+        return topics
+
     topic_names = topics.values_list('name', flat=True)
 
     # context['query'] looks like "(token) AND (token) AND (token)". Sometimes,
