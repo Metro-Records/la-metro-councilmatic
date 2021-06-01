@@ -78,6 +78,9 @@ class ClassificationMixin:
             'Program',
             'Policy'
         ),
+        'fiscal_year_exact': (
+            ''
+        )
     }
 
     @property

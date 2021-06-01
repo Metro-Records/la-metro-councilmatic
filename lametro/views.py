@@ -734,6 +734,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
          .facet('motion_by')\
          .facet('significant_date')\
          .facet('plan_program_policy')\
+         .facet('fiscal_year')\
          .highlight(**{'hl.fl': 'text,attachment_text'})
 
         data = None
