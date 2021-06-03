@@ -159,6 +159,7 @@ strong.match-group {
 /* Labels for statues */
 .label {
     padding: .25em .6em .25em;
+    display: inline-block;
 }
 
 .label-teal { background-color: #49A6AB; }
