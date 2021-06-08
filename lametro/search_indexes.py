@@ -21,6 +21,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     significant_date = indexes.MultiValueField(faceted=True)
     motion_by = indexes.MultiValueField(faceted=True)
     plan_program_policy = indexes.MultiValueField(faceted=True)
+    legislative_session = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return LAMetroBill

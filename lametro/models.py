@@ -912,6 +912,7 @@ class LAMetroSubject(models.Model):
         ('motion_by_exact', 'Motion By'),
         ('topics_exact', 'Subject'),
         ('plan_program_policy_exact', 'Plan, Program, or Policy'),
+        ('legislative_session', 'Legislative Session')
     ]
 
     class Meta:
