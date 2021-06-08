@@ -912,7 +912,6 @@ class LAMetroSubject(models.Model):
         ('motion_by_exact', 'Motion By'),
         ('topics_exact', 'Subject'),
         ('plan_program_policy_exact', 'Plan, Program, or Policy'),
-        ('fiscal_year_exact', 'Fiscal Year')
     ]
 
     class Meta:

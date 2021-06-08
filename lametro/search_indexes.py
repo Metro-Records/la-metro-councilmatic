@@ -21,7 +21,6 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     significant_date = indexes.MultiValueField(faceted=True)
     motion_by = indexes.MultiValueField(faceted=True)
     plan_program_policy = indexes.MultiValueField(faceted=True)
-    fiscal_year = indexes.MultiValueField(faceted=True)
 
     def get_model(self):
         return LAMetroBill
@@ -88,9 +87,6 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
     def prepare_plan_program_policy(self, obj):
         return self._topics_from_classification(obj, 'plan_program_policy_exact')
-
-    def prepare_fiscal_year(self, obj):
-        return self._topics_from_classification(obj, 'fiscal_year_exact')
 
     def _topics_from_classification(self, obj, classification):
         '''
