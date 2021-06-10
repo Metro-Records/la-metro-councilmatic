@@ -51,8 +51,18 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         )
 
     def prepare_legislative_session(self, obj):
-        start_year = obj.legislative_session.identifier
-        end_year = int(start_year) + 1
+        if len(obj.actions_and_agendas) > 0:
+            most_recent = sorted(obj.actions_and_agendas, key=lambda i: i['date'],reverse=True)[0]
+            action_date = most_recent['event'].start_time
+        else:
+            action_date = obj.get_last_action_date()
+
+        if action_date.month <= 6:
+            start_year = action_date.year - 1
+            end_year = action_date.year
+        else:
+            start_year = action_date.year
+            end_year = action_date.year + 1
 
         session = '7/1/{start_year} to 6/30/{end_year}'.format(start_year=start_year,
                                                                end_year=end_year)
