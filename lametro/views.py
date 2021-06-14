@@ -12,10 +12,12 @@ import sqlalchemy as sa
 from collections import namedtuple
 import os
 
+from captcha.fields import ReCaptchaField
+
 from haystack.backends import SQ
 from haystack.backends.solr_backend import SolrSearchQuery
 from haystack.inputs import Exact, Raw
-from haystack.query import SearchQuerySet
+from haystack.query import SearchQuerySet, EmptySearchQuerySet
 
 import pytz
 
@@ -644,13 +646,19 @@ class IdentifierBoostSearchQuery(SolrSearchQuery):
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
+
     def __init__(self, *args, **kwargs):
         if kwargs.get('search_corpus'):
             self.search_corpus = kwargs.pop('search_corpus')
 
         self.result_type = kwargs.pop('result_type', None)
 
+        include_captcha = kwargs.pop('include_captcha', False)
+
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
+
+        if include_captcha:
+            self.fields['captcha'] = ReCaptchaField()
 
     def _full_text_search(self, sqs):
         report_filter = SQ()
@@ -691,6 +699,13 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         return sqs
 
     def search(self):
+        if not self.is_valid():
+            print(self.errors)
+            print('Form invalid')
+            return EmptySearchQuerySet()
+
+        print('Form valid')
+
         sqs = super(LAMetroCouncilmaticSearchForm, self).search()
 
         has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
@@ -703,8 +718,6 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
 
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
-    def __call__(self, request):
-        return redirect(reverse('index'))
 
     def __init__(self, *args, **kwargs):
         kwargs['form_class'] = LAMetroCouncilmaticSearchForm
@@ -715,12 +728,14 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         extra_context['topic_facets'] = [facet for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES]
         return extra_context
 
-    def build_form(self, form_kwargs={}):
-        form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
+    def build_form(self, form_kwargs=None):
+        if not form_kwargs:
+            form_kwargs = {}
 
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
         form_kwargs['search_corpus'] = 'bills' if self.request.GET.get('search-reports') else 'all'
         form_kwargs['result_type'] = self.request.GET.get('result_type', 'all')
+        form_kwargs['include_captcha'] = not self.request.COOKIES.get('metro-allow_search-dev', False)
 
         sqs = SearchQuerySet(
             query=IdentifierBoostSearchQuery('default')
@@ -776,6 +791,35 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                 kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
 
         return self.form_class(data, **kwargs)
+
+    def __call__(self, request):
+        '''
+        django-haystack doesn't start using the class-based views until 3.0,
+        i.e., there is not a standard form_valid method we can override.
+        Instead, we override __call__ to remove reCAPTCHA validation after a
+        challenge is successfully completed.
+
+        Original method:
+        https://github.com/django-haystack/django-haystack/blob/01c440618a63fa03e05ce9f4d2615e0933f642b1/haystack/views.py#L42-L54
+        '''
+        response = super().__call__(request)
+
+        if self.form.is_valid() and self.form.fields.get('captcha'):
+            # Remove the reCAPTCHA field and recreate the response to re-render
+            # the form for this request.
+            del self.form.fields['captcha']
+            response = self.create_response()
+
+            # Set a cookie to allow search without reCAPTCHA on subsequent
+            # requests.
+            response.set_cookie(
+                'metro-allow_search-dev',
+                'true',
+                expires=datetime.datetime.now() + datetime.timedelta(weeks=52),
+                domain='localhost'
+            )
+
+        return response
 
 
 class GoogleView(IndexView):

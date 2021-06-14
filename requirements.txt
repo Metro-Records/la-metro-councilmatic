@@ -13,3 +13,4 @@ lxml==4.1.1
 dj_database_url
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
 locustio==0.13.2
+django-recaptcha==2.0.6
