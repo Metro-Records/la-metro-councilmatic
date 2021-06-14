@@ -703,6 +703,9 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
 
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
+    def __call__(self, request):
+        return redirect(reverse('index'))
+
     def __init__(self, *args, **kwargs):
         kwargs['form_class'] = LAMetroCouncilmaticSearchForm
         super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
