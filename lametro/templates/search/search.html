@@ -307,6 +307,63 @@
 
 {% endblock %}
 
+{% comment %}
+    Override this block to remove search filter event listeners, which are
+    replaced in the base template with a sitewide event listener adding
+    reCAPTCHA validation to search link clicks.
+{% endcomment %}
+
+{% block extra_js %}
+    {{ selected_facets|json_script:"selected-facets" }}
+    <script>
+    $(document).ready(function() {
+        $("#searchSubscribe").click(function() {
+            var bullHorn    = $(this).parents().find(".createSubscription");
+            var bullHornNew = $(this).parents().find(".removeSubscription");
+
+            if ('{{ request.user }}' != 'AnonymousUser') {
+                posturl2 = "/search_check_subscription/"
+                facets2 = $('#selected-facets').text();
+                stuff2 = $.post(posturl2, { query: "{{request.GET.q}}", selected_facets: facets2 },
+                    function(data, status) {
+                    console.log("returned from post with data: ", data, "status:", status);
+                }).error(function() {
+                console.log("Could not check subscription for interest {{request.GET.q}} with {{facets2}}" );
+                }),
+                posturl = "/search_subscribe/" //+ "{{request.GET.q}}"
+                facets =  $('#selected-facets').text();
+                $.post(posturl, { query: "{{request.GET.q}}", selected_facets: facets }).then(function() {
+                    $(bullHorn).hide();
+                    $(bullHornNew).show();
+
+                }, function (error) {
+                    console.error("Error subscribing to interest {{request.GET.q}} with {{selected_facets}}" );
+                })
+            }
+            else {
+                $('#search_message').html(alertMsg);
+            }
+        }
+    )});
+    </script>
+
+    <script>
+        $(function() {
+            // filters are collapsed be default b/c they are long
+            // filters w/ class panel-show (i.e. filters that have been selected) are expanded
+            $('.panel-show').addClass('in');
+
+            $(".panel-heading").click(function () {
+                if ($(this).parent().children().eq(1).hasClass("in")){
+                    $(this).find('i').removeClass("fa-minus").addClass("fa-plus");
+                } else{
+                    $(this).find('i').removeClass("fa-plus").addClass("fa-minus");
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block uninherited_js %}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.full.min.js"></script>
   <script src="{% static 'js/autocomplete.js' %}"></script>

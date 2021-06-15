@@ -84,21 +84,96 @@
 
     {% block full_content %}
     {% endblock %}
+
     <script src="https://use.typekit.net/foe4jis.js"></script>
     <script>try{Typekit.load({ async: true });}catch(e){}</script>
 
     <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
+    <script src="{% static 'js/urlPolyfill.js' %}"></script>
 
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({pageLanguage: 'en', gaTrack: true, gaId: 'UA-90842833-1'},
                 'google_translate_element');
         }
+
+        function listenForSearch() {
+            $('a').click(function(e) {
+                var $target = $(e.target);
+
+                // The remove filter target is an <i> element - grab the parent
+                // <a> element.
+                if (!$target.attr('href')) {
+                    $target = $target.parent();
+                }
+
+                if ($target.attr('href') != '#') {
+                    var targetUrl = new URL(window.location.origin + $target.attr('href'));
+                } else {
+                    // Search filters have an href of "#". There is logic below
+                    // to construct the correct URL. Start with the current URL
+                    // as a basis for this construction.
+                    var targetUrl = new URL(window.location.href);
+                }
+
+                var isSearch = ['/search', '/search/'].indexOf(targetUrl.pathname) >= 0;
+
+                console.log(targetUrl, isSearch);
+
+                if (isSearch) {
+                    e.preventDefault();
+
+                    grecaptcha.execute(
+                        '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI', {action: 'form'}
+                    ).then(function(token) {
+                        console.log("reCAPTCHA validated. Appending token to querystring...");
+
+                        var token = token || '-';
+
+                        // Remove the original reCAPTCHA value.
+                        targetUrl.searchParams.delete('captcha');
+
+                        // Add the new reCAPTCHA value.
+                        targetUrl.searchParams.append('captcha', token);
+
+                        extraParam = $target.attr('data');
+
+                        if (extraParam) {
+                            if ($target.hasClass('filter-value')) {
+                                // Add the new facet param
+                                targetUrl.searchParams.append('selected_facets', extraParam);
+                            } else if ($target.hasClass('remove-filter-value')) {
+                                // Remove the selected facet param
+                                var updatedFacets = targetUrl.searchParams
+                                                             .getAll('selected_facets')
+                                                             .filter(function(item) {return item != extraParam});
+
+                                targetUrl.searchParams.delete('selected_facets');
+
+                                $.each(updatedFacets, function(_, item) {
+                                    targetUrl.searchParams.append('selected_facets', item)
+                                });
+                            } else if ($target.hasClass('remove-order-value')) {
+                                // Clear order by params
+                                targetUrl.searchParams.delete('order_by');
+                                targetUrl.searchParams.delete('sort_by');
+                            }
+
+                        }
+
+                        window.location = targetUrl.toString();
+                    })
+                }
+            });
+        };
+
+        window.listenForSearch = listenForSearch;
     </script>
 
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI&onload=listenForSearch"></script>
 
     {% block extra_js %}{% endblock %}
 
