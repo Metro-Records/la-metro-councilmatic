@@ -12,12 +12,8 @@ import sqlalchemy as sa
 from collections import namedtuple
 import os
 
-from captcha.fields import ReCaptchaField
-
-from haystack.backends import SQ
 from haystack.backends.solr_backend import SolrSearchQuery
-from haystack.inputs import Exact, Raw
-from haystack.query import SearchQuerySet, EmptySearchQuerySet
+from haystack.query import SearchQuerySet
 
 import pytz
 
@@ -48,15 +44,14 @@ from django.views.generic import View
 
 from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
-    PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView, \
-    CouncilmaticSearchForm
+    PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 
 from opencivicdata.core.models import PersonLink
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
     LAMetroEvent, LAMetroOrganization, LAMetroSubject
-from lametro.forms import AgendaUrlForm, AgendaPdfForm
+from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
@@ -80,6 +75,7 @@ class LAMetroIndexView(IndexView):
         extra['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
         extra['todays_meetings'] = self.event_model.todays_meetings().order_by('start_date')
+        extra['form'] = LAMetroCouncilmaticSearchForm()
 
         return extra
 
@@ -645,78 +641,6 @@ class IdentifierBoostSearchQuery(SolrSearchQuery):
         return super().run(spelling_query, **kwargs)
 
 
-class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
-
-    def __init__(self, *args, **kwargs):
-        if kwargs.get('search_corpus'):
-            self.search_corpus = kwargs.pop('search_corpus')
-
-        self.result_type = kwargs.pop('result_type', None)
-
-        include_captcha = kwargs.pop('include_captcha', False)
-
-        super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
-
-        if include_captcha:
-            self.fields['captcha'] = ReCaptchaField()
-
-    def _full_text_search(self, sqs):
-        report_filter = SQ()
-        attachment_filter = SQ()
-
-        for token in self.cleaned_data['q'].split(' AND '):
-            report_filter &= SQ(text=Raw(token))
-            attachment_filter &= SQ(attachment_text=Raw(token))
-
-        sqs = sqs.filter(report_filter)
-
-        if self.search_corpus == 'all':
-            sqs = sqs.filter_or(attachment_filter)
-
-        return sqs
-
-    def _topic_search(self, sqs):
-        terms = [
-            term.strip().replace('"', '')
-            for term in self.cleaned_data['q'].split(' AND ')
-            if term
-        ]
-
-        topic_filter = Q()
-
-        for term in terms:
-            topic_filter |= Q(subject__icontains=term)
-
-        tagged_results = LAMetroBill.objects.filter(topic_filter)\
-                                            .values_list('id', flat=True)
-
-        if self.result_type == 'keyword':
-            sqs = sqs.exclude(id__in=tagged_results)
-
-        elif self.result_type == 'topic':
-            sqs = sqs.filter(id__in=tagged_results)
-
-        return sqs
-
-    def search(self):
-        if not self.is_valid():
-            print(self.errors)
-            print('Form invalid')
-            return EmptySearchQuerySet()
-
-        print('Form valid')
-
-        sqs = super(LAMetroCouncilmaticSearchForm, self).search()
-
-        has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
-
-        if has_query:
-            sqs = self._full_text_search(sqs)
-            sqs = self._topic_search(sqs)
-
-        return sqs
-
-
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
     def __init__(self, *args, **kwargs):
@@ -735,7 +659,6 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
         form_kwargs['search_corpus'] = 'bills' if self.request.GET.get('search-reports') else 'all'
         form_kwargs['result_type'] = self.request.GET.get('result_type', 'all')
-        form_kwargs['include_captcha'] = not self.request.COOKIES.get('metro-allow_search-dev', False)
 
         sqs = SearchQuerySet(
             query=IdentifierBoostSearchQuery('default')
@@ -791,35 +714,6 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                 kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
 
         return self.form_class(data, **kwargs)
-
-    def __call__(self, request):
-        '''
-        django-haystack doesn't start using the class-based views until 3.0,
-        i.e., there is not a standard form_valid method we can override.
-        Instead, we override __call__ to remove reCAPTCHA validation after a
-        challenge is successfully completed.
-
-        Original method:
-        https://github.com/django-haystack/django-haystack/blob/01c440618a63fa03e05ce9f4d2615e0933f642b1/haystack/views.py#L42-L54
-        '''
-        response = super().__call__(request)
-
-        if self.form.is_valid() and self.form.fields.get('captcha'):
-            # Remove the reCAPTCHA field and recreate the response to re-render
-            # the form for this request.
-            del self.form.fields['captcha']
-            response = self.create_response()
-
-            # Set a cookie to allow search without reCAPTCHA on subsequent
-            # requests.
-            response.set_cookie(
-                'metro-allow_search-dev',
-                'true',
-                expires=datetime.datetime.now() + datetime.timedelta(weeks=52),
-                domain='localhost'
-            )
-
-        return response
 
 
 class GoogleView(IndexView):
