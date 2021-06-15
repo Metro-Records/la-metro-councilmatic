@@ -77,9 +77,6 @@ class ClassificationMixin:
             'Plan',
             'Program',
             'Policy'
-        ),
-        'legislative_session': (
-            'Legislative Session'
         )
     }
 
