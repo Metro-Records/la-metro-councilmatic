@@ -98,5 +98,6 @@ INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
 SMART_LOGIC_KEY = 'smartlogic api key'
 SMART_LOGIC_ENVIRONMENT = '0ef5d755-1f43-4a7e-8b06-7591bed8d453'
 
-RECAPTCHA_PUBLIC_KEY = ''
-RECAPTCHA_PRIVATE_KEY = ''
+# Populate and uncomment to add live reCAPTCHA calls (defaults to always valid test calls)
+# RECAPTCHA_PUBLIC_KEY = ''
+# RECAPTCHA_PRIVATE_KEY = ''
