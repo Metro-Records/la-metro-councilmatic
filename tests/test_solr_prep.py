@@ -13,6 +13,7 @@ from lametro.search_indexes import LAMetroBillIndex
     ('2018', '7/1/2018 to 6/30/2019'),
 ])
 def test_legislative_session(bill, 
+                             bill_action,
                              legislative_session,
                              session_identifier,
                              prepared_session):
@@ -24,12 +25,22 @@ def test_legislative_session(bill,
     which returns a dict of prepped data.
     https://github.com/django-haystack/django-haystack/blob/4910ccb01c31d12bf22dcb000894eece6c26f74b/haystack/indexes.py#L198
     '''
+    # test no actions or agendas
     legislative_session.identifier = session_identifier
     legislative_session.save()
     bill = bill.build(legislative_session=legislative_session)
 
+    assert indexed_data['legislative_session'] == None
+
+    # test actions, no agenda
+    some_action = bill_action.build(bill=some_bill)
+
+
     index = LAMetroBillIndex()
     indexed_data = index.prepare(bill)
+
+    # add actions_and_agendas
+    # test actions, no agenda; agenda, no actions
 
     assert indexed_data['legislative_session'] == prepared_session
 
