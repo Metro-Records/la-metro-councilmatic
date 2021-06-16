@@ -100,7 +100,25 @@
         }
 
         function listenForSearch() {
-            $('a').click(function(e) {
+            $('form#search-form').submit(function validateFormSubmission(e) {
+                e.preventDefault();
+
+                grecaptcha.execute(
+                    '{{ recaptcha_public_key }}', {action: 'form'}
+                ).then(function(token) {
+                    console.log("reCAPTCHA validated. Setting input value...")
+                    var element = document.querySelector('.g-recaptcha[data-widget-uuid]');
+                    element.value = token || '-';
+
+                    // Defined in autocomplete.js
+                    window.handleSubmit(e);
+                });
+            });
+
+            // Add link click event listener to document so it is attached to
+            // existing links, as well as links that are dynamically added to
+            // to DOM, e.g., related topic links.
+            $(document).on('click', 'a', function validateLinkClick(e) {
                 var $target = $(e.target);
 
                 // The remove filter target is an <i> element - grab the parent
@@ -120,13 +138,11 @@
 
                 var isSearch = ['/search', '/search/'].indexOf(targetUrl.pathname) >= 0;
 
-                console.log(targetUrl, isSearch);
-
                 if (isSearch) {
                     e.preventDefault();
 
                     grecaptcha.execute(
-                        '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI', {action: 'form'}
+                        '{{ recaptcha_public_key }}', {action: 'form'}
                     ).then(function(token) {
                         console.log("reCAPTCHA validated. Appending token to querystring...");
 

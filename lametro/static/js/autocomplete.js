@@ -163,9 +163,7 @@ function initAutocomplete (formElement, inputElement) {
         $('.select2-search input').val('').trigger('change');
     });
 
-    $form.on('submit', function handleSubmit (e) {
-        e.preventDefault();
-
+    function handleSubmit(e) {
         var terms = $('#search-bar')
           .select2('data')
           .map(function (el) {return el.id});
@@ -180,7 +178,7 @@ function initAutocomplete (formElement, inputElement) {
 
         var queryString = terms.join(' AND ');
 
-        var corpusString = $(this).find('input[name="search-all"]')[0].checked
+        var corpusString = $(e.target).find('input[name="search-all"]')[0].checked
           ? 'search-all=on'
           : 'search-reports=on';
 
@@ -199,7 +197,11 @@ function initAutocomplete (formElement, inputElement) {
         };
 
         window.location.href = searchUrl;
-    });
+    };
+
+    // Store handleSubmit in the global namespace so it can be referenced in
+    // the reCAPTCHA callback
+    window.handleSubmit = handleSubmit;
 
     // Select option and execute search on enter
     // https://github.com/select2/select2/issues/1456#issuecomment-265457102
