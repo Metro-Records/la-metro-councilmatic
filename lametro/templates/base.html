@@ -154,30 +154,12 @@
                         // Add the new reCAPTCHA value.
                         targetUrl.searchParams.append('captcha', token);
 
-                        extraParam = $target.attr('data');
-
-                        if (extraParam) {
-                            if ($target.hasClass('filter-value')) {
-                                // Add the new facet param
-                                targetUrl.searchParams.append('selected_facets', extraParam);
-                            } else if ($target.hasClass('remove-filter-value')) {
-                                // Remove the selected facet param
-                                var updatedFacets = targetUrl.searchParams
-                                                             .getAll('selected_facets')
-                                                             .filter(function(item) {return item != extraParam});
-
-                                targetUrl.searchParams.delete('selected_facets');
-
-                                $.each(updatedFacets, function(_, item) {
-                                    targetUrl.searchParams.append('selected_facets', item)
-                                });
-                            } else if ($target.hasClass('remove-order-value')) {
-                                // Clear order by params
-                                targetUrl.searchParams.delete('order_by');
-                                targetUrl.searchParams.delete('sort_by');
-                            }
-
-                        }
+                        // If there is an updateQueryParameters method on the
+                        // window, e.g., on the search page, apply it to the
+                        // URL object.
+                        targetUrl = window.updateQueryParameters
+                            ? window.updateQueryParameters($target, targetUrl)
+                            : targetUrl;
 
                         window.location = targetUrl.toString();
                     })
