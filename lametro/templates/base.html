@@ -84,21 +84,94 @@
 
     {% block full_content %}
     {% endblock %}
+
     <script src="https://use.typekit.net/foe4jis.js"></script>
     <script>try{Typekit.load({ async: true });}catch(e){}</script>
 
     <script src="{% static 'js/jquery-1.10.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
+    <script src="{% static 'js/urlPolyfill.js' %}"></script>
 
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({pageLanguage: 'en', gaTrack: true, gaId: 'UA-90842833-1'},
                 'google_translate_element');
         }
+
+        function listenForSearch() {
+            $('form#search-form').submit(function validateFormSubmission(e) {
+                e.preventDefault();
+
+                grecaptcha.execute(
+                    '{{ recaptcha_public_key }}', {action: 'form'}
+                ).then(function(token) {
+                    console.log("reCAPTCHA validated. Setting input value...")
+                    var element = document.querySelector('.g-recaptcha[data-widget-uuid]');
+                    element.value = token || '-';
+
+                    // Defined in autocomplete.js
+                    window.handleSubmit(e);
+                });
+            });
+
+            // Add link click event listener to document so it is attached to
+            // existing links, as well as links that are dynamically added to
+            // to DOM, e.g., related topic links.
+            $(document).on('click', 'a', function validateLinkClick(e) {
+                var $target = $(e.target);
+
+                // The remove filter target is an <i> element - grab the parent
+                // <a> element.
+                if (!$target.attr('href')) {
+                    $target = $target.parent();
+                }
+
+                if ($target.attr('href') != '#') {
+                    var targetUrl = new URL(window.location.origin + $target.attr('href'));
+                } else {
+                    // Search filters have an href of "#". There is logic below
+                    // to construct the correct URL. Start with the current URL
+                    // as a basis for this construction.
+                    var targetUrl = new URL(window.location.href);
+                }
+
+                var isSearch = ['/search', '/search/'].indexOf(targetUrl.pathname) >= 0;
+
+                if (isSearch) {
+                    e.preventDefault();
+
+                    grecaptcha.execute(
+                        '{{ recaptcha_public_key }}', {action: 'form'}
+                    ).then(function(token) {
+                        console.log("reCAPTCHA validated. Appending token to querystring...");
+
+                        var token = token || '-';
+
+                        // Remove the original reCAPTCHA value.
+                        targetUrl.searchParams.delete('captcha');
+
+                        // Add the new reCAPTCHA value.
+                        targetUrl.searchParams.append('captcha', token);
+
+                        // If there is an updateQueryParameters method on the
+                        // window, e.g., on the search page, apply it to the
+                        // URL object.
+                        targetUrl = window.updateQueryParameters
+                            ? window.updateQueryParameters($target, targetUrl)
+                            : targetUrl;
+
+                        window.location = targetUrl.toString();
+                    })
+                }
+            });
+        };
+
+        window.listenForSearch = listenForSearch;
     </script>
 
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_public_key }}&onload=listenForSearch"></script>
 
     {% block extra_js %}{% endblock %}
 

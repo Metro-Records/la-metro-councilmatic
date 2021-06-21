@@ -12,9 +12,7 @@ import sqlalchemy as sa
 from collections import namedtuple
 import os
 
-from haystack.backends import SQ
 from haystack.backends.solr_backend import SolrSearchQuery
-from haystack.inputs import Exact, Raw
 from haystack.query import SearchQuerySet
 
 import pytz
@@ -46,15 +44,14 @@ from django.views.generic import View
 
 from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
-    PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView, \
-    CouncilmaticSearchForm
+    PersonDetailView, EventDetailView, EventsView, CouncilmaticFacetedSearchView
 from councilmatic_core.models import *
 
 from opencivicdata.core.models import PersonLink
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
     LAMetroEvent, LAMetroOrganization, LAMetroSubject
-from lametro.forms import AgendaUrlForm, AgendaPdfForm
+from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
@@ -78,6 +75,7 @@ class LAMetroIndexView(IndexView):
         extra['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
         extra['todays_meetings'] = self.event_model.todays_meetings().order_by('start_date')
+        extra['form'] = LAMetroCouncilmaticSearchForm()
 
         return extra
 
@@ -643,68 +641,7 @@ class IdentifierBoostSearchQuery(SolrSearchQuery):
         return super().run(spelling_query, **kwargs)
 
 
-class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
-    def __init__(self, *args, **kwargs):
-        if kwargs.get('search_corpus'):
-            self.search_corpus = kwargs.pop('search_corpus')
-
-        self.result_type = kwargs.pop('result_type', None)
-
-        super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
-
-    def _full_text_search(self, sqs):
-        report_filter = SQ()
-        attachment_filter = SQ()
-
-        for token in self.cleaned_data['q'].split(' AND '):
-            report_filter &= SQ(text=Raw(token))
-            attachment_filter &= SQ(attachment_text=Raw(token))
-
-        sqs = sqs.filter(report_filter)
-
-        if self.search_corpus == 'all':
-            sqs = sqs.filter_or(attachment_filter)
-
-        return sqs
-
-    def _topic_search(self, sqs):
-        terms = [
-            term.strip().replace('"', '')
-            for term in self.cleaned_data['q'].split(' AND ')
-            if term
-        ]
-
-        topic_filter = Q()
-
-        for term in terms:
-            topic_filter |= Q(subject__icontains=term)
-
-        tagged_results = LAMetroBill.objects.filter(topic_filter)\
-                                            .values_list('id', flat=True)
-
-        if self.result_type == 'keyword':
-            sqs = sqs.exclude(id__in=tagged_results)
-
-        elif self.result_type == 'topic':
-            sqs = sqs.filter(id__in=tagged_results)
-
-        return sqs
-
-    def search(self):
-        sqs = super(LAMetroCouncilmaticSearchForm, self).search()
-
-        has_query = hasattr(self, 'cleaned_data') and self.cleaned_data['q']
-
-        if has_query:
-            sqs = self._full_text_search(sqs)
-            sqs = self._topic_search(sqs)
-
-        return sqs
-
-
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
-    def __call__(self, request):
-        return redirect(reverse('index'))
 
     def __init__(self, *args, **kwargs):
         kwargs['form_class'] = LAMetroCouncilmaticSearchForm
@@ -715,8 +652,9 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         extra_context['topic_facets'] = [facet for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES]
         return extra_context
 
-    def build_form(self, form_kwargs={}):
-        form = super(CouncilmaticFacetedSearchView, self).build_form(form_kwargs=form_kwargs)
+    def build_form(self, form_kwargs=None):
+        if not form_kwargs:
+            form_kwargs = {}
 
         form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
         form_kwargs['search_corpus'] = 'bills' if self.request.GET.get('search-reports') else 'all'

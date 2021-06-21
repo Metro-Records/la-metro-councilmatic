@@ -32,6 +32,11 @@ except ImportError:
         '.councilmatic.org'
     ]
 
+try:
+    from .settings_deployment import RECAPTCHA_PUBLIC_KEY, RECAPTCHA_PRIVATE_KEY
+except ImportError:
+    SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+
 
 # Application definition
 
@@ -50,6 +55,7 @@ INSTALLED_APPS = (
     'councilmatic_core',
     'adv_cache_tag',
     'debug_toolbar',
+    'captcha',
 )
 
 try:
@@ -82,6 +88,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'councilmatic_core.views.city_context',
+                'lametro.context_processors.recaptcha_public_key',
             ],
         },
     },
