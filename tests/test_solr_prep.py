@@ -1,39 +1,100 @@
 import pytest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from opencivicdata.legislative.models import EventParticipant
 
 from lametro.search_indexes import LAMetroBillIndex
 
-@pytest.mark.parametrize('session_identifier,prepared_session', [
-    ('2014', '7/1/2014 to 6/30/2015'),
-    ('2015', '7/1/2015 to 6/30/2016'),
-    ('2016', '7/1/2016 to 6/30/2017'),
-    ('2017', '7/1/2017 to 6/30/2018'),
-    ('2018', '7/1/2018 to 6/30/2019'),
-])
-def test_legislative_session(bill, 
-                             legislative_session,
-                             session_identifier,
-                             prepared_session):
+@pytest.mark.parametrize('month', [6, 7])
+def test_legislative_session(bill, metro_organization, event, mocker, month):
     '''
     This test instantiates LAMetroBillIndex – a subclass of SearchIndex from
     Haystack, used for building the Solr index.
 
-    The test, then, calls the SearchIndex `prepare` function, 
+    The test, then, calls the SearchIndex `prepare` function,
     which returns a dict of prepped data.
     https://github.com/django-haystack/django-haystack/blob/4910ccb01c31d12bf22dcb000894eece6c26f74b/haystack/indexes.py#L198
     '''
-    legislative_session.identifier = session_identifier
-    legislative_session.save()
-    bill = bill.build(legislative_session=legislative_session)
+    org = metro_organization.build()
+    event = event.build()
+    bill = bill.build()
+
+    now = datetime.now()
+
+    # Create test actions and agendas
+    recent_action = {
+        'date': datetime(now.year, month, now.day),
+        'description': 'org2 descripton',
+        'event': event,
+        'organization': org
+    }
+    older_action = {
+        'date': datetime(now.year, month, now.day) - timedelta(days=365*2),
+        'description': 'org2 descripton',
+        'event': event,
+        'organization': org
+    }
+    recent_agenda = {
+        'date': datetime(now.year, month, now.day) - timedelta(days=365),
+        'description': 'SCHEDULED',
+        'event': event,
+        'organization': org
+    }
+    older_agenda = {
+        'date': datetime(now.year, month, now.day) - timedelta(days=365*3),
+        'description': 'SCHEDULED',
+        'event': event,
+        'organization': org
+    }
+
+    # Test indexed value when there are both actions and agendas
+    mock_actions_and_agendas = mocker.PropertyMock(
+        return_value=[recent_action, older_action, recent_agenda, older_agenda]
+    )
+
+    mocker.patch('lametro.models.LAMetroBill.actions_and_agendas', new_callable=mock_actions_and_agendas)
 
     index = LAMetroBillIndex()
+    expected_fmt = '7/1/{0} to 6/30/{1}'
+
     indexed_data = index.prepare(bill)
 
-    assert indexed_data['legislative_session'] == prepared_session
+    if month <= 6:
+        expected_value = expected_fmt.format(recent_agenda['date'].year - 1, recent_agenda['date'].year)
+    else:
+        expected_value = expected_fmt.format(recent_agenda['date'].year, recent_agenda['date'].year + 1)
 
-def test_sponsorships(bill, 
+    assert indexed_data['legislative_session'] == expected_value
+
+    # Test indexed value when there are just actions
+    mock_actions_and_agendas = mocker.PropertyMock(
+        return_value=[recent_action, older_action]
+    )
+
+    mocker.patch('lametro.models.LAMetroBill.actions_and_agendas', new_callable=mock_actions_and_agendas)
+
+    indexed_data = index.prepare(bill)
+
+    if month <= 6:
+        expected_value = expected_fmt.format(recent_action['date'].year - 1, recent_action['date'].year)
+    else:
+        expected_value = expected_fmt.format(recent_action['date'].year, recent_action['date'].year + 1)
+
+    assert indexed_data['legislative_session'] == expected_value
+
+    # Test indexed value when there are neither actions nor agendas
+    mock_actions_and_agendas = mocker.PropertyMock(
+        return_value=[]
+    )
+
+    mocker.patch('lametro.models.LAMetroBill.actions_and_agendas', new_callable=mock_actions_and_agendas)
+
+    indexed_data = index.prepare(bill)
+
+    assert not indexed_data['legislative_session']
+
+
+def test_sponsorships(bill,
                       metro_organization,
                       event,
                       event_related_entity,
