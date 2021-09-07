@@ -36,3 +36,5 @@ debug.log
 
 *.csv
 .gnupg/
+
+lametro/secrets.py

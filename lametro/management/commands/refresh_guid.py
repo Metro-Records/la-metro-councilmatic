@@ -68,7 +68,7 @@ class ClassificationMixin:
             'Subregion',
         ),
         'significant_date_exact': (
-            'Dates',
+            'Date',
         ),
         'motion_by_exact': (
             'Board Member',
@@ -77,7 +77,7 @@ class ClassificationMixin:
             'Plan',
             'Program',
             'Policy'
-        ),
+        )
     }
 
     @property
