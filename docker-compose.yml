@@ -61,8 +61,6 @@ services:
       DATABASE_URL: 'postgis://postgres:@postgres/lametro'
       SHARED_DB: "True"
     command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=30 && pupa update --rpm=600 lametro events'
-    volumes:
-      - ./lametro/secrets.py:/app/lametro/secrets.py
 
 volumes:
   lametro-solr-data:
