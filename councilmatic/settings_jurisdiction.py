@@ -279,7 +279,7 @@ MANUAL_HEADSHOTS = {
     'holly-mitchell-68d838612b17': {'source': '', 'image': 'manual-headshots/holly-mitchell.jpg'},
     'fernando-dutra-19bb1bb05d11': {'source': '', 'image': 'manual-headshots/fernando-dutra.png'},
     'tim-sandoval-387c30ca1882': {'source': '', 'image': 'manual-headshots/tim-sandoval.jpeg'},
-    'stephanie-stephanie-wiggins-9076299471ab': {'source': '', 'image': 'manual-headshots/stephanie-wiggins.jpg'},
+    'stephanie-wiggins-9076299471ab': {'source': '', 'image': 'manual-headshots/stephanie-wiggins.jpg'},
 }
 
 MEMBER_BIOS = {
