@@ -282,7 +282,7 @@
                     <ul class="pagination">
                         {% if page.has_previous %}
                             <li>
-                                <a href="?{{ q_filters }}&amp;page={{ page.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo; Previous</span></a>
+                                <a href="/search/?{{ q_filters }}&amp;page={{ page.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo; Previous</span></a>
                             </li>
                         {% else %}
                             <li class="disabled">
@@ -292,7 +292,7 @@
 
                         {% if page.has_next %}
                             <li>
-                                <a href="?{{ q_filters }}&amp;page={{ page.next_page_number }}" aria-label="Next"><span aria-hidden="true">Next &raquo;</span></a>
+                                <a href="/search/?{{ q_filters }}&amp;page={{ page.next_page_number }}" aria-label="Next"><span aria-hidden="true">Next &raquo;</span></a>
                             </li>
                         {% else %}
                             <li class="disabled">
