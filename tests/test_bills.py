@@ -226,3 +226,27 @@ def test_actions_and_agendas(bill,
     assert expected_agenda['date'] == datetime.strptime(some_action.date, '%Y-%m-%d')\
                                               .date()
     assert expected_agenda['description'] == 'SCHEDULED'
+
+@pytest.mark.django_db
+def test_related_bill_respects_privacy(bill):
+    primary_bill = bill.build()
+
+    public_related_bill = bill.build(
+        id='ocd-bill/{}'.format(str(uuid4())),
+        slug='public'
+    )
+    private_related_bill = bill.build(
+        id='ocd-bill/{}'.format(str(uuid4())),
+        slug='private',
+        extras={'restrict_view': True}
+    )
+
+    for relation in (public_related_bill, private_related_bill):
+        RelatedBill.objects.create(bill=primary_bill, related_bill=relation)
+
+    related_bills = primary_bill.related_bills.values_list(
+        'related_bill__councilmatic_bill__slug', flat=True
+    )
+
+    assert public_related_bill.slug in related_bills
+    assert private_related_bill.slug not in related_bills

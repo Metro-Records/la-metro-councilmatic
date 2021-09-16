@@ -254,10 +254,19 @@ class LAMetroBill(Bill, SourcesMixin):
         return sorted_data
 
 
+class RelatedBillManager(models.Manager):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.exclude(related_bill__extras__restrict_view=True)
+
+
 class RelatedBill(RelatedBill):
 
     class Meta:
         proxy = True
+
+    objects = RelatedBillManager()
 
     bill = ProxyForeignKey(LAMetroBill,
                            related_name='related_bills',
