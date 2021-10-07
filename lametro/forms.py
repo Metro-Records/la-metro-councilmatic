@@ -27,6 +27,25 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
 
+    def clean_q(self):
+        q = self.cleaned_data['q']
+
+        # Close open quotes
+        if q.count('"') % 2:
+            q += '"'
+
+        # Escape reserved characters
+        reserved_characters = '''|&*/\!{[]}~-+'()^:'''
+
+        for char in reserved_characters:
+            q = q.replace(char, '\{}'.format(char))
+
+        # Downcase boolean operators
+        for op in ('OR', 'AND'):
+            q = q.replace(op, op.lower())
+
+        return q
+
     def _full_text_search(self, sqs):
         report_filter = SQ()
         attachment_filter = SQ()
