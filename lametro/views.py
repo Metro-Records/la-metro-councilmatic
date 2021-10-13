@@ -162,6 +162,11 @@ class LAMetroEventDetail(EventDetailView):
             context['legistar_ok'] = r.ok
             # GET the event URL; allow admin to delete event if 404
             response = requests.get(event.api_source.url)
+
+            # if response.ok && meeting body is the same: context['event_ok']
+
+            # import pdb
+            # pdb.set_trace()
             context['event_ok'] = response.ok
 
         try:
