@@ -165,8 +165,6 @@ class LAMetroEventDetail(EventDetailView):
 
             changes = event.name in response.text
 
-            import pdb
-            pdb.set_trace()
             context['event_ok'] = response.ok and not changes
 
         try:
