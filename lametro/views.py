@@ -163,11 +163,11 @@ class LAMetroEventDetail(EventDetailView):
             # GET the event URL; allow admin to delete event if 404
             response = requests.get(event.api_source.url)
 
-            # if response.ok && meeting body is the same: context['event_ok']
+            changes = event.name in response.text
 
-            # import pdb
-            # pdb.set_trace()
-            context['event_ok'] = response.ok
+            import pdb
+            pdb.set_trace()
+            context['event_ok'] = response.ok and not changes
 
         try:
             context['minutes'] = event.documents.get(note__icontains='minutes')
