@@ -812,7 +812,8 @@ class Packet(models.Model):
         if merge:
             self._merge_docs()
 
-        self.url = settings.MERGER_BASE_URL + '/document/' + self.related_entity.slug
+        self.url = settings.MERGER_BASE_URL + self.related_entity.slug + '.pdf'
+
         super().save(*args, **kwargs)
 
     def is_ready(self):
@@ -825,8 +826,22 @@ class Packet(models.Model):
         return self.ready
 
     def _merge_docs(self):
-        merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.related_entity.slug
-        requests.post(merge_url, json=self.related_files)
+        headers = {
+            'cache-control': 'no-cache',
+            'content-type': 'application/json',
+        }
+
+        data = {
+            'run_id': 'merge_{0}_{1}'.format(self.related_entity.slug, datetime.now().isoformat()),
+            'conf': {
+                'identifier': self.related_entity.slug,
+                'attachment_links': self.related_files
+            }
+        }
+
+        requests.post(settings.MERGE_ENDPOINT,
+                      headers=headers,
+                      json=data)
 
 
 class BillPacket(Packet):

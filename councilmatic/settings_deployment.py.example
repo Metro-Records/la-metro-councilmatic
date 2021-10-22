@@ -101,3 +101,6 @@ SMART_LOGIC_ENVIRONMENT = '0ef5d755-1f43-4a7e-8b06-7591bed8d453'
 # Populate and uncomment to add live reCAPTCHA calls (defaults to always valid test calls)
 # RECAPTCHA_PUBLIC_KEY = ''
 # RECAPTCHA_PRIVATE_KEY = ''
+
+# Assumes a locally running instance of the dashboard
+MERGE_ENDPOINT = 'http://host.docker.internal:8080/api/experimental/dags/make_packet/dag_runs'

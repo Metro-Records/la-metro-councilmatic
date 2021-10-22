@@ -1,3 +1,5 @@
+import time
+
 from django.core.management.base import BaseCommand
 from django.db.models import F
 
@@ -54,6 +56,7 @@ class Command(BaseCommand):
             # only save if the packet already existed
             if not created:
                 event_packet.save(merge=self.merge)
+                time.sleep(1)
 
     def _events_to_compile(self):
 
@@ -116,6 +119,7 @@ class Command(BaseCommand):
             # only call save here if the packet already existed
             if not created:
                 bill_packet.save(merge=self.merge)
+                time.sleep(1)
 
     def _board_reports_to_compile(self):
 
