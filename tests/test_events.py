@@ -366,6 +366,8 @@ def test_delete_button_shows(event, admin_client, django_user_model, mocker):
 
         source_matcher = re.compile(api_source)
         success = m.get(source_matcher, status_code=200)
+        # import pdb
+        # pdb.set_trace()
         success_response = admin_client.get(event_template)
 
         failure = m.get(source_matcher, status_code=404)
