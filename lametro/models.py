@@ -838,7 +838,8 @@ class Packet(models.Model):
             'conf': {
                 'identifier': self.related_entity.slug,
                 'attachment_links': self.related_files
-            }
+            },
+            'replace_microseconds': 'false',
         }
 
         requests.post(settings.MERGE_ENDPOINT,
