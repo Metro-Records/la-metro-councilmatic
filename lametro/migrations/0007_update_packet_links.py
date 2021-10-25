@@ -6,7 +6,7 @@ from django.db import migrations
 def resave_packets(apps, schema_editor):
     '''
     Re-save all existing packets to update their URLs based on the
-    new value of MERGER_BASE_URL.
+    new value of MERGE_HOST.
     '''
     for packet in ('BillPacket', 'EventPacket'):
         packet_model = apps.get_model('lametro', packet)

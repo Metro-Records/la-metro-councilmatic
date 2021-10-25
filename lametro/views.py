@@ -54,7 +54,7 @@ from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
 from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
-from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
+from councilmatic.settings import PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
 

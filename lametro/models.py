@@ -812,7 +812,9 @@ class Packet(models.Model):
         if merge:
             self._merge_docs()
 
-        self.url = settings.MERGER_BASE_URL + self.related_entity.slug + '.pdf'
+        # MERGE_HOST contains a trailing slash
+        self.url = '{host}{slug}.pdf'.format(host=settings.MERGE_HOST,
+                                             slug=self.related_entity.slug)
 
         super().save(*args, **kwargs)
 
