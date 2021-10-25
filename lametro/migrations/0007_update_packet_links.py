@@ -11,7 +11,7 @@ def resave_packets(apps, schema_editor):
     for packet in ('BillPacket', 'EventPacket'):
         packet_model = apps.get_model('lametro', packet)
         for p in packet_model.objects.all():
-            p.save()
+            p.save(merge=False)
 
 
 class Migration(migrations.Migration):
