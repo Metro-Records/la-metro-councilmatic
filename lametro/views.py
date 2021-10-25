@@ -163,7 +163,9 @@ class LAMetroEventDetail(EventDetailView):
             # GET the event URL; allow admin to delete event if 404
             response = requests.get(event.api_source.url)
 
-            changes = event.name in response.text
+            parsed_response = response.json()
+
+            changes = event.name != parsed_response['EventBodyName']
 
             context['event_ok'] = response.ok and not changes
 
