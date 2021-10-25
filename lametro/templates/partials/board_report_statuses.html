@@ -1,0 +1,24 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th class="desktop-only">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for status in bill_statuses %}
+        <tr>
+            <td>
+                <p class='nowrap'>
+                    <p>{{status.name}}</p>
+                </p>
+            </td>
+            <td class="desktop-only">
+                <p>
+                    <p>{{status.definition}}</p>
+                </p>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
