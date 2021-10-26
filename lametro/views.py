@@ -169,8 +169,8 @@ class LAMetroEventDetail(EventDetailView):
                 context['event_ok'] = False
             else:
                 parsed_response = response.json()
-                changes = event.name != parsed_response['EventBodyName']
-                context['event_ok'] = response.ok and not changes
+                name_changed = event.name != parsed_response['EventBodyName']
+                context['event_ok'] != name_changed
 
         try:
             context['minutes'] = event.documents.get(note__icontains='minutes')
