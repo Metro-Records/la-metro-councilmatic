@@ -365,16 +365,18 @@ def test_delete_button_shows(event, admin_client, django_user_model, mocker):
         m.get(cal_matcher, status_code=200)
 
         source_matcher = re.compile(api_source)
-        success = m.get(source_matcher, status_code=200)
-        # import pdb
-        # pdb.set_trace()
-        success_response = admin_client.get(event_template)
+        success_new_name = m.get(source_matcher, status_code=200, json={'EventBodyName': 'Planning and Programming Committee'})
+        success_new_name_response = admin_client.get(event_template)
+
+        success_same_name = m.get(source_matcher, status_code=200, json={'EventBodyName': e.name})
+        success_same_name_response = admin_client.get(event_template)
 
         failure = m.get(source_matcher, status_code=404)
         failure_response = admin_client.get(event_template)
 
         text = 'This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.'
-        assert text not in success_response.content.decode('utf-8')
+        assert text not in success_same_name_response.content.decode('utf-8')
+        assert text in success_new_name_response.content.decode('utf-8')
         assert text in failure_response.content.decode('utf-8')
 
 
