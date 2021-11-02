@@ -470,9 +470,6 @@ class LAMetroAboutView(AboutView):
 
         context['timestamp'] = datetime.datetime.now(app_timezone).strftime('%m%d%Y%s')
 
-        # Board Report statuses
-        context['bill_statuses'] =
-
         return context
 
 
