@@ -237,112 +237,112 @@ BILL_STATUS_DESCRIPTIONS = [
     {
         'name': 'ADOPTED',
         'definition': 'Item was adopted by a majority vote of the Board.',
-        'status': 'Adopted'
+        'search_term': 'adopted'
     },
     {
         'name': 'ADOPTED AS AMENDED',
         'definition': 'Item was adopted as amended by a majority vote of the Board.',
-        'status': 'Adopted'
+        'search_term': 'adopted'
     },
     {
         'name': 'APPROVED',
         'definition': 'Item was approved by a majority vote of the Board.',
-        'status': 'Approved'
+        'search_term': 'approved'
     },
     {
         'name': 'APPROVED AS AMENDED',
         'definition': 'Item was approved as amended by a majority vote of the Board.',
-        'status': 'Approved'
+        'search_term': 'approved'
     },
     {
         'name': 'APPROVED ON CONSENT CALENDAR',
         'definition': 'Item was approved on Consent Calendar by a majority vote of the Board.',
-        'status': 'Approved'
+        'search_term': 'approved'
     },
     {
         'name': 'CARRIED OVER --> (Sent To)',
         'definition': 'Item was carried over to the next Committee or Regular Board Meeting.',
-        'status': 'Active'
+        'search_term': 'active'
     },
     {
         'name': 'FAILED',
         'definition': 'Item failed due to insufficient votes.',
-        'status': 'Failed'
+        'search_term': 'failed'
     },
     {
         'name': 'FORWARDED DUE TO ABSENCES AND CONFLICTS',
         'definition': 'Item was forwarded from a Committee to the Regular Board Meeting due to absences and conflicts.',
-        'status': 'Active'
+        'search_term': 'active'
     },
     {
         'name': 'FORWARDED WITHOUT RECOMMENDATION  --> (Sent To)',
         'definition': 'Item was forwarded to the Regular Board Meeting without recommendation.',
-        'status': 'Active'
+        'search_term': 'active'
     },
     {
         'name': 'RECEIVED',
         'definition': 'Item was received by the Committee or Board. (Oral report)',
-        'status': 'Received'
+        'search_term': 'received'
     },
     {
         'name': 'RECEIVED AND FILED',
         'definition': 'Item was was received and filed by the Committee or Board.',
-        'status': 'Received'
+        'search_term': 'received'
     },
     {
         'name': 'RECOMMENDED FOR APPROVAL --> (Sent To)',
         'definition': 'Committee members recommended that the item be approved by the Full Board.',
-        'status': 'Active'
+        'search_term': 'active'
     },
     {
         'name': 'RECOMMENDED FOR APPROVAL AS AMENDED --> (Sent To)',
         'definition': 'Committee members recommended that the item be approved as amended by the Full Board.',
-        'status': 'Active'
+        'search_term': 'active'
     },
     {
         'name': 'REFERRED --> (Sent To)',
         'definition': 'Item was referred to another Committee or Full Board.',
-        'status': 'Active'
+        'search_term': 'active'
     },
     {
         'name': 'WITHDRAWN',
         'definition': 'Item was withdrawn from the agenda.',
-        'status': 'Withdrawn'
+        'search_term': 'withdrawn'
     },
     {
         'name': 'NO ACTION TAKEN',
         'definition': 'No action was taken on the item.',
-        'status': 'Active'
+        'search_term': 'active'
     },
     {
         'name': 'NOT DISCUSSED',
         'definition': 'Item was not discussed.',
-        'status': 'Active'
+        'search_term': 'active'
     },
     {
         'name': 'APPROVED UNDER RECONSIDERATION',
         'definition': 'Item was approved when considered a 2nd time.',
-        'status': 'Approved'
+        'search_term': 'approved'
     },
     {
         'name': 'FAILED UNDER RECONSIDERATION',
         'definition': 'Item failed when considered a 2nd time.',
-        'status': 'Failed'
+        'search_term': 'failed'
     },
     {
         'name': 'ADOPTED UNDER RECONSIDERATION',
         'definition': 'Item was adopted when considered a 2nd time.',
-        'status': 'Adopted'
+        'search_term': 'adopted'
     },
     {
         'name': 'APPROVED AS AMENDED UNDER RECONSIDERATION',
         'definition': 'Item was approved by a majority vote of the Board as amended when considered a 2nd time.',
-        'status': 'Approved'
+        'search_term': 'approved'
     },
     {
         'name': 'ADOPTED AS AMENDED UNDER RECONSIDERATION',
         'definition': 'Item was adopted by a majority vote of the Board as amended when considered a 2nd time.',
-        'status': 'Adopted'
+        'search_term': 'adopted'
     },
 ]
 

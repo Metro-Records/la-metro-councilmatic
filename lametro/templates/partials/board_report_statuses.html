@@ -6,11 +6,11 @@
         </tr>
     </thead>
     <tbody>
-    {% for status in bill_statuses %}
+    {% for status in BILL_STATUS_DESCRIPTIONS %}
         <tr>
             <td>
                 <p class='nowrap'>
-                    <p>{{status.name}}</p>
+                    <a href='href="/search/?selected_facets=bill_type_exact%3A{{status.search_term}}'>{{status.name}}</p>
                 </p>
                 <div class="non-desktop-only">
                     <p>
