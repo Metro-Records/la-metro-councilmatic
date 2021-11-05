@@ -828,11 +828,6 @@ class Packet(models.Model):
         return self.ready
 
     def _merge_docs(self):
-        headers = {
-            'cache-control': 'no-cache',
-            'content-type': 'application/json',
-        }
-
         data = {
             'run_id': 'merge_{0}_{1}'.format(self.related_entity.slug, datetime.now().isoformat()),
             'conf': {
@@ -842,9 +837,7 @@ class Packet(models.Model):
             'replace_microseconds': 'false',
         }
 
-        requests.post(settings.MERGE_ENDPOINT,
-                      headers=headers,
-                      json=data)
+        requests.post(settings.MERGE_ENDPOINT, json=data)
 
 
 class BillPacket(Packet):
