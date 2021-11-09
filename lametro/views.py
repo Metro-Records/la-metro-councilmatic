@@ -168,8 +168,10 @@ class LAMetroEventDetail(EventDetailView):
             if response.status_code != 200:
                 context['event_ok'] = False
             else:
-                parsed_response = response.json()
-                name_changed = event.name != parsed_response['EventBodyName']
+                name = response.json()['EventBodyName']
+                if 'Board of Directors -' in name:
+                    name = response_name[21:]
+                name_changed = event.name != name
                 context['event_ok'] = not name_changed
 
         try:
