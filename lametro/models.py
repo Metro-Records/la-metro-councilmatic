@@ -41,6 +41,20 @@ class SourcesMixin(object):
     def api_source(self):
         return self.sources.get(note='api')
 
+    @property
+    def api_representation(self):
+        response = requests.get(self.api_source.url)
+
+        if response.status_code != 200:
+            msg = 'Request to {0} resulted in non-200 status code: {1}'.format(
+                self.api_source.url, response.status_code
+            )
+            logger.warning(msg)
+            return None
+
+        else:
+            return response.json()
+
 
 class LAMetroBillManager(models.Manager):
     def get_queryset(self):
@@ -712,6 +726,17 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         else:
             return 'Upcoming'
 
+    @property
+    def api_body_name(self):
+        '''
+        Return the name of the meeting body, as it would have appeared in the
+        API when scraped, for comparison to the current API data. This method
+        effectively undoes transformations applied in the events scraper:
+        https://github.com/opencivicdata/scrapers-us-municipal/blob/11a1532e46953eb2feec89ed6b978de0052b9fb7/lametro/events.py#L200-L211
+        '''
+        if self.name == 'Regular Board Meeting':
+            return 'Board of Directors - Regular Board Meeting'
+        return self.name
 
 class EventAgendaItem(EventAgendaItem):
 

@@ -160,17 +160,16 @@ class LAMetroEventDetail(EventDetailView):
         if self.request.user.is_authenticated:
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
+
             # GET the event URL; allow admin to delete event if 404
             # or if event name has changed
             # https://github.com/datamade/la-metro-councilmatic/issues/692#issuecomment-934648716
-            response = requests.get(event.api_source.url)
+            api_rep = event.api_representation
 
-            if response.status_code != 200:
-                context['event_ok'] = False
+            if api_rep:
+                context['event_ok'] = event.api_body_name == api_rep['EventBodyName']
             else:
-                parsed_response = response.json()
-                name_changed = event.name != parsed_response['EventBodyName']
-                context['event_ok'] = not name_changed
+                context['event_ok'] = False
 
         try:
             context['minutes'] = event.documents.get(note__icontains='minutes')
