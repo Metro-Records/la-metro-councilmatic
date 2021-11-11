@@ -1136,6 +1136,7 @@ class LAMetroSubject(models.Model):
     classification = models.CharField(
         max_length=256, default="topics_exact", choices=CLASSIFICATION_CHOICES
     )
+    bills = models.ManyToManyField('LAMetroBill', related_name='subjects')
 
     def __str__(self):
         if self.guid is not None:

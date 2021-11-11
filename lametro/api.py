@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.core import management
+from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, RedirectView
