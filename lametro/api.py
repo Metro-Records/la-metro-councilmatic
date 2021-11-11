@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.core import management
+from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, RedirectView
@@ -67,12 +68,15 @@ def refresh_guid_trigger(request, refresh_key):
 
 def fetch_subjects(request):
     related_terms = request.GET.getlist('related_terms[]')
-    subjects = list(LAMetroSubject.objects.filter(name__in=related_terms).values_list('name', flat=True))
+    subjects = LAMetroSubject.objects.annotate(bill_count=Count('bills'))\
+                                     .filter(name__in=related_terms, bill_count__gt=0)\
+                                     .order_by('-bill_count')\
+                                     .values_list('name', flat=True)
 
     response = {
         'status_code': 200,
         'related_terms': related_terms,
-        'subjects': subjects,
+        'subjects': list(subjects),
     }
 
     return JsonResponse(response)
