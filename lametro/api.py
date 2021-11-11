@@ -87,12 +87,17 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
         return self.filter_concepts(suggestions)
 
     def get_relations(self, concepts):
-        if concepts['total'] == 1:
-            if concepts['terms'][0].get('associated') and len(concepts['terms'][0]['associated']) > 0:
-                relations = {
-                    term['field']['id']: {'name': term['field']['name']}
-                    for term in concepts['terms'][0]['associated'][0]['fields']
-                }
+        if int(concepts['total']) == 1:
+            relations = {}
+
+            if concepts['terms'][0]['term'].get('associated') and \
+                    len(concepts['terms'][0]['term']['associated']) > 0:
+
+                for field in concepts['terms'][0]['term']['associated']:
+                    relations.update({
+                        term['field']['id']: {'name': term['field']['name']}
+                        for term in field['fields']
+                    })
 
         else:
             relations = {
@@ -114,7 +119,7 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
 
         return {
             'status_code': 200,
-            'guids': guids,
+            'concepts': concepts,
             'subjects': subjects,
         }
 
