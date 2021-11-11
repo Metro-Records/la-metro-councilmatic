@@ -197,8 +197,6 @@ function showRelatedTerms (termArray) {
         return;
     };
 
-    var relatedTerms = [];
-
     // Execute all Ajax requests before proceeding:
     // https://stackoverflow.com/a/5627301/7142170
     $.when.apply(
@@ -211,7 +209,8 @@ function showRelatedTerms (termArray) {
         // If there is only one request, then args is an array with three items:
         // the response, status, and Ajax object. If there is more than one,
         // then args is an array of these arrays.
-        // TODO: Fix this
+        var relatedTerms = [];
+
         if ( termArray.length === 1 ) {
             var response = arguments[0];
             relatedTerms = parseRelatedTerms(response);
@@ -219,7 +218,6 @@ function showRelatedTerms (termArray) {
             $.each(arguments, function (_, arg) {
                 var response = arg[0];
                 relatedTerms = relatedTerms.concat(parseRelatedTerms(response));
-
             });
         };
 
@@ -251,6 +249,8 @@ function parseRelatedTerms (response) {
         return $.map(response.subjects, function (subject) {
             return subject.name
         });
+    } else {
+        return [];
     };
 }
 
