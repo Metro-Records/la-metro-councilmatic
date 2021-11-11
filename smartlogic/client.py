@@ -19,11 +19,11 @@ class SmartLogic(object):
             'Authorization': 'Bearer {}'.format(self._token)
         }
 
-    def endpoint(self, method, route, **kwargs):
+    def endpoint(self, method, route, **requests_kwargs):
         url = self.BASE_URL + route
 
         try:
-            response = getattr(requests, method)(url, **kwargs)
+            response = getattr(requests, method)(url, **requests_kwargs)
         except HTTPError as e:
             raise
 
@@ -47,7 +47,7 @@ class SmartLogic(object):
     def concepts(self, term, params):
         return self.endpoint(
            'get',
-           self.SERVICE_URL + '/concepts/' + term + '.json',
+           self.SERVICE_URL + 'concepts/' + term + '.json',
            params=params,
            headers=self.auth_headers
         )

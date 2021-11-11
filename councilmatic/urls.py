@@ -1,8 +1,9 @@
+from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.urls import path
 from django.views.static import serve
 from django.views.generic.base import RedirectView
-from django.conf import settings
 from django.views.decorators.cache import never_cache
 
 from haystack.query import SearchQuerySet, EmptySearchQuerySet
@@ -10,8 +11,8 @@ from haystack.query import SearchQuerySet, EmptySearchQuerySet
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
 from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 
-from lametro.api import SmartLogicAPI, PublicComment, refresh_guid_trigger, \
-    fetch_subjects, fetch_object_counts
+from lametro.api import PublicComment, refresh_guid_trigger, fetch_subjects, \
+    fetch_object_counts
 from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
     LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
@@ -46,12 +47,12 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^metro-login/$', metro_login, name='metro_login'),
     url(r'^metro-logout/$', metro_logout, name='metro_logout'),
-    url(r'^ses-token/$', SmartLogicAPI.as_view(), name='ses_token'),
     url(r'^refresh-guid/(.*)$', refresh_guid_trigger, name='refresh_guid'),
     url(r'^subjects/$', fetch_subjects, name='subjects'),
     url(r'^object-counts/(.*)$', fetch_object_counts, name='object_counts'),
     url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
     url(r'^delete-event/(?P<event_slug>[^/]+)/$', delete_event, name='delete_event'),
+    path('smartlogic/', include('smartlogic.urls', namespace='smartlogic')),
     url(r'', include('councilmatic_core.urls')),
 ]
 

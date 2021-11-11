@@ -9,37 +9,6 @@ from django.views.generic import ListView, RedirectView
 from haystack.query import SearchQuerySet
 
 from lametro.models import LAMetroBill, LAMetroEvent, LAMetroSubject
-from lametro.smartlogic import SmartLogic
-
-
-class SmartLogicAPI(ListView):
-    api_key = settings.SMART_LOGIC_KEY
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.smartlogic = SmartLogic(
-            settings.SMART_LOGIC_KEY,
-            token=self.request.GET.get('token', None)
-        )
-
-    def render_to_response(self, context):
-        '''
-        Return response as JSON.
-        '''
-        try:
-            return JsonResponse(context['object_list'])
-        except json.JSONDecodeError:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Could not retrieve SmartLogic token'
-            }, status=500)
-
-    def get_queryset(self, *args, **kwargs):
-        '''
-        Return a SmartLogic authentication token.
-        '''
-        return self.smartlogic.token()
 
 
 class PublicComment(RedirectView):
@@ -71,15 +40,52 @@ def refresh_guid_trigger(request, refresh_key):
 
 
 def fetch_subjects(request):
-    guids = request.GET.getlist('guids[]')
-    subjects = LAMetroSubject.objects.filter(guid__in=guids, bill_count__gt=0)\
-                                     .order_by('-bill_count')\
-                                     .values('name', 'guid')
+    from smartlogic.client import SmartLogic
+
+    s = SmartLogic(settings.SMART_LOGIC_KEY, token=request.GET.get('token', None))
+
+    query_parameters = request.GET.dict()
+    search_term = query_parameters.pop('term')
+
+    concepts = s.concepts(search_term, query_parameters)
+
+    suggestions = {}
+
+    if concepts.get('terms'):
+        for result in concepts['terms']:
+            term = result['term']
+            synonym_label = ''
+
+            if term.get('equivalence') and len(term['equivalence']) > 0:
+                for equivalent_term in term['equivalence']:
+                    try:
+                        synonym = [
+                            s['field']['name'] for s in equivalent_term['fields']
+                            if s['field']['name'].lower() == search_term.lower()
+                        ][0]
+                    except IndexError:
+                        continue
+                    else:
+                        synonym_label = ' ({})'.format(synonym)
+                        break
+
+            suggestions[term['id']] = {
+                'name': term['name'],
+                'synonym_label': synonym_label,
+            }
+
+    guids = list(suggestions.keys())
+    subjects = list(LAMetroSubject.objects.filter(guid__in=guids, bill_count__gt=0)\
+                                          .order_by('-bill_count')\
+                                          .values('name', 'guid'))
+
+    for subject in subjects:
+        subject['display_name'] = subject['name'] + suggestions[subject['guid']]['synonym_label']
 
     response = {
         'status_code': 200,
         'guids': guids,
-        'subjects': list(subjects),
+        'subjects': subjects,
     }
 
     return JsonResponse(response)

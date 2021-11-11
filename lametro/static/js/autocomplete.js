@@ -19,78 +19,33 @@ var SmartLogic = {
     };
   },
   buildServiceUrl: function (query) {
-    var queryLocation = query.term + '.json';
     var stop = query.stop_cm_after_stage ? query.stop_cm_after_stage : '3';
     var maxResults = query.maxResultCount ? query.maxResultCount : '10';
 
-    return SmartLogic.baseUrl + queryLocation
-        + '?FILTER=AT=System:%20Legistar&stop_cm_after_stage=' + stop
-        + '&maxResultCount=' + maxResults;
+    return '/subjects/?term=' + query.term
+        + '&stop_cm_after_stage=' + stop
+        + '&maxResultCount=' + maxResults
+        + '&FILTER=AT=System:%20Legistar';
   },
   transformResponse: function (data, params) {
     SmartLogic.query = params;
 
-    var results = data.terms
-      ? $.map(data.terms, function(d) {
-        /* d.term.equivalence is an array of objects. Each object contains
-        a "fields" array, also an array of objects, containing alternative
-        names for the concept. Identify whether our search term matches one
-        of these labels, so we can include it in the suggestion. */
-        var nptLabel = '';
+    var results = $.map(data.subjects, function(result) {
+        return {text: result.display_name, id: result.name}
+    });
 
-        if ( d.term.equivalence !== undefined && d.term.equivalence.length > 0 ) {
-          var npt;
-
-          $.each(d.term.equivalence, function(idx, el) {
-            npt = el.fields.reduce(function(inp, el) {
-              if (inp) {
-                return inp
-              } else {
-                if (el.field.name.toLowerCase() == params.term.toLowerCase()) {
-                  return el.field.name;
-                }
-              }
-            }, undefined);
-
-            if ( npt ) {
-              nptLabel = ' (' + npt + ')';
-              return false; // Equivalent to "break"
-            }
-          });
-        };
-
-        return {'aliasString': nptLabel, 'guid': d.term.id};
-      })
+    // Only show the suggested group if there are suggestions
+    var groupedResults = results.length > 0
+      ? [{
+        'text': 'Suggested query terms',
+        'children': results
+      }]
       : [];
 
-    return getSubjectsFromTerms(results, objectAttr='guid').done(
-        function (response) {
-            processedResults = response.subjects.length > 0
-                ? $.map(response.subjects, function(subject) {
-                    var correspondingResult = results.filter(function(result) {
-                        return result.guid === subject.guid
-                    })[0];
-                    return {
-                        'text': subject.name + correspondingResult.aliasString,
-                        'id': subject.name
-                    }
-                })
-                : [];
-
-            // Only show the suggested group if there are suggestions
-            var groupedResults = processedResults.length > 0
-              ? [{
-                'text': 'Suggested query terms',
-                'children': processedResults
-              }]
-              : [];
-
-            return {
-              'results': groupedResults,
-              'pagination': {'more': false}
-            };
-        }
-    )
+    return {
+      'results': groupedResults,
+      'pagination': {'more': false}
+    };
   },
   highlightResult: function (result) {
     // Return the first result with a set prefix, no highlight
