@@ -11,8 +11,8 @@ from haystack.query import SearchQuerySet, EmptySearchQuerySet
 from councilmatic_core.views import CouncilmaticSearchForm, CouncilmaticFacetedSearchView, EventDetailView
 from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 
-from lametro.api import PublicComment, refresh_guid_trigger, fetch_subjects, \
-    fetch_object_counts
+from lametro.api import PublicComment, refresh_guid_trigger, \
+    fetch_object_counts, LAMetroSmartLogicAPI
 from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LABoardMembersView, \
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
     LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
@@ -48,10 +48,10 @@ urlpatterns = [
     url(r'^metro-login/$', metro_login, name='metro_login'),
     url(r'^metro-logout/$', metro_logout, name='metro_logout'),
     url(r'^refresh-guid/(.*)$', refresh_guid_trigger, name='refresh_guid'),
-    url(r'^subjects/$', fetch_subjects, name='subjects'),
     url(r'^object-counts/(.*)$', fetch_object_counts, name='object_counts'),
     url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
     url(r'^delete-event/(?P<event_slug>[^/]+)/$', delete_event, name='delete_event'),
+    path('smartlogic/concepts/<str:term>/<str:action>', LAMetroSmartLogicAPI.as_view(), name='lametro_ses_endpoint'),
     path('smartlogic/', include('smartlogic.urls', namespace='smartlogic')),
     url(r'', include('councilmatic_core.urls')),
 ]

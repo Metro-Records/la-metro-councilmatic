@@ -19,11 +19,12 @@ var SmartLogic = {
     };
   },
   buildServiceUrl: function (query) {
+    var action = query.action ? query.action : 'suggest';
     var stop = query.stop_cm_after_stage ? query.stop_cm_after_stage : '3';
     var maxResults = query.maxResultCount ? query.maxResultCount : '10';
 
-    return '/subjects/?term=' + query.term
-        + '&stop_cm_after_stage=' + stop
+    return '/smartlogic/concepts/' + query.term + '/' + action
+        + '?stop_cm_after_stage=' + stop
         + '&maxResultCount=' + maxResults
         + '&FILTER=AT=System:%20Legistar';
   },
@@ -210,6 +211,7 @@ function showRelatedTerms (termArray) {
         // If there is only one request, then args is an array with three items:
         // the response, status, and Ajax object. If there is more than one,
         // then args is an array of these arrays.
+        // TODO: Fix this
         if ( termArray.length === 1 ) {
             var response = arguments[0];
             relatedTerms = parseRelatedTerms(response);
@@ -217,14 +219,11 @@ function showRelatedTerms (termArray) {
             $.each(arguments, function (_, arg) {
                 var response = arg[0];
                 relatedTerms = relatedTerms.concat(parseRelatedTerms(response));
+
             });
         };
 
-        $.when(
-            getSubjectsFromTerms(relatedTerms)
-        ).then(function (response) {
-            renderRelatedTerms(response);
-        });
+        renderRelatedTerms(relatedTerms);
     })
 }
 
@@ -233,6 +232,7 @@ function getRelatedTerms (term) {
 
     var url = SmartLogic.buildServiceUrl({
         'term': term,
+        'action': 'relate',
         'stop_cm_after_stage': 1,
         'maxResultCount': 5,
     });
@@ -247,41 +247,20 @@ function getRelatedTerms (term) {
 }
 
 function parseRelatedTerms (response) {
-    if ( response.total === '1' ) {
-        // If there is only one term, then the supplied term exactly
-        // matches a term in SES. Display associated terms, if any.
-        return response.terms[0].term.associated.length
-            ? response.terms[0].term.associated[0].fields.map(function (el) {
-                return {'name': el.field.name, 'id': el.field.id}
-            })
-            : [];
-    } else {
-        // If there is more than one term, then the supplied term
-        // does not exactly match a term in SES. Display all results
-        // (limited to at most 5 by our query.)
-        return response.terms.map(function (el) {
-            return {'name': el.term.name, 'id': el.term.id}
+    if ( response.status_code == 200 && response.subjects.length > 0) {
+        return $.map(response.subjects, function (subject) {
+            return subject.name
         });
     };
 }
 
-function getSubjectsFromTerms (terms, objectAttr) {
-    var objectAttr = objectAttr? objectAttr : 'id';
-    var termNames = terms.map(function(el) {return el[objectAttr]});
-
-    return $.ajax({
-        url: '/subjects/',
-        data: {guids: termNames}
-    });
-}
-
-function renderRelatedTerms (response) {
-    if ( response.status_code == 200 && response.subjects.length > 0 ) {
+function renderRelatedTerms (subjects) {
+    if ( subjects.length > 0 ) {
         $('#related-terms').removeClass('hidden');
 
-        $.each(response.subjects, function (idx, subject) {
-            var link = $('<a />').attr('href', '/search/?q=' + subject.name).text(subject.name);
+        $.each(subjects, function (idx, subject) {
+            var link = $('<a />').attr('href', '/search/?q=' + subject).text(subject);
             $('#related-terms').append(link).append('<br />');
         });
-    };
+    }
 }

@@ -9,6 +9,7 @@ from django.views.generic import ListView, RedirectView
 from haystack.query import SearchQuerySet
 
 from lametro.models import LAMetroBill, LAMetroEvent, LAMetroSubject
+from smartlogic.views import SmartLogicAPI
 
 
 class PublicComment(RedirectView):
@@ -39,59 +40,83 @@ def refresh_guid_trigger(request, refresh_key):
     return HttpResponse(403)
 
 
-def fetch_subjects(request):
-    from smartlogic.client import SmartLogic
+class LAMetroSmartLogicAPI(SmartLogicAPI):
 
-    s = SmartLogic(
-        settings.SMART_LOGIC_KEY,
-        authorization=request.headers.get('Authorization', None)
-    )
+    def get_queryset(self, *args, **kwargs):
+        self.kwargs['endpoint'] = 'concepts'
 
-    query_parameters = request.GET.dict()
-    search_term = query_parameters.pop('term')
+        qs = super().get_queryset(*args, **kwargs)
 
-    concepts = s.concepts(search_term, query_parameters)
+        action = self.kwargs.get('action', 'suggest')
 
-    suggestions = {}
+        if action not in ('suggest', 'relate'):
+            raise ValueError('action must be one of: suggest, relate')
 
-    if concepts.get('terms'):
-        for result in concepts['terms']:
-            term = result['term']
-            synonym_label = ''
+        if action == 'suggest':
+            return self.get_suggestions(qs)
 
-            if term.get('equivalence') and len(term['equivalence']) > 0:
-                for equivalent_term in term['equivalence']:
-                    try:
-                        synonym = [
-                            s['field']['name'] for s in equivalent_term['fields']
-                            if s['field']['name'].lower() == search_term.lower()
-                        ][0]
-                    except IndexError:
-                        continue
-                    else:
-                        synonym_label = ' ({})'.format(synonym)
-                        break
+        else:
+            return self.get_relations(qs)
 
-            suggestions[term['id']] = {
-                'name': term['name'],
-                'synonym_label': synonym_label,
+    def get_suggestions(self, concepts):
+        suggestions = {}
+
+        if concepts.get('terms'):
+            for result in concepts['terms']:
+                term = result['term']
+                synonym_label = ''
+
+                if term.get('equivalence') and len(term['equivalence']) > 0:
+                    for equivalent_term in term['equivalence']:
+                        try:
+                            synonym = [
+                                s['field']['name'] for s in equivalent_term['fields']
+                                if s['field']['name'].lower() == self.kwargs['term'].lower()
+                            ][0]
+                        except IndexError:
+                            continue
+                        else:
+                            synonym_label = ' ({})'.format(synonym)
+                            break
+
+                suggestions[term['id']] = {
+                    'name': term['name'],
+                    'synonym_label': synonym_label,
+                }
+
+        return self.filter_concepts(suggestions)
+
+    def get_relations(self, concepts):
+        if concepts['total'] == 1:
+            if concepts['terms'][0].get('associated') and len(concepts['terms'][0]['associated']) > 0:
+                relations = {
+                    term['field']['id']: {'name': term['field']['name']}
+                    for term in concepts['terms'][0]['associated'][0]['fields']
+                }
+
+        else:
+            relations = {
+                term['term']['id']: {'name': term['term']['name']}
+                for term in concepts['terms']
             }
 
-    guids = list(suggestions.keys())
-    subjects = list(LAMetroSubject.objects.filter(guid__in=guids, bill_count__gt=0)\
-                                          .order_by('-bill_count')\
-                                          .values('name', 'guid'))
+        return self.filter_concepts(relations)
 
-    for subject in subjects:
-        subject['display_name'] = subject['name'] + suggestions[subject['guid']]['synonym_label']
+    def filter_concepts(self, concepts):
+        guids = list(concepts.keys())
+        subjects = list(LAMetroSubject.objects.filter(guid__in=guids, bill_count__gt=0)\
+                                              .order_by('-bill_count')\
+                                              .values('name', 'guid'))
 
-    response = {
-        'status_code': 200,
-        'guids': guids,
-        'subjects': subjects,
-    }
+        for subject in subjects:
+            subject['display_name'] = subject['name'] + \
+                concepts[subject['guid']].get('synonym_label', '')
 
-    return JsonResponse(response)
+        return {
+            'status_code': 200,
+            'guids': guids,
+            'subjects': subjects,
+        }
 
 
 def fetch_object_counts(request, key):

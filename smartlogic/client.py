@@ -31,7 +31,7 @@ class SmartLogic(object):
         try:
             return response.json()
         except json.JSONDecodeError:
-            return response
+            return {'response': response.content.decode('utf-8')}
 
     def token(self):
         data = {'grant_type': 'apikey', 'key': self.api_key}
