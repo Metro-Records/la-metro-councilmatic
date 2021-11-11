@@ -10,7 +10,7 @@ from legistar.bills import LegistarAPIBillScraper
 from opencivicdata.legislative.models import Bill
 
 from lametro.models import LAMetroSubject
-from lametro.smartlogic import SmartLogic
+from smartlogic.client import SmartLogic
 
 
 class ClassificationMixin:

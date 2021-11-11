@@ -1,7 +1,8 @@
+from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.urls import path
 from django.views.static import serve
-from django.conf import settings
 from django.views.decorators.cache import never_cache
 
 from haystack.query import EmptySearchQuerySet
@@ -12,7 +13,6 @@ from councilmatic_core.views import (
 from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 
 from lametro.api import (
-    SmartLogicAPI,
     PublicComment,
     refresh_guid_trigger,
     fetch_subjects,
@@ -40,6 +40,7 @@ from lametro.views import (
     pong,
 )
 from lametro.feeds import LAMetroPersonDetailFeed
+
 
 patterns = (
     [
@@ -93,25 +94,17 @@ patterns = (
 )
 
 urlpatterns = [
-    url(r"", include(patterns)),
-    url(r"^admin/", admin.site.urls),
-    url(r"^metro-login/$", metro_login, name="metro_login"),
-    url(r"^metro-logout/$", metro_logout, name="metro_logout"),
-    url(r"^ses-token/$", SmartLogicAPI.as_view(), name="ses_token"),
-    url(r"^refresh-guid/(.*)$", refresh_guid_trigger, name="refresh_guid"),
-    url(r"^subjects/$", fetch_subjects, name="subjects"),
-    url(r"^object-counts/(.*)$", fetch_object_counts, name="object_counts"),
-    url(
-        r"^delete-submission/(?P<event_slug>[^/]+)/$",
-        delete_submission,
-        name="delete_submission",
-    ),
-    url(r"^delete-event/(?P<event_slug>[^/]+)/$", delete_event, name="delete_event"),
-    url(
-        r"^pong/$",
-        pong,
-    ),
-    url(r"", include("councilmatic_core.urls")),
+    url(r'', include(patterns)),
+    url(r'^admin/', admin.site.urls),
+    url(r'^metro-login/$', metro_login, name='metro_login'),
+    url(r'^metro-logout/$', metro_logout, name='metro_logout'),
+    url(r'^refresh-guid/(.*)$', refresh_guid_trigger, name='refresh_guid'),
+    url(r'^subjects/$', fetch_subjects, name='subjects'),
+    url(r'^object-counts/(.*)$', fetch_object_counts, name='object_counts'),
+    url(r'^delete-submission/(?P<event_slug>[^/]+)/$', delete_submission, name='delete_submission'),
+    url(r'^delete-event/(?P<event_slug>[^/]+)/$', delete_event, name='delete_event'),
+    path('smartlogic/', include('smartlogic.urls', namespace='smartlogic')),
+    url(r'', include('councilmatic_core.urls')),
 ]
 
 if settings.DEBUG:
