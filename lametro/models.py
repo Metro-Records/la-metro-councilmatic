@@ -1137,6 +1137,7 @@ class LAMetroSubject(models.Model):
         max_length=256, default="topics_exact", choices=CLASSIFICATION_CHOICES
     )
     bills = models.ManyToManyField('LAMetroBill', related_name='subjects')
+    bill_count = models.IntegerField(default=0)
 
     def __str__(self):
         if self.guid is not None:

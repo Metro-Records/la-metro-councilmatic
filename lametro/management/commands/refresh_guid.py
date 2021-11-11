@@ -3,6 +3,8 @@ from itertools import chain
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.db import connection
+from django.db.utils import IntegrityError
 
 from legistar.bills import LegistarAPIBillScraper
 from opencivicdata.legislative.models import Bill
@@ -133,6 +135,43 @@ class Command(BaseCommand, ClassificationMixin):
             ],
             ignore_conflicts=True,
         )
+
+        with connection.cursor():
+            # Create new LAMetroSubject-Bill relationships, ignoring conflicts
+            # from relationships that already exist
+            cursor.execute('''
+                INSERT INTO lametro_lametrosubject_bills (
+                    lametrosubject_id,
+                    lametrobill_id
+                )
+                SELECT
+                    subject.id,
+                    bill_subjects.id
+                FROM (
+                    SELECT
+                        id,
+                        UNNEST(subject) AS subject
+                    FROM opencivicdata_bill
+                ) bill_subjects
+                JOIN lametro_lametrosubject subject
+                ON bill_subjects.subject = subject.name
+                ON CONFLICT DO NOTHING
+            ''')
+
+            # Cache the number of associated bills so it doesn't need to be
+            # calculated on the fly for filtering and sorting during suggestion
+            cursor.execute('''
+                UPDATE lametro_lametrosubject subject
+                SET bill_count = counts.count
+                FROM (
+                    SELECT
+                        lametrosubject_id AS subject_id,
+                        COUNT(*)
+                    FROM lametro_lametrosubject_bills
+                    GROUP BY lametrosubject_id
+                ) counts
+                WHERE subject.id = counts.subject_id
+            ''')
 
         for_update = []
 

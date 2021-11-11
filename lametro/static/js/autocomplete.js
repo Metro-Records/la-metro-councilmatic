@@ -59,22 +59,38 @@ var SmartLogic = {
           });
         };
 
-        return {'text': d.term.name + nptLabel, 'id': d.term.name};
+        return {'aliasString': nptLabel, 'guid': d.term.id};
       })
       : [];
 
-    // Only show the suggested group if there are suggestions
-    var groupedResults = results.length > 0
-      ? [{
-        'text': 'Suggested query terms',
-        'children': results
-      }]
-      : [];
+    return getSubjectsFromTerms(results, objectAttr='guid').done(
+        function (response) {
+            processedResults = response.subjects.length > 0
+                ? $.map(response.subjects, function(subject) {
+                    var correspondingResult = results.filter(function(result) {
+                        return result.guid === subject.guid
+                    })[0];
+                    return {
+                        'text': subject.name + correspondingResult.aliasString,
+                        'id': subject.name
+                    }
+                })
+                : [];
 
-    return {
-      'results': groupedResults,
-      'pagination': {'more': false}
-    };
+            // Only show the suggested group if there are suggestions
+            var groupedResults = processedResults.length > 0
+              ? [{
+                'text': 'Suggested query terms',
+                'children': processedResults
+              }]
+              : [];
+
+            return {
+              'results': groupedResults,
+              'pagination': {'more': false}
+            };
+        }
+    )
   },
   highlightResult: function (result) {
     // Return the first result with a set prefix, no highlight
@@ -294,12 +310,13 @@ function parseRelatedTerms (response) {
     };
 }
 
-function getSubjectsFromTerms (terms) {
-    var termNames = terms.map(function(el) {return el.name});
+function getSubjectsFromTerms (terms, objectAttr) {
+    var objectAttr = objectAttr? objectAttr : 'id';
+    var termNames = terms.map(function(el) {return el[objectAttr]});
 
     return $.ajax({
         url: '/subjects/',
-        data: {related_terms: termNames}
+        data: {guids: termNames}
     });
 }
 
@@ -308,7 +325,7 @@ function renderRelatedTerms (response) {
         $('#related-terms').removeClass('hidden');
 
         $.each(response.subjects, function (idx, subject) {
-            var link = $('<a />').attr('href', '/search/?q=' + subject).text(subject);
+            var link = $('<a />').attr('href', '/search/?q=' + subject.name).text(subject.name);
             $('#related-terms').append(link).append('<br />');
         });
     };
