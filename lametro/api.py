@@ -2,7 +2,6 @@ import json
 
 from django.conf import settings
 from django.core import management
-from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, RedirectView
@@ -18,6 +17,11 @@ class SmartLogicAPI(ListView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.smartlogic = SmartLogic(
+            settings.SMART_LOGIC_KEY,
+            token=self.request.GET.get('token', None)
+        )
 
     def render_to_response(self, context):
         '''
@@ -35,7 +39,7 @@ class SmartLogicAPI(ListView):
         '''
         Return a SmartLogic authentication token.
         '''
-        return SmartLogic(settings.SMART_LOGIC_KEY).token()
+        return self.smartlogic.token()
 
 
 class PublicComment(RedirectView):
@@ -67,15 +71,14 @@ def refresh_guid_trigger(request, refresh_key):
 
 
 def fetch_subjects(request):
-    related_terms = request.GET.getlist('related_terms[]')
-    subjects = LAMetroSubject.objects.annotate(bill_count=Count('bills'))\
-                                     .filter(name__in=related_terms, bill_count__gt=0)\
+    guids = request.GET.getlist('guids[]')
+    subjects = LAMetroSubject.objects.filter(guid__in=guids, bill_count__gt=0)\
                                      .order_by('-bill_count')\
-                                     .values_list('name', flat=True)
+                                     .values('name', 'guid')
 
     response = {
         'status_code': 200,
-        'related_terms': related_terms,
+        'guids': guids,
         'subjects': list(subjects),
     }
 

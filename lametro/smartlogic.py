@@ -8,9 +8,9 @@ class SmartLogic(object):
     BASE_URL = 'https://cloud.smartlogic.com/'
     SERVICE_URL = 'svc/0dcee7c7-1667-4164-81e5-c16e46f2f74c/ses/v1.2/CombinedModel/'
 
-    def __init__(self, api_key):
+    def __init__(self, api_key, token=None):
         self.api_key = api_key
-        self._token = self.token()['access_token']
+        self._token = token if token else self.token()['access_token']
 
     @property
     def auth_headers(self):
@@ -42,4 +42,12 @@ class SmartLogic(object):
             self.SERVICE_URL + 'terms.json',
             params=params,
             headers=self.auth_headers
+        )
+
+    def concepts(self, term, params):
+        return self.endpoint(
+           'get',
+           self.SERVICE_URL + '/concepts/' + term + '.json',
+           params=params,
+           headers=self.auth_headers
         )
