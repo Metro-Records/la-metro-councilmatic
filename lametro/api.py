@@ -45,7 +45,10 @@ def refresh_guid_trigger(request, refresh_key):
 def fetch_subjects(request):
     from smartlogic.client import SmartLogic
 
-    s = SmartLogic(settings.SMART_LOGIC_KEY, token=request.GET.get('token', None))
+    s = SmartLogic(
+        settings.SMART_LOGIC_KEY,
+        authorization=request.headers.get('Authorization', None)
+    )
 
     query_parameters = request.GET.dict()
     search_term = query_parameters.pop('term')

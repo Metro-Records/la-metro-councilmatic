@@ -8,15 +8,16 @@ class SmartLogic(object):
     BASE_URL = "https://cloud.smartlogic.com/"
     SERVICE_URL = "svc/d3807554-347e-4091-90ea-f107a906aaff/ses/CombinedModel/"
 
-    def __init__(self, api_key, token=None):
+    def __init__(self, api_key, authorization=None):
         self.api_key = api_key
-        self._token = token if token else self.token()['access_token']
+        self._authorization = authorization if authorization \
+            else 'Bearer {}'.format(self.token()['access_token'])
 
     @property
     def auth_headers(self):
         return {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Bearer {}".format(self._token),
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': self._authorization
         }
 
     def endpoint(self, method, route, **requests_kwargs):
