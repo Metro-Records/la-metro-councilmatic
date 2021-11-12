@@ -1,10 +1,13 @@
 import json
+import os
 
 from django.urls import reverse
 import pytest
 import requests
 
 from lametro.models import LAMetroEvent
+from lametro.api import SmartLogicAPI
+from smartlogic.views import SmartLogic
 
 
 def _test_redirect(response, expected_location):
@@ -60,17 +63,71 @@ def test_public_comment_endpoint_concurrent_meetings(
     _test_redirect(response, LAMetroEvent.GENERIC_ECOMMENT_URL)
 
 
-def test_fetch_subjects_from_related_terms(client, metro_subject):
-    subject = metro_subject.build()
+def _mock_smartlogic(mocker, fixture_file):
+    file_directory = os.path.dirname(__file__)
+    absolute_file_directory = os.path.abspath(file_directory)
+    fixture_path = os.path.join(absolute_file_directory, 'fixtures', fixture_file)
 
-    dummy_terms = [subject.name, "some other subject"]
+    with open(fixture_path, 'r') as f:
+        concepts = json.load(f)
 
-    response = client.get('/subjects/', {'guids[]': [subject.name, 'some other subject']})
-    response = json.loads(response.content.decode('utf-8'))
+    mocker.patch.object(SmartLogicAPI, 'get_queryset', return_value=concepts)
+    mocker.patch.object(SmartLogic, 'token', return_value={'access_token': 'foo'})
+
+
+def test_lametro_smartlogic_api_suggest(client, metro_subject, mocker):
+    _mock_smartlogic(mocker, 'suggest_concepts.json')
+
+    red_line = metro_subject.build(
+        name='Metro Red Line',
+        guid='1031d836-2d8b-4c20-b3c1-1487f0d503e6',
+        bill_count=5
+    )
+
+    rail_operations = metro_subject.build(
+        name='Rail Operations - Red Line (Project)',
+        guid='b53296db-4ac2-455d-9942-2bfba6f1c8bf',
+        bill_count=1
+    )
+
+    lametro_ses_endpoint = reverse('lametro_ses_endpoint', kwargs={
+        'term': 'red line', 'action': 'suggest'
+    })
+
+    response = client.get(lametro_ses_endpoint).json()
 
     assert response['status_code'] == 200
-    assert response['guids'] == dummy_terms
-    assert response['subjects'] == [subject.name]
+    assert len(response['subjects']) == 2
+
+    # Test that the red line is the first result
+    assert response['subjects'][0]['guid'] == red_line.guid
+
+    # Test that the synonym matching the search term was appended to the subject name
+    assert response['subjects'][0]['display_name'] == 'Metro Red Line (Red Line)'
+
+    # Test that the second result is rail operations
+    assert response['subjects'][1]['guid'] == rail_operations.guid
+
+
+def test_lametro_smartlogic_api_relate(client, metro_subject, mocker):
+    _mock_smartlogic(mocker, 'relate_concepts.json')
+
+    b_line = metro_subject.build(
+        name='Metro Rail B Line',
+        guid='48ddb0c1-2e4a-48c3-adde-74d6dbaaec3f'
+    )
+
+    lametro_ses_endpoint = reverse('lametro_ses_endpoint', kwargs={
+        'term': 'metro red line', 'action': 'relate'
+    })
+
+    response = client.get(lametro_ses_endpoint).json()
+
+    assert response['status_code'] == 200
+    assert len(response['subjects']) == 1
+
+    # Test that the result is our existent subject
+    assert response['subjects'][0]['guid'] == b_line.guid
 
 
 @pytest.mark.django_db
