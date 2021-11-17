@@ -6,21 +6,25 @@
         </tr>
     </thead>
     <tbody>
-    {% for status in BILL_STATUS_DESCRIPTIONS %}
+    {% for status, obj in BILL_STATUS_DESCRIPTIONS.items %}
         <tr>
             <td>
                 <p class='nowrap'>
-                    <a href='href="/search/?selected_facets=bill_type_exact%3A{{status.search_term}}'>{{status.name}}</p>
+                    {% if obj.search_term != None %}
+                    <a href='/search/?selected_facets=bill_type_exact%3A{{obj.search_term}}'>{{status}}</a>
+                    {% else %}
+                    <p>{{status}}</p>
+                    {% endif %}
                 </p>
                 <div class="non-desktop-only">
                     <p>
-                        <p>{{status.definition}}</p>
+                        <p>{{obj.definition}}</p>
                     </p>
                 </div>
             </td>
             <td class="desktop-only">
                 <p>
-                    <p>{{status.definition}}</p>
+                    <p>{{obj.definition}}</p>
                 </p>
             </td>
         </tr>
