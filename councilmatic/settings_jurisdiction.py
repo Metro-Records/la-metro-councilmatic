@@ -233,118 +233,96 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     },
 ]
 
-BILL_STATUS_DESCRIPTIONS = [
-    {
-        'name': 'ADOPTED',
+BILL_STATUS_DESCRIPTIONS = {
+    'ADOPTED': {
         'definition': 'Item was adopted by a majority vote of the Board.',
-        'search_term': 'adopted'
+        'search_term': 'Adopted'
     },
-    {
-        'name': 'ADOPTED AS AMENDED',
+    'ADOPTED AS AMENDED': {
         'definition': 'Item was adopted as amended by a majority vote of the Board.',
-        'search_term': 'adopted'
+        'search_term': 'Adopted'
     },
-    {
-        'name': 'APPROVED',
+    'APPROVED': {
         'definition': 'Item was approved by a majority vote of the Board.',
-        'search_term': 'approved'
+        'search_term': 'Approved'
     },
-    {
-        'name': 'APPROVED AS AMENDED',
+    'APPROVED AS AMENDED': {
         'definition': 'Item was approved as amended by a majority vote of the Board.',
-        'search_term': 'approved'
+        'search_term': 'Approved'
     },
-    {
-        'name': 'APPROVED ON CONSENT CALENDAR',
+    'APPROVED ON CONSENT CALENDAR': {
         'definition': 'Item was approved on Consent Calendar by a majority vote of the Board.',
-        'search_term': 'approved'
+        'search_term': 'Approved'
     },
-    {
-        'name': 'CARRIED OVER --> (Sent To)',
+    'CARRIED OVER': {
         'definition': 'Item was carried over to the next Committee or Regular Board Meeting.',
-        'search_term': 'active'
+        'search_term': 'Active'
     },
-    {
-        'name': 'FAILED',
+    'FAILED': {
         'definition': 'Item failed due to insufficient votes.',
-        'search_term': 'failed'
+        'search_term': 'Failed'
     },
-    {
-        'name': 'FORWARDED DUE TO ABSENCES AND CONFLICTS',
+    'FORWARDED DUE TO ABSENCES AND CONFLICTS': {
         'definition': 'Item was forwarded from a Committee to the Regular Board Meeting due to absences and conflicts.',
-        'search_term': 'active'
+        'search_term': 'Active'
     },
-    {
-        'name': 'FORWARDED WITHOUT RECOMMENDATION  --> (Sent To)',
+    'FORWARDED WITHOUT RECOMMENDATION': {
         'definition': 'Item was forwarded to the Regular Board Meeting without recommendation.',
-        'search_term': 'active'
+        'search_term': 'Active'
     },
-    {
-        'name': 'RECEIVED',
+    'RECEIVED': {
         'definition': 'Item was received by the Committee or Board. (Oral report)',
-        'search_term': 'received'
+        'search_term': 'Received'
     },
-    {
-        'name': 'RECEIVED AND FILED',
+    'RECEIVED AND FILED': {
         'definition': 'Item was was received and filed by the Committee or Board.',
-        'search_term': 'received'
+        'search_term': 'Received'
     },
-    {
-        'name': 'RECOMMENDED FOR APPROVAL --> (Sent To)',
+    'RECOMMENDED FOR APPROVAL': {
         'definition': 'Committee members recommended that the item be approved by the Full Board.',
-        'search_term': 'active'
+        'search_term': 'Active'
     },
-    {
-        'name': 'RECOMMENDED FOR APPROVAL AS AMENDED --> (Sent To)',
+    'RECOMMENDED FOR APPROVAL AS AMENDED': {
         'definition': 'Committee members recommended that the item be approved as amended by the Full Board.',
-        'search_term': 'active'
+        'search_term': 'Active'
     },
-    {
-        'name': 'REFERRED --> (Sent To)',
+    'REFERRED': {
         'definition': 'Item was referred to another Committee or Full Board.',
-        'search_term': 'active'
+        'search_term': 'Active'
     },
-    {
-        'name': 'WITHDRAWN',
+    'WITHDRAWN': {
         'definition': 'Item was withdrawn from the agenda.',
-        'search_term': 'withdrawn'
+        'search_term': 'Withdrawn'
     },
-    {
-        'name': 'NO ACTION TAKEN',
+    'NO ACTION TAKEN': {
         'definition': 'No action was taken on the item.',
-        'search_term': 'active'
+        'search_term': 'Active'
     },
-    {
-        'name': 'NOT DISCUSSED',
+    'NOT DISCUSSED': {
         'definition': 'Item was not discussed.',
-        'search_term': 'active'
+        'search_term': 'Active'
     },
-    {
-        'name': 'APPROVED UNDER RECONSIDERATION',
+    'APPROVED UNDER RECONSIDERATION': {
         'definition': 'Item was approved when considered a 2nd time.',
-        'search_term': 'approved'
+        'search_term': None
     },
-    {
-        'name': 'FAILED UNDER RECONSIDERATION',
+    'FAILED UNDER RECONSIDERATION': {
         'definition': 'Item failed when considered a 2nd time.',
-        'search_term': 'failed'
+        'search_term': None
     },
-    {
-        'name': 'ADOPTED UNDER RECONSIDERATION',
+    'ADOPTED UNDER RECONSIDERATION': {
         'definition': 'Item was adopted when considered a 2nd time.',
-        'search_term': 'adopted'
+        'search_term': None
     },
-    {
-        'name': 'APPROVED AS AMENDED UNDER RECONSIDERATION',
+    'APPROVED AS AMENDED UNDER RECONSIDERATION': {
         'definition': 'Item was approved by a majority vote of the Board as amended when considered a 2nd time.',
-        'search_term': 'approved'
+        'search_term': None
     },
-    {
-        'name': 'ADOPTED AS AMENDED UNDER RECONSIDERATION',
+    'ADOPTED AS AMENDED UNDER RECONSIDERATION': {
         'definition': 'Item was adopted by a majority vote of the Board as amended when considered a 2nd time.',
-        'search_term': 'adopted'
+        'search_term': None
     },
-]
+}
 
 
 # these keys should match committee slugs
