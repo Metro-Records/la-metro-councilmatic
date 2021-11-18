@@ -142,7 +142,9 @@ class LAMetroBill(Bill, SourcesMixin):
         return self._status(description)
 
     def _status(self, description):
-        return BILL_STATUS_DESCRIPTIONS[description.upper()]['search_term']
+        if description and BILL_STATUS_DESCRIPTIONS[description.upper()]:
+            return BILL_STATUS_DESCRIPTIONS[description.upper()]['search_term']
+        return None
 
     # LA METRO CUSTOMIZATION
     @property
