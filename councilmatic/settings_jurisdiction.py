@@ -304,23 +304,23 @@ BILL_STATUS_DESCRIPTIONS = {
     },
     'APPROVED UNDER RECONSIDERATION': {
         'definition': 'Item was approved when considered a 2nd time.',
-        'search_term': None
+        'search_term': 'Approved'
     },
     'FAILED UNDER RECONSIDERATION': {
         'definition': 'Item failed when considered a 2nd time.',
-        'search_term': None
+        'search_term': 'Failed'
     },
     'ADOPTED UNDER RECONSIDERATION': {
         'definition': 'Item was adopted when considered a 2nd time.',
-        'search_term': None
+        'search_term': 'Adopted'
     },
     'APPROVED AS AMENDED UNDER RECONSIDERATION': {
         'definition': 'Item was approved by a majority vote of the Board as amended when considered a 2nd time.',
-        'search_term': None
+        'search_term': 'Approved'
     },
     'ADOPTED AS AMENDED UNDER RECONSIDERATION': {
         'definition': 'Item was adopted by a majority vote of the Board as amended when considered a 2nd time.',
-        'search_term': None
+        'search_term': 'Adopted'
     },
 }
 
