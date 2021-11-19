@@ -11,7 +11,7 @@
             <td>
                 <p class='nowrap'>
                     {% if obj.search_term != None %}
-                    <a href='/search/?selected_facets=bill_type_exact%3A{{obj.search_term}}'>{{status}}</a>
+                    <a href='/search/?selected_facets=inferred_status_exact%3A{{obj.search_term}}'>{{status}}</a>
                     {% else %}
                     <p>{{status}}</p>
                     {% endif %}
