@@ -142,7 +142,7 @@ class LAMetroBill(Bill, SourcesMixin):
         return self._status(description)
 
     def _status(self, description):
-        if description and BILL_STATUS_DESCRIPTIONS[description.upper()]:
+        if description and description.upper() in BILL_STATUS_DESCRIPTIONS.items():
             return BILL_STATUS_DESCRIPTIONS[description.upper()]['search_term']
         return None
 
