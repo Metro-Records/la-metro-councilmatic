@@ -53,7 +53,7 @@ from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
     LAMetroEvent, LAMetroOrganization, LAMetroSubject
 from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm
 
-from councilmatic.settings_jurisdiction import MEMBER_BIOS
+from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
 from councilmatic.settings import MERGER_BASE_URL, PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
@@ -476,6 +476,8 @@ class LAMetroAboutView(AboutView):
         context = super().get_context_data(**kwargs)
 
         context['timestamp'] = datetime.datetime.now(app_timezone).strftime('%m%d%Y%s')
+
+        context['BILL_STATUS_DESCRIPTIONS'] = BILL_STATUS_DESCRIPTIONS
 
         return context
 

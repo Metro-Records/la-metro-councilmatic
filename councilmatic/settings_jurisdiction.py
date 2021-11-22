@@ -233,6 +233,97 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     },
 ]
 
+BILL_STATUS_DESCRIPTIONS = {
+    'ADOPTED': {
+        'definition': 'Item was adopted by a majority vote of the Board.',
+        'search_term': 'Adopted'
+    },
+    'ADOPTED AS AMENDED': {
+        'definition': 'Item was adopted as amended by a majority vote of the Board.',
+        'search_term': 'Adopted'
+    },
+    'APPROVED': {
+        'definition': 'Item was approved by a majority vote of the Board.',
+        'search_term': 'Approved'
+    },
+    'APPROVED AS AMENDED': {
+        'definition': 'Item was approved as amended by a majority vote of the Board.',
+        'search_term': 'Approved'
+    },
+    'APPROVED ON CONSENT CALENDAR': {
+        'definition': 'Item was approved on Consent Calendar by a majority vote of the Board.',
+        'search_term': 'Approved'
+    },
+    'CARRIED OVER': {
+        'definition': 'Item was carried over to the next Committee or Regular Board Meeting.',
+        'search_term': 'Active'
+    },
+    'FAILED': {
+        'definition': 'Item failed due to insufficient votes.',
+        'search_term': 'Failed'
+    },
+    'FORWARDED DUE TO ABSENCES AND CONFLICTS': {
+        'definition': 'Item was forwarded from a Committee to the Regular Board Meeting due to absences and conflicts.',
+        'search_term': 'Active'
+    },
+    'FORWARDED WITHOUT RECOMMENDATION': {
+        'definition': 'Item was forwarded to the Regular Board Meeting without recommendation.',
+        'search_term': 'Active'
+    },
+    'RECEIVED': {
+        'definition': 'Item was received by the Committee or Board. (Oral report)',
+        'search_term': 'Received'
+    },
+    'RECEIVED AND FILED': {
+        'definition': 'Item was was received and filed by the Committee or Board.',
+        'search_term': 'Received'
+    },
+    'RECOMMENDED FOR APPROVAL': {
+        'definition': 'Committee members recommended that the item be approved by the Full Board.',
+        'search_term': 'Active'
+    },
+    'RECOMMENDED FOR APPROVAL AS AMENDED': {
+        'definition': 'Committee members recommended that the item be approved as amended by the Full Board.',
+        'search_term': 'Active'
+    },
+    'REFERRED': {
+        'definition': 'Item was referred to another Committee or Full Board.',
+        'search_term': 'Active'
+    },
+    'WITHDRAWN': {
+        'definition': 'Item was withdrawn from the agenda.',
+        'search_term': 'Withdrawn'
+    },
+    'NO ACTION TAKEN': {
+        'definition': 'No action was taken on the item.',
+        'search_term': 'Active'
+    },
+    'NOT DISCUSSED': {
+        'definition': 'Item was not discussed.',
+        'search_term': 'Active'
+    },
+    'APPROVED UNDER RECONSIDERATION': {
+        'definition': 'Item was approved when considered a 2nd time.',
+        'search_term': 'Approved'
+    },
+    'FAILED UNDER RECONSIDERATION': {
+        'definition': 'Item failed when considered a 2nd time.',
+        'search_term': 'Failed'
+    },
+    'ADOPTED UNDER RECONSIDERATION': {
+        'definition': 'Item was adopted when considered a 2nd time.',
+        'search_term': 'Adopted'
+    },
+    'APPROVED AS AMENDED UNDER RECONSIDERATION': {
+        'definition': 'Item was approved by a majority vote of the Board as amended when considered a 2nd time.',
+        'search_term': 'Approved'
+    },
+    'ADOPTED AS AMENDED UNDER RECONSIDERATION': {
+        'definition': 'Item was adopted by a majority vote of the Board as amended when considered a 2nd time.',
+        'search_term': 'Adopted'
+    },
+}
+
 
 # these keys should match committee slugs
 COMMITTEE_DESCRIPTIONS = {

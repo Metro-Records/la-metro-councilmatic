@@ -26,6 +26,7 @@ from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
     EventManager, Membership
 
 from lametro.utils import format_full_text, parse_subject
+from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -155,21 +156,9 @@ class LAMetroBill(Bill, SourcesMixin):
         return self._status(description)
 
     def _status(self, description):
-        if description:
-            if description.upper() in ['APPROVED', 'APPROVED AS AMENDED', 'APPROVED THE CONSENT CALENDAR']:
-                return 'Approved'
-            elif description.upper() in ['ADOPTED', 'ADOPTED AS AMENDED']:
-                return 'Adopted'
-            elif description.upper() in ['RECOMMENDED FOR APPROVAL', 'RECOMMENDED FOR APPROVAL AS AMENDED', 'REFERRED', 'FORWARDED DUE TO ABSENCES AND CONFLICTS', 'FORWARDED WITHOUT RECOMMENDATION', 'NO ACTION TAKEN', 'NOT DISCUSSED']:
-                return 'Active'
-            elif description.upper() in ['RECEIVED', 'RECEIVED AND FILED']:
-                return 'Received'
-            elif description.upper() == 'FAILED':
-                return 'Failed'
-            elif description.upper() == 'WITHDRAWN':
-              return 'Withdrawn'
-        else:
-            return None
+        if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
+            return BILL_STATUS_DESCRIPTIONS[description.upper()]['search_term']
+        return None
 
     # LA METRO CUSTOMIZATION
     @property
