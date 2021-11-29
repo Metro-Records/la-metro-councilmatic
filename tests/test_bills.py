@@ -14,7 +14,6 @@ from councilmatic_core.models import Bill, Event
 from lametro.models import LAMetroBill
 from lametro.utils import format_full_text, parse_subject
 
-
 # This collection of tests checks the functionality of Bill-specific views, helper functions, and relations.
 def test_bill_url(client, bill):
     '''
@@ -250,3 +249,17 @@ def test_related_bill_respects_privacy(bill):
 
     assert public_related_bill.slug in related_bills
     assert private_related_bill.slug not in related_bills
+
+
+@pytest.mark.django_db
+def test_private_bill(client, bill):
+    # test private bill (test with bill.extras.restrict_view; get 404)
+    private_bill = bill.build(
+        id='ocd-bill/{}'.format(str(uuid4())),
+        extras={'restrict_view': True}
+    )
+
+    url = reverse('bill_detail', kwargs={'slug': private_bill.slug})
+    response = client.get(url)
+    assert response.status_code == 404
+
