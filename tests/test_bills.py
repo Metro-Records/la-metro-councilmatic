@@ -15,7 +15,6 @@ from lametro.models import LAMetroBill
 from lametro.utils import format_full_text, parse_subject
 
 # This collection of tests checks the functionality of Bill-specific views, helper functions, and relations.
-@pytest.mark.django_db
 def test_bill_url(client, bill):
     '''
     This test checks that the bill detail view returns a successful response.
