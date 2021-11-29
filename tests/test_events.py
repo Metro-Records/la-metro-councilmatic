@@ -13,7 +13,7 @@ import requests
 import requests_mock
 from unittest.mock import patch
 
-from opencivicdata.legislative.models import EventDocument
+from opencivicdata.legislative.models import EventDocument, EventLocation
 from councilmatic_core.models import Bill
 
 from lametro.models import LAMetroEvent, app_timezone
@@ -415,3 +415,18 @@ def test_delete_event(event, client, admin_client):
 
     event_in_db = LAMetroEvent.objects.filter(id=e.id)
     assert not event_in_db.exists()
+
+
+# test event (event location name = TEST; get 404)
+def test_private_event(client, event, mocker):
+    private_event = event.build()
+
+    mock_location = mocker.MagicMock(spec=EventLocation)
+    mock_location.name = 'TEST'
+
+    mocker.patch('lametro.models.LAMetroEvent.location', return_value=mock_location)
+
+    url = reverse('lametro:events', args=[private_event.slug])
+    response = client.get(url)
+
+    assert response.status_code == 404

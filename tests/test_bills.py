@@ -21,7 +21,7 @@ def test_bill_url(client, bill):
     This test checks that the bill detail view returns a successful response.
     '''
     bill = bill.build()
-    url = reverse('bill_detail', kwargs={'slug': bill.slug})
+    url = reverse('lametro:bill_detail', kwargs={'slug': bill.slug})
     response = client.get(url)
 
     assert response.status_code == 200
