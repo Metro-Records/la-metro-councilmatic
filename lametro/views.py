@@ -145,11 +145,9 @@ class LAMetroEventDetail(EventDetailView):
         else:
             return self.render_to_response(self.get_context_data(url_form=url_form, pdf_form=pdf_form))
 
-    def get_object(self):
-        # Get the event with prefetched media_urls in proper order.
-        event = LAMetroEvent.objects.with_media().get(slug=self.kwargs['slug'])
-
-        return event
+    def get_queryset(self):
+        # Get the queryset with prefetched media_urls in proper order.
+        return LAMetroEvent.objects.with_media()
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
