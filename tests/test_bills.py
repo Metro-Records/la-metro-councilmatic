@@ -254,7 +254,6 @@ def test_related_bill_respects_privacy(bill):
 
 
 def test_private_bill(client, bill):
-    # test private bill (test with bill.extras.restrict_view; get 404)
     private_bill = bill.build(
         id='ocd-bill/{}'.format(str(uuid4())),
         extras={'restrict_view': True}
