@@ -417,14 +417,13 @@ def test_delete_event(event, client, admin_client):
     assert not event_in_db.exists()
 
 
-# test event (event location name = TEST; get 404)
-def test_private_event(client, event, mocker):
+def test_private_event(client, event, event_location):
+    settings.SHOW_TEST_EVENTS = False
+
+    location = event_location.build()
     private_event = event.build()
+    private_event.location = location
 
-    mock_location = mocker.MagicMock(spec=EventLocation)
-    mock_location.name = 'TEST'
-
-    mocker.patch('lametro.models.LAMetroEvent.location', return_value=mock_location)
 
     url = reverse('lametro:events', args=[private_event.slug])
     response = client.get(url)
