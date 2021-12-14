@@ -12,7 +12,7 @@ from opencivicdata.legislative.models import (
     EventRelatedEntity,
     )
 from opencivicdata.core.models import Jurisdiction, Division
-from opencivicdata.legislative.models import EventDocument, BillAction
+from opencivicdata.legislative.models import EventDocument, BillAction, EventLocation
 from councilmatic_core.models import Bill, Membership
 from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, \
     LAMetroOrganization, LAMetroSubject
@@ -339,3 +339,23 @@ def concurrent_current_meetings(event):
     construction_meeting = event.build(**construction_meeting_info)
 
     return board_meeting, construction_meeting
+
+@pytest.fixture
+@pytest.mark.django_db
+def event_location(db, jurisdiction):
+    class EventLocationFactory():
+        def build(self, **kwargs):
+            related_jurisdiction = jurisdiction
+
+            event_location_info = {
+                'name': 'TEST',
+                'jurisdiction': related_jurisdiction,
+            }
+
+            event_location_info.update(**kwargs)
+
+            event_location = EventLocation.objects.create(**event_location_info)
+
+            return event_location
+
+    return EventLocationFactory()
