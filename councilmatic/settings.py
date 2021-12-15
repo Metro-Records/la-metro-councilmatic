@@ -118,9 +118,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MERGER_BASE_URL = 'https://metro-pdf-merger.datamade.us'
-# MERGER_BASE_URL = 'http://0.0.0.0:5000'
-
 PIC_BASE_URL = 'https://pic.datamade.us/lametro/document/'
 # PIC_BASE_URL = 'http://127.0.0.1:5000/lametro/document/'
 

@@ -826,7 +826,10 @@ class Packet(models.Model):
         if merge:
             self._merge_docs()
 
-        self.url = settings.MERGER_BASE_URL + '/document/' + self.related_entity.slug
+        # MERGE_HOST contains a trailing slash
+        self.url = '{host}{slug}.pdf'.format(host=settings.MERGE_HOST,
+                                             slug=self.related_entity.slug)
+
         super().save(*args, **kwargs)
 
     def is_ready(self):
@@ -839,8 +842,16 @@ class Packet(models.Model):
         return self.ready
 
     def _merge_docs(self):
-        merge_url = settings.MERGER_BASE_URL + '/merge_pdfs/' + self.related_entity.slug
-        requests.post(merge_url, json=self.related_files)
+        data = {
+            'run_id': 'merge_{0}_{1}'.format(self.related_entity.slug, datetime.now().isoformat()),
+            'conf': {
+                'identifier': self.related_entity.slug,
+                'attachment_links': self.related_files
+            },
+            'replace_microseconds': 'false',
+        }
+
+        requests.post(settings.MERGE_ENDPOINT, json=data)
 
 
 class BillPacket(Packet):
