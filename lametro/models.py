@@ -26,6 +26,7 @@ from councilmatic_core.models import Bill, Event, Post, Person, Organization, \
     EventManager, Membership
 
 from lametro.utils import format_full_text, parse_subject
+from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -40,6 +41,20 @@ class SourcesMixin(object):
     @property
     def api_source(self):
         return self.sources.get(note='api')
+
+    @property
+    def api_representation(self):
+        response = requests.get(self.api_source.url)
+
+        if response.status_code != 200:
+            msg = 'Request to {0} resulted in non-200 status code: {1}'.format(
+                self.api_source.url, response.status_code
+            )
+            logger.warning(msg)
+            return None
+
+        else:
+            return response.json()
 
 
 class LAMetroBillManager(models.Manager):
@@ -141,21 +156,9 @@ class LAMetroBill(Bill, SourcesMixin):
         return self._status(description)
 
     def _status(self, description):
-        if description:
-            if description.upper() in ['APPROVED', 'APPROVED AS AMENDED', 'APPROVED THE CONSENT CALENDAR']:
-                return 'Approved'
-            elif description.upper() in ['ADOPTED', 'ADOPTED AS AMENDED']:
-                return 'Adopted'
-            elif description.upper() in ['RECOMMENDED FOR APPROVAL', 'RECOMMENDED FOR APPROVAL AS AMENDED', 'REFERRED', 'FORWARDED DUE TO ABSENCES AND CONFLICTS', 'FORWARDED WITHOUT RECOMMENDATION', 'NO ACTION TAKEN', 'NOT DISCUSSED']:
-                return 'Active'
-            elif description.upper() in ['RECEIVED', 'RECEIVED AND FILED']:
-                return 'Received'
-            elif description.upper() == 'FAILED':
-                return 'Failed'
-            elif description.upper() == 'WITHDRAWN':
-              return 'Withdrawn'
-        else:
-            return None
+        if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
+            return BILL_STATUS_DESCRIPTIONS[description.upper()]['search_term']
+        return None
 
     # LA METRO CUSTOMIZATION
     @property
@@ -712,6 +715,17 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         else:
             return 'Upcoming'
 
+    @property
+    def api_body_name(self):
+        '''
+        Return the name of the meeting body, as it would have appeared in the
+        API when scraped, for comparison to the current API data. This method
+        effectively undoes transformations applied in the events scraper:
+        https://github.com/opencivicdata/scrapers-us-municipal/blob/11a1532e46953eb2feec89ed6b978de0052b9fb7/lametro/events.py#L200-L211
+        '''
+        if self.name == 'Regular Board Meeting':
+            return 'Board of Directors - Regular Board Meeting'
+        return self.name
 
 class EventAgendaItem(EventAgendaItem):
 

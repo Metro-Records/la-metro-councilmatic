@@ -74,7 +74,7 @@ ANALYTICS_TRACKING_CODE = ''
 HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), '..'
                              '/lametro/static/images/')
 
-SHOW_TEST_EVENTS = True
+SHOW_TEST_EVENTS = False
 
 SMART_LOGIC_KEY = 'smartlogic api key'
 SMART_LOGIC_ENVIRONMENT = '0ef5d755-1f43-4a7e-8b06-7591bed8d453'

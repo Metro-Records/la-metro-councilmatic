@@ -53,7 +53,7 @@ from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
     LAMetroEvent, LAMetroOrganization, LAMetroSubject
 from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm
 
-from councilmatic.settings_jurisdiction import MEMBER_BIOS
+from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
 from councilmatic.settings import PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
@@ -145,11 +145,9 @@ class LAMetroEventDetail(EventDetailView):
         else:
             return self.render_to_response(self.get_context_data(url_form=url_form, pdf_form=pdf_form))
 
-    def get_object(self):
-        # Get the event with prefetched media_urls in proper order.
-        event = LAMetroEvent.objects.with_media().get(slug=self.kwargs['slug'])
-
-        return event
+    def get_queryset(self):
+        # Get the queryset with prefetched media_urls in proper order.
+        return LAMetroEvent.objects.with_media()
 
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
@@ -160,9 +158,16 @@ class LAMetroEventDetail(EventDetailView):
         if self.request.user.is_authenticated:
             r = requests.get('https://metro.legistar.com/calendar.aspx')
             context['legistar_ok'] = r.ok
+
             # GET the event URL; allow admin to delete event if 404
-            response = requests.get(event.api_source.url)
-            context['event_ok'] = response.ok
+            # or if event name has changed
+            # https://github.com/datamade/la-metro-councilmatic/issues/692#issuecomment-934648716
+            api_rep = event.api_representation
+
+            if api_rep:
+                context['event_ok'] = event.api_body_name == api_rep['EventBodyName']
+            else:
+                context['event_ok'] = False
 
         try:
             context['minutes'] = event.documents.get(note__icontains='minutes')
@@ -469,6 +474,8 @@ class LAMetroAboutView(AboutView):
         context = super().get_context_data(**kwargs)
 
         context['timestamp'] = datetime.datetime.now(app_timezone).strftime('%m%d%Y%s')
+
+        context['BILL_STATUS_DESCRIPTIONS'] = BILL_STATUS_DESCRIPTIONS
 
         return context
 

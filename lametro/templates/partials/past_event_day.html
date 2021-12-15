@@ -55,18 +55,15 @@
 
     {% if event.start_time|compare_time %}
     <div class="col-xs-1">
-        {% if 'board meeting' in event.name|lower or 'la safe' in event.name|lower %}
-        <p>
-            <a href="http://boardarchives.metro.net/recaps/" target="_blank">Recap</a>
-            </br>
-        </p>
-        {% endif %}
-    </div>
-    <div class="col-xs-1">
         {% with minutes=event.minutes.0.links.all.0.url %}
             {% if minutes %}
             <p>
                 <a href="{{ minutes }}">Minutes</a>
+            </p>
+            {% elif 'board meeting' in event.name|lower or 'la safe' in event.name|lower %}
+            <p>
+                <a href="http://boardarchives.metro.net/recaps/" target="_blank">Recap</a>
+                </br>
             </p>
             {% endif %}
         {% endwith %}
