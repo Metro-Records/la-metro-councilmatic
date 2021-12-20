@@ -731,6 +731,9 @@ class LAMetroArchiveSearch(TemplateView):
     template_name = 'lametro/archive_search.html'
 
 
+class LAMetroContactView(IndexView):
+    template_name = 'lametro/contact.html'
+
 def metro_login(request):
     logout(request)
     if request.method == 'POST':
