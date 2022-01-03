@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - deploy
+      - hcg/ci-update
 
 jobs:
   publish:
@@ -17,8 +18,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create tag from branch
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/${{ github.repository }}
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ env.GITHUB_REF_NAME }}
+          tags: ${{ steps.meta.outputs.tags }}
