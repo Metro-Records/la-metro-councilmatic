@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   app:
-    image: lametro:upgrade
+    image: ghcr.io/datamade/la-metro-councilmatic:master
     container_name: lametro
     restart: always
     build: .
