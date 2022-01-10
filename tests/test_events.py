@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.urls import reverse
 from freezegun import freeze_time
@@ -430,3 +431,18 @@ def test_private_event(client, event, event_location):
     response = client.get(url)
 
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_meeting_stream_link_unavailable(mocker):
+    '''
+    Check that an empty queryset is returned if external site for retrieving meeting stream links is unavailable.
+    '''
+    mock_response = mocker.MagicMock(spec=requests.Response)
+    mock_response.status_code = 404
+    mocker.patch('lametro.models.requests.get')
+
+    current_meeting = LAMetroEvent.current_meeting()
+
+    assert isinstance(current_meeting, QuerySet)
+    assert len(current_meeting) == 0
