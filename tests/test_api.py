@@ -40,6 +40,7 @@ def test_public_comment_endpoint_one_meeting(concurrent_current_meetings, mocker
     # Patch running events endpoint to return our dummy GUID.
     mock_response = mocker.MagicMock(spec=requests.Response)
     mock_response.json.return_value = [dummy_guid]  # GUIDs in running events endpoint are all lowercase.
+    mock_response.status_code = 200
 
     mocker.patch('lametro.models.requests.get', return_value=mock_response)
 
