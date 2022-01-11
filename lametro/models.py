@@ -552,21 +552,26 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         Hit the endpoint, and return the corresponding meeting, or an empty
         queryset.
         '''
-        running_events = requests.get('http://metro.granicus.com/running_events.php')
 
-        for guid in running_events.json():
-            # We get back two GUIDs, but we won't know which is the English
-            # audio GUID stored in the 'guid' field of the extras dict. Thus,
-            # we iterate.
-            #
-            # Note that our stored GUIDs are all uppercase, because they come
-            # that way from the Legistar API. The running events endpoint
-            # returns all-lowercase GUIDs, so we need to uppercase them for
-            # comparison.
-            meeting = cls.objects.filter(extras__guid=guid.upper())
+        try:
+            running_events = requests.get('http://metro.granicus.com/running_events.php', timeout=5)
+        except requests.exceptions.ConnectTimeout:
+            return cls.objects.none()
 
-            if meeting:
-                return meeting
+        if running_events.status_code == 200:
+            for guid in running_events.json():
+                # We get back two GUIDs, but we won't know which is the English
+                # audio GUID stored in the 'guid' field of the extras dict. Thus,
+                # we iterate.
+                #
+                # Note that our stored GUIDs are all uppercase, because they come
+                # that way from the Legistar API. The running events endpoint
+                # returns all-lowercase GUIDs, so we need to uppercase them for
+                # comparison.
+                meeting = cls.objects.filter(extras__guid=guid.upper())
+
+                if meeting:
+                    return meeting
 
         return cls.objects.none()
 
