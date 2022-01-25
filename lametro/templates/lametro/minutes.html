@@ -1,0 +1,20 @@
+{% extends "base_with_margins.html" %}
+{% load staticfiles %}
+{% block title %}Minutes{% endblock %}
+
+{% block content %}
+  {% include 'partials/banner.html' %}
+  <div class="row-fluid">
+    <div class="col-sm-9 no-pad-mobile">
+      <br/><br class="non-mobile-only"/>
+      <div id="events-form" class="row">
+        <div class="col-xs-8">
+        	<h2><span>Minutes</span></h2>
+					{% for e in historical_events %}
+					<p>{{ e.agenda_link }}</p>
+					{% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

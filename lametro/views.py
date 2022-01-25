@@ -58,6 +58,8 @@ from councilmatic.settings import PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
 
+from .utils import get_list_from_csv
+
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 class LAMetroIndexView(IndexView):
@@ -733,6 +735,18 @@ class LAMetroArchiveSearch(TemplateView):
 
 class LAMetroContactView(IndexView):
     template_name = 'lametro/contact.html'
+
+
+class MinutesView(EventsView):
+    template_name = 'lametro/minutes.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['historical_events'] = get_list_from_csv('historical_events.csv')
+        # import pdb
+        # pdb.set_trace()
+        return context
+
 
 def metro_login(request):
     logout(request)
