@@ -9,7 +9,6 @@ from lxml.etree import tostring
 
 from django.conf import settings
 from django.utils import timezone
-from django.utils.text import slugify
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
