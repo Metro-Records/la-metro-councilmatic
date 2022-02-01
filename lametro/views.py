@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil import parser
 import requests
 import sqlalchemy as sa
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import os
 
 from haystack.backends.solr_backend import SolrSearchQuery
@@ -742,9 +742,20 @@ class MinutesView(EventsView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['historical_events'] = get_list_from_csv('historical_events.csv')
-        # import pdb
-        # pdb.set_trace()
+
+        csv_events = get_list_from_csv('historical_events.csv')
+        events_dicts = [dict(e) for e in csv_events]
+
+        groups = {}
+        for obj in events_dicts:
+            if obj['date'] not in groups.keys():
+                groups[obj['date']] = []
+            # change date to datetime
+            # if line break in agenda_items or minutes_link, break up
+            groups[obj['date']].append(obj)
+
+        context['historical_events'] = groups
+
         return context
 
 

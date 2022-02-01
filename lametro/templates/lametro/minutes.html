@@ -9,12 +9,24 @@
       <br/><br class="non-mobile-only"/>
       <div id="events-form" class="row">
         <div class="col-xs-8">
-        	<h2><span>Minutes</span></h2>
-					{% for e in historical_events %}
-					<p>{{ e.agenda_link }}</p>
-					{% endfor %}
+            <h2><span>Minutes</span></h2>
+              {% for date_group, events in historical_events.items %}
+              <h5 class="text-default">
+                <i class="fa fa-fw fa-calendar-o"></i> {{ date_group | date:"D m/d/Y"}}
+                <div class="divider"></div>
+              </h5>
+              {% for e in events %}
+                {% include 'partials/minutes_item.html' %}
+              {% endfor %}
+            {% endfor %}
         </div>
       </div>
     </div>
   </div>
 {% endblock %}
+
+{% if forloop.last %}
+<div class="row" style="margin-bottom: 30px;">
+{% else %}
+<div class="row">
+{% endif %}

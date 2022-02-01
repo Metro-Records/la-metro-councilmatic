@@ -1,0 +1,14 @@
+<div class="row">
+  <br/>
+  <div class="col-xs-4">
+      <span class="desktop-only text-muted">
+        {{e.meeting}}<br />
+      </span>
+  </div>
+  <div class="col-xs-4">
+    {% if e.agenda_link %}<p><a href="{{ e.agenda_link | safe }}">Agenda</a><br/></p>{% endif %}
+  </div>
+  <div class="col-xs-4">
+    {% if e.minutes_link %}<p><a href="{{ e.minutes_link | safe }}">Minutes</a><br/></p>{% endif %}
+  </div>
+</div>
