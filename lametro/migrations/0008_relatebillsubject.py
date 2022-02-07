@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lametro', '0006_add_plan_program_policy'),
+        ('lametro', '0007_update_packet_links'),
     ]
 
     operations = [

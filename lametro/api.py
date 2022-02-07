@@ -2,11 +2,13 @@ import json
 
 from django.conf import settings
 from django.core import management
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, RedirectView
 
 from haystack.query import SearchQuerySet
+from requests.exceptions import HTTPError
 
 from lametro.models import LAMetroBill, LAMetroEvent, LAMetroSubject
 from smartlogic.views import SmartLogicAPI
@@ -46,6 +48,11 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
         self.kwargs['endpoint'] = 'concepts'
 
         qs = super().get_queryset(*args, **kwargs)
+
+        if qs.get('status', 'ok') == 'error':
+            if 400 <= qs['status_code'] <= 500:
+                raise PermissionDenied
+            raise HTTPError(qs['reason'])
 
         action = self.kwargs.get('action', 'suggest')
 

@@ -10,8 +10,7 @@ class SmartLogic(object):
 
     def __init__(self, api_key, authorization=None):
         self.api_key = api_key
-        self._authorization = authorization if authorization \
-            else 'Bearer {}'.format(self.token()['access_token'])
+        self._authorization = authorization
 
     @property
     def auth_headers(self):
@@ -31,7 +30,12 @@ class SmartLogic(object):
         try:
             return response.json()
         except json.JSONDecodeError:
-            return {'response': response.content.decode('utf-8')}
+            return {
+                'response': response.content.decode('utf-8'),
+                'status_code': response.status_code,
+                'status': 'error',
+                'reason': getattr(response, 'reason', 'No reason provided'),
+            }
 
     def token(self):
         data = {'grant_type': 'apikey', 'key': self.api_key}

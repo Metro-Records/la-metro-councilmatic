@@ -85,6 +85,9 @@ class ClassificationMixin:
     def smartlogic(self):
         if not hasattr(self, '_smartlogic'):
             self._smartlogic = SmartLogic(settings.SMART_LOGIC_KEY)
+            self._smartlogic._authorization = 'Bearer {}'.format(
+                self._smartlogic.token()['access_token']
+            )
         return self._smartlogic
 
     @property
@@ -139,7 +142,7 @@ class Command(BaseCommand, ClassificationMixin):
             LAMetroSubject(name=s, classification=self.DEFAULT_FACET) for s in current_topics
         ], ignore_conflicts=True)
 
-        with connection.cursor():
+        with connection.cursor() as cursor:
             # Create new LAMetroSubject-Bill relationships, ignoring conflicts
             # from relationships that already exist
             cursor.execute('''
