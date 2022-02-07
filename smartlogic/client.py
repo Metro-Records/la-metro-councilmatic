@@ -23,7 +23,9 @@ class SmartLogic(object):
         }
 
     def endpoint(self, method, route, **requests_kwargs):
-        if not self._authorization:
+        # Token requests are unauthenticated. Otherwise, short circuit if
+        # authorization is not provided.
+        if route != 'token' and not self._authorization:
             raise RequestNotAuthenticated
 
         url = self.BASE_URL + route
