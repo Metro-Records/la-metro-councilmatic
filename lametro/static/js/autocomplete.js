@@ -23,7 +23,7 @@ var SmartLogic = {
     var stop = query.stop_cm_after_stage ? query.stop_cm_after_stage : '3';
     var maxResults = query.maxResultCount ? query.maxResultCount : '10';
 
-    return '/smartlogic/concepts/' + query.term + '/' + action
+    return '/smartlogic/concepts/' + encodeURIComponent(query.term) + '/' + action
         + '?stop_cm_after_stage=' + stop
         + '&maxResultCount=' + maxResults
         + '&FILTER=AT=System:%20Legistar';
