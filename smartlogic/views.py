@@ -3,8 +3,10 @@ import json
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.generic import ListView
+from requests.exceptions import HTTPError, ConnectTimeout
 
 from smartlogic.client import SmartLogic
+from smartlogic.exceptions import ResponseNotSerializable
 
 
 class SmartLogicAPI(ListView):
@@ -25,6 +27,36 @@ class SmartLogicAPI(ListView):
             settings.SMART_LOGIC_KEY,
             authorization=self.request.headers.get('Authorization', None)
         )
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+
+        except HTTPError as e:
+            message = 'Could not reach SmartLogic'
+            reason = e.response.reason
+            status_code = e.response.status_code
+
+        except ConnectTimeout:
+            message = 'Could not reach SmartLogic'
+            reason = 'Read timeout'
+            status_code = 504
+
+        except ResponseNotSerializable as e:
+            message = e.message
+            reason = e.reason
+            status_code = e.status_code
+
+        except Exception as e:
+            message = 'Unanticipated error'
+            reason = str(e)
+            status_code = 500
+
+        return JsonResponse({
+            'status': 'error',
+            'message': message,
+            'reason': reason
+        }, status=status_code)
 
     def render_to_response(self, context):
         '''

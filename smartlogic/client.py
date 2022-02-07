@@ -1,7 +1,9 @@
 import json
 
 import requests
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, ConnectTimeout
+
+from smartlogic.exceptions import ResponseNotSerializable
 
 
 class SmartLogic(object):
@@ -23,19 +25,15 @@ class SmartLogic(object):
         url = self.BASE_URL + route
 
         try:
-            response = getattr(requests, method)(url, **requests_kwargs)
-        except HTTPError as e:
+            response = getattr(requests, method)(url, timeout=5, **requests_kwargs)
+        except (HTTPError, ConnectTimeout) as e:
             raise
 
         try:
             return response.json()
         except json.JSONDecodeError:
-            return {
-                'response': response.content.decode('utf-8'),
-                'status_code': response.status_code,
-                'status': 'error',
-                'reason': getattr(response, 'reason', 'No reason provided'),
-            }
+            response.status_code = response.status_code if response.status_code != 200 else 500
+            raise ResponseNotSerializable(response=response)
 
     def token(self):
         data = {'grant_type': 'apikey', 'key': self.api_key}
