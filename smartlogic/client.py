@@ -3,7 +3,8 @@ import json
 import requests
 from requests.exceptions import HTTPError, ConnectTimeout
 
-from smartlogic.exceptions import ResponseNotSerializable
+from smartlogic.exceptions import RequestNotAuthenticated, AuthenticationFailed, \
+    ResponseNotSerializable
 
 
 class SmartLogic(object):
@@ -22,6 +23,9 @@ class SmartLogic(object):
         }
 
     def endpoint(self, method, route, **requests_kwargs):
+        if not self._authorization:
+            raise RequestNotAuthenticated
+
         url = self.BASE_URL + route
 
         try:
@@ -29,10 +33,14 @@ class SmartLogic(object):
         except (HTTPError, ConnectTimeout) as e:
             raise
 
+        if response.status_code == 403:
+            raise AuthenticationFailed
+
         try:
             return response.json()
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
             response.status_code = response.status_code if response.status_code != 200 else 500
+            response.reason = str(e)
             raise ResponseNotSerializable(response=response)
 
     def token(self):

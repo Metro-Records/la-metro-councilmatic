@@ -1,6 +1,18 @@
 import json
 
 
+class RequestNotAuthenticated(Exception):
+
+    def __init__(self):
+        self.message = 'Request missing authentication'
+        self.status_code = 401
+
+class AuthenticationFailed(Exception):
+
+    def __init__(self):
+        self.message = 'Provided authentication is invalid'
+        self.status_code = 403
+
 class ResponseNotSerializable(Exception):
 
     def __init__(self, response):

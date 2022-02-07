@@ -6,8 +6,8 @@ from django.views.generic import ListView
 from requests.exceptions import HTTPError, ConnectTimeout
 
 from smartlogic.client import SmartLogic
-from smartlogic.exceptions import ResponseNotSerializable
-
+from smartlogic.exceptions import RequestNotAuthenticated, AuthenticationFailed, \
+    ResponseNotSerializable
 
 class SmartLogicAPI(ListView):
 
@@ -42,9 +42,9 @@ class SmartLogicAPI(ListView):
             reason = 'Read timeout'
             status_code = 504
 
-        except ResponseNotSerializable as e:
+        except (RequestNotAuthenticated, AuthenticationFailed, ResponseNotSerializable) as e:
             message = e.message
-            reason = e.reason
+            reason = getattr(e, 'reason', '')
             status_code = e.status_code
 
         except Exception as e:
