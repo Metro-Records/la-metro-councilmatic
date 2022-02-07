@@ -9,7 +9,7 @@ var SmartLogic = {
 
     if ( (tokenNeeded || tokenExpired) ) {
       return $.get(
-        '/ses-token/'
+        '/smartlogic/token/'
       ).then(function(response) {
           window.localStorage.setItem('ses_token', response.access_token);
           window.localStorage.setItem('ses_issued', Date.now());
