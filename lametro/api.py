@@ -112,10 +112,11 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
         return self.filter_concepts(relations)
 
     def filter_concepts(self, concepts):
+        result_count = int(self.request.GET.get('maxResultCount', 10))
         guids = list(concepts.keys())
         subjects = list(LAMetroSubject.objects.filter(guid__in=guids, bill_count__gt=0)\
                                               .order_by('-bill_count')\
-                                              .values('name', 'guid'))
+                                              .values('name', 'guid'))[:result_count]
 
         for subject in subjects:
             subject['display_name'] = subject['name'] + \
