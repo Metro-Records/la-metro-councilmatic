@@ -139,7 +139,8 @@ class Command(BaseCommand, ClassificationMixin):
         # unique on name. Ignore conflicts so we can bulk create instances
         # without querying for or introducing duplicates.
         LAMetroSubject.objects.bulk_create([
-            LAMetroSubject(name=s, classification=self.DEFAULT_FACET) for s in current_topics
+            LAMetroSubject(name=s, classification=self.DEFAULT_FACET, bill_count=0)
+            for s in current_topics
         ], ignore_conflicts=True)
 
         with connection.cursor() as cursor:
