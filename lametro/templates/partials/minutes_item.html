@@ -20,7 +20,7 @@
   </div>
   <div class="col-xs-4">
     {% for link in e.minutes_link %}
-      <p><a href="{{ e.minutes_link | safe }}">Minutes {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a><br/></p>
+      <p><a href="{{ link | safe }}">Minutes {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a><br/></p>
     {% endfor %}
   </div>
 </div>

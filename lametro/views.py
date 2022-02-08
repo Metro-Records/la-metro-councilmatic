@@ -796,9 +796,9 @@ class MinutesView(EventsView):
         day_grouper = lambda x: x['start_time']
         for event_date, events in itertools.groupby(all_minutes, key=day_grouper):
             events = sorted(events, key=day_grouper)
-            org_all_events.append([event_date, events])
+            org_all_minutes.append([event_date, events])
 
-        context['all_minutes'] = org_all_events
+        context['all_minutes'] = org_all_minutes
 
         return context
 
