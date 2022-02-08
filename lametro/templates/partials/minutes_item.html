@@ -1,13 +1,12 @@
-{% if not forloop.first %}
-  <hr class="events-line"/>
-{% endif %}
-
 {% if forloop.last %}
 <div class="row" style="margin-bottom: 30px;">
 {% else %}
 <div class="row">
 {% endif %}
 
+  {% if not forloop.first %}
+    <hr class="events-line"/>
+  {% endif %}
   <br/>
   <div class="col-xs-4">
     <span class="desktop-only text-muted">

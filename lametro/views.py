@@ -745,15 +745,28 @@ class MinutesView(EventsView):
 
         csv_events = get_list_from_csv('historical_events.csv')
         events_dicts = [dict(e) for e in csv_events]
-
         for obj in events_dicts:
             obj['start_time'] = datetime.datetime.strptime(obj['date'], '%Y-%m-%d')
             obj['agenda_link'] = obj['agenda_link'].split('\n')
             obj['minutes_link'] = obj['minutes_link'].split('\n')
 
-        stored_events = LAMetroEvent.objects.with_media()\
-                            .filter(start_time__lt=timezone.now())\
-                            .order_by('start_time')\
+
+        start_date_str = self.request.GET.get('minutes-from')
+        end_date_str = self.request.GET.get('minutes-to')
+        if end_date_str:
+            context['end_date'] = end_date_str
+            end_date_time = parser.parse(end_date_str)
+            stored_events = LAMetroEvent.objects.with_media()\
+                                                .filter(start_time__lt=end_date_time)
+        else:
+            stored_events = LAMetroEvent.objects.with_media()\
+                                                .filter(start_time__lt=timezone.now())\
+                                                .order_by('start_time')
+        if start_date_str:
+            context['start_date'] = start_date_str
+            start_date_time = parser.parse(start_date_str)
+            stored_events = stored_events.filter(start_time__gt=start_date_time)\
+                                                .order_by('start_time')
 
         db_events = []
         for event in stored_events:
@@ -777,15 +790,15 @@ class MinutesView(EventsView):
 
             db_events.append(stored_events_dict)
 
-        all_events = events_dicts + db_events
+        all_minutes = events_dicts + db_events
 
-        org_all_events = []
+        org_all_minutes = []
         day_grouper = lambda x: x['start_time']
-        for event_date, events in itertools.groupby(all_events, key=day_grouper):
+        for event_date, events in itertools.groupby(all_minutes, key=day_grouper):
             events = sorted(events, key=day_grouper)
             org_all_events.append([event_date, events])
 
-        context['all_events'] = org_all_events
+        context['all_minutes'] = org_all_events
 
         return context
 
