@@ -8,18 +8,16 @@
     <div class="col-sm-9 no-pad-mobile">
       <br/><br class="non-mobile-only"/>
       <div id="events-form" class="row">
-        <div class="col-xs-8">
-            <h2><span>Minutes</span></h2>
-              {% for date_group, events in historical_events.items %}
-              <h5 class="text-default">
-                <i class="fa fa-fw fa-calendar-o"></i> {{ date_group | date:"D m/d/Y"}}
-                <div class="divider"></div>
-              </h5>
-              {% for e in events %}
-                {% include 'partials/minutes_item.html' %}
-              {% endfor %}
-            {% endfor %}
-        </div>
+        <h2><span>Minutes</span></h2>
+          {% for date, event_list in all_events %}
+          <h5 class="text-default">
+            <i class="fa fa-fw fa-calendar-o"></i> {{ date | date:"D m/d/Y"}}
+            <div class="divider"></div>
+          </h5>
+          {% for e in event_list %}
+            {% include 'partials/minutes_item.html' %}
+          {% endfor %}
+        {% endfor %}
       </div>
     </div>
   </div>

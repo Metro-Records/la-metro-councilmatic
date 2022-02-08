@@ -368,6 +368,7 @@ class LAMetroEventsView(EventsView):
 
         return context
 
+
 class LABoardMembersView(CouncilMembersView):
     template_name = 'lametro/board_members.html'
 
@@ -509,7 +510,6 @@ class LACommitteesView(CommitteesView):
                                           to_attr='current_members'))
 
         return qs
-
 
 
 class LACommitteeDetailView(CommitteeDetailView):
@@ -746,15 +746,47 @@ class MinutesView(EventsView):
         csv_events = get_list_from_csv('historical_events.csv')
         events_dicts = [dict(e) for e in csv_events]
 
-        groups = {}
         for obj in events_dicts:
-            if obj['date'] not in groups.keys():
-                groups[obj['date']] = []
-            # change date to datetime
-            # if line break in agenda_items or minutes_link, break up
-            groups[obj['date']].append(obj)
+            obj['start_time'] = datetime.datetime.strptime(obj['date'], '%Y-%m-%d')
+            obj['agenda_link'] = obj['agenda_link'].split('\n')
 
-        context['historical_events'] = groups
+        stored_events = LAMetroEvent.objects.with_media()\
+                            .filter(start_time__lt=timezone.now())\
+                            .order_by('start_time')\
+
+        db_events = []
+        for event in stored_events:
+            stored_events_dict = {
+                'start_time': event.start_time,
+                'meeting': event.name,
+                'minutes_link': [],
+                'agenda_link': [],
+            }
+            try:
+                minutes_link = event.documents.get(note__icontains='minutes').links.first().url
+                stored_events_dict['minutes_link'].append(minutes_link)
+            except EventDocument.DoesNotExist:
+                pass
+
+            try:
+                agenda_link = event.documents.get(note__icontains='agenda').links.first().url
+                stored_events_dict['agenda_link'].append(agenda_link)
+            except EventDocument.DoesNotExist:
+                pass
+
+            db_events.append(stored_events_dict)
+
+        # import pdb
+        # pdb.set_trace()
+        all_events = events_dicts + db_events
+
+        org_all_events = []
+        day_grouper = lambda x: x['start_time']
+        for event_date, events in itertools.groupby(all_events, key=day_grouper):
+            events = sorted(events, key=day_grouper)
+            org_all_events.append([event_date, events])
+
+        context['all_events'] = org_all_events
 
         return context
 
