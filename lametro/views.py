@@ -749,6 +749,7 @@ class MinutesView(EventsView):
         for obj in events_dicts:
             obj['start_time'] = datetime.datetime.strptime(obj['date'], '%Y-%m-%d')
             obj['agenda_link'] = obj['agenda_link'].split('\n')
+            obj['minutes_link'] = obj['minutes_link'].split('\n')
 
         stored_events = LAMetroEvent.objects.with_media()\
                             .filter(start_time__lt=timezone.now())\
@@ -776,8 +777,6 @@ class MinutesView(EventsView):
 
             db_events.append(stored_events_dict)
 
-        # import pdb
-        # pdb.set_trace()
         all_events = events_dicts + db_events
 
         org_all_events = []

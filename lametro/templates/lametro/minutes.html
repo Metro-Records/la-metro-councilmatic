@@ -9,7 +9,8 @@
       <br/><br class="non-mobile-only"/>
       <div id="events-form" class="row">
         <h2><span>Minutes</span></h2>
-          {% for date, event_list in all_events %}
+        {% for date, event_list in all_events %}
+        <div class="minutes-listing">
           <h5 class="text-default">
             <i class="fa fa-fw fa-calendar-o"></i> {{ date | date:"D m/d/Y"}}
             <div class="divider"></div>
@@ -17,7 +18,10 @@
           {% for e in event_list %}
             {% include 'partials/minutes_item.html' %}
           {% endfor %}
+        </div>
         {% endfor %}
+        <a href="" class="btn btn-salmon" id="more-minutes"><i class="fa fa-fw fa-chevron-down"></i>Show all minutes</a>
+        <a href="" class="btn btn-salmon" id="fewer-minutes"><i class="fa fa-fw fa-chevron-up"></i>Show fewer minutes</a>
       </div>
     </div>
   </div>
@@ -28,3 +32,37 @@
 {% else %}
 <div class="row">
 {% endif %}
+
+
+{% block extra_js %}
+  <script>
+    $(document).ready(function() {
+
+      // $('#from').datepicker();
+      // $('#to').datepicker();
+
+      function collapseMinutes(e){
+        $(".minutes-listing:gt(10)").hide();
+        $("#more-minutes").show();
+        $("#fewer-minutes").hide();
+      }
+      function expandMinutes(e){
+        $(".minutes-listing:gt(10)").show();
+        $("#more-minutes").hide();
+        $("#fewer-minutes").show();
+      }
+
+      collapseMinutes();
+
+      $("#more-minutes").click(function() {
+          expandMinutes();
+          return false
+      });
+
+      $("#fewer-minutes").click(function() {
+          collapseMinutes();
+          return false
+      });
+    });
+  </script>
+{% endblock %}

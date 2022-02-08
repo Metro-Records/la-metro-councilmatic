@@ -1,5 +1,3 @@
-
-
 {% if not forloop.first %}
   <hr class="events-line"/>
 {% endif %}
@@ -10,39 +8,20 @@
 <div class="row">
 {% endif %}
 
-{% if e.meeting %}
   <br/>
   <div class="col-xs-4">
-      <span class="desktop-only text-muted">
-        {{e.meeting}}<br />
-      </span>
+    <span class="desktop-only text-muted">
+      {{e.meeting}}<br />
+    </span>
   </div>
-    <div class="col-xs-4">
+  <div class="col-xs-4">
     {% for link in e.agenda_link %}
       <p><a href="{{ link | safe }}">Agenda {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a><br/></p>
     {% endfor %}
   </div>
   <div class="col-xs-4">
-    {% if e.minutes_link %}<p><a href="{{ e.minutes_link | safe }}">Minutes</a><br/></p>{% endif %}
-  </div>
-{% else %}
-  <br/>
-  <div class="col-xs-4">
-      <span class="desktop-only text-muted">
-        {{e.name}}<br />
-      </span>
-  </div>
-  {{ e }}
-  {% for link in e.agenda_link %}
-    <div class="col-xs-4">
-      <p><a href="{{ link | safe }}">Agenda</a><br/></p>
-      {{ link }}
-    </div>
-  {% endfor %}
-  {% for link in e.minutes_link %}
-    <div class="col-xs-4">
+    {% for link in e.minutes_link %}
       <p><a href="{{ e.minutes_link | safe }}">Minutes {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a><br/></p>
-    </div>
-  {% endfor %}
-{% endif %}
+    {% endfor %}
+  </div>
 </div>
