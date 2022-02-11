@@ -132,7 +132,8 @@ def event(db, jurisdiction):
 
             event = LAMetroEvent.objects.create(**event_info)
 
-            return event
+            # Get event from queryset so it has the start_time annotation from the manager
+            return LAMetroEvent.objects.get(id=event.id)
 
     return EventFactory()
 
@@ -359,3 +360,13 @@ def event_location(db, jurisdiction):
             return event_location
 
     return EventLocationFactory()
+
+
+@pytest.fixture
+def mocked_streaming_meeting(mocker):
+    mock_response = mocker.MagicMock(spec=requests.Response)
+    mock_response.status_code = 200
+
+    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+
+    return mock_response
