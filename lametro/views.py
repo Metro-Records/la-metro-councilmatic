@@ -750,14 +750,21 @@ class MinutesView(EventsView):
             obj['agenda_link'] = obj['agenda_link'].split('\n')
             obj['minutes_link'] = obj['minutes_link'].split('\n')
 
+        start_date_str = None
+        end_date_str = None
+        if 'minutes_from' in self.request.GET.keys():
+            start_date_str = self.request.GET.get('minutes-from')
+            start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
+        if 'minutes-to' in self.request.GET.keys():
+            end_date_str = self.request.GET.get('minutes-to')
+            end_datetime = datetime.datetime.strptime(end_date_str, '%m/%d/%Y')
 
-        start_date_str = self.request.GET.get('minutes-from')
-        end_date_str = self.request.GET.get('minutes-to')
         if end_date_str:
             context['end_date'] = end_date_str
             end_date_time = parser.parse(end_date_str)
             stored_events = LAMetroEvent.objects.with_media()\
-                                                .filter(start_time__lt=end_date_time)
+                                                .filter(start_time__lt=end_date_time)\
+                                                .order_by('start_time')
         else:
             stored_events = LAMetroEvent.objects.with_media()\
                                                 .filter(start_time__lt=timezone.now())\
@@ -768,7 +775,8 @@ class MinutesView(EventsView):
             stored_events = stored_events.filter(start_time__gt=start_date_time)\
                                                 .order_by('start_time')
 
-        db_events = []
+        # filter db events based on start and end dates
+        filtered_db_events = []
         for event in stored_events:
             stored_events_dict = {
                 'start_time': event.start_time,
@@ -788,17 +796,35 @@ class MinutesView(EventsView):
             except EventDocument.DoesNotExist:
                 pass
 
-            db_events.append(stored_events_dict)
+            filtered_db_events.append(stored_events_dict)
 
-        all_minutes = events_dicts + db_events
+        # filter events from csv based on start and end dates
+        filtered_historical_events = []
+        if start_date_str or end_date_str:
+            for e in events_dicts:
+                e_datetime = datetime.datetime.strptime(e['date'], '%Y-%m-%d')
+                if start_datetime and end_datetime:
+                    if e_datetime >= start_datetime and e_datetime <= end_datetime:
+                        filtered_historical_events.append(e)
+                elif start_datetime:
+                    if e_datetime >= start_datetime:
+                        filtered_historical_events.append(e)
+                elif e_datetime <= end_datetime:
+                    filtered_historical_events.append(e)
+        else:
+            filtered_historical_events = events_dicts
 
-        org_all_minutes = []
+        all_minutes = filtered_historical_events + filtered_db_events
+
+        all_minutes_grouped = []
         day_grouper = lambda x: x['start_time']
         for event_date, events in itertools.groupby(all_minutes, key=day_grouper):
             events = sorted(events, key=day_grouper)
-            org_all_minutes.append([event_date, events])
+            all_minutes_grouped.append([event_date, events])
 
-        context['all_minutes'] = org_all_minutes
+        import pdb
+        pdb.set_trace()
+        context['all_minutes'] = all_minutes_grouped
 
         return context
 
