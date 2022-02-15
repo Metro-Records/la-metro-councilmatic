@@ -817,7 +817,7 @@ class MinutesView(EventsView):
 
         # sort and group csv and db events together
         all_minutes = filtered_historical_events + filtered_db_events
-        all_minutes_sorted = sorted(all_minutes, key=lambda x: x['start_time'])
+        all_minutes_sorted = sorted(all_minutes, key=lambda x: x['start_time'], reverse=True)
 
         all_minutes_grouped = []
         day_grouper = lambda x: x['start_time']
