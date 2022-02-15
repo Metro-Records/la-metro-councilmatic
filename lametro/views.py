@@ -818,9 +818,6 @@ class MinutesView(EventsView):
         all_minutes = filtered_historical_events + filtered_db_events
         all_minutes_sorted = sorted(all_minutes, key=lambda x: x['start_time'])
 
-        import pdb
-        pdb.set_trace()
-
         all_minutes_grouped = []
         day_grouper = lambda x: x['start_time']
         for event_date, events in itertools.groupby(all_minutes_sorted, key=day_grouper):
