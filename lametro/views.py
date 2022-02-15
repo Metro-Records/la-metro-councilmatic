@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil import parser
 import requests
 import sqlalchemy as sa
-from collections import namedtuple, defaultdict
+from collections import namedtuple
 import os
 
 from haystack.backends.solr_backend import SolrSearchQuery
@@ -743,23 +743,16 @@ class MinutesView(EventsView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        csv_events = get_list_from_csv('historical_events.csv')
-        events_dicts = [dict(e) for e in csv_events]
-        for obj in events_dicts:
-            obj['start_time'] = timezone.make_aware(datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
-            obj['agenda_link'] = obj['agenda_link'].split('\n')
-            obj['minutes_link'] = obj['minutes_link'].split('\n')
-
-
         start_date_str = None
         end_date_str = None
-        if 'minutes_from' in self.request.GET.keys():
+        if 'minutes-from' in self.request.GET.keys():
             start_date_str = self.request.GET.get('minutes-from')
             start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
         if 'minutes-to' in self.request.GET.keys():
             end_date_str = self.request.GET.get('minutes-to')
             end_datetime = datetime.datetime.strptime(end_date_str, '%m/%d/%Y')
 
+        # filter db events based on start and end dates
         if end_date_str:
             context['end_date'] = end_date_str
             end_date_time = parser.parse(end_date_str)
@@ -776,7 +769,6 @@ class MinutesView(EventsView):
             stored_events = stored_events.filter(start_time__gt=start_date_time)\
                                                 .order_by('start_time')
 
-        # filter db events based on start and end dates
         filtered_db_events = []
         for event in stored_events:
             stored_events_dict = {
@@ -800,21 +792,30 @@ class MinutesView(EventsView):
             filtered_db_events.append(stored_events_dict)
 
         # filter events from csv based on start and end dates
+        csv_events = get_list_from_csv('historical_events.csv')
+        events_dicts = [dict(e) for e in csv_events]
+        for obj in events_dicts:
+            obj['start_time'] = timezone.make_aware(datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
+            obj['agenda_link'] = obj['agenda_link'].split('\n')
+            obj['minutes_link'] = obj['minutes_link'].split('\n')
+
         filtered_historical_events = []
         if start_date_str or end_date_str:
             for e in events_dicts:
                 e_datetime = datetime.datetime.strptime(e['date'], '%Y-%m-%d')
-                if start_datetime and end_datetime:
+                if start_date_str and end_date_str:
                     if e_datetime >= start_datetime and e_datetime <= end_datetime:
                         filtered_historical_events.append(e)
-                elif start_datetime:
+                elif start_date_str:
                     if e_datetime >= start_datetime:
                         filtered_historical_events.append(e)
-                elif e_datetime <= end_datetime:
-                    filtered_historical_events.append(e)
+                elif end_date_str:
+                    if e_datetime <= end_datetime:
+                        filtered_historical_events.append(e)
         else:
             filtered_historical_events = events_dicts
 
+        # sort and group csv and db events together
         all_minutes = filtered_historical_events + filtered_db_events
         all_minutes_sorted = sorted(all_minutes, key=lambda x: x['start_time'])
 
