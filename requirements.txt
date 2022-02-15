@@ -1,4 +1,4 @@
-Django>=2.2,<2.3
+Django>=2.2,<2.2.26
 psycopg2-binary>=2.8,<2.9
 opencivicdata>=3.1.0
 django-councilmatic[convert_docs]==2.6.1
