@@ -746,9 +746,10 @@ class MinutesView(EventsView):
         csv_events = get_list_from_csv('historical_events.csv')
         events_dicts = [dict(e) for e in csv_events]
         for obj in events_dicts:
-            obj['start_time'] = datetime.datetime.strptime(obj['date'], '%Y-%m-%d')
+            obj['start_time'] = timezone.make_aware(datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
             obj['agenda_link'] = obj['agenda_link'].split('\n')
             obj['minutes_link'] = obj['minutes_link'].split('\n')
+
 
         start_date_str = None
         end_date_str = None
@@ -779,7 +780,7 @@ class MinutesView(EventsView):
         filtered_db_events = []
         for event in stored_events:
             stored_events_dict = {
-                'start_time': event.start_time,
+                'start_time': event.start_time.date(),
                 'meeting': event.name,
                 'minutes_link': [],
                 'agenda_link': [],
@@ -815,14 +816,16 @@ class MinutesView(EventsView):
             filtered_historical_events = events_dicts
 
         all_minutes = filtered_historical_events + filtered_db_events
+        all_minutes_sorted = sorted(all_minutes, key=lambda x: x['start_time'])
 
-        all_minutes_grouped = []
-        day_grouper = lambda x: x['start_time'].date()
-        for event_date, events in itertools.groupby(all_minutes, key=day_grouper):
-            events = sorted(events, key=day_grouper)
-            all_minutes_grouped.append([event_date, events])
         import pdb
         pdb.set_trace()
+
+        all_minutes_grouped = []
+        day_grouper = lambda x: x['start_time']
+        for event_date, events in itertools.groupby(all_minutes_sorted, key=day_grouper):
+            events = sorted(events, key=day_grouper)
+            all_minutes_grouped.append([event_date, events])
 
         context['all_minutes'] = all_minutes_grouped
 
