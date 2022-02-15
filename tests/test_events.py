@@ -254,7 +254,7 @@ def test_check_current_meeting():
 
 
 def get_event_id():
-        return 'ocd-event/{}'.format(str(uuid4()))
+    return 'ocd-event/{}'.format(str(uuid4()))
 
 
 @pytest.mark.parametrize('n_before_board', [1, 4, 8])
