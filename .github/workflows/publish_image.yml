@@ -5,6 +5,9 @@ on:
     branches:
       - master
       - deploy
+  pull_request:
+    branches:
+      - master
 
 jobs:
   publish:
@@ -22,6 +25,9 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v2
         with:
