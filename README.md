@@ -16,6 +16,14 @@ Metro Board Reports is a member of the [Councilmatic family](https://www.council
 
 These days, we run apps in containers for local development. More on that [here](https://github.com/datamade/how-to/blob/master/docker/local-development.md). Prefer to run the app locally? See the [legacy setup instructions](https://github.com/datamade/la-metro-councilmatic/blob/b8bc14f6d90f1b05e24b5076b1bfcd5e0d37527a/README.md).
 
+### Get the API key
+
+There should be an entry in the DataMade LastPass account called 'LA Metro - secrets.py.' Copy its contents into a file called `secrets.py` and place it in `lametro/`.
+
+### Generate the deployment settings
+
+Duplicate `councilmatic/settings_deployment.py.example` and rename the new file `settings_deployment.py`.
+
 ### Install OS level dependencies:
 
 * [Docker](https://www.docker.com/get-started)
@@ -61,7 +69,7 @@ Then, run the `refresh_guid` management command to grab the appropriate
 classifications for topics in the database.
 
 ```bash
-python manage.py refresh_guid
+docker-compose exec app python manage.py refresh_guid
 ```
 
 Finally, add data to your search index with the `update_index` command from
