@@ -768,13 +768,13 @@ class MinutesView(EventsView):
         return filtered_historical_events
 
     def _get_stored_events(self, start_datetime=None, end_datetime=None):
+        all_events = LAMetroEvent.objects.with_media()\
+                                         .prefetch_related(Prefetch('documents'))
         if start_datetime:
-            stored_events = LAMetroEvent.objects.with_media()\
-                                                .filter(start_time__gt=start_datetime)\
-                                                .order_by('start_time')
+            stored_events = all_events.filter(start_time__gt=start_datetime)\
+                                      .order_by('start_time')
         else:
-            stored_events = LAMetroEvent.objects.with_media()\
-                                                .order_by('start_time')
+            stored_events = all_events.order_by('start_time')
         if end_datetime:
             stored_events = stored_events.filter(start_time__lt=end_datetime)\
                                          .order_by('start_time')
@@ -783,6 +783,8 @@ class MinutesView(EventsView):
                                          .order_by('start_time')
 
         structured_db_events = []
+        # import pdb
+        # pdb.set_trace()
         for event in stored_events:
             stored_events_dict = {
                 'start_time': event.start_time.date(),
@@ -811,6 +813,8 @@ class MinutesView(EventsView):
 
         start_date_str = None
         end_date_str = None
+        start_datetime = None
+        end_datetime = None
         if 'minutes-from' in self.request.GET:
             start_date_str = self.request.GET['minutes-from'] or None
             if start_date_str:
