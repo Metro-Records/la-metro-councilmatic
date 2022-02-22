@@ -13,7 +13,7 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && \
     apt-get install -y libxml2-dev libxslt1-dev antiword unrtf poppler-utils \
-                       pstotext tesseract-ocr flac ffmpeg lame libmad0 \
+                       pstotext tesseract-ocr flac ffmpeg lame libmad0 libpq-dev \
                        libsox-fmt-mp3 sox libjpeg-dev swig gdal-bin gnupg && \
     apt-get clean && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*

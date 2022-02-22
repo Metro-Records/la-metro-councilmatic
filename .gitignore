@@ -35,6 +35,7 @@ debug.log
 /configs/settings_deployment.staging.py
 
 *.csv
+!lametro_divisions.csv
 .gnupg/
 
 lametro/secrets.py
