@@ -740,36 +740,49 @@ class LAMetroContactView(IndexView):
 class MinutesView(EventsView):
     template_name = 'lametro/minutes.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def _get_historical_events(self, start_datetime=None, end_datetime=None):
+        csv_events = get_list_from_csv('historical_events.csv')
 
-        start_date_str = None
-        end_date_str = None
-        if 'minutes-from' in self.request.GET.keys():
-            start_date_str = self.request.GET.get('minutes-from')
-            start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
-        if 'minutes-to' in self.request.GET.keys():
-            end_date_str = self.request.GET.get('minutes-to')
-            end_datetime = datetime.datetime.strptime(end_date_str, '%m/%d/%Y')
+        events_dicts = [dict(e) for e in csv_events]
+        filtered_historical_events = []
+        if start_datetime or end_datetime:
+            for e in events_dicts:
+                e_datetime = datetime.datetime.strptime(e['date'], '%Y-%m-%d')
+                if start_datetime and end_datetime:
+                    if e_datetime >= start_datetime and e_datetime <= end_datetime:
+                        filtered_historical_events.append(e)
+                elif start_datetime:
+                    if e_datetime >= start_datetime:
+                        filtered_historical_events.append(e)
+                elif end_datetime:
+                    if e_datetime <= end_datetime:
+                        filtered_historical_events.append(e)
+        else:
+            filtered_historical_events = events_dicts
 
-        # filter db events based on start and end dates
-        if end_date_str:
-            context['end_date'] = end_date_str
-            end_date_time = parser.parse(end_date_str)
+        for obj in filtered_historical_events:
+            obj['start_time'] = timezone.make_aware(datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
+            obj['agenda_link'] = obj['agenda_link'].split('\n')
+            obj['minutes_link'] = obj['minutes_link'].split('\n')
+
+        return filtered_historical_events
+
+    def _get_stored_events(self, start_datetime=None, end_datetime=None):
+        if start_datetime:
             stored_events = LAMetroEvent.objects.with_media()\
-                                                .filter(start_time__lt=end_date_time)\
+                                                .filter(start_time__gt=start_datetime)\
                                                 .order_by('start_time')
         else:
             stored_events = LAMetroEvent.objects.with_media()\
-                                                .filter(start_time__lt=timezone.now())\
                                                 .order_by('start_time')
-        if start_date_str:
-            context['start_date'] = start_date_str
-            start_date_time = parser.parse(start_date_str)
-            stored_events = stored_events.filter(start_time__gt=start_date_time)\
-                                                .order_by('start_time')
+        if end_datetime:
+            stored_events = stored_events.filter(start_time__lt=end_datetime)\
+                                         .order_by('start_time')
+        else:
+            stored_events = stored_events.filter(start_time__lt=timezone.now())\
+                                         .order_by('start_time')
 
-        filtered_db_events = []
+        structured_db_events = []
         for event in stored_events:
             stored_events_dict = {
                 'start_time': event.start_time.date(),
@@ -789,34 +802,32 @@ class MinutesView(EventsView):
             except EventDocument.DoesNotExist:
                 pass
 
-            filtered_db_events.append(stored_events_dict)
+            structured_db_events.append(stored_events_dict)
 
-        # filter events from csv based on start and end dates
-        csv_events = get_list_from_csv('historical_events.csv')
-        events_dicts = [dict(e) for e in csv_events]
-        for obj in events_dicts:
-            obj['start_time'] = timezone.make_aware(datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
-            obj['agenda_link'] = obj['agenda_link'].split('\n')
-            obj['minutes_link'] = obj['minutes_link'].split('\n')
+        return structured_db_events
 
-        filtered_historical_events = []
-        if start_date_str or end_date_str:
-            for e in events_dicts:
-                e_datetime = datetime.datetime.strptime(e['date'], '%Y-%m-%d')
-                if start_date_str and end_date_str:
-                    if e_datetime >= start_datetime and e_datetime <= end_datetime:
-                        filtered_historical_events.append(e)
-                elif start_date_str:
-                    if e_datetime >= start_datetime:
-                        filtered_historical_events.append(e)
-                elif end_date_str:
-                    if e_datetime <= end_datetime:
-                        filtered_historical_events.append(e)
-        else:
-            filtered_historical_events = events_dicts
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        start_date_str = None
+        end_date_str = None
+        if 'minutes-from' in self.request.GET:
+            start_date_str = self.request.GET['minutes-from'] or None
+            if start_date_str:
+                start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
+        if 'minutes-to' in self.request.GET:
+            end_date_str = self.request.GET['minutes-to'] or None
+            if end_date_str:
+                end_datetime = datetime.datetime.strptime(end_date_str, '%m/%d/%Y')
+
+        context['start_date'] = start_date_str
+        context['end_date'] = end_date_str
+
+        historical_events = self._get_historical_events(start_datetime, end_datetime)
+        stored_events = self._get_stored_events(start_datetime, end_datetime)
 
         # sort and group csv and db events together
-        all_minutes = filtered_historical_events + filtered_db_events
+        all_minutes = historical_events + stored_events
         all_minutes_sorted = sorted(all_minutes, key=lambda x: x['start_time'], reverse=True)
 
         all_minutes_grouped = []
