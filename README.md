@@ -22,7 +22,7 @@ There should be an entry in the DataMade LastPass account called 'LA Metro - sec
 
 ### Generate the deployment settings
 
-Duplicate `councilmatic/settings_deployment.py.example` (in `councilmatic/`) and rename the new file `settings_deployment.py`.
+Run `cp councilmatic/settings_deployment.py.example councilmatic/settings_deployment.py`.
 
 ### Install OS level dependencies:
 
