@@ -125,3 +125,9 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 HAYSTACK_IDENTIFIER_METHOD = 'lametro.utils.get_identifier'
 
 ADV_CACHE_INCLUDE_PK = True
+
+# Django Debug Toolbar Panel Settings
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+]
