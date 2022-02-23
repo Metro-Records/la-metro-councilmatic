@@ -3,7 +3,7 @@
 {% load highlight %}
 
 <p>
-    <a class="small" href="{% url 'lametro:bill_detail' r.object.slug %}">
+    <a class="small" target='_blank' href="{% url 'lametro:bill_detail' r.object.slug %}">
         {{ r.object.friendly_name }}
     </a>
     {% if r.object.inferred_status %}{{ r.object.inferred_status | inferred_status_label | safe }}{% endif %}
@@ -28,7 +28,7 @@
     </div>
     <div class='col-xs-1 no-pad-mobile'>
         <div>
-            <a class='btn-bill-detail' href='/board-report/{{ r.object.slug }}/'>
+            <a class='btn-bill-detail' target='_blank' href='/board-report/{{ r.object.slug }}/'>
                 <i class="fa fa-fw fa-chevron-right"></i>
             </a>
         </div>
