@@ -743,10 +743,9 @@ class MinutesView(EventsView):
     def _get_historical_events(self, start_datetime=None, end_datetime=None):
         csv_events = get_list_from_csv('historical_events.csv')
 
-        events_dicts = [dict(e) for e in csv_events]
         filtered_historical_events = []
         if start_datetime or end_datetime:
-            for e in events_dicts:
+            for e in csv_events:
                 e_datetime = datetime.datetime.strptime(e['date'], '%Y-%m-%d')
                 if start_datetime and end_datetime:
                     if e_datetime >= start_datetime and e_datetime <= end_datetime:
@@ -758,7 +757,7 @@ class MinutesView(EventsView):
                     if e_datetime <= end_datetime:
                         filtered_historical_events.append(e)
         else:
-            filtered_historical_events = events_dicts
+            filtered_historical_events = csv_events
 
         for obj in filtered_historical_events:
             obj['start_time'] = timezone.make_aware(datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
@@ -768,21 +767,24 @@ class MinutesView(EventsView):
         return filtered_historical_events
 
     def _get_stored_events(self, start_datetime=None, end_datetime=None):
-        minutes = EventDocument.objects.filter(note__icontains='minutes').prefetch_related(Prefetch('links', to_attr='prefetched_links'))
-        agenda = EventDocument.objects.filter(note__icontains='agenda').prefetch_related(Prefetch('links', to_attr='prefetched_links'))
-        all_events = LAMetroEvent.objects.prefetch_related(Prefetch('documents', queryset=minutes, to_attr='minutes_document'))\
-                                         .prefetch_related(Prefetch('documents', queryset=agenda, to_attr='agenda_document'))
+        minutes = EventDocument.objects.filter(note__icontains='minutes')\
+                                       .prefetch_related(Prefetch('links', to_attr='prefetched_links'))
+        agenda = EventDocument.objects.filter(note__icontains='agenda')\
+                                      .prefetch_related(Prefetch('links', to_attr='prefetched_links'))
+        all_events = LAMetroEvent.objects.prefetch_related(Prefetch('documents',
+                                                                    queryset=minutes,
+                                                                    to_attr='minutes_document'))\
+                                         .prefetch_related(Prefetch('documents',
+                                                                    queryset=agenda,
+                                                                    to_attr='agenda_document'))
         if start_datetime:
-            stored_events = all_events.filter(start_time__gt=start_datetime)\
-                                      .order_by('start_time')
+            stored_events = all_events.filter(start_time__gt=start_datetime)
         else:
-            stored_events = all_events.order_by('start_time')
+            stored_events = all_events
         if end_datetime:
-            stored_events = stored_events.filter(start_time__lt=end_datetime)\
-                                         .order_by('start_time')
+            stored_events = stored_events.filter(start_time__lt=end_datetime)
         else:
-            stored_events = stored_events.filter(start_time__lt=timezone.now())\
-                                         .order_by('start_time')
+            stored_events = stored_events.filter(start_time__lt=timezone.now())
 
         structured_db_events = []
         for event in stored_events:
@@ -811,16 +813,16 @@ class MinutesView(EventsView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        start_date_str = None
-        end_date_str = None
-        start_datetime = None
-        end_datetime = None
+        start_date_str = ''
+        end_date_str = ''
+        start_datetime = ''
+        end_datetime = ''
         if 'minutes-from' in self.request.GET:
-            start_date_str = self.request.GET['minutes-from'] or None
+            start_date_str = self.request.GET['minutes-from'] or ''
             if start_date_str:
                 start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
         if 'minutes-to' in self.request.GET:
-            end_date_str = self.request.GET['minutes-to'] or None
+            end_date_str = self.request.GET['minutes-to'] or ''
             if end_date_str:
                 end_datetime = datetime.datetime.strptime(end_date_str, '%m/%d/%Y')
 
