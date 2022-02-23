@@ -768,8 +768,10 @@ class MinutesView(EventsView):
         return filtered_historical_events
 
     def _get_stored_events(self, start_datetime=None, end_datetime=None):
-        all_events = LAMetroEvent.objects.with_media()\
-                                         .prefetch_related(Prefetch('documents'))
+        minutes = EventDocument.objects.filter(note__icontains='minutes').prefetch_related(Prefetch('links', to_attr='prefetched_links'))
+        agenda = EventDocument.objects.filter(note__icontains='agenda').prefetch_related(Prefetch('links', to_attr='prefetched_links'))
+        all_events = LAMetroEvent.objects.prefetch_related(Prefetch('documents', queryset=minutes, to_attr='minutes_document'))\
+                                         .prefetch_related(Prefetch('documents', queryset=agenda, to_attr='agenda_document'))
         if start_datetime:
             stored_events = all_events.filter(start_time__gt=start_datetime)\
                                       .order_by('start_time')
@@ -783,8 +785,6 @@ class MinutesView(EventsView):
                                          .order_by('start_time')
 
         structured_db_events = []
-        # import pdb
-        # pdb.set_trace()
         for event in stored_events:
             stored_events_dict = {
                 'start_time': event.start_time.date(),
@@ -793,15 +793,15 @@ class MinutesView(EventsView):
                 'agenda_link': [],
             }
             try:
-                minutes_link = event.documents.get(note__icontains='minutes').links.first().url
+                minutes_link = event.minutes_document[0].prefetched_links[0].url
                 stored_events_dict['minutes_link'].append(minutes_link)
-            except EventDocument.DoesNotExist:
+            except IndexError:
                 pass
 
             try:
-                agenda_link = event.documents.get(note__icontains='agenda').links.first().url
+                agenda_link = event.agenda_document[0].prefetched_links[0].url
                 stored_events_dict['agenda_link'].append(agenda_link)
-            except EventDocument.DoesNotExist:
+            except IndexError:
                 pass
 
             structured_db_events.append(stored_events_dict)
