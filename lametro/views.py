@@ -813,18 +813,16 @@ class MinutesView(EventsView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        start_date_str = ''
-        end_date_str = ''
-        start_datetime = ''
-        end_datetime = ''
-        if 'minutes-from' in self.request.GET:
-            start_date_str = self.request.GET['minutes-from'] or ''
-            if start_date_str:
-                start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
-        if 'minutes-to' in self.request.GET:
-            end_date_str = self.request.GET['minutes-to'] or ''
-            if end_date_str:
-                end_datetime = datetime.datetime.strptime(end_date_str, '%m/%d/%Y')
+        start_datetime = None
+        end_datetime = None
+
+        start_date_str = self.request.GET.get('minutes-from', '')
+        if start_date_str:
+            start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
+
+        end_date_str = self.request.GET.get('minutes-to', '')
+        if end_date_str:
+            end_datetime = datetime.datetime.strptime(end_date_str, '%m/%d/%Y')
 
         context['start_date'] = start_date_str
         context['end_date'] = end_date_str

@@ -27,7 +27,7 @@
           </form>
         </div>
         <div class="col-xs-2">
-          <a href="{% url 'lametro:minutes' %}?show=all" class="btn btn-salmon d-inline-block"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs"> All minutes</span></a>
+          <a href="{% url 'lametro:minutes' %}" class="btn btn-salmon d-inline-block" id="show-all"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs"> All minutes</span></a>
         </div>
         <div class="col-xs-2">
           <a href="{% url 'lametro:minutes' %}" class="btn btn-teal d-inline-block"><i class="fa fa-repeat" aria-hidden="true"></i><span class="hidden-xs"> Reset</span></a>
@@ -99,6 +99,11 @@
           collapseMinutes();
           return false
       });
+
+      $("#show-all").click(function() {
+        expandMinutes()
+        return false
+      })
     });
   </script>
 {% endblock %}
