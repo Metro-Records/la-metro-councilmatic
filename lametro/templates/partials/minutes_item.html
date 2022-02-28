@@ -1,0 +1,26 @@
+{% if forloop.last %}
+<div class="row" style="margin-bottom: 30px;">
+{% else %}
+<div class="row">
+{% endif %}
+
+  {% if not forloop.first %}
+    <hr class="events-line"/>
+  {% endif %}
+  <br/>
+  <div class="col-xs-4">
+    <span class="desktop-only text-muted">
+      {{ e.meeting }}<br />
+    </span>
+  </div>
+  <div class="col-xs-4">
+    {% for link in e.agenda_link %}
+      <p><a href="{{ link | safe }}">Agenda {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a><br/></p>
+    {% endfor %}
+  </div>
+  <div class="col-xs-4">
+    {% for link in e.minutes_link %}
+      <p><a href="{{ link | safe }}">Minutes {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a><br/></p>
+    {% endfor %}
+  </div>
+</div>
