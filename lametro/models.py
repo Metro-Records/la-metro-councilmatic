@@ -510,6 +510,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @classmethod
     def most_recent_past_meetings(cls):
+        '''
+        Returns meetings in the current month that have occured in the past
+        two weeks.
+        '''
         yesterday = datetime.today() - timedelta(days=2)
         current_month = yesterday.month
         two_weeks_ago = datetime.today() - timedelta(weeks=2)
