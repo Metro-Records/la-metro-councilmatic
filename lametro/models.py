@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
 import logging
 import pytz
@@ -31,6 +31,7 @@ from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 logger = logging.getLogger(__name__)
+
 
 class SourcesMixin(object):
 
@@ -106,7 +107,8 @@ class LAMetroBillManager(models.Manager):
         qs = qs.exclude(
             extras__restrict_view=True
         ).annotate(board_box=Case(
-            When(extras__local_classification__in=('Board Box', 'Board Correspondence'), then=True),
+            When(extras__local_classification__in=(
+                'Board Box', 'Board Correspondence'), then=True),
             When(classification__contains=['Board Box'], then=True),
             When(classification__contains=['Board Correspondence'], then=True),
             default=False,
@@ -202,20 +204,22 @@ class LAMetroBill(Bill, SourcesMixin):
         }
         '''
         actions = self.actions.all()
-        events = LAMetroEvent.objects.filter(agenda__related_entities__bill=self)
+        events = LAMetroEvent.objects.filter(
+            agenda__related_entities__bill=self)
 
         data = []
 
         for action in actions:
             try:
-                event = LAMetroEvent.objects.get(\
-                    participants__entity_type='organization',\
+                event = LAMetroEvent.objects.get(
+                    participants__entity_type='organization',
                     participants__organization=action.organization,
                     start_time__date=action.date)
             except LAMetroEvent.DoesNotExist:
                 logger.warning(
                     'Could not find event corresponding to action on Board ' +
-                    'Report {0} by {1} on {2}'.format(self.identifier, action.organization, action.date)
+                    'Report {0} by {1} on {2}'.format(
+                        self.identifier, action.organization, action.date)
                 )
                 continue
 
@@ -251,8 +255,8 @@ class LAMetroBill(Bill, SourcesMixin):
 
         # Sort actions by date, and list SCHEDULED actions before other actions on that date
         # SCHEDULED descriptions are kept uppercase to use ascii-betical sorting
-        sorted_data = sorted(data, key=lambda x:(x['date'],\
-            x['description'].upper() if x['description'] == 'SCHEDULED' else x['description'].lower()))
+        sorted_data = sorted(data, key=lambda x: (x['date'],
+                                                  x['description'].upper() if x['description'] == 'SCHEDULED' else x['description'].lower()))
 
         return sorted_data
 
@@ -301,7 +305,7 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def latest_council_membership(self):
-        filter_kwarg = {'organization__name': settings.OCD_CITY_COUNCIL_NAME,}
+        filter_kwarg = {'organization__name': settings.OCD_CITY_COUNCIL_NAME, }
         city_council_memberships = self.memberships.filter(**filter_kwarg)
 
         # Select posts denoting membership, i.e., exclude leadership
@@ -328,7 +332,8 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def board_office(self):
-        office_roles = ('Chair', '1st Chair', 'Vice Chair', '1st Vice Chair', '2nd Chair', '2nd Vice Chair')
+        office_roles = ('Chair', '1st Chair', 'Vice Chair',
+                        '1st Vice Chair', '2nd Chair', '2nd Vice Chair')
 
         try:
             office_membership = self.memberships\
@@ -372,7 +377,8 @@ class LAMetroPerson(Person, SourcesMixin):
     @property
     def headshot_url(self):
         if self.slug in settings.MANUAL_HEADSHOTS:
-            image_url = 'images/' + settings.MANUAL_HEADSHOTS[self.slug]['image']
+            image_url = 'images/' + \
+                settings.MANUAL_HEADSHOTS[self.slug]['image']
         elif self.headshot:
             image_url = self.headshot.url
         else:
@@ -432,7 +438,6 @@ class LiveMediaMixin(object):
         '''
         return bool(self.extras.get('sap_guid'))
 
-
     def _valid(self, media_url):
         response = requests.get(media_url)
 
@@ -440,7 +445,6 @@ class LiveMediaMixin(object):
             return True
         else:
             return False
-
 
     @property
     def english_live_media_url(self):
@@ -452,7 +456,6 @@ class LiveMediaMixin(object):
         else:
             return self.GENERIC_ENGLISH_MEDIA_URL
 
-
     @property
     def spanish_live_media_url(self):
         '''
@@ -461,7 +464,8 @@ class LiveMediaMixin(object):
         '''
         if self.bilingual:
             guid = self.extras['sap_guid']
-            spanish_url = self.BASE_MEDIA_URL + 'event_id={guid}'.format(guid=guid)
+            spanish_url = self.BASE_MEDIA_URL + \
+                'event_id={guid}'.format(guid=guid)
 
             if self._valid(spanish_url):
                 return spanish_url
@@ -497,13 +501,23 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         '''
         board_meetings = cls.objects.filter(name__icontains='Board Meeting',
                                             start_time__gt=timezone.now())\
-                                    .order_by('start_time')
+            .order_by('start_time')
 
         next_meeting = board_meetings.first()
 
         return board_meetings.filter(start_time__month=next_meeting.start_time.month)\
                              .order_by('start_time')
 
+    @classmethod
+    def most_recent_past_meetings(cls):
+        yesterday = datetime.today() - timedelta(days=2)
+        current_month = yesterday.month
+        two_weeks_ago = datetime.today() - timedelta(weeks=2)
+
+        past_meetings = cls.objects.filter(
+            Q(start_time__month=current_month), Q(start_time__range=(two_weeks_ago, yesterday))).order_by('start_time')
+
+        return past_meetings
 
     @staticmethod
     def _time_ago(**kwargs):
@@ -512,14 +526,12 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         '''
         return timezone.now() - relativedelta(**kwargs)
 
-
     @staticmethod
     def _time_from_now(**kwargs):
         '''
         Convenience method for returning localized, positive timedeltas.
         '''
         return timezone.now() + relativedelta(**kwargs)
-
 
     @classmethod
     def _potentially_current_meetings(cls):
@@ -538,8 +550,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return cls.objects.filter(start_time__gte=six_hours_ago,
                                   start_time__lte=five_minutes_from_now)\
-                           .exclude(status='cancelled')
-
+            .exclude(status='cancelled')
 
     @classmethod
     def _streaming_meeting(cls):
@@ -554,7 +565,8 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         '''
 
         try:
-            running_events = requests.get('http://metro.granicus.com/running_events.php', timeout=5)
+            running_events = requests.get(
+                'http://metro.granicus.com/running_events.php', timeout=5)
         except requests.exceptions.ConnectTimeout:
             return cls.objects.none()
 
@@ -574,7 +586,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
                     return meeting
 
         return cls.objects.none()
-
 
     @classmethod
     def current_meeting(cls):
@@ -623,7 +634,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return current_meetings
 
-
     @classmethod
     def upcoming_committee_meetings(cls):
         '''
@@ -646,7 +656,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         else:
             return meetings[:5]
 
-
     @property
     def is_upcoming(self):
         '''
@@ -665,7 +674,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             and local_now >= local_evening_before \
             and not any([self.is_ongoing, self.has_passed])
 
-
     @property
     def is_ongoing(self):
         if not hasattr(self, '_is_ongoing'):
@@ -673,11 +681,9 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return self._is_ongoing
 
-
     @property
     def has_passed(self):
         return self.start_time < timezone.now() and not self.is_ongoing
-
 
     @property
     def ecomment_url(self):
@@ -686,7 +692,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         elif self.is_ongoing:
             return self.GENERIC_ECOMMENT_URL
-
 
     @property
     def ecomment_message(self):
@@ -699,10 +704,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         else:
             return self.UPCOMING_ECOMMENT_MESSAGE
 
-
     @classmethod
     def todays_meetings(cls):
-        today_la = app_timezone.localize(datetime.now()).replace(hour=0, minute=0, second=0, microsecond=0)
+        today_la = app_timezone.localize(datetime.now()).replace(
+            hour=0, minute=0, second=0, microsecond=0)
 
         today_utc = today_la.astimezone(pytz.utc)
         tomorrow_utc = today_utc + timedelta(days=1)
@@ -732,12 +737,14 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             return 'Board of Directors - Regular Board Meeting'
         return self.name
 
+
 class EventAgendaItem(EventAgendaItem):
 
     class Meta:
         proxy = True
 
-    event = ProxyForeignKey(LAMetroEvent, related_name='agenda', on_delete=models.CASCADE)
+    event = ProxyForeignKey(
+        LAMetroEvent, related_name='agenda', on_delete=models.CASCADE)
 
 
 class EventRelatedEntity(EventRelatedEntity):
@@ -876,7 +883,7 @@ class BillPacket(Packet):
         attachments = self.bill.documents\
             .annotate(
                 index=Case(
-                    When(note__istartswith = '0', then=Value('z')),
+                    When(note__istartswith='0', then=Value('z')),
                     default=F('note'),
                     output_field=models.CharField()))\
             .order_by('index')
@@ -897,8 +904,8 @@ class BillPacket(Packet):
 class EventPacket(Packet):
 
     event = models.OneToOneField(LAMetroEvent,
-                                related_name='packet',
-                                on_delete=models.CASCADE)
+                                 related_name='packet',
+                                 on_delete=models.CASCADE)
 
     @property
     def related_entity(self):
