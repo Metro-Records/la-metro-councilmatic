@@ -514,7 +514,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         Returns meetings in the current month that have occured in the past
         two weeks.
         '''
-        yesterday = datetime.today() - timedelta(days=2)
+        yesterday = datetime.today() - timedelta(days=1)
         current_month = yesterday.month
         two_weeks_ago = datetime.today() - timedelta(weeks=2)
 
