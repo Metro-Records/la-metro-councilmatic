@@ -515,7 +515,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         two weeks.
         '''
         yesterday = datetime.today() - timedelta(days=1)
-        current_month = yesterday.month
+        current_month = datetime.today().month
         two_weeks_ago = datetime.today() - timedelta(weeks=2)
 
         past_meetings = cls.objects.filter(

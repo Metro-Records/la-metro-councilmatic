@@ -350,6 +350,15 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
 
+@freeze_time("2021-02-01 10:00:00")
+def test_first_of_month_returns_no_recent_past_meetings(event):
+    yesterday = LAMetroEvent._time_ago(days=1).strftime('%Y-%m-%d %H:%M')
+    yesterdays_event = event.build(
+        name='Board Meeting', start_date=yesterday, id=get_event_id())
+
+    assert LAMetroEvent.most_recent_past_meetings().count() == 0
+
+
 @freeze_time("2021-02-07 10:00:00")
 def test_most_recent_past_meetings(event):
     three_weeks_ago = LAMetroEvent._time_ago(
@@ -360,22 +369,17 @@ def test_most_recent_past_meetings(event):
         minutes=1).strftime('%Y-%m-%d %H:%M')
     eight_days_ago_last_month = LAMetroEvent._time_ago(
         days=8).strftime('%Y-%m-%d %H:%M')
+
     four_days_ago = LAMetroEvent._time_ago(days=4).strftime('%Y-%m-%d %H:%M')
     five_days_ago = LAMetroEvent._time_ago(days=5).strftime('%Y-%m-%d %H:%M')
 
-    # Build an event older than two weeks
+    # Events that shouldn't be returned
     event_older_than_two_weeks = event.build(
         name='Board Meeting', start_date=three_weeks_ago, id=get_event_id())
-
-    # Build an event today
     event_today = event.build(
         name='Board Meeting', start_date=one_minute_from_now, id=get_event_id())
-
-    # Build an event a week from now
     event_one_week_from_now = event.build(
         name='Board Meeting', start_date=one_minute_from_now, id=get_event_id())
-
-    # Build a week old event in the previous month
     event_last_month = event.build(
         name='Board Meeting', start_date=eight_days_ago_last_month, id=get_event_id())
 
