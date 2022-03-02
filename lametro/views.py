@@ -62,7 +62,6 @@ from .utils import get_list_from_csv
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
-
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
 
@@ -72,20 +71,15 @@ class LAMetroIndexView(IndexView):
     def extra_context(self):
         extra = {}
 
-        extra['upcoming_board_meetings'] = self.event_model.upcoming_board_meetings()[
-            :2]
+        extra['upcoming_board_meetings'] = self.event_model.upcoming_board_meetings()[:2]
         extra['current_meeting'] = self.event_model.current_meeting()
-        extra['bilingual'] = bool(
-            [e for e in extra['current_meeting'] if e.bilingual])
+        extra['bilingual'] = bool([e for e in extra['current_meeting'] if e.bilingual])
         extra['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
-        extra['todays_meetings'] = self.event_model.todays_meetings().order_by(
-            'start_date')
+        extra['todays_meetings'] = self.event_model.todays_meetings().order_by('start_date')
         extra['form'] = LAMetroCouncilmaticSearchForm()
-        extra['most_recent_past_meetings'] = self.event_model.most_recent_past_meetings()
 
         return extra
-
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill
@@ -119,7 +113,7 @@ class LAMetroEventDetail(EventDetailView):
     template_name = 'lametro/event.html'
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()  # Assign object to detail view, so that get_context_data can find this variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
+        self.object = self.get_object() # Assign object to detail view, so that get_context_data can find this variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
         event = self.get_object()
         event_slug = event.slug
 
@@ -138,7 +132,7 @@ class LAMetroEventDetail(EventDetailView):
                 event=event,
                 note='Event Document - Manual upload URL')
 
-            document_obj.date = timezone.now().date()
+            document_obj.date=timezone.now().date()
             document_obj.save()
 
             document_obj.links.create(url=agenda_url)
@@ -216,7 +210,7 @@ class LAMetroEventDetail(EventDetailView):
                     '''
 
         context['related_board_reports'] = agenda_with_board_reports
-        context['base_url'] = PIC_BASE_URL  # Give JS access to this variable
+        context['base_url'] = PIC_BASE_URL # Give JS access to this variable
 
         context['has_agenda'] = (context.get('agenda_url') or
                                  context.get('uploaded_agenda_url') or
@@ -227,6 +221,7 @@ class LAMetroEventDetail(EventDetailView):
             context['url_form'] = AgendaUrlForm()
         if 'pdf_form' not in context:
             context['pdf_form'] = AgendaPdfForm()
+
 
         context['USING_ECOMMENT'] = settings.USING_ECOMMENT
 
@@ -254,14 +249,13 @@ def handle_uploaded_agenda(agenda, event):
 @login_required
 def delete_submission(request, event_slug):
     event = LAMetroEvent.objects.get(slug=event_slug)
-    event_doc = EventDocument.objects.filter(
-        event_id=event.id, note__icontains='Manual upload')
+    event_doc = EventDocument.objects.filter(event_id=event.id, note__icontains='Manual upload')
 
     for e in event_doc:
         # Remove stored PDF from Metro app.
         if 'Manual upload PDF' in e.note:
             try:
-                os.remove('lametro/static/%s' % e.links.get().url)
+                os.remove('lametro/static/%s' % e.links.get().url )
             except OSError:
                 pass
         e.delete()
@@ -284,19 +278,17 @@ class LAMetroEventsView(EventsView):
 
         # Did the user set date boundaries?
         start_date_str = self.request.GET.get('from')
-        end_date_str = self.request.GET.get('to')
-        def day_grouper(x): return (x.local_start_time.year,
-                                    x.local_start_time.month, x.local_start_time.day)
+        end_date_str   = self.request.GET.get('to')
+        day_grouper    = lambda x: (x.local_start_time.year, x.local_start_time.month, x.local_start_time.day)
 
-        minutes_queryset = EventDocument.objects.filter(
-            note__icontains='minutes')
+        minutes_queryset = EventDocument.objects.filter(note__icontains='minutes')
 
         # If yes...
         if start_date_str and end_date_str:
             context['start_date'] = start_date_str
-            context['end_date'] = end_date_str
-            start_date_time = parser.parse(start_date_str)
-            end_date_time = parser.parse(end_date_str)
+            context['end_date']   = end_date_str
+            start_date_time       = parser.parse(start_date_str)
+            end_date_time         = parser.parse(end_date_str)
 
             select_events = LAMetroEvent.objects\
                                         .with_media()\
@@ -305,9 +297,9 @@ class LAMetroEventsView(EventsView):
                                         .order_by('start_time')\
 
             select_events = select_events.prefetch_related(Prefetch('documents',
-                                                                    minutes_queryset,
-                                                                    to_attr='minutes'))\
-                .prefetch_related('minutes__links')
+                                                                minutes_queryset,
+                                                                to_attr='minutes'))\
+                                         .prefetch_related('minutes__links')
 
             org_select_events = []
 
@@ -355,7 +347,7 @@ class LAMetroEventsView(EventsView):
             past_events = past_events.prefetch_related(Prefetch('documents',
                                                                 minutes_queryset,
                                                                 to_attr='minutes'))\
-                .prefetch_related('minutes__links')
+                                     .prefetch_related('minutes__links')
 
             org_past_events = []
 
@@ -388,7 +380,7 @@ class LABoardMembersView(CouncilMembersView):
                                         'features': []},
                 'map_geojson_city': {'type': 'FeatureCollection',
                                      'features': []},
-                }
+        }
 
         posts = LAMetroPost.objects\
                            .filter(shape__isnull=False)\
@@ -398,8 +390,7 @@ class LABoardMembersView(CouncilMembersView):
             district = post.label
 
             try:
-                current_membership = post.memberships.get(
-                    end_date_dt__gt=Now())
+                current_membership = post.memberships.get(end_date_dt__gt=Now())
 
             except ObjectDoesNotExist:
                 council_member = 'Vacant'
@@ -469,10 +460,8 @@ class LABoardMembersView(CouncilMembersView):
 
         context['seo'] = self.get_seo_blob()
 
-        board = LAMetroOrganization.objects.get(
-            name=settings.OCD_CITY_COUNCIL_NAME)
-        context['recent_activity'] = board.actions.order_by(
-            '-date', '-bill__identifier', '-order')
+        board = LAMetroOrganization.objects.get(name=settings.OCD_CITY_COUNCIL_NAME)
+        context['recent_activity'] = board.actions.order_by('-date', '-bill__identifier', '-order')
         context['recent_events'] = board.recent_events
 
         if settings.MAP_CONFIG:
@@ -487,8 +476,7 @@ class LAMetroAboutView(AboutView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['timestamp'] = datetime.datetime.now(
-            app_timezone).strftime('%m%d%Y%s')
+        context['timestamp'] = datetime.datetime.now(app_timezone).strftime('%m%d%Y%s')
 
         context['BILL_STATUS_DESCRIPTIONS'] = BILL_STATUS_DESCRIPTIONS
 
@@ -513,9 +501,9 @@ class LACommitteesView(CommitteesView):
                     organization__classification='committee')
 
         qs = LAMetroOrganization.objects\
-            .filter(classification='committee')\
-            .filter(memberships__in=memberships)\
-            .distinct()
+                 .filter(classification='committee')\
+                 .filter(memberships__in=memberships)\
+                 .distinct()
 
         qs = qs.prefetch_related(Prefetch('memberships',
                                           memberships,
@@ -586,8 +574,7 @@ class LAPersonDetailView(PersonDetailView):
                 # Return a 404 if more than one matching slug, or if there are no matching slugs
                 response = HttpResponseNotFound()
             else:
-                response = HttpResponsePermanentRedirect(
-                    reverse('person', args=[person.slug]))
+                response = HttpResponsePermanentRedirect(reverse('person', args=[person.slug]))
 
         return response
 
@@ -667,23 +654,19 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
     def __init__(self, *args, **kwargs):
         kwargs['form_class'] = LAMetroCouncilmaticSearchForm
-        super(LAMetroCouncilmaticFacetedSearchView,
-              self).__init__(*args, **kwargs)
+        super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
 
     def extra_context(self):
         extra_context = super().extra_context()
-        extra_context['topic_facets'] = [facet for facet,
-                                         _ in LAMetroSubject.CLASSIFICATION_CHOICES]
+        extra_context['topic_facets'] = [facet for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES]
         return extra_context
 
     def build_form(self, form_kwargs=None):
         if not form_kwargs:
             form_kwargs = {}
 
-        form_kwargs['selected_facets'] = self.request.GET.getlist(
-            "selected_facets")
-        form_kwargs['search_corpus'] = 'bills' if self.request.GET.get(
-            'search-reports') else 'all'
+        form_kwargs['selected_facets'] = self.request.GET.getlist("selected_facets")
+        form_kwargs['search_corpus'] = 'bills' if self.request.GET.get('search-reports') else 'all'
         form_kwargs['result_type'] = self.request.GET.get('result_type', 'all')
 
         sqs = SearchQuerySet(
@@ -723,18 +706,14 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                 for el in dataDict['sort_by']:
                     if el == 'date':
                         if dataDict.get('order_by') == ['asc']:
-                            kwargs['searchqueryset'] = sqs.order_by(
-                                'last_action_date')
+                            kwargs['searchqueryset'] = sqs.order_by('last_action_date')
                         else:
-                            kwargs['searchqueryset'] = sqs.order_by(
-                                '-last_action_date')
+                            kwargs['searchqueryset'] = sqs.order_by('-last_action_date')
                     if el == 'title':
                         if dataDict.get('order_by') == ['desc']:
-                            kwargs['searchqueryset'] = sqs.order_by(
-                                '-sort_name')
+                            kwargs['searchqueryset'] = sqs.order_by('-sort_name')
                         else:
-                            kwargs['searchqueryset'] = sqs.order_by(
-                                'sort_name')
+                            kwargs['searchqueryset'] = sqs.order_by('sort_name')
                     if el == 'relevance':
                         kwargs['searchqueryset'] = sqs
 
@@ -781,8 +760,7 @@ class MinutesView(EventsView):
             filtered_historical_events = csv_events
 
         for obj in filtered_historical_events:
-            obj['start_time'] = timezone.make_aware(
-                datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
+            obj['start_time'] = timezone.make_aware(datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
             obj['agenda_link'] = obj['agenda_link'].split('\n')
             obj['minutes_link'] = obj['minutes_link'].split('\n')
 
@@ -796,9 +774,9 @@ class MinutesView(EventsView):
         all_events = LAMetroEvent.objects.prefetch_related(Prefetch('documents',
                                                                     queryset=minutes,
                                                                     to_attr='minutes_document'))\
-            .prefetch_related(Prefetch('documents',
-                                       queryset=agenda,
-                                       to_attr='agenda_document'))
+                                         .prefetch_related(Prefetch('documents',
+                                                                    queryset=agenda,
+                                                                    to_attr='agenda_document'))
         if start_datetime:
             stored_events = all_events.filter(start_time__gt=start_datetime)
         else:
@@ -840,8 +818,7 @@ class MinutesView(EventsView):
 
         start_date_str = self.request.GET.get('minutes-from', '')
         if start_date_str:
-            start_datetime = datetime.datetime.strptime(
-                start_date_str, '%m/%d/%Y')
+            start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
 
         end_date_str = self.request.GET.get('minutes-to', '')
         if end_date_str:
@@ -850,17 +827,15 @@ class MinutesView(EventsView):
         context['start_date'] = start_date_str
         context['end_date'] = end_date_str
 
-        historical_events = self._get_historical_events(
-            start_datetime, end_datetime)
+        historical_events = self._get_historical_events(start_datetime, end_datetime)
         stored_events = self._get_stored_events(start_datetime, end_datetime)
 
         # sort and group csv and db events together
         all_minutes = historical_events + stored_events
-        all_minutes_sorted = sorted(
-            all_minutes, key=lambda x: x['start_time'], reverse=True)
+        all_minutes_sorted = sorted(all_minutes, key=lambda x: x['start_time'], reverse=True)
 
         all_minutes_grouped = []
-        def day_grouper(x): return x['start_time']
+        day_grouper = lambda x: x['start_time']
         for event_date, events in itertools.groupby(all_minutes_sorted, key=day_grouper):
             events = sorted(events, key=day_grouper)
             all_minutes_grouped.append([event_date, events])

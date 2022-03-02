@@ -44,8 +44,7 @@ def test_agenda_pdf_form_submit():
     with open('tests/test_agenda.pdf', 'rb') as agenda:
         agenda_file = agenda.read()
 
-        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile(
-            'test_agenda.pdf', agenda_file, content_type='application/pdf')})
+        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_agenda.pdf', agenda_file, content_type='application/pdf')})
 
         assert agenda_pdf_form.is_valid() == True
 
@@ -58,8 +57,7 @@ def test_agenda_pdf_form_error():
     with open('tests/test_image.gif', 'rb') as agenda:
         bad_agenda_file = agenda.read()
 
-        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile(
-            'test_image.gif', bad_agenda_file, content_type='image/gif')})
+        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_image.gif', bad_agenda_file, content_type='image/gif')})
 
         assert agenda_pdf_form.is_valid() == False
 
@@ -80,8 +78,7 @@ def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
     # the current date on save. Mock that attribute to return values useful for
     # testing. More on auto_now:
     # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.DateField.auto_now
-    mock_update = mocker.patch(
-        'lametro.models.LAMetroEvent.updated_at', new_callable=mocker.PropertyMock)
+    mock_update = mocker.patch('lametro.models.LAMetroEvent.updated_at', new_callable=mocker.PropertyMock)
     mock_update.return_value = updated_at
 
     event = event.build(start_date=datetime.now().isoformat()[:25])
@@ -110,14 +107,12 @@ def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
 
     # Add dummy GUID to one of our events.
     live_meeting, _ = concurrent_current_meetings
-    # GUIDs in the Legistar API are all caps.
-    live_meeting.extras = {'guid': dummy_guid.upper()}
+    live_meeting.extras = {'guid': dummy_guid.upper()}  # GUIDs in the Legistar API are all caps.
     live_meeting.save()
 
     # Patch running events endpoint to return our dummy GUID.
     mock_response = mocker.MagicMock(spec=requests.Response)
-    # GUIDs in running events endpoint are all lowercase.
-    mock_response.json.return_value = [dummy_guid]
+    mock_response.json.return_value = [dummy_guid]  # GUIDs in running events endpoint are all lowercase.
     mock_response.status_code = 200
 
     mocker.patch('lametro.models.requests.get', return_value=mock_response)
@@ -159,9 +154,9 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
     crenshaw_meeting_info = {
         'id': 'ocd-event/3c93e81f-f1a9-42ce-97fe-30c77a4a6740',
         'name': 'Crenshaw Project Corporation',
-        'start_date': LAMetroEvent._time_ago(minutes=15)
-        .replace(second=0, microsecond=0)
-        .isoformat(),
+        'start_date': LAMetroEvent._time_ago(minutes=15)\
+            .replace(second=0, microsecond=0)\
+            .isoformat(),
     }
     late_current_meeting = event.build(**crenshaw_meeting_info)
 
@@ -188,9 +183,9 @@ def test_current_meeting_no_potentially_current(event):
     safety_meeting_info = {
         'id': 'ocd-event/5e84e91d-279c-4c83-a463-4a0e05784b62',
         'name': 'System Safety, Security and Operations Committee',
-        'start_date': LAMetroEvent._time_from_now(hours=12)
-        .replace(second=0, microsecond=0)
-        .isoformat(),
+        'start_date': LAMetroEvent._time_from_now(hours=12)\
+            .replace(second=0, microsecond=0)\
+            .isoformat(),
     }
     event.build(**safety_meeting_info)
 
@@ -201,7 +196,7 @@ def test_current_meeting_no_potentially_current(event):
 
 
 def get_event_id():
-    return 'ocd-event/{}'.format(str(uuid4()))
+        return 'ocd-event/{}'.format(str(uuid4()))
 
 
 @pytest.mark.parametrize('n_before_board', [1, 4, 8])
@@ -214,10 +209,8 @@ def test_upcoming_committee_meetings(event, n_before_board):
         id=get_event_id()
     )
 
-    before_board_date = LAMetroEvent._time_from_now(
-        days=6).strftime('%Y-%m-%d %H:%M')
-    after_board_date = LAMetroEvent._time_from_now(
-        days=8).strftime('%Y-%m-%d %H:%M')
+    before_board_date = LAMetroEvent._time_from_now(days=6).strftime('%Y-%m-%d %H:%M')
+    after_board_date = LAMetroEvent._time_from_now(days=8).strftime('%Y-%m-%d %H:%M')
 
     # Create ten test meetings.
     for i in range(1, 11):
@@ -258,11 +251,9 @@ def test_upcoming_committee_meetings(event, n_before_board):
 
 
 def test_upcoming_board_meetings(event):
-    one_minute_from_now = LAMetroEvent._time_from_now(
-        minutes=1).strftime('%Y-%m-%d %H:%M')
+    one_minute_from_now = LAMetroEvent._time_from_now(minutes=1).strftime('%Y-%m-%d %H:%M')
     forty_days_ago = LAMetroEvent._time_ago(days=40).strftime('%Y-%m-%d %H:%M')
-    forty_days_from_now = LAMetroEvent._time_from_now(
-        days=40).strftime('%Y-%m-%d %H:%M')
+    forty_days_from_now = LAMetroEvent._time_from_now(days=40).strftime('%Y-%m-%d %H:%M')
 
     # Create a past meeting
     past_board_meeting = event.build(
@@ -320,16 +311,13 @@ def test_event_is_upcoming(event, mocker):
     tomorrow = (in_an_hour + timedelta(days=1)).date()
 
     # Before the upcoming window
-    yesterday_afternoon = datetime(
-        yesterday.year, yesterday.month, yesterday.day, 12, 0)
+    yesterday_afternoon = datetime(yesterday.year, yesterday.month, yesterday.day, 12, 0)
 
     # During the upcoming window
-    yesterday_evening = datetime(
-        yesterday.year, yesterday.month, yesterday.day, 17, 0)
+    yesterday_evening = datetime(yesterday.year, yesterday.month, yesterday.day, 17, 0)
 
     # After the upcoming window
-    tomorrow_morning = datetime(
-        tomorrow.year, tomorrow.month, tomorrow.day, 9, 0)
+    tomorrow_morning = datetime(tomorrow.year, tomorrow.month, tomorrow.day, 9, 0)
 
     with freeze_time(yesterday_afternoon):
         assert not test_event.is_upcoming
@@ -403,8 +391,7 @@ def test_most_recent_past_meetings(event):
 
 def test_todays_meetings(event):
     # create event for some day
-    event_time = app_timezone.localize(
-        datetime(2020, 3, 15, 15, 0, 0, 0))  # March 15, 2020 at 3pm LA time
+    event_time = app_timezone.localize(datetime(2020, 3, 15, 15, 0, 0, 0)) # March 15, 2020 at 3pm LA time
 
     time_string = event_time.strftime('%Y-%m-%d %H:%M')
 
@@ -446,8 +433,7 @@ def test_delete_button_shows(event, admin_client, django_user_model, mocker, eve
     with requests_mock.Mocker() as m:
         m.get(cal_matcher, status_code=200)
 
-        m.get(source_matcher, status_code=200, json={
-              'EventBodyName': 'Planning and Programming Committee'})
+        m.get(source_matcher, status_code=200, json={'EventBodyName': 'Planning and Programming Committee'})
         response = admin_client.get(event_template)
         assert delete_button_text in response.content.decode('utf-8')
 
@@ -456,8 +442,7 @@ def test_delete_button_shows(event, admin_client, django_user_model, mocker, eve
         else:
             api_event_name = event_name
 
-        m.get(source_matcher, status_code=200, json={
-              'EventBodyName': api_event_name})
+        m.get(source_matcher, status_code=200, json={'EventBodyName': api_event_name})
         response = admin_client.get(event_template)
         assert delete_button_text not in response.content.decode('utf-8')
 
