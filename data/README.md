@@ -6,7 +6,11 @@ from `raw/` each time the Makefile runs.
 
 The Makefile is run using a Docker container separate from the main Docker app that runs the Metro site locally.
 
-To generate new boundaries, run
+To generate new boundaries, first build the Docker app with
+
+`docker-compose build`
+
+Then run
 
 ```
 docker-compose run --rm app make clean
