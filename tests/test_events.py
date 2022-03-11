@@ -352,19 +352,18 @@ def test_first_of_month_returns_no_recent_past_meetings(event):
 def test_most_recent_past_meetings(event):
     three_weeks_ago = LAMetroEvent._time_ago(
         days=21).strftime('%Y-%m-%d %H:%M')
-    one_week_from_now = LAMetroEvent._time_from_now(
-        days=7).strftime('%Y-%m-%d %H:%M')
+    eight_days_ago_last_month = LAMetroEvent._time_ago(
+        days=8).strftime('%Y-%m-%d %H:%M')
+    five_days_ago = LAMetroEvent._time_ago(days=5).strftime('%Y-%m-%d %H:%M')
+    four_days_ago = LAMetroEvent._time_ago(days=4).strftime('%Y-%m-%d %H:%M')
 
     earlier_today = LAMetroEvent._time_ago(
         minutes=120).strftime('%Y-%m-%d %H:%M')
-
     one_hour_from_now = LAMetroEvent._time_from_now(
         minutes=60).strftime('%Y-%m-%d %H:%M')
-    eight_days_ago_last_month = LAMetroEvent._time_ago(
-        days=8).strftime('%Y-%m-%d %H:%M')
 
-    four_days_ago = LAMetroEvent._time_ago(days=4).strftime('%Y-%m-%d %H:%M')
-    five_days_ago = LAMetroEvent._time_ago(days=5).strftime('%Y-%m-%d %H:%M')
+    one_week_from_now = LAMetroEvent._time_from_now(
+        days=7).strftime('%Y-%m-%d %H:%M')
 
     # Events that shouldn't be returned
     event_older_than_two_weeks = event.build(
@@ -376,7 +375,7 @@ def test_most_recent_past_meetings(event):
     event_last_month = event.build(
         name='Board Meeting', start_date=eight_days_ago_last_month, id=get_event_id())
 
-    # Build events that should be in list
+    # Events that should be returned
     event_earlier_today = event.build(
         name='Board Meeting', start_date=earlier_today, id=get_event_id())
     event_four_days_ago = event.build(
@@ -392,6 +391,7 @@ def test_most_recent_past_meetings(event):
     assert event_later_today not in recent_past_meetings
     assert event_one_week_from_now not in recent_past_meetings
     assert event_last_month not in recent_past_meetings
+
     assert event_four_days_ago in recent_past_meetings
     assert event_five_days_ago in recent_past_meetings
     assert event_earlier_today in recent_past_meetings

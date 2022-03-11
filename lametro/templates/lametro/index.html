@@ -77,6 +77,7 @@
                         {% endfor %}
                     {% endif %}
                 {% else %}
+                    <br>
                     <p><em>No meetings scheduled in the next two months.</em></p>
                 {% endif %}
                 <br/>
@@ -94,13 +95,12 @@
                     Recent Meetings
                 </h2>
                 {% if most_recent_past_meetings %}
-                    {% if most_recent_past_meetings %}
-                        {% for event in most_recent_past_meetings %}
-                            {% include "partials/event_item.html" %}
-                        {% endfor %}
-                    {% endif %}
+                    {% for event in most_recent_past_meetings %}
+                        {% include "partials/event_item.html" %}
+                    {% endfor %}
                 {% else %}
-                    <p><em>No meetings held in the past two weeks of this month.</em></p>
+                    <br>
+                    <p><em>No meetings in the past two weeks of this month.</em></p>
                 {% endif %}
                 <br/>
                 <a href="/events/" class="btn btn-sm btn-primary">
