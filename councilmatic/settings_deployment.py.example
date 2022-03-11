@@ -1,6 +1,7 @@
 # These are all the settings that are specific to a deployment
 
 import os
+import sys
 
 ALLOWED_HOSTS = [
     'localhost',
