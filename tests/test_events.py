@@ -1,6 +1,7 @@
 import pytest
 import pytz
 import re
+import pdb
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -344,7 +345,7 @@ def test_first_of_month_returns_no_recent_past_meetings(event):
     yesterdays_event = event.build(
         name='Board Meeting', start_date=yesterday, id=get_event_id())
 
-    assert LAMetroEvent.most_recent_past_meetings().count() == 0
+    assert len(LAMetroEvent.most_recent_past_meetings()) == 0
 
 
 @freeze_time("2021-02-07 10:00:00")
@@ -353,8 +354,12 @@ def test_most_recent_past_meetings(event):
         days=21).strftime('%Y-%m-%d %H:%M')
     one_week_from_now = LAMetroEvent._time_from_now(
         days=7).strftime('%Y-%m-%d %H:%M')
-    one_minute_from_now = LAMetroEvent._time_from_now(
-        minutes=1).strftime('%Y-%m-%d %H:%M')
+
+    earlier_today = LAMetroEvent._time_ago(
+        minutes=120).strftime('%Y-%m-%d %H:%M')
+
+    one_hour_from_now = LAMetroEvent._time_from_now(
+        minutes=60).strftime('%Y-%m-%d %H:%M')
     eight_days_ago_last_month = LAMetroEvent._time_ago(
         days=8).strftime('%Y-%m-%d %H:%M')
 
@@ -364,14 +369,16 @@ def test_most_recent_past_meetings(event):
     # Events that shouldn't be returned
     event_older_than_two_weeks = event.build(
         name='Board Meeting', start_date=three_weeks_ago, id=get_event_id())
-    event_today = event.build(
-        name='Board Meeting', start_date=one_minute_from_now, id=get_event_id())
+    event_later_today = event.build(
+        name='Board Meeting', start_date=one_hour_from_now, id=get_event_id())
     event_one_week_from_now = event.build(
-        name='Board Meeting', start_date=one_minute_from_now, id=get_event_id())
+        name='Board Meeting', start_date=one_week_from_now, id=get_event_id())
     event_last_month = event.build(
         name='Board Meeting', start_date=eight_days_ago_last_month, id=get_event_id())
 
     # Build events that should be in list
+    event_earlier_today = event.build(
+        name='Board Meeting', start_date=earlier_today, id=get_event_id())
     event_four_days_ago = event.build(
         name='Board Meeting', start_date=four_days_ago, id=get_event_id())
     event_five_days_ago = event.build(
@@ -379,14 +386,15 @@ def test_most_recent_past_meetings(event):
 
     recent_past_meetings = LAMetroEvent.most_recent_past_meetings()
 
-    assert recent_past_meetings.count() == 2
+    assert len(recent_past_meetings) == 3
 
     assert event_older_than_two_weeks not in recent_past_meetings
-    assert event_today not in recent_past_meetings
+    assert event_later_today not in recent_past_meetings
     assert event_one_week_from_now not in recent_past_meetings
     assert event_last_month not in recent_past_meetings
     assert event_four_days_ago in recent_past_meetings
     assert event_five_days_ago in recent_past_meetings
+    assert event_earlier_today in recent_past_meetings
 
 
 def test_todays_meetings(event):

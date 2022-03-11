@@ -493,12 +493,16 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         Returns meetings in the current month that have occured in the past
         two weeks.
         '''
-        yesterday = datetime.today() - timedelta(days=1)
-        current_month = datetime.today().month
-        two_weeks_ago = datetime.today() - timedelta(weeks=2)
+        current_month = timezone.now().month
+        two_weeks_ago = timezone.now() - timedelta(weeks=2)
 
-        past_meetings = cls.objects.filter(
-            Q(start_time__month=current_month), Q(start_time__range=(two_weeks_ago, yesterday))).order_by('start_time')
+        meetings_in_past_two_weeks = cls.objects.filter(
+            Q(start_time__month=current_month), Q(start_time__gte=(two_weeks_ago)), Q())
+
+        # since display_status is a property of LAMetroEvent rather than
+        # a model attribute, we have to make sure returned meetings 
+        # have concluded separately from the above Queryset filter
+        past_meetings = list(filter(lambda m: m.display_status == 'Concluded', meetings_in_past_two_weeks))
 
         return past_meetings
 
