@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  app:
+    image: data
+    container_name: data
+    build: .
+    stdin_open: true
+    volumes:
+      - .:/app
+    entrypoint: /app/docker-entrypoint.sh
