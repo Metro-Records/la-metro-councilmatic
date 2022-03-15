@@ -488,6 +488,25 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         proxy = True
 
     @classmethod
+    def most_recent_past_meetings(cls):
+        '''
+        Returns meetings in the current month that have occured in the past
+        two weeks.
+        '''
+        current_month = timezone.now().month
+        two_weeks_ago = timezone.now() - timedelta(weeks=2)
+
+        meetings_in_past_two_weeks = cls.objects.filter(
+            start_time__month=current_month, start_time__gte=two_weeks_ago)
+
+        # since has_passed is a property of LAMetroEvent rather than
+        # a model attribute, we have to make sure returned meetings 
+        # have concluded separately from the above Queryset filter
+        past_meetings = list(filter(lambda m: m.has_passed, meetings_in_past_two_weeks))
+
+        return past_meetings
+
+    @classmethod
     def upcoming_board_meetings(cls):
         '''
         In rare instances, there are two board meetings in a given month, e.g.,
@@ -524,7 +543,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     @classmethod
     def _potentially_current_meetings(cls):
         '''
-        Return meetings that could be "current" – that is, meetings that are
+        Return meetings that could be "current" – that is, meetings that are
         scheduled to start in the last six hours, or in the next five minutes.
 
         Fun fact: The longest Metro meeting on record is 5.38 hours long (see
