@@ -1,5 +1,4 @@
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 import pytest
 from uuid import uuid4
 from random import randrange
@@ -133,7 +132,13 @@ def event(db, jurisdiction):
             event = LAMetroEvent.objects.create(**event_info)
 
             # Get event from queryset so it has the start_time annotation from the manager
-            return LAMetroEvent.objects.get(id=event.id)
+            metro_event = LAMetroEvent.objects.get(id=event.id)
+
+            if metro_event.start_time < datetime.now(timezone.utc):
+                metro_event.extras['has_broadcast'] = True
+                metro_event.save()
+
+            return metro_event
 
     return EventFactory()
 

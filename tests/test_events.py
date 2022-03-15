@@ -358,7 +358,7 @@ def test_upcoming_board_meetings(event):
 def test_event_is_upcoming(event, mocker):
     mock_streaming_meetings(mocker)
 
-    in_an_hour = datetime.now() + timedelta(hours=1)
+    in_an_hour = LAMetroEvent._time_from_now(hours=1)
 
     # Build an event that starts in an hour
     test_event = event.build(start_date=in_an_hour.strftime('%Y-%m-%d %H:%M'))
