@@ -497,10 +497,9 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         two_weeks_ago = timezone.now() - timedelta(weeks=2)
 
         meetings_in_past_two_weeks = cls.objects.filter(
-            start_time__month=current_month).filter(
-            start_time__gte=two_weeks_ago)
+            start_time__month=current_month, start_time__gte=two_weeks_ago)
 
-        # since display_status is a property of LAMetroEvent rather than
+        # since has_passed is a property of LAMetroEvent rather than
         # a model attribute, we have to make sure returned meetings 
         # have concluded separately from the above Queryset filter
         past_meetings = list(filter(lambda m: m.has_passed, meetings_in_past_two_weeks))
