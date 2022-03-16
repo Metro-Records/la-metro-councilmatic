@@ -72,6 +72,7 @@ class LAMetroIndexView(IndexView):
         extra = {}
 
         extra['upcoming_board_meetings'] = self.event_model.upcoming_board_meetings()[:2]
+        extra['most_recent_past_meetings'] = self.event_model.most_recent_past_meetings()
         extra['current_meeting'] = self.event_model.current_meeting()
         extra['bilingual'] = bool([e for e in extra['current_meeting'] if e.bilingual])
         extra['USING_ECOMMENT'] = settings.USING_ECOMMENT
