@@ -639,7 +639,11 @@ class IdentifierBoostSearchQuery(SolrSearchQuery):
         Reference:
         https://medium.com/@pablocastelnovo/if-they-match-i-want-them-to-be-always-first-boosting-documents-in-apache-solr-with-the-boost-362abd36476c
         '''
-        identifiers = set(re.findall('\d{4}-\d{4}', self.build_query()))
+        # Remove slashes escaping the dash in an identifier
+        identifiers = set(
+            i.replace('\\', '') for i in
+            re.findall(r'\d{4}\\-\d{4}', self.build_query())
+        )
 
         if identifiers:
             kwargs.update({
