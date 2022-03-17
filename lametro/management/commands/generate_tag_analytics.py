@@ -1,4 +1,5 @@
 import csv
+from tqdm import tqdm
 from django.core.management.base import BaseCommand
 
 from lametro.models import LAMetroBill
@@ -12,13 +13,19 @@ class Command(BaseCommand):
 
         with open('tag_analytics.csv', 'w', newline='') as f:
             writer = csv.writer(f, delimiter=',')
-            files = [(b.board_report.id,
-                      b.identifier,
-                      b.friendly_name,
-                      b.last_action_date,
-                      b.subject) for b in LAMetroBill.objects.all()]
+            files = []
+            for bill in LAMetroBill.all_objects.all():
+                if bill.board_report:
+                    files.append(
+                        (bill.board_report.id,
+                         bill.identifier,
+                         bill.friendly_name,
+                         bill.last_action_date,
+                         bill.subject)
+                    )
+
             writer.writerow(['File ID', 'Identifier', 'Title', 'Last Action Date', 'Tag'])
-            for report_id, identifier, title, last_action_date, tags in files:
+            for report_id, identifier, title, last_action_date, tags in tqdm(files):
                 for tag in tags:
                     writer.writerow([
                         str(report_id),
