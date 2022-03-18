@@ -7,13 +7,13 @@
       <small>
         <i class="fa fa-fw fa-calendar-o"></i>
         <span class="non-mobile-only">
-          {{event.start_time | date:"D"}}
+          {{ event.start_time | date:"D" }}
         </span>
-        {{event.start_time | date:"m/d"}}
+        {{ event.start_time | date:"m/d" }}
         <span class="non-mobile-only">
           <i class="fa fa-fw fa-clock-o"></i>
         </span>
-        {{event.start_time| date:"g:ia"}}<br/>
+        {{ event.start_time| date:"g:ia" }}<br/>
       </small>
     {% if event.status == 'cancelled' %}
       </strike>

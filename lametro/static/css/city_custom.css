@@ -63,8 +63,13 @@ h1, .h1 {
     margin-bottom: 0px !important;
 }
 
+#upcoming-meetings {
+    margin-bottom: 20px;
+}
+
 #past-meetings {
-    padding-top: 20px;
+    border-top: 1px solid #ccc;
+    margin-top: 10px;
 }
 
 #map { margin-bottom: 2em; }
