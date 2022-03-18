@@ -13,24 +13,25 @@ class Command(BaseCommand):
 
         with open('tag_analytics.csv', 'w', newline='') as f:
             writer = csv.writer(f, delimiter=',')
-            files = []
-            for bill in LAMetroBill.all_objects.all():
-                if bill.board_report:
-                    files.append(
+            writer.writerow(
+                ('File ID',
+                 'Identifier'
+                 'Title',
+                 'Last Action Date',
+                 'Tag Classification',
+                 'Tag')
+            )
+
+            for bill in tqdm(LAMetroBill.objects.all()):
+                if not bill.board_report:
+                    continue
+
+                for tag in bill.rich_topics:
+                    writer.writerow(
                         (bill.board_report.id,
                          bill.identifier,
                          bill.friendly_name,
                          bill.last_action_date,
-                         bill.subject)
+                         tag.classification,
+                         tag.name)
                     )
-
-            writer.writerow(['File ID', 'Identifier', 'Title', 'Last Action Date', 'Tag'])
-            for report_id, identifier, title, last_action_date, tags in tqdm(files):
-                for tag in tags:
-                    writer.writerow([
-                        str(report_id),
-                        identifier,
-                        title,
-                        last_action_date,
-                        tag,
-                    ])
