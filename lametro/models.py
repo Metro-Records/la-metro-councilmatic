@@ -120,7 +120,6 @@ class LAMetroBillManager(models.Manager):
 
 class LAMetroBill(Bill, SourcesMixin):
     objects = LAMetroBillManager()
-    all_objects = models.Manager()
 
     class Meta:
         proxy = True
