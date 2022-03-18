@@ -32,10 +32,12 @@
         {% if event.media %}
           {% for media in event.media.all %}
             <p>
-              <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank">{% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
-              </br>
-            </p>
+            <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank">
+              <i class="fa fa-headphones" aria-hidden="true"></i>
+              {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}
+            </a>
           {% endfor %}
+          </br>
         {% endif %}
 
       {% endif %}
