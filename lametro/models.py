@@ -590,6 +590,12 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
                 meeting = cls.objects.filter(extras__guid=guid.upper())
 
                 if meeting:
+                    # Record that a meeting has been broadcast, so we can infer
+                    # when it has concluded.
+                    meeting_obj = meeting.first()
+                    meeting_obj.extras['has_broadcast'] = True
+                    meeting_obj.save()
+
                     return meeting
 
         return cls.objects.none()
@@ -687,15 +693,12 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def is_ongoing(self):
-        if not hasattr(self, '_is_ongoing'):
-            self._is_ongoing = self in type(self).current_meeting()
-
-        return self._is_ongoing
+        return self in type(self)._streaming_meeting()
 
 
     @property
     def has_passed(self):
-        return self.start_time < timezone.now() and not self.is_ongoing
+        return self.extras.get('has_broadcast', False) and not self.is_ongoing
 
 
     @property

@@ -22,7 +22,16 @@ from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
 
 
-# This collection of tests checks the functionality of Event-specific views, helper functions, and relations.
+def mock_streaming_meetings(mocker, return_value=None):
+    mock_response = mocker.MagicMock(spec=requests.Response)
+    mock_response.json.return_value = return_value if return_value else []
+    mock_response.status_code = 200
+
+    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+
+    return mock_response
+
+
 def test_agenda_creation(event, event_document):
     '''
     Test that the same agenda url does not get added twice.
@@ -109,12 +118,7 @@ def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
     live_meeting.extras = {'guid': dummy_guid.upper()}  # GUIDs in the Legistar API are all caps.
     live_meeting.save()
 
-    # Patch running events endpoint to return our dummy GUID.
-    mock_response = mocker.MagicMock(spec=requests.Response)
-    mock_response.json.return_value = [dummy_guid]  # GUIDs in running events endpoint are all lowercase.
-    mock_response.status_code = 200
-
-    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+    mock_streaming_meetings(mocker, return_value=[dummy_guid])
 
     current_meetings = LAMetroEvent.current_meeting()
 
@@ -128,12 +132,7 @@ def test_current_meeting_no_streaming_event(concurrent_current_meetings,
     Test that if an event is not streaming, and there are concurrently
     scheduled events, both events are returned as current.
     '''
-    # Patch running events endpoint to return no running events.
-    mock_response = mocker.MagicMock(spec=requests.Response)
-    mock_response.json.return_value = []
-    mock_response.status_code = 200
-
-    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+    mock_streaming_meetings(mocker)
 
     current_meetings = LAMetroEvent.current_meeting()
 
@@ -159,12 +158,7 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
     }
     late_current_meeting = event.build(**crenshaw_meeting_info)
 
-    # Patch running events endpoint to return no running events.
-    mock_response = mocker.MagicMock(spec=requests.Response)
-    mock_response.json.return_value = []
-    mock_response.status_code = 200
-
-    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+    mock_streaming_meetings(mocker)
 
     current_meetings = LAMetroEvent.current_meeting()
 
@@ -194,8 +188,73 @@ def test_current_meeting_no_potentially_current(event):
     assert not current_meetings
 
 
+def test_upcoming_meetings_are_not_marked_as_broadcast(concurrent_current_meetings, mocker):
+    # Create two potentially current meetings
+    test_event_a, test_event_b = concurrent_current_meetings
+
+    mock_streaming_meetings(mocker)
+
+    # Assert the events are returned (potentially current), but not marked as
+    # having been broadcast
+    current_meetings = LAMetroEvent.current_meeting()
+    assert current_meetings.count() == 2
+
+    for e in (test_event_a, test_event_b):
+        assert e in current_meetings
+
+        e.refresh_from_db()
+        assert not e.extras.get('has_broadcast', False)
+
+
+def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mocker):
+    # Create two potentially current meetings
+    test_event_a, test_event_b = concurrent_current_meetings
+
+    # Return the event from the running events endpoint
+    dummy_guid = 'a super special guid'
+
+    test_event_a.extras = {'guid': dummy_guid.upper()}  # GUIDs in the Legistar API are all caps.
+    test_event_a.save()
+
+    mock_response = mock_streaming_meetings(mocker, return_value=[dummy_guid])
+
+    # Assert Event A is the only event returned, and is marked as having
+    # been broadcast and has the correct status
+    current_meeting = LAMetroEvent.current_meeting()
+    assert current_meeting.get() == test_event_a
+
+    test_event_a.refresh_from_db()
+    assert test_event_a.extras['has_broadcast']
+
+    assert test_event_a.is_ongoing
+    assert not any([test_event_a.is_upcoming, test_event_a.has_passed])
+
+    # Assert Event B has not been marked as broadcast and is still upcoming
+    test_event_b.refresh_from_db()
+    assert not test_event_b.extras.get('has_broadcast', False)
+
+    assert test_event_b.is_upcoming
+    assert not any([test_event_b.is_ongoing, test_event_b.has_passed])
+
+    # Fast forward an hour, no longer return Event A from the running events
+    # endpoint, and assert that it has the correct status. Also assert Event B
+    # is still upcoming, since it has not yet broadcast.
+    with freeze_time(LAMetroEvent._time_from_now(hours=1)):
+        mock_response.json.return_value = []
+
+        assert test_event_a.has_passed
+        assert not any([test_event_a.is_upcoming, test_event_a.is_ongoing])
+
+        assert test_event_b.is_upcoming
+        assert not any([test_event_b.is_ongoing, test_event_b.has_passed])
+
+
+def test_check_current_meeting():
+    ...
+
+
 def get_event_id():
-        return 'ocd-event/{}'.format(str(uuid4()))
+    return 'ocd-event/{}'.format(str(uuid4()))
 
 
 @pytest.mark.parametrize('n_before_board', [1, 4, 8])
@@ -297,13 +356,12 @@ def test_upcoming_board_meetings(event):
 
 
 def test_event_is_upcoming(event, mocker):
-    in_an_hour = datetime.now() + timedelta(hours=1)
+    mock_streaming_meetings(mocker)
+
+    in_an_hour = LAMetroEvent._time_from_now(hours=1)
 
     # Build an event that starts in an hour
-    _event = event.build(start_date=in_an_hour.strftime('%Y-%m-%d %H:%M'))
-
-    # Get event from queryset so it has the start_time annotation from the manager
-    test_event = LAMetroEvent.objects.get(id=_event.id)
+    test_event = event.build(start_date=in_an_hour.strftime('%Y-%m-%d %H:%M'))
 
     # Create three timestamps to test upcoming at three points in time...
     yesterday = (in_an_hour - timedelta(days=1)).date()
@@ -331,6 +389,7 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
         test_event.status = 'confirmed'
+        test_event.extras['has_broadcast'] = True
         test_event.save()
 
     with freeze_time(tomorrow_morning):
@@ -431,12 +490,14 @@ def test_delete_button_shows(event, admin_client, django_user_model, mocker, eve
 
     source_matcher = re.compile(api_source)
     cal_matcher = re.compile('https://metro.legistar.com/calendar.aspx')
+    running_events_matcher = re.compile('http://metro.granicus.com/running_events.php')
 
     delete_button_text = ('This event does not exist in Legistar. It may have '
                           'been deleted from Legistar due to being a duplicate. '
                           'To delete this event, click the button below.')
 
     with requests_mock.Mocker() as m:
+        m.get(running_events_matcher, status_code=302)
         m.get(cal_matcher, status_code=200)
 
         m.get(source_matcher, status_code=200, json={'EventBodyName': 'Planning and Programming Committee'})

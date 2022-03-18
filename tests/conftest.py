@@ -1,5 +1,4 @@
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 import pytest
 from uuid import uuid4
 from random import randrange
@@ -132,7 +131,14 @@ def event(db, jurisdiction):
 
             event = LAMetroEvent.objects.create(**event_info)
 
-            return event
+            # Get event from queryset so it has the start_time annotation from the manager
+            metro_event = LAMetroEvent.objects.get(id=event.id)
+
+            if metro_event.start_time < datetime.now(timezone.utc):
+                metro_event.extras['has_broadcast'] = True
+                metro_event.save()
+
+            return metro_event
 
     return EventFactory()
 
@@ -359,3 +365,13 @@ def event_location(db, jurisdiction):
             return event_location
 
     return EventLocationFactory()
+
+
+@pytest.fixture
+def mocked_streaming_meeting(mocker):
+    mock_response = mocker.MagicMock(spec=requests.Response)
+    mock_response.status_code = 200
+
+    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+
+    return mock_response
