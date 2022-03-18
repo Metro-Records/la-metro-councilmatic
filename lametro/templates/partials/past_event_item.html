@@ -1,0 +1,44 @@
+<div class="row">
+  <br/>
+  <div class="col-xs-4">
+    {% if event.status == 'cancelled' %}
+      <strike>
+    {% endif %}
+      <small>
+        <i class="fa fa-fw fa-calendar-o"></i>
+        <span class="non-mobile-only">
+          {{event.start_time | date:"D"}}
+        </span>
+        {{event.start_time | date:"m/d"}}
+        <span class="non-mobile-only">
+          <i class="fa fa-fw fa-clock-o"></i>
+        </span>
+        {{event.start_time| date:"g:ia"}}<br/>
+      </small>
+    {% if event.status == 'cancelled' %}
+      </strike>
+    {% endif %}
+  </div>
+
+  <div class="col-xs-8">
+    <p>
+      {% if event.status == 'cancelled' %}
+        <strike>{{ event.link_html | safe }}</strike>
+        <span class="label label-stale">Cancelled</span>
+        <br/>
+      {% else %}
+        {{ event.link_html | safe }}<br/>
+
+        {% if event.media %}
+          {% for media in event.media.all %}
+            <p>
+              <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank">{% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
+              </br>
+            </p>
+          {% endfor %}
+        {% endif %}
+
+      {% endif %}
+    </p>
+  </div>
+</div>

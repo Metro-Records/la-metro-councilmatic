@@ -496,7 +496,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         current_month = timezone.now().month
         two_weeks_ago = timezone.now() - timedelta(weeks=2)
 
-        meetings_in_past_two_weeks = cls.objects.filter(
+        meetings_in_past_two_weeks = cls.objects.with_media().filter(
             start_time__month=current_month, start_time__gte=two_weeks_ago).order_by('-start_time')
 
         # since has_passed is a property of LAMetroEvent rather than
