@@ -58,6 +58,15 @@ h1, .h1 {
     padding-bottom: 20px;
 }
 
+#section-events h2 {
+    margin-top: 20px !important;
+    margin-bottom: 0px !important;
+}
+
+#upcoming-meetings {
+    margin-bottom: 20px;
+}
+
 #map { margin-bottom: 2em; }
 
 #map-screenshot { width: 90%; }
