@@ -472,7 +472,6 @@ def test_display_status(event):
     assert cancelled_this_morning.display_status == 'Cancelled'
 
 
-
 def test_todays_meetings(event):
     # create event for some day
     event_time = app_timezone.localize(datetime(2020, 3, 15, 15, 0, 0, 0)) # March 15, 2020 at 3pm LA time
