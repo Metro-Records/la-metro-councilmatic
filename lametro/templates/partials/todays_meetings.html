@@ -1,6 +1,6 @@
 <h3>Today's Meetings</h3>
     {% for meeting in todays_meetings %}
-        {% if meeting.status == 'cancelled' %}
+        {% if meeting.display_status == 'Cancelled' %}
             <strike> {{  meeting.link_html | safe }} </strike>
             <small>
                 <span class="label label-stale">
