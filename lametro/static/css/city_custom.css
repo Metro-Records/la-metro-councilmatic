@@ -67,11 +67,6 @@ h1, .h1 {
     margin-bottom: 20px;
 }
 
-#past-meetings {
-    border-top: 1px solid #ccc;
-    margin-top: 10px;
-}
-
 #map { margin-bottom: 2em; }
 
 #map-screenshot { width: 90%; }
