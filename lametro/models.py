@@ -722,6 +722,17 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             return self.UPCOMING_ECOMMENT_MESSAGE
 
 
+    @property
+    def accepts_live_comment(self):
+        meetings_without_live_comment = {
+            'Measure R Independent Taxpayer Oversight Committee',
+            'Measure M Independent Taxpayer Oversight Committee',
+            'Independent Citizen’s Advisory and Oversight Committee',
+        }
+
+        return self.name not in meetings_without_live_comment
+
+
     @classmethod
     def todays_meetings(cls):
         today_la = app_timezone.localize(datetime.now()).replace(hour=0, minute=0, second=0, microsecond=0)

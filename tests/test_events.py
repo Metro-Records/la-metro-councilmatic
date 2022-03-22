@@ -564,3 +564,54 @@ def test_meeting_stream_link_unavailable(mocker):
 
     assert isinstance(current_meeting, QuerySet)
     assert len(current_meeting) == 0
+
+
+LIVE_COMMENT_PARAMETERS = [
+    ('Special Operations, Safety, and Customer Experience Committee', True),
+    ('Planning and Programming Committee', True),
+    ('Operations, Safety, and Customer Experience Committee', True),
+    ('Finance, Budget and Audit Committee', True),
+    ('Executive Management Committee', True),
+    ('Construction Committee', True),
+    ('Measure R Independent Taxpayer Oversight Committee', False),
+    ('Measure M Independent Taxpayer Oversight Committee', False),
+    ('Independent Citizen’s Advisory and Oversight Committee', False),
+]
+
+
+@pytest.mark.parametrize('event_name,expected_live_comment_value', LIVE_COMMENT_PARAMETERS)
+def test_accepts_live_comment(event,
+                              event_document,
+                              event_name,
+                              expected_live_comment_value):
+
+    in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime('%Y-%m-%d %H:%M')
+    test_event = event.build(name=event_name, start_date=in_an_hour)
+    event_document.build(note='Agenda', event_id=test_event.id)
+
+    assert test_event.accepts_live_comment == expected_live_comment_value
+
+
+@pytest.mark.parametrize('event_name,expected_live_comment_value', LIVE_COMMENT_PARAMETERS)
+def test_live_comment_details_display_as_expected(client,
+                                                  event,
+                                                  event_document,
+                                                  event_name,
+                                                  expected_live_comment_value):
+
+    in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime('%Y-%m-%d %H:%M')
+    test_event = event.build(name=event_name, start_date=in_an_hour)
+    event_document.build(note='Agenda', event_id=test_event.id)
+
+    url = reverse('lametro:events', args=[test_event.slug])
+    response = client.get(url)
+    response_content = response.content.decode('utf-8')
+
+    live_comment_signature = (
+        'During the meeting',
+        'By phone:',
+        'You may join the public comment participation call 5 minutes prior to the start of the meeting.',
+    )
+
+    for line in live_comment_signature:
+        assert (line in response_content) == expected_live_comment_value
