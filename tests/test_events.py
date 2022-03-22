@@ -566,7 +566,7 @@ def test_meeting_stream_link_unavailable(mocker):
     assert len(current_meeting) == 0
 
 
-@pytest.mark.parametrize('event_name,expected_live_comment_value', [
+LIVE_COMMENT_PARAMETERS = [
     ('Special Operations, Safety, and Customer Experience Committee', True),
     ('Planning and Programming Committee', True),
     ('Operations, Safety, and Customer Experience Committee', True),
@@ -576,8 +576,24 @@ def test_meeting_stream_link_unavailable(mocker):
     ('Measure R Independent Taxpayer Oversight Committee', False),
     ('Measure M Independent Taxpayer Oversight Committee', False),
     ('Independent Citizen’s Advisory and Oversight Committee', False),
-])
-def test_live_comment_info_displays_appropriately(client,
+]
+
+
+@pytest.mark.parametrize('event_name,expected_live_comment_value', LIVE_COMMENT_PARAMETERS)
+def test_accepts_live_comment(event,
+                              event_document,
+                              event_name,
+                              expected_live_comment_value):
+
+    in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime('%Y-%m-%d %H:%M')
+    test_event = event.build(name=event_name, start_date=in_an_hour)
+    event_document.build(note='Agenda', event_id=test_event.id)
+
+    assert test_event.accepts_live_comment == expected_live_comment_value
+
+
+@pytest.mark.parametrize('event_name,expected_live_comment_value', LIVE_COMMENT_PARAMETERS)
+def test_live_comment_details_display_as_expected(client,
                                                   event,
                                                   event_document,
                                                   event_name,
@@ -586,8 +602,6 @@ def test_live_comment_info_displays_appropriately(client,
     in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime('%Y-%m-%d %H:%M')
     test_event = event.build(name=event_name, start_date=in_an_hour)
     event_document.build(note='Agenda', event_id=test_event.id)
-
-    assert test_event.accepts_live_comment == expected_live_comment_value
 
     url = reverse('lametro:events', args=[test_event.slug])
     response = client.get(url)

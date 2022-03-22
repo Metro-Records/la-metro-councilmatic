@@ -724,11 +724,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def accepts_live_comment(self):
-        meetings_without_live_comment = (
+        meetings_without_live_comment = {
             'Measure R Independent Taxpayer Oversight Committee',
             'Measure M Independent Taxpayer Oversight Committee',
             'Independent Citizen’s Advisory and Oversight Committee',
-        )
+        }
 
         return self.name not in meetings_without_live_comment
 
