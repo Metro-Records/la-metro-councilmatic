@@ -16,7 +16,7 @@ from lametro.views import LAMetroIndexView, LAMetroEventDetail, LABillDetail, LA
     LAMetroAboutView, LACommitteeDetailView, LACommitteesView, LAPersonDetailView, \
     LAMetroEventsView, LAMetroCouncilmaticFacetedSearchView, GoogleView, \
     metro_login, metro_logout, delete_submission, delete_event, LAMetroArchiveSearch,\
-    LAMetroContactView, MinutesView
+    LAMetroContactView
 from lametro.feeds import *
 
 patterns = ([
@@ -39,7 +39,6 @@ patterns = ([
     url(r'^google66b34bb6957ad66c.html/$', GoogleView.as_view(), name='google_view'),
     url(r'^public-comment/$', PublicComment.as_view(), name='public_comment'),
     url(r'^contact/$', LAMetroContactView.as_view(), name='contact'),
-    url(r'^minutes/$', MinutesView.as_view(), name='minutes'),
 ], settings.APP_NAME)
 
 urlpatterns = [

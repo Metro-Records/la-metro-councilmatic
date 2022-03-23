@@ -58,8 +58,6 @@ from councilmatic.settings import PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
 
-from .utils import get_list_from_csv
-
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 class LAMetroIndexView(IndexView):
@@ -369,7 +367,6 @@ class LAMetroEventsView(EventsView):
 
         return context
 
-
 class LABoardMembersView(CouncilMembersView):
     template_name = 'lametro/board_members.html'
 
@@ -511,6 +508,7 @@ class LACommitteesView(CommitteesView):
                                           to_attr='current_members'))
 
         return qs
+
 
 
 class LACommitteeDetailView(CommitteeDetailView):
@@ -740,115 +738,6 @@ class LAMetroArchiveSearch(TemplateView):
 
 class LAMetroContactView(IndexView):
     template_name = 'lametro/contact.html'
-
-
-class MinutesView(EventsView):
-    template_name = 'lametro/minutes.html'
-
-    def _get_historical_events(self, start_datetime=None, end_datetime=None):
-        csv_events = get_list_from_csv('historical_events.csv')
-
-        filtered_historical_events = []
-        if start_datetime or end_datetime:
-            for e in csv_events:
-                e_datetime = datetime.datetime.strptime(e['date'], '%Y-%m-%d')
-                if start_datetime and end_datetime:
-                    if e_datetime >= start_datetime and e_datetime <= end_datetime:
-                        filtered_historical_events.append(e)
-                elif start_datetime:
-                    if e_datetime >= start_datetime:
-                        filtered_historical_events.append(e)
-                elif end_datetime:
-                    if e_datetime <= end_datetime:
-                        filtered_historical_events.append(e)
-        else:
-            filtered_historical_events = csv_events
-
-        for obj in filtered_historical_events:
-            obj['start_time'] = timezone.make_aware(datetime.datetime.strptime(obj['date'], '%Y-%m-%d')).date()
-            obj['agenda_link'] = obj['agenda_link'].split('\n')
-            obj['minutes_link'] = obj['minutes_link'].split('\n')
-
-        return filtered_historical_events
-
-    def _get_stored_events(self, start_datetime=None, end_datetime=None):
-        minutes = EventDocument.objects.filter(note__icontains='minutes')\
-                                       .prefetch_related(Prefetch('links', to_attr='prefetched_links'))
-        agenda = EventDocument.objects.filter(note__icontains='agenda')\
-                                      .prefetch_related(Prefetch('links', to_attr='prefetched_links'))
-        all_events = LAMetroEvent.objects.prefetch_related(Prefetch('documents',
-                                                                    queryset=minutes,
-                                                                    to_attr='minutes_document'))\
-                                         .prefetch_related(Prefetch('documents',
-                                                                    queryset=agenda,
-                                                                    to_attr='agenda_document'))
-        if start_datetime:
-            stored_events = all_events.filter(start_time__gt=start_datetime)
-        else:
-            stored_events = all_events
-        if end_datetime:
-            stored_events = stored_events.filter(start_time__lt=end_datetime)
-        else:
-            stored_events = stored_events.filter(start_time__lt=timezone.now())
-
-        structured_db_events = []
-        for event in stored_events:
-            stored_events_dict = {
-                'start_time': event.start_time.date(),
-                'meeting': event.name,
-                'minutes_link': [],
-                'agenda_link': [],
-            }
-            try:
-                minutes_link = event.minutes_document[0].prefetched_links[0].url
-                stored_events_dict['minutes_link'].append(minutes_link)
-            except IndexError:
-                pass
-
-            try:
-                agenda_link = event.agenda_document[0].prefetched_links[0].url
-                stored_events_dict['agenda_link'].append(agenda_link)
-            except IndexError:
-                pass
-
-            structured_db_events.append(stored_events_dict)
-
-        return structured_db_events
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        start_datetime = None
-        end_datetime = None
-
-        start_date_str = self.request.GET.get('minutes-from', '')
-        if start_date_str:
-            start_datetime = datetime.datetime.strptime(start_date_str, '%m/%d/%Y')
-
-        end_date_str = self.request.GET.get('minutes-to', '')
-        if end_date_str:
-            end_datetime = datetime.datetime.strptime(end_date_str, '%m/%d/%Y')
-
-        context['start_date'] = start_date_str
-        context['end_date'] = end_date_str
-
-        historical_events = self._get_historical_events(start_datetime, end_datetime)
-        stored_events = self._get_stored_events(start_datetime, end_datetime)
-
-        # sort and group csv and db events together
-        all_minutes = historical_events + stored_events
-        all_minutes_sorted = sorted(all_minutes, key=lambda x: x['start_time'], reverse=True)
-
-        all_minutes_grouped = []
-        day_grouper = lambda x: x['start_time']
-        for event_date, events in itertools.groupby(all_minutes_sorted, key=day_grouper):
-            events = sorted(events, key=day_grouper)
-            all_minutes_grouped.append([event_date, events])
-
-        context['all_minutes'] = all_minutes_grouped
-
-        return context
-
 
 def metro_login(request):
     logout(request)

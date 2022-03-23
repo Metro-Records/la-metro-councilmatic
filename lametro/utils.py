@@ -1,5 +1,3 @@
-import csv
-import os
 import re
 import pytz
 from datetime import datetime, timedelta
@@ -44,21 +42,3 @@ def get_identifier(obj_or_string):
     if isinstance(obj_or_string, str):
         return obj_or_string
     return obj_or_string.id
-
-def get_list_from_csv(filename):
-    file_directory = os.path.dirname(__file__)
-    absolute_file_directory = os.path.abspath(file_directory)
-    my_file = os.path.join(absolute_file_directory, '..', 'data', filename)
-
-    with open(my_file) as f:
-        reader = csv.DictReader(f)
-
-        new_fieldnames = []
-        for field in reader.fieldnames:
-            new_fieldname = field.lower().replace(' ', '_')
-            new_fieldnames.append(new_fieldname)
-        reader.fieldnames = new_fieldnames
-
-        my_list = [row for row in reader]
-
-    return my_list
