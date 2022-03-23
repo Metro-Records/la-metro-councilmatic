@@ -23,9 +23,6 @@ class Command(BaseCommand):
             )
 
             for bill in tqdm(LAMetroBill.objects.all()):
-                if not bill.board_report:
-                    continue
-
                 for tag in bill.rich_topics:
                     writer.writerow(
                         (bill.board_report.id,
