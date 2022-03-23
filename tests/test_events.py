@@ -458,15 +458,12 @@ def test_most_recent_past_meetings(event):
 def test_display_status(event):
     this_morning = LAMetroEvent._time_ago(minutes=120).strftime('%Y-%m-%d %H:%M')
 
-    e = event.build(
+    cancelled_this_morning = event.build(
         name='Board Meeting',
         start_date=this_morning,
         status='cancelled',
         id=get_event_id()
     )
-
-    # Get event from queryset so it has the start_time annotation from the manager
-    cancelled_this_morning = LAMetroEvent.objects.get(id=e.id)
 
     assert cancelled_this_morning.has_passed == True
     assert cancelled_this_morning.display_status == 'Cancelled'
