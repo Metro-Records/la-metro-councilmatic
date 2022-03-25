@@ -772,16 +772,26 @@ class MinutesView(EventsView):
         return filtered_historical_events
 
     def _get_stored_events(self, start_datetime=None, end_datetime=None):
-        minutes = EventDocument.objects.filter(note__icontains='minutes')\
-                                       .prefetch_related(Prefetch('links', to_attr='prefetched_links'))
-        agenda = EventDocument.objects.filter(note__icontains='agenda')\
-                                      .prefetch_related(Prefetch('links', to_attr='prefetched_links'))
-        all_events = LAMetroEvent.objects.prefetch_related(Prefetch('documents',
+
+        # we only want to display meetings that can have minutes
+        meetings_with_minutes = Q(event__name__icontains='LA SAFE') |\
+            Q(event__name__icontains='Board Meeting') |\
+            Q(event__name__icontains='Crenshaw Project Corporation')
+
+        minutes = EventDocument.objects.filter(meetings_with_minutes, note__icontains='minutes')\
+           .prefetch_related(Prefetch('links', to_attr='prefetched_links'))
+
+        agenda = EventDocument.objects.filter(meetings_with_minutes, note__icontains='agenda')\
+           .prefetch_related(Prefetch('links', to_attr='prefetched_links'))
+
+        all_events = LAMetroEvent.objects.filter(meetings_with_minutes)\
+                                        .prefetch_related(Prefetch('documents',
                                                                     queryset=minutes,
                                                                     to_attr='minutes_document'))\
                                          .prefetch_related(Prefetch('documents',
                                                                     queryset=agenda,
                                                                     to_attr='agenda_document'))
+
         if start_datetime:
             stored_events = all_events.filter(start_time__gt=start_datetime)
         else:
