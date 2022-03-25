@@ -35,6 +35,7 @@ debug.log
 /configs/settings_deployment.staging.py
 
 *.csv
+!historical_events.csv
 !lametro_divisions.csv
 .gnupg/
 
