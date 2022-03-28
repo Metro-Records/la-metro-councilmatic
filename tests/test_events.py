@@ -454,6 +454,21 @@ def test_most_recent_past_meetings(event):
     assert event_earlier_today in recent_past_meetings
 
 
+@freeze_time("2021-02-07 12:00:00")
+def test_display_status(event):
+    this_morning = LAMetroEvent._time_ago(minutes=120).strftime('%Y-%m-%d %H:%M')
+
+    cancelled_this_morning = event.build(
+        name='Board Meeting',
+        start_date=this_morning,
+        status='cancelled',
+        id=get_event_id()
+    )
+
+    assert cancelled_this_morning.has_passed == True
+    assert cancelled_this_morning.display_status == 'Cancelled'
+
+
 def test_todays_meetings(event):
     # create event for some day
     event_time = app_timezone.localize(datetime(2020, 3, 15, 15, 0, 0, 0)) # March 15, 2020 at 3pm LA time
