@@ -40,3 +40,4 @@ debug.log
 .gnupg/
 
 lametro/secrets.py
+/configs/lametro_service_acct_key.json
