@@ -135,7 +135,7 @@ def event(db, jurisdiction):
             metro_event = LAMetroEvent.objects.get(id=event.id)
 
             if metro_event.start_time < datetime.now(timezone.utc):
-                metro_event.extras['has_broadcast'] = True
+                metro_event.has_broadcast = True
                 metro_event.save()
 
             return metro_event

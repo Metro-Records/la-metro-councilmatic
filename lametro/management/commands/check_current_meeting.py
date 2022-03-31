@@ -22,7 +22,7 @@ class Command(BaseCommand):
         if current_meetings.exists():
             logger.info('Found current meetings: {}'.format(current_meetings))
 
-            live_meeting = current_meetings.filter(extras__has_broadcast=True)
+            live_meeting = current_meetings.filter(has_broadcast=True)
 
             if live_meeting:
                 logger.info('Meeting marked as has broadcast: {}'.format(live_meeting))

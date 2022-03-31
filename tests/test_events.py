@@ -203,7 +203,7 @@ def test_upcoming_meetings_are_not_marked_as_broadcast(concurrent_current_meetin
         assert e in current_meetings
 
         e.refresh_from_db()
-        assert not e.extras.get('has_broadcast', False)
+        assert not e.has_broadcast
 
 
 def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mocker):
@@ -224,14 +224,14 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
     assert current_meeting.get() == test_event_a
 
     test_event_a.refresh_from_db()
-    assert test_event_a.extras['has_broadcast']
+    assert test_event_a.has_broadcast
 
     assert test_event_a.is_ongoing
     assert not any([test_event_a.is_upcoming, test_event_a.has_passed])
 
     # Assert Event B has not been marked as broadcast and is still upcoming
     test_event_b.refresh_from_db()
-    assert not test_event_b.extras.get('has_broadcast', False)
+    assert not test_event_b.has_broadcast
 
     assert test_event_b.is_upcoming
     assert not any([test_event_b.is_ongoing, test_event_b.has_passed])
@@ -389,7 +389,7 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
         test_event.status = 'confirmed'
-        test_event.extras['has_broadcast'] = True
+        test_event.has_broadcast = True
         test_event.save()
 
     with freeze_time(tomorrow_morning):
