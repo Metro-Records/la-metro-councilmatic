@@ -484,8 +484,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     objects = LAMetroEventManager()
 
-    class Meta:
-        proxy = True
+    has_broadcast = models.BooleanField(default=False)
 
     @classmethod
     def most_recent_past_meetings(cls):
@@ -500,7 +499,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             start_time__month=current_month, start_time__gte=two_weeks_ago).order_by('-start_time')
 
         # since has_passed is a property of LAMetroEvent rather than
-        # a model attribute, we have to make sure returned meetings 
+        # a model attribute, we have to make sure returned meetings
         # have concluded separately from the above Queryset filter
         past_meetings = list(filter(lambda m: m.has_passed, meetings_in_past_two_weeks))
 
