@@ -14,7 +14,7 @@ from opencivicdata.core.models import Jurisdiction, Division
 from opencivicdata.legislative.models import EventDocument, BillAction, EventLocation
 from councilmatic_core.models import Bill, Membership
 from lametro.models import LAMetroPerson, LAMetroEvent, LAMetroBill, \
-    LAMetroOrganization, LAMetroSubject
+    LAMetroOrganization, LAMetroSubject, EventBroadcast
 
 
 def get_uid_chunk(uid=None):
@@ -135,8 +135,7 @@ def event(db, jurisdiction):
             metro_event = LAMetroEvent.objects.get(id=event.id)
 
             if metro_event.start_time < datetime.now(timezone.utc):
-                metro_event.extras['has_broadcast'] = True
-                metro_event.save()
+                EventBroadcast.objects.create(event=metro_event)
 
             return metro_event
 

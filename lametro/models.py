@@ -590,12 +590,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
                 meeting = cls.objects.filter(extras__guid=guid.upper())
 
                 if meeting:
-                    # Record that a meeting has been broadcast, so we can infer
-                    # when it has concluded.
-                    meeting_obj = meeting.first()
-                    meeting_obj.extras['has_broadcast'] = True
-                    meeting_obj.save()
-
                     return meeting
 
         return cls.objects.none()
@@ -698,7 +692,14 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def has_passed(self):
-        return self.extras.get('has_broadcast', False) and not self.is_ongoing
+        try:
+            event_broadcast = self.broadcast.get()
+
+        except EventBroadcast.DoesNotExist:
+            return False
+
+        else:
+            return event_broadcast.observed and not self.is_ongoing
 
 
     @property
@@ -764,6 +765,18 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         if self.name == 'Regular Board Meeting':
             return 'Board of Directors - Regular Board Meeting'
         return self.name
+
+
+class EventBroadcast(models.Model):
+    '''
+    Record of whether we've seen a meeting broadcast.
+    '''
+    event = models.ForeignKey(LAMetroEvent,
+                              related_name='broadcast',
+                              on_delete=models.CASCADE)
+
+    observed = models.BooleanField(default=True)
+
 
 class EventAgendaItem(EventAgendaItem):
 

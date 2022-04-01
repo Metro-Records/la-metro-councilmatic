@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
 from django.conf import settings
 from django.db.models.query import QuerySet
 from django.utils import timezone
@@ -16,7 +17,7 @@ from unittest.mock import patch
 from opencivicdata.legislative.models import EventDocument, EventLocation
 from councilmatic_core.models import Bill
 
-from lametro.models import LAMetroEvent, app_timezone
+from lametro.models import LAMetroEvent, app_timezone, EventBroadcast
 from lametro.views import LAMetroEventDetail
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
@@ -203,7 +204,7 @@ def test_upcoming_meetings_are_not_marked_as_broadcast(concurrent_current_meetin
         assert e in current_meetings
 
         e.refresh_from_db()
-        assert not e.extras.get('has_broadcast', False)
+        assert not e.broadcast.exists()
 
 
 def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mocker):
@@ -218,20 +219,22 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
 
     mock_response = mock_streaming_meetings(mocker, return_value=[dummy_guid])
 
+    call_command('check_current_meeting')
+
     # Assert Event A is the only event returned, and is marked as having
     # been broadcast and has the correct status
     current_meeting = LAMetroEvent.current_meeting()
     assert current_meeting.get() == test_event_a
 
     test_event_a.refresh_from_db()
-    assert test_event_a.extras['has_broadcast']
+    assert test_event_a.broadcast.exists()
 
     assert test_event_a.is_ongoing
     assert not any([test_event_a.is_upcoming, test_event_a.has_passed])
 
     # Assert Event B has not been marked as broadcast and is still upcoming
     test_event_b.refresh_from_db()
-    assert not test_event_b.extras.get('has_broadcast', False)
+    assert not test_event_b.broadcast.exists()
 
     assert test_event_b.is_upcoming
     assert not any([test_event_b.is_ongoing, test_event_b.has_passed])
@@ -388,9 +391,9 @@ def test_event_is_upcoming(event, mocker):
 
         assert not test_event.is_upcoming
 
-        test_event.status = 'confirmed'
-        test_event.extras['has_broadcast'] = True
-        test_event.save()
+    test_event.status = 'confirmed'
+    EventBroadcast.objects.create(event=test_event)
+    test_event.save()
 
     with freeze_time(tomorrow_morning):
         assert not test_event.is_upcoming

@@ -2,7 +2,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from lametro.models import LAMetroEvent
+from lametro.models import LAMetroEvent, EventBroadcast
 
 
 logger = logging.getLogger(__name__)
@@ -10,22 +10,17 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     '''
-    Check the current meetings, marking any live meeting as having been
-    broadcast.
+    Create record of meeting stream, if one exists.
     '''
-    class Meta:
-        proxy = True
-
     def handle(self, *args, **options):
-        current_meetings = LAMetroEvent.current_meeting()
+        streaming_meeting = LAMetroEvent._streaming_meeting()
 
-        if current_meetings.exists():
-            logger.info('Found current meetings: {}'.format(current_meetings))
+        if streaming_meeting.exists():
+            streaming_meeting = streaming_meeting.get()
 
-            live_meeting = current_meetings.filter(extras__has_broadcast=True)
+            EventBroadcast.objects.create(event=streaming_meeting)
 
-            if live_meeting:
-                logger.info('Meeting marked as has broadcast: {}'.format(live_meeting))
+            logger.info('Meeting marked as has broadcast: {}'.format(streaming_meeting))
 
         else:
-            logger.info('No current meetings found')
+            logger.info('No streaming meetings found')
