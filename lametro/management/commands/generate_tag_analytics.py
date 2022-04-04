@@ -1,4 +1,5 @@
 import csv
+import json
 from io import StringIO
 from datetime import datetime
 from tqdm import tqdm
@@ -14,6 +15,27 @@ from google.oauth2 import service_account
 from lametro.models import LAMetroBill
 
 
+class UploadError(Exception):
+    """Google Drive returned an error message when given a file to upload."""
+
+    def __init__(self, response):
+        self.response = json.loads(response)
+        self.message = self.response['message']
+
+    def __str__(self):
+        return self.message
+
+
+class DriveBuildError(Exception):
+    """Couldn't connect to Google Drive"""
+
+    def __init__(self, e):
+        self.error = e
+
+    def __str__(self):
+        return self.error
+
+
 class Command(BaseCommand):
 
     help = "This command produces a CSV file that lists each Board Report's tags and \
@@ -25,26 +47,29 @@ class Command(BaseCommand):
         date = datetime.today().strftime('%m_%d_%y')
         output_file_name = f'{date}_tag_analytics.csv'
 
-
         file_metadata = {
             'name': output_file_name,
             'parents': [settings.REMOTE_ANALYTICS_FOLDER]
         }
-        drive_service = self.get_google_drive()
 
-        if not drive_service:
-            return
-
-        media = MediaIoBaseUpload(csv_string, mimetype='text/csv')
-        drive_service.files().create(
-                body=file_metadata,
-                media_body=media,
-                fields='id'
-            ).execute()
-
-        self.stdout.write(
-            self.style.SUCCESS(f'Successfully uploaded {output_file_name}!')
-        )
+        try:
+            drive_service = self.get_google_drive()
+            file = self.upload_file_bytes(drive_service, csv_string, file_metadata)
+            self.stdout.write(
+                self.style.SUCCESS(f'Successfully uploaded {output_file_name}!')
+            )
+        except DriveBuildError as e:
+            self.stdout.write(
+                self.style.ERROR(f'Unable to connect to Google Drive: {e}')
+            )
+        except HttpError as e:
+            self.stdout.write(
+                self.style.ERROR(f'HTTP Error: {e}')
+            )
+        except UploadError as e:
+            self.stdout.write(
+                self.style.ERROR(f'Unable to upload that file: {e}')
+            )
 
     def generate_tag_analytics(self):
         """Returns a CSV-formatted byte stream of the tag analytics"""
@@ -54,11 +79,10 @@ class Command(BaseCommand):
         writer.writerow(
             ('File ID',
              'Identifier'
-             'Title',
              'File Name',
              'Last Action Date',
-             'Tag Classification',
-             'Tag')
+             'Tag',
+             'Tag Classification')
         )
 
         self.stdout.write('\nGenerating tag analytics...')
@@ -86,12 +110,23 @@ class Command(BaseCommand):
             credentials = service_account.Credentials.from_service_account_file(
                     settings.SERVICE_ACCOUNT_KEY_PATH
                 ).with_scopes(SCOPES)
-        except FileNotFoundError:
-            self.stdout.write(self.style.ERROR('Service account key file not found.'))
-            return
 
-        if not credentials:
-            self.stdout.write(self.style.ERROR('Could not generate credentials!'))
-            return None
+            return build('drive', 'v3', credentials=credentials)
 
-        return build('drive', 'v3', credentials=credentials)
+        except Exception as e:
+            raise DriveBuildError(e)
+
+    def upload_file_bytes(self, drive, file, file_metadata):
+        """Uploads a byte stream to Google Drive."""
+
+        media = MediaIoBaseUpload(file, mimetype='text/csv')
+        file = drive.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id'
+        ).execute()
+
+        if 'error' in file:
+            raise UploadError(file)
+
+        return file
