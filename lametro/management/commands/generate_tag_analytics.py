@@ -1,5 +1,4 @@
 import csv
-import json
 from io import StringIO
 from datetime import datetime
 from tqdm import tqdm
@@ -13,27 +12,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from lametro.models import LAMetroBill
-
-
-class UploadError(Exception):
-    """Google Drive returned an error message when given a file to upload."""
-
-    def __init__(self, response):
-        self.response = json.loads(response)
-        self.message = self.response['message']
-
-    def __str__(self):
-        return self.message
-
-
-class DriveBuildError(Exception):
-    """Couldn't connect to Google Drive"""
-
-    def __init__(self, e):
-        self.error = e
-
-    def __str__(self):
-        return self.error
+from lametro.exceptions import DriveBuildError, UploadError
 
 
 class Command(BaseCommand):
@@ -62,14 +41,17 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.ERROR(f'Unable to connect to Google Drive: {e}')
             )
+            raise
         except HttpError as e:
             self.stdout.write(
                 self.style.ERROR(f'HTTP Error: {e}')
             )
+            raise
         except UploadError as e:
             self.stdout.write(
-                self.style.ERROR(f'Unable to upload that file: {e}')
+                self.style.ERROR(f'Unable to upload the file: {e}')
             )
+            raise
 
     def generate_tag_analytics(self):
         """Returns a CSV-formatted byte stream of the tag analytics"""
