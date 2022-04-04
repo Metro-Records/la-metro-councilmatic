@@ -14,9 +14,3 @@ class UploadError(Exception):
 
 class DriveBuildError(Exception):
     """Couldn't connect to Google Drive"""
-
-    def __init__(self, e):
-        self.error = e
-
-    def __str__(self):
-        return self.error

@@ -39,12 +39,12 @@ class Command(BaseCommand):
             )
         except DriveBuildError as e:
             self.stdout.write(
-                self.style.ERROR(f'Unable to connect to Google Drive: {e}')
+                self.style.ERROR(f'Unable to connect to Google Drive!')
             )
             raise
         except HttpError as e:
             self.stdout.write(
-                self.style.ERROR(f'HTTP Error: {e}')
+                self.style.ERROR(f'HTTP Error!')
             )
             raise
         except UploadError as e:
@@ -96,7 +96,7 @@ class Command(BaseCommand):
             return build('drive', 'v3', credentials=credentials)
 
         except Exception as e:
-            raise DriveBuildError(e)
+            raise DriveBuildError
 
     def upload_file_bytes(self, drive, file, file_metadata):
         """Uploads a byte stream to Google Drive."""
