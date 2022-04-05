@@ -8,10 +8,10 @@ from lametro.models import app_timezone
 
 
 def create_event_broadcast(apps, schema_editor):
-    Event = apps.get_model('legislative', 'Event')
+    Event = apps.get_model('councilmatic_core', 'Event')
     EventBroadcast = apps.get_model('lametro', 'EventBroadcast')
     past_events = Event.objects.filter(
-        start_date__lte=app_timezone.localize(datetime.now()).isoformat()
+        event__start_date__lte=app_timezone.localize(datetime.now()).isoformat()
     )
     for event in past_events:
         EventBroadcast.objects.create(event_id=event.id, observed=True)
