@@ -7,10 +7,7 @@ class UploadError(Exception):
     def __init__(self, response):
         self.response = json.loads(response)
         self.message = self.response['message']
+        self.code = self.response['code']
 
     def __str__(self):
-        return self.message
-
-
-class DriveBuildError(Exception):
-    """Couldn't connect to Google Drive"""
+        return f'[Error {self.code}] {self.message}'

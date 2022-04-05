@@ -12,7 +12,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from lametro.models import LAMetroBill
-from lametro.exceptions import DriveBuildError, UploadError
+from lametro.exceptions import UploadError
 
 
 class Command(BaseCommand):
@@ -37,19 +37,9 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS(f'Successfully uploaded {output_file_name}!')
             )
-        except DriveBuildError as e:
-            self.stdout.write(
-                self.style.ERROR(f'Unable to connect to Google Drive!')
-            )
-            raise
-        except HttpError as e:
-            self.stdout.write(
-                self.style.ERROR(f'HTTP Error!')
-            )
-            raise
         except UploadError as e:
             self.stdout.write(
-                self.style.ERROR(f'Unable to upload the file: {e}')
+                self.style.ERROR(f'Unable to upload the file to Google Drive: {e}')
             )
             raise
 
@@ -88,15 +78,11 @@ class Command(BaseCommand):
             'https://www.googleapis.com/auth/drive',
         ]
 
-        try:
-            credentials = service_account.Credentials.from_service_account_file(
-                    settings.SERVICE_ACCOUNT_KEY_PATH
-                ).with_scopes(SCOPES)
+        credentials = service_account.Credentials.from_service_account_file(
+                settings.SERVICE_ACCOUNT_KEY_PATH
+            ).with_scopes(SCOPES)
 
-            return build('drive', 'v3', credentials=credentials)
-
-        except Exception as e:
-            raise DriveBuildError
+        return build('drive', 'v3', credentials=credentials)
 
     def upload_file_bytes(self, drive, file, file_metadata):
         """Uploads a byte stream to Google Drive."""
