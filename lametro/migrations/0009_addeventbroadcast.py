@@ -14,7 +14,7 @@ def create_event_broadcast(apps, schema_editor):
         event__start_date__lte=app_timezone.localize(datetime.now()).isoformat()
     )
     for event in past_events:
-        EventBroadcast.objects.create(event_id=event.id, observed=True)
+        EventBroadcast.objects.create(event_id=event.event_id, observed=True)
 
 
 def delete_event_broadcast(apps, schema_editor):
