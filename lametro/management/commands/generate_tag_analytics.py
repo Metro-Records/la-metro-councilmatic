@@ -50,7 +50,7 @@ class Command(BaseCommand):
         writer = csv.writer(csv_string, delimiter=',')
         writer.writerow(
             ('File ID',
-             'Identifier'
+             'Identifier',
              'File Name',
              'Last Action Date',
              'Tag',
@@ -65,8 +65,8 @@ class Command(BaseCommand):
                      bill.identifier,
                      bill.friendly_name,
                      bill.last_action_date,
-                     tag.classification,
-                     tag.name)
+                     tag.name,
+                     tag.classification)
                 )
 
         return csv_string
