@@ -33,6 +33,7 @@ debug.log
 /scripts/after_install.sh
 /configs/settings_deployment.production.py
 /configs/settings_deployment.staging.py
+/configs/lametro_service_acct_key.json
 
 *.csv
 !historical_events.csv

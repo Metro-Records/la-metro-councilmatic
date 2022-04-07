@@ -131,3 +131,6 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.sql.SQLPanel',
     'debug_toolbar.panels.cache.CachePanel',
 ]
+
+SERVICE_ACCOUNT_KEY_PATH = 'configs/lametro_service_acct_key.json'
+

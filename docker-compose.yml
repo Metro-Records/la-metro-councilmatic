@@ -1,7 +1,10 @@
 version: '2.4'
 services:
   app:
-    image: ghcr.io/datamade/la-metro-councilmatic:master
+    image: lametro
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
     container_name: lametro
     restart: always
     stdin_open: true
