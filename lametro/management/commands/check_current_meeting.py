@@ -18,9 +18,12 @@ class Command(BaseCommand):
         if streaming_meeting.exists():
             streaming_meeting = streaming_meeting.get()
 
-            EventBroadcast.objects.create(event=streaming_meeting)
+            _, created = EventBroadcast.objects.get_or_create(
+                event=streaming_meeting
+            )
 
-            logger.info('Meeting marked as has broadcast: {}'.format(streaming_meeting))
+            if created:
+                logger.info('Meeting marked as has broadcast: {}'.format(streaming_meeting))
 
         else:
             logger.info('No streaming meetings found')
