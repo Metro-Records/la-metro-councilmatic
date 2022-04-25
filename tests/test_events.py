@@ -239,6 +239,12 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
     assert test_event_b.is_upcoming
     assert not any([test_event_b.is_ongoing, test_event_b.has_passed])
 
+    # Test that duplicate broadcast records are not created
+    call_command('check_current_meeting')
+
+    test_event_a.refresh_from_db()
+    assert test_event_a.broadcast.count() == 1
+
     # Fast forward an hour, no longer return Event A from the running events
     # endpoint, and assert that it has the correct status. Also assert Event B
     # is still upcoming, since it has not yet broadcast.
