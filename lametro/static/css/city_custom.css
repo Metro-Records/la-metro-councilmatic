@@ -171,6 +171,10 @@ strong.match-group {
     display: inline-block;
 }
 
+.label-info {
+  background-color: #EB6864;
+}
+
 .label-teal { background-color: #49A6AB; }
 
 .label-received, .label-approved, .label-adopted {

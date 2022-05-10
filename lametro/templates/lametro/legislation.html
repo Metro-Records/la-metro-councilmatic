@@ -19,7 +19,9 @@
                     <br>
                 </h1>
                 <h1>
-                    {{ legislation.bill_type }}
+				  <span class="label label-info">
+					{{ legislation.bill_type }}
+				  </span>
 
                     {% if legislation.inferred_status %}
                         {{ legislation.inferred_status | inferred_status_label | safe }}
