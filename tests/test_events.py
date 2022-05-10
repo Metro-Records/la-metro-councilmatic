@@ -405,21 +405,10 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
 
-@freeze_time("2021-02-01 10:00:00")
-def test_first_of_month_returns_no_recent_past_meetings(event):
-    yesterday = LAMetroEvent._time_ago(days=1).strftime('%Y-%m-%d %H:%M')
-    yesterdays_event = event.build(
-        name='Board Meeting', start_date=yesterday, id=get_event_id())
-
-    assert len(LAMetroEvent.most_recent_past_meetings()) == 0
-
-
 @freeze_time("2021-02-07 10:00:00")
 def test_most_recent_past_meetings(event):
     three_weeks_ago = LAMetroEvent._time_ago(
         days=21).strftime('%Y-%m-%d %H:%M')
-    eight_days_ago_last_month = LAMetroEvent._time_ago(
-        days=8).strftime('%Y-%m-%d %H:%M')
     five_days_ago = LAMetroEvent._time_ago(days=5).strftime('%Y-%m-%d %H:%M')
     four_days_ago = LAMetroEvent._time_ago(days=4).strftime('%Y-%m-%d %H:%M')
 
@@ -427,7 +416,6 @@ def test_most_recent_past_meetings(event):
         minutes=120).strftime('%Y-%m-%d %H:%M')
     one_hour_from_now = LAMetroEvent._time_from_now(
         minutes=60).strftime('%Y-%m-%d %H:%M')
-
     one_week_from_now = LAMetroEvent._time_from_now(
         days=7).strftime('%Y-%m-%d %H:%M')
 
@@ -438,8 +426,6 @@ def test_most_recent_past_meetings(event):
         name='Board Meeting', start_date=one_hour_from_now, id=get_event_id())
     event_one_week_from_now = event.build(
         name='Board Meeting', start_date=one_week_from_now, id=get_event_id())
-    event_last_month = event.build(
-        name='Board Meeting', start_date=eight_days_ago_last_month, id=get_event_id())
 
     # Events that should be returned
     event_earlier_today = event.build(
@@ -456,7 +442,6 @@ def test_most_recent_past_meetings(event):
     assert event_older_than_two_weeks not in recent_past_meetings
     assert event_later_today not in recent_past_meetings
     assert event_one_week_from_now not in recent_past_meetings
-    assert event_last_month not in recent_past_meetings
 
     assert event_four_days_ago in recent_past_meetings
     assert event_five_days_ago in recent_past_meetings
