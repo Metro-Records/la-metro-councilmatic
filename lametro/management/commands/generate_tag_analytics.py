@@ -1,5 +1,5 @@
 import csv
-from io import StringIO
+from io import StringIO, BytesIO
 from datetime import datetime
 from tqdm import tqdm
 
@@ -58,7 +58,8 @@ class Command(BaseCommand):
         )
 
         self.stdout.write('\nGenerating tag analytics...')
-        for bill in tqdm(LAMetroBill.objects.all()):
+
+        for bill in tqdm(LAMetroBill.objects.iterator(chunk_size=200)):
             for tag in bill.rich_topics:
                 writer.writerow(
                     (bill.board_report.id,
@@ -69,7 +70,9 @@ class Command(BaseCommand):
                      tag.classification)
                 )
 
-        return csv_string
+        csv_string.seek(0)
+
+        return BytesIO(csv_string.read().encode('utf-8'))
 
     def get_google_drive(self):
         """Authenticates a service account and returns a Google Drive object."""
@@ -87,14 +90,18 @@ class Command(BaseCommand):
     def upload_file_bytes(self, drive, file, file_metadata):
         """Uploads a byte stream to Google Drive."""
 
-        media = MediaIoBaseUpload(file, mimetype='text/csv')
-        file = drive.files().create(
+        media = MediaIoBaseUpload(
+            file,
+            mimetype='text/csv'
+        )
+
+        result = drive.files().create(
             body=file_metadata,
             media_body=media,
             fields='id'
         ).execute()
 
-        if 'error' in file:
-            raise UploadError(file)
+        if 'error' in result:
+            raise UploadError(result)
 
-        return file
+        return result
