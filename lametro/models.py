@@ -520,8 +520,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         next_meeting = board_meetings.first()
 
-        return board_meetings.filter(start_time__month=next_meeting.start_time.month)\
-                             .order_by('start_time')
+        return board_meetings.filter(
+                start_time__month=next_meeting.start_time.month,
+                start_time__year=next_meeting.start_time.year
+            ).order_by('start_time')
 
 
     @staticmethod
