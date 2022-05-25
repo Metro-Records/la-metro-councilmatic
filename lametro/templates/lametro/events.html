@@ -32,7 +32,7 @@
                 <div class="col-xs-2">
                     <a href="{% url 'events' %}" class="btn btn-teal d-inline-block"><i class="fa fa-repeat" aria-hidden="true"></i><span class="hidden-xs"> Reset</span></a>
                 </div>
-            </div>
+            </div><br class="non-mobile-only"/>
 
             {% if request.user.is_authenticated %}
             <div class="row">
@@ -49,8 +49,16 @@
             {% if future_events %}
                 <h2><span>Upcoming {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
-                <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
-                </h2>
+                <small>
+                    <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                        <i class="fa fa-rss-square" aria-hidden="true"></i>
+                    </a>
+                    <a href="{% static 'pdf/fy23-committee-board-calendar.pdf' %}" class="btn btn-link">
+                        <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+                        Download Fiscal Year 2023 event calendar (PDF)
+                    </a>
+                </small>
+                </h2><br class="non-mobile-only"/>
 
                 <div class='row'>
                     <div class='col-sm-8' id='events_message'></div>
@@ -68,7 +76,7 @@
                 <h2 style="margin-top: 40px;"><span>Past {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
-                </h2>
+                </h2><br class="non-mobile-only"/>
 
                 <div class='row'>
                     <div class='col-sm-8' id='events_message'></div>
