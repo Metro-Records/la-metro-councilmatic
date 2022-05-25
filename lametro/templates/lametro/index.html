@@ -67,8 +67,16 @@
         <div class="row-fluid">
             <div class="col-sm-10 col-sm-offset-1" id="upcoming-meetings">
                 <h2>
-                    <span class="non-mobile-only"><i class="fa fa-fw fa-group"></i> </span>
+                    <span class="non-mobile-only">
+                        <i class="fa fa-fw fa-group"></i>
+                    </span>
                     Upcoming Meetings
+                    <small>
+                        <a href="{% static 'pdf/fy23-committee-board-calendar.pdf' %}" class="btn btn-sm btn-link">
+                            <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+                            Download Fiscal Year 2023 event calendar (PDF)
+                        </a>
+                    </small>
                 </h2>
                 {% if upcoming_committee_meetings %}
                     {% if upcoming_committee_meetings %}
@@ -84,7 +92,7 @@
                 <a href="/events/" class="btn btn-sm btn-primary">
                     View Upcoming and Past {{ CITY_VOCAB.EVENTS }}
                     <i class="fa fa-fw fa-chevron-right"></i>
-                </a>
+                </a><br />
             </div>
         </div>
         <div class="row-fluid">
@@ -95,9 +103,16 @@
         <div class="row-fluid">
             <div class="col-sm-10 col-sm-offset-1">
                 <h2>
-                    <span class="non-mobile-only"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-</span>
+                    <span class="non-mobile-only">
+                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                    </span>
                     Recent Meetings
+                    <small>
+                        <a href="{% static 'pdf/fy23-committee-board-calendar.pdf' %}" class="btn btn-sm btn-link">
+                            <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+                            Download Fiscal Year 2023 event calendar (PDF)
+                        </a>
+                    </small>
                 </h2>
                 {% if most_recent_past_meetings %}
                     {% for event in most_recent_past_meetings %}
