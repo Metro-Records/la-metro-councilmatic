@@ -1,9 +1,8 @@
 {% extends "base.html" %}
-{% load extras %}
-{% load adv_cache %}
-{% load staticfiles %}
-{% block title %}Metro Board of Directors{% endblock %}
 
+{% load adv_cache extras static %}
+
+{% block title %}Metro Board of Directors{% endblock %}
 
 {% block extra_css %}
     {% cache 86400 leaflet_wrapper 'leaflet' %}
@@ -13,7 +12,6 @@
     {% endif %}
     {% endcache %}
 {% endblock %}
-
 
 {% block full_content %}
 

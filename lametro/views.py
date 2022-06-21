@@ -8,7 +8,6 @@ from datetime import date, timedelta, datetime, MINYEAR
 from dateutil.relativedelta import relativedelta
 from dateutil import parser
 import requests
-import sqlalchemy as sa
 from collections import namedtuple
 import os
 
@@ -37,7 +36,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, HttpResponseNotFound
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import redirect
 from django.core import management
 from django.core.serializers import serialize
 from django.views.generic import View
@@ -666,9 +665,57 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
 
     def extra_context(self):
-        extra_context = super().extra_context()
-        extra_context['topic_facets'] = [facet for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES]
+        # Raise an error if Councilmatic cannot connect to Solr.
+        # Most likely, Solr is down and needs restarting.
+        try:
+            solr_url = settings.HAYSTACK_CONNECTIONS["default"]["URL"]
+            requests.get(solr_url)
+        except requests.ConnectionError:
+            raise Exception(
+                "ConnectionError: Unable to connect to Solr at {}. Is Solr running?".format(
+                    solr_url
+                )
+            )
+
+        extra_context = {}
+        extra_context.update(self.get_search_context())
+
         return extra_context
+
+    def get_search_context(self):
+        q_filters = ""
+
+        url_params = [
+            (p, val) for p, val in self.request.GET.items()
+            if p not in("page", "selected_facets", "amp", "_")
+        ]
+
+        search_term = self.request.GET.get("q")
+
+        for facet_val in self.request.GET.getlist("selected_facets"):
+            url_params.append(("selected_facets", facet_val))
+
+        if url_params:
+            q_filters = urllib.parse.urlencode(url_params)
+
+        selected_facets = {}
+
+        for val in self.request.GET.getlist("selected_facets"):
+            if val:
+                [k, v] = val.split("_exact:", 1)
+                try:
+                    selected_facets[k].append(v)
+                except KeyError:
+                    selected_facets[k] = [v]
+
+        topic_facets = [facet for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES]
+
+        return {
+            'facets': self.results.facet_counts(),
+            'topic_facets': topic_facets,
+            'selected_facets': selected_facets,
+            'q_filters': q_filters,
+        }
 
     def build_form(self, form_kwargs=None):
         if not form_kwargs:
