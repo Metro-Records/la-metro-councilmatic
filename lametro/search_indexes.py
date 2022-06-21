@@ -25,6 +25,12 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     def get_model(self):
         return LAMetroBill
 
+    def read_queryset(self, using=None):
+        return self.get_model().objects.select_related('bill__actions')
+
+    def load_all_queryset(self, using=None):
+        return self.get_model().objects.select_related('bill__actions')
+
     def prepare_controlling_body(self, obj):
         return None
 

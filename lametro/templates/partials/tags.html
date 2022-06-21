@@ -1,7 +1,9 @@
 {% load extras %}
 {% load lametro_extras %}
 <p class="small text-muted condensed">
-  <i class="fa fa-fw fa-calendar-o"></i> {{result.last_action_date|date:'n/d/Y'}} - {{result.object.current_action.description | remove_action_subj }} (most recent action)
+  {% with last_action=result.object.actions_and_agendas.0 %}
+  <i class="fa fa-fw fa-calendar-o"></i> {{ last_action.date|date:'n/d/Y'}} - {{ last_action.description }} (most recent action)
+  {% endwith %}
 </p>
 
 

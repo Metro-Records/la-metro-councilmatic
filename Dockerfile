@@ -1,19 +1,19 @@
-FROM ubuntu:18.04 as builder
+FROM ubuntu:20.04 as builder
 
 # Clone and build Blackbox
-RUN apt-get update && apt-get install -y build-essential git-core && \
+RUN apt-get update && \
+    apt-get install -y build-essential git-core && \
     git clone https://github.com/StackExchange/blackbox.git && \
     cd blackbox && \
     make copy-install
 
-FROM python:3.6-slim-stretch
+FROM python:3.10
 LABEL maintainer "DataMade <info@datamade.us>"
 
-ENV PYTHONUNBUFFERED=1
-
+# TODO: Figure out how to install pstotext
 RUN apt-get update && \
     apt-get install -y libxml2-dev libxslt1-dev antiword unrtf poppler-utils \
-                       pstotext tesseract-ocr flac ffmpeg lame libmad0 libpq-dev \
+                       tesseract-ocr flac ffmpeg lame libmad0 libpq-dev \
                        libsox-fmt-mp3 sox libjpeg-dev swig gdal-bin gnupg && \
     apt-get clean && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*

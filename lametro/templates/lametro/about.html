@@ -1,6 +1,5 @@
 {% extends "base_with_margins.html" %}
-{% load staticfiles %}
-{% load adv_cache %}
+{% load adv_cache static %}
 {% block title %}About Us{% endblock %}
 {% block content %}
 
@@ -183,7 +182,7 @@
 
         </br>
 
-        <p><a href='http://datamade.us' target="_blank"><img style='height:50px;' src='/static/images/datamade-logo.png' /></a></p>
+        <p><a href='http://datamade.us' target="_blank"><img style='height:50px;' src='{% static "images/datamade-logo.png" %}' /></a></p>
 
         <br/>
     </div>
