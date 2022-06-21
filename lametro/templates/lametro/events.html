@@ -1,11 +1,15 @@
 {% extends "base_with_margins.html" %}
-{% load staticfiles %}
+
+{% load static %}
+
 {% block title %}Events{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 {% endblock %}
+
 {% block content %}
     {% include 'partials/banner.html' %}
     <div class="row-fluid">

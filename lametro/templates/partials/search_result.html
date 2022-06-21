@@ -2,8 +2,10 @@
 {% load lametro_extras %}
 {% load highlight %}
 
+{{ r.object }}
+
 <p>
-    <a class="small" target='_blank' href="{% url 'lametro:bill_detail' r.object.slug %}">
+    <a class="small" target='_blank' href="#">
         {{ r.object.friendly_name }}
     </a>
     {% if r.object.inferred_status %}{{ r.object.inferred_status | inferred_status_label | safe }}{% endif %}

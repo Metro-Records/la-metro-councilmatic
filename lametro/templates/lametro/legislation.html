@@ -1,8 +1,9 @@
 {% extends "base_with_margins.html" %}
-{% load extras %}
-{% load lametro_extras %}
-{% load staticfiles %}
+
+{% load extras lametro_extras static %}
+
 {% block title %}{{ legislation.friendly_name }}{% endblock %}
+
 {% block content %}
 
     {% if legislation %}

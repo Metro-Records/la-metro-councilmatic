@@ -1,8 +1,9 @@
-Django>=2.2,<2.2.26
+Django>=3.2,<3.3
 psycopg2-binary>=2.8,<2.9
 opencivicdata>=3.1.0
-django-councilmatic[convert_docs]==2.6.1
-django-debug-toolbar==1.9.1
+#django-councilmatic[convert_docs]==2.6.1
+https://github.com/datamade/django-councilmatic/zipball/hcg/3.0
+django-debug-toolbar>=3.4,<3.5
 sentry-sdk==0.14.2
 gunicorn==19.6.0
 pytest
@@ -10,7 +11,6 @@ pytest-django
 pytest-mock==1.6.3
 requests-mock==1.8.0
 freezegun==1.0.0
-lxml==4.1.1
 dj_database_url
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
 locustio==0.13.2
@@ -18,3 +18,4 @@ django-recaptcha==2.0.6
 google-api-python-client==2.42.0
 google-auth-oauthlib
 google-auth-httplib2
+textract

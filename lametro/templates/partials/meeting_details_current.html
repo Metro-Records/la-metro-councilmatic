@@ -1,5 +1,4 @@
-{% load staticfiles %}
-{% load lametro_extras %}
+{% load lametro_extras static %}
 
 <div>
     <div>
@@ -68,7 +67,7 @@
             <!-- Display meeting details and image side by side -->
             <div class="row" style="margin-top: 1em;">
                 <div class="col-md-6 current-meeting-img">
-                    <img src='/static/images/Gateway03RT.jpg' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
+                    <img src='{% static "images/Gateway03RT.jpg" %}' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
                 </div>
 
                 <div class="col-md-6">

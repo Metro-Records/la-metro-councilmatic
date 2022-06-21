@@ -4,8 +4,6 @@ import re
 import pytz
 from datetime import datetime, timedelta
 import requests
-import lxml.html
-from lxml.etree import tostring
 
 from django.conf import settings
 from django.utils import timezone
