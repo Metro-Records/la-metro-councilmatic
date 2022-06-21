@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
 import django.contrib.postgres.fields as postgres_fields
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from opencivicdata.legislative.models import EventMedia, EventDocument, \
     EventDocumentLink, EventAgendaItem, EventRelatedEntity, RelatedBill, \
     BillVersion
@@ -546,10 +546,15 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         next_meeting = board_meetings.first()
 
-        return board_meetings.filter(
+        if board_meetings.exists():
+            next_meeting = board_meetings.first()
+
+            return board_meetings.filter(
                 start_time__month=next_meeting.start_time.month,
                 start_time__year=next_meeting.start_time.year
             ).order_by('start_time')
+
+        return cls.objects.none()
 
 
     @staticmethod
@@ -679,13 +684,16 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         NOTE: This property name is a misnomer, inherited from django-councilmatic.
         '''
-        date_of_next_board_meeting = cls.upcoming_board_meetings().last().start_time
-
         # Sometimes there are meetings scheduled for the same time as the
         # board meeting. Show the board meeting last.
         meetings = cls.objects.filter(start_time__gt=timezone.now())\
                               .annotate(is_board_meeting=RawSQL("opencivicdata_event.name like %s", ('%Board Meeting%',)))\
                               .order_by('start_time', 'is_board_meeting')
+
+        if not cls.upcoming_board_meetings().exists():
+            return meetings[:5]
+
+        date_of_next_board_meeting = cls.upcoming_board_meetings().last().start_time
 
         if meetings.filter(start_time__lte=date_of_next_board_meeting).count() >= 5:
             return meetings.filter(start_time__lte=date_of_next_board_meeting)
