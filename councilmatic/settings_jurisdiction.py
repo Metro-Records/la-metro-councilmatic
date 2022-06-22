@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 # These are all the settings that are specific to a jurisdiction
 
 ###############################
@@ -90,7 +92,7 @@ COMMITTEE_MEMBER_TITLE = 'Member'
 # this is for convenience, & used to populate a table
 # describing legislation types on the default about page template
 # the 'search_term' should be lowercase with spaces before and after backslashes
-LEGISLATION_TYPE_DESCRIPTIONS = [
+legislation_types = [
     {
         'name': 'Budget',
         'search_term': 'budget',
@@ -232,6 +234,9 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
         'desc': "Formal information communication to the Board not requiring actions. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box items through the <a href='/archive-search' target='_blank'>Archive Search</a>."
     },
 ]
+
+# we want board report types to be in alphabetical order on Metro's About page
+LEGISLATION_TYPE_DESCRIPTIONS = sorted(legislation_types, key=itemgetter('name'))
 
 BILL_STATUS_DESCRIPTIONS = {
     'ADOPTED': {
