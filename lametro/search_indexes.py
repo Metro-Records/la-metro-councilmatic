@@ -1,3 +1,4 @@
+import json
 import re
 
 from haystack import indexes
@@ -22,14 +23,15 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     motion_by = indexes.MultiValueField(faceted=True)
     plan_program_policy = indexes.MultiValueField(faceted=True)
 
+    # Preloaded fields for display
+    listing_description = indexes.CharField(indexed=False)
+    last_action_description = indexes.CharField(indexed=False)
+    primary_sponsor = indexes.CharField(indexed=False)
+    rich_topics = indexes.CharField(indexed=False)
+    pseudo_topics = indexes.CharField(indexed=False)
+
     def get_model(self):
         return LAMetroBill
-
-    def read_queryset(self, using=None):
-        return self.get_model().objects.select_related('bill__actions')
-
-    def load_all_queryset(self, using=None):
-        return self.get_model().objects.select_related('bill__actions')
 
     def prepare_controlling_body(self, obj):
         return None
@@ -117,3 +119,24 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         ).values_list('name', flat=True)
 
         return list(topics)
+
+    def prepare_listing_description(self, obj):
+        return obj.listing_description
+
+    def prepare_last_action_description(self, obj):
+        if obj.current_action:
+            return obj.current_action.description
+
+    def prepare_primary_sponsor(self, obj):
+        if obj.primary_sponsor:
+            return obj.primary_sponsor.name
+
+    def prepare_rich_topics(self, obj):
+        return json.dumps(
+            list(obj.rich_topics.values('name', 'classification'))
+        )
+
+    def prepare_pseudo_topics(self, obj):
+        return json.dumps(
+            list({'name': o.name} for o in obj.pseudo_topics)
+        )

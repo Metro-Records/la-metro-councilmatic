@@ -1,24 +1,22 @@
 {% load extras %}
 {% load lametro_extras %}
 <p class="small text-muted condensed">
-  {% with last_action=result.object.actions_and_agendas.0 %}
-  <i class="fa fa-fw fa-calendar-o"></i> {{ last_action.date|date:'n/d/Y'}} - {{ last_action.description }} (most recent action)
-  {% endwith %}
+  <i class="fa fa-fw fa-calendar-o"></i> {{ result.last_action_date|date:'n/d/Y' }} - {{ result.last_action_description | remove_action_subj }} (most recent action)
 </p>
 
 
-{% if result.object.primary_sponsor %}
+{% if result.primary_sponsor %}
     <p class="small text-muted condensed">
         <i class="fa fa-fw fa-users"></i>
-        {{result.object.primary_sponsor.name}}
+        {{ result.primary_sponsor }}
     </p>
 {% endif %}
 
 <div class="row">
     <div class="col-xs-11">
-    {% if result.object.rich_topics %}
+    {% if result.rich_topics|length %}
         <i class="fa fa-fw fa-tag"></i>
-        {% hits_first result.object.rich_topics selected_facets as tags %}
+        {% hits_first result.rich_topics|safe selected_facets as tags %}
         {% for tag in tags|slice:":10" %}
             {% with tag.classification|add:":"|add:tag.name as tag_facet %}
             <span class="badge{% if tag.name|matches_query:request or tag.name|matches_facet:selected_facets %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
@@ -41,9 +39,9 @@
             </div>
         {% endif %}
         <br /><br />
-    {% elif result.object.pseudo_topics %}
+    {% elif result.pseudo_topics|length %}
         <i class="fa fa-fw fa-tag"></i>
-        {% hits_first result.object.pseudo_topics selected_facets.topics as tags %}
+        {% hits_first result.pseudo_topics|safe selected_facets.topics as tags %}
         {% for tag in tags %}
             {% with "sponsorships_exact:"|add:tag as tag_facet %}
             <span class="badge{% if tag|matches_query:request or tag|matches_facet:selected_facets.topics %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
