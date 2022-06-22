@@ -20,10 +20,10 @@
                 </h1>
                 <h1>
 				  <div>
-					<span class="label label-info">
+					<span class="label label-info bill-type-wrapper">
 					  {{ legislation.bill_type }}
-					  <a href="{{ legislation.bill_type | get_bill_type_link }}">
-						<i class='fa fa-question-circle' style="color:white;"></i>
+					  <a href="{{ legislation.bill_type | get_bill_type_link }}" title="View description of {{ legislation.bill_type }} board reports" aria-label="View description of {{ legislation.bill_type }} board reports">
+						<i class="fa fa-question-circle bill-type-info"></i>
 					  </a>
 					</span>
 

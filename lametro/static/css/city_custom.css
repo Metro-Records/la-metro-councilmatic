@@ -375,3 +375,15 @@ hr .events-line {
 	visibility: hidden; 
 	pointer-events: none;
 }
+
+.bill-type-info {
+	color: white;
+	position: absolute;
+	right: 3px;
+	top: 3px;
+	font-size: .5em;
+}
+
+.bill-type-wrapper {
+	position: relative;
+}
