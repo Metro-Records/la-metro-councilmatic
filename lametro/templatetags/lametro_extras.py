@@ -18,7 +18,7 @@ from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Bill
 from councilmatic_core.utils import ExactHighlighter
 
-from lametro.models import LAMetroEvent
+from lametro.models import LAMetroEvent, app_timezone
 from lametro.utils import format_full_text, parse_subject
 
 
@@ -132,21 +132,21 @@ def short_topic_name(text):
         return text
 
 @register.filter
-def updates_made(event_id):
+def updates_made(event):
     '''
     If an upcoming event has been updated in any way (changed time, address,
     document, agenda item, status, etc), in a four-day window before the
     event's scheduled start time.
     '''
-    event = LAMetroEvent.objects.get(id=event_id)
-
-    try:
-        event.documents.get(note__icontains='agenda')
-    except EventDocument.DoesNotExist:
-        return False
-
     four_days_before_meeting = event.start_time - timedelta(days=4)
-    return four_days_before_meeting <= event.updated_at < event.start_time
+
+    if four_days_before_meeting <= app_timezone.localize(datetime.now()) < event.start_time:
+        # Only check for an agenda (firing an additional query) if we're within
+        # the update window.
+        if not event.documents.filter(note__icontains='agenda').exists():
+            return False
+
+        return four_days_before_meeting <= event.updated_at < event.start_time
 
 @register.filter
 def find_agenda_url(all_documents):
