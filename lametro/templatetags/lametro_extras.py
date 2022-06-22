@@ -1,5 +1,6 @@
 from datetime import date, timedelta, datetime
 import itertools
+import json
 import re
 import urllib
 
@@ -208,7 +209,7 @@ def hits_first(context, topics, selected_facets):
     if isinstance(topics, list):
         return topics
 
-    topic_names = topics.values_list('name', flat=True)
+    topics = json.loads(topics)
 
     # context['query'] looks like "(token) AND (token) AND (token)". Sometimes,
     # tokens end with parentheses, e.g., "(Coronavirus (COVID-19))". Using a
@@ -218,16 +219,19 @@ def hits_first(context, topics, selected_facets):
     # remove the first closing parenthesis, then put the string back in the
     # right order.
     terms = [token.replace('(', '', 1)[::-1].replace(')', '', 1)[::-1].replace('"', '')
-             for token in context['query'].split(' AND ') if token]
+             for token in re.split(' and ', context['query'], re.IGNORECASE) if token]
 
     for _, values in selected_facets.items():
         terms += values
 
-    lower_terms = set(t.lower() for t in terms)
-    hits_pattern = r'({})'.format('|'.join(re.escape(term) for term in lower_terms))
+    hits_pattern = r'({})'.format('|'.join(re.escape(term) for term in terms))
 
-    return list(itertools.chain(topics.filter(name__iregex=hits_pattern),
-                                topics.exclude(name__iregex=hits_pattern)))
+    return list(
+        itertools.chain(
+            filter(lambda topic: re.match(hits_pattern, topic['name'], re.IGNORECASE), topics),
+            filter(lambda topic: not re.match(hits_pattern, topic['name'], re.IGNORECASE), topics)
+        )
+    )
 
 @register.filter
 def all_have_extra(entities, extra):

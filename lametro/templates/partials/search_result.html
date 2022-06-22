@@ -2,13 +2,11 @@
 {% load lametro_extras %}
 {% load highlight %}
 
-{{ r.object }}
-
 <p>
     <a class="small" target='_blank' href="#">
-        {{ r.object.friendly_name }}
+        {{ r.friendly_name }}
     </a>
-    {% if r.object.inferred_status %}{{ r.object.inferred_status | inferred_status_label | safe }}{% endif %}
+    {% if r.inferred_status %}{{ r.inferred_status | inferred_status_label | safe }}{% endif %}
 </p>
 
 <div class="row">
@@ -24,13 +22,13 @@
             </p>
         {% else %}
             <p>
-              {{r.object.listing_description | short_blurb}}
+              {{ r.listing_description | short_blurb }}
             </p>
         {% endif %}
     </div>
     <div class='col-xs-1 no-pad-mobile'>
         <div>
-            <a class='btn-bill-detail' target='_blank' href='/board-report/{{ r.object.slug }}/'>
+            <a class='btn-bill-detail' target='_blank' href='/board-report/{{ r.slug }}/'>
                 <i class="fa fa-fw fa-chevron-right"></i>
             </a>
         </div>

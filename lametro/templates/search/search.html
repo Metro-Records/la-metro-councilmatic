@@ -265,11 +265,9 @@
                 {% include 'partials/search_result.html' %}
             {% endwith %}
 
-
             {% include 'partials/tags.html' %}
 
-
-        {% empty %}
+            {% empty %}
             {% include 'partials/empty_search_message.html' %}
         {% endfor %}
         </div>
