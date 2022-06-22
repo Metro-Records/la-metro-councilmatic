@@ -227,11 +227,12 @@ legislation_types = [
         'html_desc': True,
         'desc': 'Certain board actions require the adoption of a board resolution, usually financial and real estate transactions.',
     },
-    {   'name': 'Board Box',
+    {
+        'name': 'Board Box / Board Correspondence',
         'search_term': 'board box',
         'fa_icon': 'commenting-o',
         'html_desc': True,
-        'desc': "Formal information communication to the Board not requiring actions. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box items through the <a href='/archive-search' target='_blank'>Archive Search</a>."
+        'desc': 'Formal information communication from Metro staff to the Board, which does not require Board action. Historically, these items were called "Board Box"(es), because a physical box containing each month\'s items was delivered to the Board for review. Because these items are now delivered digitally, their "Board Report Type" designation is "Board Correspondence" so the nature of these items is more clear to the public. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box/Correspondence items through the <a href="/archive-search">Archive Search</a>. You can also access a directory of Board Correspondence from 2015 to present, by year, <a href="http://boardarchives.metro.net/BoardBox/">here</a>.'
     },
 ]
 
