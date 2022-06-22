@@ -34,7 +34,7 @@
                     <br/>
                 {% else %}
                     {{event.name}}
-                    {% if event.id|updates_made %}
+                    {% if event|updates_made %}
                         <span class='label label-info label-teal'>Updated</span>
                     {% endif %}
                     <br/>
