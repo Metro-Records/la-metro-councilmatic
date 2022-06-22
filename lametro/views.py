@@ -660,6 +660,8 @@ class IdentifierBoostSearchQuery(SolrSearchQuery):
 
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
+    load_all = False
+
     def __init__(self, *args, **kwargs):
         kwargs['form_class'] = LAMetroCouncilmaticSearchForm
         super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
