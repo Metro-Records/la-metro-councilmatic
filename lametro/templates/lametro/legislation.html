@@ -19,13 +19,18 @@
                     <br>
                 </h1>
                 <h1>
-				  <span class="label label-info">
-					{{ legislation.bill_type }}
-				  </span>
+				  <div>
+					<span class="label label-info">
+					  {{ legislation.bill_type }}
+					  <a href="{{ legislation.bill_type | get_bill_type_link }}">
+						<i class='fa fa-question-circle' style="color:white;"></i>
+					  </a>
+					</span>
 
-                    {% if legislation.inferred_status %}
-                        {{ legislation.inferred_status | inferred_status_label | safe }}
-                    {% endif %}
+					{% if legislation.inferred_status %}
+					{{ legislation.inferred_status | inferred_status_label | safe }}
+					{% endif %}
+				  </div>
 
                 </h1>
 

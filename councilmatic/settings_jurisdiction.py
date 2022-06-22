@@ -95,12 +95,14 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
         'name': 'Budget',
         'search_term': 'budget',
         'fa_icon': 'dollar',
+        'html_id': 'budget',
         'html_desc': True,
         'desc': 'A plan of financial operations for a given period, including proposed expenditures, authorized staffing levels, and a proposed means of financing them. Metro follows a July 1 to June 30 Fiscal Year.  Its annual budgets are typically approved by the Board after a public hearing in May of each year. Individual capital projects over $5 million have a Life of Project (LOP) budget estimate reviewed by the Board of Directors.',
     },
     {
         'name': 'Fare/Tariff/Service Change',
         'search_term': 'fare / tariff / service change',
+        'html_id': 'fare-tariff-service-change',
         'fa_icon': 'dollar',
         'html_desc': True,
         'desc': 'Chapter 2-50 of Metro’s Administrative Code (its Ordinances) set the parameters and procedures for holding public hearings in advance of any fare, tariff or major service changes. Fare changes and major service changes require public hearings and Title VI analysis. Minor service changes are continually reviewed and approved with public participation by Metro’s Service Councils for the San Gabriel Valley, San Fernando Valley, Westside, Southbay and Gateway Cities regions of the County.',
@@ -108,6 +110,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Formula Allocation / Local Return',
         'search_term': 'formula allocation / local return',
+        'html_id': 'formula-allocation-local-return',
         'fa_icon': 'dollar',
         'html_desc': True,
         'desc': 'Formula Allocation and Local Return are adopted methods for distributing Federal, State and local transit and transportation funding. Funding is allocated to 16 municipal transit operators using audited performance data, and 88 cities in Los Angeles County using population data. The majority of this funding is local sales tax revenues from Proposition A (1980), Proposition C (1990) and Measure R (2008).',
@@ -115,6 +118,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Agreement',
         'search_term': 'agreement',
+        'html_id': 'agreement',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'A negotiated arrangement between parties.',
@@ -122,6 +126,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Application',
         'search_term': 'application',
+        'html_id': 'application',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'A formal request, usually for state and federal funding programs.',
@@ -129,6 +134,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Contract',
         'search_term': 'contract',
+        'html_id': 'contract',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'A written agreement executed by Metro and an individual who or firm which thereby becomes the Contractor. The contract sets forth the rights or obligations of the parties in connection with the furnishing of goods or services, including construction. Contracts over $500,000 require Board approval.',
@@ -136,6 +142,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Informational Report',
         'search_term': 'informational report',
+        'html_id': 'informational-report',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'Metro staff will provide various informational reports to the Board of Directors as background to the Agency’s policies, programs, plans, situations and events. Many of these reports are circulated publicly as “Receive and File” reports.',
@@ -143,6 +150,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Federal Legislation / State Legislation (Position)',
         'search_term': 'federal legislation / state legislation (position)',
+        'html_id': 'federal-state-legislation',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'Metro’s Government Relations staff seeks Board of Director approval prior to taking a position of “support”, “oppose”, or “work with author” on significant State and Federal legislation.',
@@ -150,6 +158,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Ordinance / Administrative Code',
         'search_term': 'ordinance / administrative code',
+        'html_id': 'ordinance-administrative-code',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'Metro as an entity created by the State of California for Los Angeles County has the legal authority to adopt ordinances. Its adopted ordinances are collectively referred to as the Metro Administrative Code. Metro ordinances are enacted pursuant to the ordinance adopting authority granted to the Southern California Rapid Transit District by Public Utilities Code Sections 30273 et seq., and to the Los Angeles Comment [SAR1]: Capitalize Board Report Comment [SAR2]: Items included here are only those where text is edited. All existing types of Board Reports should still be included as is. County Transportation Commission by Public Utilities Code Sections 130103 and 130105. Ordinances include, among others: <br><br>a.) Metro’s Retail Transactions and Use Taxes (Sales Taxes) <br>b.) Transit Court <br>c.) Codes of Conduct <br>d.) Settlement of Claims <br>e.) Public Hearings <br>f.) Contracting <br>g.) Tolls and Enforcement of Toll Violations <br>h.) Parking',
@@ -157,6 +166,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Plan',
         'search_term': 'plan',
+        'html_id': 'plan',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'A detailed proposal for achieving public policy goals.  Major Metro plans include the Long Range Transportation Plan, the Short Range Transportation Plan, the Union Station master plans, and subject specific action or strategic plans.',
@@ -164,6 +174,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Policy',
         'search_term': 'policy',
+        'html_id': 'policy',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'A course or principle of action adopted by the Board of Directors in carrying out its legal authority and mission. Examples include Metro’s Debt policy, Energy and Sustainability Policy, Alternative Fuel Policy, Film Production, Financial Stability, Formula Allocation Procedures, Holiday Fares, Investment, Metro System Advertising, Procurement, Property Naming, Small Business, Transit Service, and other public policies. Policies remain in effect until modified or repealed by the Board.',
@@ -171,6 +182,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Program',
         'search_term': 'program',
+        'html_id': 'program',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'A group of related activities performed by one or more organizational units for the purpose of accomplishing a function for which Metro is responsible.  Examples are the Joint Development Program, Rider Relief Transportation Program, Immediate Needs Transportation Program, Congestion Management Program, Transit Safety Program, Soundwall Program, Vanpool Program and many more.',
@@ -178,6 +190,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Project',
         'search_term': 'project',
+        'html_id': 'project',
         'fa_icon': 'file-text-o',
         'html_desc': True,
         'desc': 'A carefully planned enterprise designed to achieve a particular aim. Major projects at Metro usually have a Life of Project (LOP) budget, environmental impact report, preliminary engineering work, and more. Examples would be light rail projects, subway projects, highway projects, bikeway projects, freight and goods movement facilities, information and technology improvements, and other transportation infrastructure for Los Angeles County.',
@@ -185,6 +198,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Appointment',
         'search_term': 'appointment',
+        'html_id': 'appointment',
         'fa_icon': 'user',
         'html_desc': True,
         'desc': 'The Board of Directors makes appointments to various committees created for the purpose of collecting and reviewing public input such as the Citizens Advisory Council and the Metro Service Councils, and also to external organizations that include representation from Metro such as Metrolink.',
@@ -192,6 +206,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Minutes',
         'search_term': 'minutes',
+        'html_id': 'minutes',
         'fa_icon': 'calendar',
         'html_desc': True,
         'desc': 'The permanent official legal record of the business transacted, resolutions adopted, votes taken, and general proceedings of the Board of Directors. ',
@@ -199,6 +214,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Motion/Motion Response',
         'search_term': 'motion / motion response',
+        'html_id': 'motion-response',
         'fa_icon': 'bullhorn',
         'html_desc': True,
         'desc': 'These are issues raised by Board Members during meetings. Motions are usually proposed in writing by one or more Board Members. Motions include background information and a specific directive to staff after the words “I therefore move”, and then voted on. When adopted by the Board with a majority vote, staff is given a specific timeframe to research and respond back.',
@@ -206,6 +222,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Oral Report/Presentation',
         'search_term': 'oral report / presentation',
+        'html_id': 'oral-report-presentation',
         'fa_icon': 'bullhorn',
         'html_desc': True,
         'desc': 'Metro staff make public  presentations to the board during public meetings via Powerpoint and oral reports.  These are included in the agendas and meeting webcasts.',
@@ -214,6 +231,7 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Public Hearing',
         'search_term': 'public hearing',
+        'html_id': 'public-hearing',
         'fa_icon': 'bullhorn',
         'html_desc': True,
         'desc': 'Various board actions require a public hearing prior to voting.  These include the adoption of the annual budget, fare changes, major service changes, ordinances, eminent domain actions and others as defined by State/Federal law or board ordinance.',
@@ -221,12 +239,15 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
     {
         'name': 'Resolution',
         'search_term': 'resolution',
+        'html_id': 'resolution',
         'fa_icon': 'commenting-o',
         'html_desc': True,
         'desc': 'Certain board actions require the adoption of a board resolution, usually financial and real estate transactions.',
     },
-    {   'name': 'Board Box',
+    {
+        'name': 'Board Box',
         'search_term': 'board box',
+        'html_id': 'board-box',
         'fa_icon': 'commenting-o',
         'html_desc': True,
         'desc': "Formal information communication to the Board not requiring actions. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box items through the <a href='/archive-search' target='_blank'>Archive Search</a>."
