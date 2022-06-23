@@ -10,7 +10,7 @@ pytest-django
 pytest-mock==1.6.3
 requests-mock==1.8.0
 freezegun==1.0.0
-lxml==4.1.1
+lxml==4.2.0
 dj_database_url
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
 locustio==0.13.2
