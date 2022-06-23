@@ -19,20 +19,17 @@
                     <br>
                 </h1>
                 <h1>
-				  <div>
 					<span class="label label-info">
 					  {{ legislation.bill_type }}
 					</span>
 
 					{% if legislation.inferred_status %}
-					{{ legislation.inferred_status | inferred_status_label | safe }}
+					  {{ legislation.inferred_status | inferred_status_label | safe }}
 					{% endif %}
-				  </div>
-
                 </h1>
 
                 <p>
-				<a href="{{ legislation.bill_type | get_bill_type_link }}" title="Learn more about this type of board report" target="_blank">
+					<a href="{{ legislation.bill_type | get_bill_type_link }}" title="Learn more about this type of board report" target="_blank">
                         <i class='fa fa-fw fa-external-link'></i> Learn more about this type of board report
                     </a>
                 </p>
