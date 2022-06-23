@@ -2,7 +2,7 @@ Django>=2.2,<2.2.26
 psycopg2-binary>=2.8,<2.9
 opencivicdata>=3.1.0
 django-councilmatic[convert_docs]==2.6.1
-https://github.com/hancush/django-haystack/zipball/v2.8.1/pin_setuptools
+# https://github.com/hancush/django-haystack/zipball/v2.8.1/pin_setuptools
 django-debug-toolbar==1.9.1
 sentry-sdk==0.14.2
 gunicorn==19.6.0
