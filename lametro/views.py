@@ -62,8 +62,6 @@ from .utils import get_list_from_csv
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
-print('Testing')
-
 class LAMetroIndexView(IndexView):
     template_name = 'lametro/index.html'
 
