@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 # These are all the settings that are specific to a jurisdiction
 
 ###############################
@@ -90,7 +92,7 @@ COMMITTEE_MEMBER_TITLE = 'Member'
 # this is for convenience, & used to populate a table
 # describing legislation types on the default about page template
 # the 'search_term' should be lowercase with spaces before and after backslashes
-LEGISLATION_TYPE_DESCRIPTIONS = [
+legislation_types = [
     {
         'name': 'Budget',
         'search_term': 'budget',
@@ -245,14 +247,17 @@ LEGISLATION_TYPE_DESCRIPTIONS = [
         'desc': 'Certain board actions require the adoption of a board resolution, usually financial and real estate transactions.',
     },
     {
-        'name': 'Board Box',
+        'name': 'Board Box / Board Correspondence',
         'search_term': 'board box',
         'html_id': 'board-box',
         'fa_icon': 'commenting-o',
         'html_desc': True,
-        'desc': "Formal information communication to the Board not requiring actions. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box items through the <a href='/archive-search' target='_blank'>Archive Search</a>."
+        'desc': 'Formal information communication from Metro staff to the Board, which does not require Board action. Historically, these items were called "Board Box"(es), because a physical box containing each month\'s items was delivered to the Board for review. Because these items are now delivered digitally, their "Board Report Type" designation is "Board Correspondence" so the nature of these items is more clear to the public. We are in the process of importing Board Boxes to this website; in the meantime, please access Board Box/Correspondence items through the <a href="/archive-search">Archive Search</a>. You can also access a directory of Board Correspondence from 2015 to present, by year, <a href="http://boardarchives.metro.net/BoardBox/">here</a>.'
     },
 ]
+
+# we want board report types to be in alphabetical order on Metro's About page
+LEGISLATION_TYPE_DESCRIPTIONS = sorted(legislation_types, key=itemgetter('name'))
 
 BILL_STATUS_DESCRIPTIONS = {
     'ADOPTED': {
