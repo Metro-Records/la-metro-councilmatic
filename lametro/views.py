@@ -283,9 +283,9 @@ class LAMetroEventsView(EventsView):
         day_grouper    = lambda x: (x.local_start_time.year, x.local_start_time.month, x.local_start_time.day)
 
         # We only want to display approved minutes
-        all_event_docs = EventDocument.objects.select_related('event')
-        approved_minutes = [doc.id for doc in all_event_docs if doc.event.extras.get('approved_minutes')]
-        minutes_queryset = all_event_docs.filter(id__in=approved_minutes)
+        minutes_queryset = EventDocument.objects.select_related('event')\
+                                        .filter(note__icontains='minutes')\
+                                        .filter(event__extras__approved_minutes=True)
 
         # If yes...
         if start_date_str and end_date_str:
