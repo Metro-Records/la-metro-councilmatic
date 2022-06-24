@@ -361,3 +361,17 @@ hr .events-line {
 .tooltip.top .tooltip-arrow {
     border-top-color: #000000;
 }
+
+/* When we link to a specific bill type on the About page,
+ * the navbar blocks the top of the element. This pseudo
+ * element fixes that.
+ * https://css-tricks.com/hash-tag-links-padding/
+ */
+#legislation-types td > p::before {
+	display: block; 
+	content: " "; 
+	margin-top: -100px !important; 
+	height: 100px; 
+	visibility: hidden; 
+	pointer-events: none;
+}

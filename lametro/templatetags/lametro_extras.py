@@ -240,3 +240,11 @@ def all_have_extra(entities, extra):
 @register.filter
 def get_list(querydict, key):
     return querydict.getlist(key)
+
+@register.filter
+def get_bill_type_link(bill_type):
+    for legislation_type in LEGISLATION_TYPE_DESCRIPTIONS:
+        if legislation_type['search_term'].upper() == bill_type.upper():
+            return f'/about#{legislation_type["html_id"]}'
+
+    return ''
