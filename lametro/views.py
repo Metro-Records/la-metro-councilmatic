@@ -284,8 +284,8 @@ class LAMetroEventsView(EventsView):
 
         # We only want to display approved minutes
         all_event_docs = EventDocument.objects.select_related('event')
-        minutes = [doc.id for doc in all_event_docs if doc.event.extras.get('approved_minutes')]
-        minutes_queryset = all_event_docs.filter(id__in=minutes)
+        approved_minutes = [doc.id for doc in all_event_docs if doc.event.extras.get('approved_minutes')]
+        minutes_queryset = all_event_docs.filter(id__in=approved_minutes)
 
         # If yes...
         if start_date_str and end_date_str:
