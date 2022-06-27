@@ -38,14 +38,7 @@ APP_NAME = "lametro"
 #########################
 
 # this is for populating meta tags
-SITE_META = {
-    "site_name": "Metro Board",  # e.g. 'Chicago Councilmatc'
-    "site_desc": "",  # e.g. 'City Council, demystified. Keep tabs on Chicago legislation, aldermen, & meetings.'
-    "site_author": "",  # e.g. 'DataMade'
-    "site_url": "",  # e.g. 'https://chicago.councilmatic.org'
-    "twitter_site": "",  # e.g. '@DataMadeCo'
-    "twitter_creator": "",  # e.g. '@DataMadeCo'
-}
+SITE_META = {}
 
 LEGISTAR_URL = ""  # e.g. 'https://chicago.legistar.com/Legislation.aspx'
 
