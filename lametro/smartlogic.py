@@ -25,7 +25,7 @@ class SmartLogic(object):
 
         try:
             response = getattr(requests, method)(url, **kwargs)
-        except HTTPError as e:
+        except HTTPError:
             raise
 
         try:

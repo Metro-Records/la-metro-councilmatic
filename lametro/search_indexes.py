@@ -1,5 +1,4 @@
 import json
-import re
 
 from haystack import indexes
 from councilmatic_core.haystack_indexes import BillIndex

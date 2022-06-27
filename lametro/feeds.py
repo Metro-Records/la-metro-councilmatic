@@ -1,9 +1,4 @@
-from django.urls import reverse, reverse_lazy
-from django.utils.feedgenerator import Rss201rev2Feed
-from django.conf import settings
-
 from councilmatic_core.feeds import PersonDetailFeed
-from councilmatic_core.models import Person
 
 from lametro.models import LAMetroPerson
 
