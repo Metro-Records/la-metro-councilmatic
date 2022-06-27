@@ -16,6 +16,28 @@ Metro Board Reports is a member of the [Councilmatic family](https://www.council
 
 These days, we run apps in containers for local development. More on that [here](https://github.com/datamade/how-to/blob/master/docker/local-development.md). Prefer to run the app locally? See the [legacy setup instructions](https://github.com/datamade/la-metro-councilmatic/blob/b8bc14f6d90f1b05e24b5076b1bfcd5e0d37527a/README.md).
 
+### Set-up pre-commit
+
+We use the [pre-commit](https://pre-commit.com/) framework to use Git pre-commit hooks that keep our codebase clean.
+
+To set up Pre-Commit, install the Python package on your local machine using
+
+```bash
+python -m pip install pre-commit
+```
+
+If you'd rather not install pre-commit globally, create and activate a [virtual environment](https://docs.python.org/3/library/venv.html) in this repo before running the above command.
+
+Then, run
+
+```bash
+pre-commit install
+```
+
+to set up the git hooks.
+
+Since hooks are run locally, you can modify which scripts are run before each commit by modifying `.pre-commit-config.yaml`.
+
 ### Get the API key
 
 There should be an entry in the DataMade LastPass account called 'LA Metro - secrets.py.' Copy its contents into a file called `secrets.py` and place it in `lametro/`.
