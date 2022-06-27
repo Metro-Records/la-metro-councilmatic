@@ -1,16 +1,13 @@
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.static import serve
-from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.views.decorators.cache import never_cache
 
-from haystack.query import SearchQuerySet, EmptySearchQuerySet
+from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import (
     CouncilmaticSearchForm,
-    CouncilmaticFacetedSearchView,
-    EventDetailView,
 )
 from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 
@@ -41,7 +38,7 @@ from lametro.views import (
     LAMetroContactView,
     MinutesView,
 )
-from lametro.feeds import *
+from lametro.feeds import LAMetroPersonDetailFeed
 
 patterns = (
     [

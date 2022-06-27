@@ -1,6 +1,3 @@
-import datetime
-
-from django.urls import reverse, resolve
 import pytest
 
 from .conftest import get_uid_chunk
@@ -42,8 +39,7 @@ def test_person_page_redirects(client, metro_person, mocker):
 
     # Assert navigating to a partially valid slug matching more than one
     # object returns a 404.
-
-    person_of_same_name = metro_person.build()
+    metro_person.build()
 
     view = LAPersonDetailView()
     view.kwargs = {"slug": partial_slug}

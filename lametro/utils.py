@@ -2,28 +2,29 @@ import csv
 import os
 import re
 import pytz
-from datetime import datetime, timedelta
-import requests
 
 from django.conf import settings
-from django.utils import timezone
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 
 def format_full_text(full_text):
     """
-    The search results and board report titles (on the BillDetail) should show the "SUBJECT:" header from the board report when present.
-    The ocr_full_text contains this information. Some example snippets:
+    The search results and board report titles (on the BillDetail) should show
+    the "SUBJECT:" header from the board report when present. The ocr_full_text
+    contains this information. Some example snippets:
 
     # Subject header followed by two linebreaks.
-    ..Subject\nSUBJECT:\tFOOD SERVICE OPERATOR\n\n..Action\nACTION:\tAWARD SERVICES CONTRACT\n\n..
+    ..Subject\nSUBJECT:\tFOOD SERVICE OPERATOR\n\n..Action\nACTION:\tAWARD
+    SERVICES CONTRACT\n\n..
 
     # Subject header followed by a return carriage and linebreak.
-    ..Subject/Action\r\nSUBJECT: MONTHLY REPORT ON CRENSHAW/LAX SAFETY\r\nACTION: RECEIVE AND FILE\r\n
+    ..Subject/Action\r\nSUBJECT: MONTHLY REPORT ON CRENSHAW/LAX SAFETY\r\nACTION:
+    RECEIVE AND FILE\r\n
 
     # Subject header with a linebreak in the middle and without an ACTION header.
-    ..Subject\nSUBJECT:    REVISED MOTION BY DIRECTORS HAHN, SOLIS, \nGARCIA, AND DUPONT-WALKER\n..Title\n
+    ..Subject\nSUBJECT:    REVISED MOTION BY DIRECTORS HAHN, SOLIS, \nGARCIA,
+    AND DUPONT-WALKER\n..Title\n
     """
     results = ""
 

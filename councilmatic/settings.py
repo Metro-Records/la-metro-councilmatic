@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from .settings_deployment import *
-from .settings_jurisdiction import *
+from .settings_deployment import *  # noqa
+from .settings_jurisdiction import *  # noqa
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,7 +28,7 @@ except ImportError:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".datamade.us", ".councilmatic.org"]
 
 try:
-    from .settings_deployment import RECAPTCHA_PUBLIC_KEY, RECAPTCHA_PRIVATE_KEY
+    from .settings_deployment import RECAPTCHA_PUBLIC_KEY, RECAPTCHA_PRIVATE_KEY  # noqa
 except ImportError:
     SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
 
@@ -54,7 +54,7 @@ INSTALLED_APPS = (
 )
 
 try:
-    INSTALLED_APPS += EXTRA_APPS
+    INSTALLED_APPS += EXTRA_APPS  # noqa
 except NameError:
     pass
 

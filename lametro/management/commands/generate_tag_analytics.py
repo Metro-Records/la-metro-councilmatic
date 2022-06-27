@@ -8,7 +8,6 @@ from django.core.management.base import BaseCommand
 
 from googleapiclient.http import MediaIoBaseUpload
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from lametro.models import LAMetroBill
@@ -33,7 +32,7 @@ class Command(BaseCommand):
 
         try:
             drive_service = self.get_google_drive()
-            file = self.upload_file_bytes(drive_service, csv_string, file_metadata)
+            self.upload_file_bytes(drive_service, csv_string, file_metadata)
             self.stdout.write(
                 self.style.SUCCESS(f"Successfully uploaded {output_file_name}!")
             )

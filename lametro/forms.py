@@ -35,10 +35,10 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             q += '"'
 
         # Escape reserved characters
-        reserved_characters = """|&*/\!{[]}~-+'()^:"""
+        reserved_characters = r"""|&*/\!{[]}~-+'()^:"""
 
         for char in reserved_characters:
-            q = q.replace(char, "\{}".format(char))
+            q = q.replace(char, r"\{}".format(char))
 
         # Downcase boolean operators
         for op in ("OR", "AND"):
@@ -124,7 +124,7 @@ class AgendaUrlForm(forms.Form):
                 return agenda_url
             elif r.status_code == 404:
                 raise forms.ValidationError("Broken URL! Returns a 404.")
-        except requests.exceptions.MissingSchema as e:
+        except requests.exceptions.MissingSchema:
             raise forms.ValidationError(
                 "Not a valid URL! Check your link, and resubmit."
             )

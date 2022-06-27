@@ -1,14 +1,11 @@
 import re
-from itertools import groupby
 from operator import attrgetter
 import itertools
 import urllib
 import json
-from datetime import date, timedelta, datetime, MINYEAR
-from dateutil.relativedelta import relativedelta
+from datetime import date, datetime
 from dateutil import parser
 import requests
-from collections import namedtuple
 import os
 
 from haystack.backends.solr_backend import SolrSearchQuery
@@ -16,28 +13,25 @@ from haystack.query import SearchQuerySet
 
 import pytz
 
-from django.db import transaction, connection, connections
 from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
-from django.db.models import Max, Min, Prefetch, Case, When, Value, IntegerField, Q
+from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.views.generic import TemplateView
 from django.http import (
-    HttpResponse,
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
     HttpResponseNotFound,
 )
-from django.shortcuts import redirect
 from django.core import management
 from django.core.serializers import serialize
-from django.views.generic import View
 
 from councilmatic_core.views import (
     IndexView,
@@ -51,7 +45,7 @@ from councilmatic_core.views import (
     EventsView,
     CouncilmaticFacetedSearchView,
 )
-from councilmatic_core.models import *
+from councilmatic_core.models import Organization, Membership
 
 from opencivicdata.core.models import PersonLink
 
@@ -135,9 +129,9 @@ class LAMetroEventDetail(EventDetailView):
     template_name = "lametro/event.html"
 
     def post(self, request, *args, **kwargs):
-        self.object = (
-            self.get_object()
-        )  # Assign object to detail view, so that get_context_data can find this variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
+        # Assign object to detail view, so that get_context_data can find this
+        # variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
+        self.object = self.get_object()
         event = self.get_object()
         event_slug = event.slug
 
@@ -309,11 +303,13 @@ class LAMetroEventsView(EventsView):
         # Did the user set date boundaries?
         start_date_str = self.request.GET.get("from")
         end_date_str = self.request.GET.get("to")
-        day_grouper = lambda x: (
-            x.local_start_time.year,
-            x.local_start_time.month,
-            x.local_start_time.day,
-        )
+
+        def day_grouper(x):
+            return (
+                x.local_start_time.year,
+                x.local_start_time.month,
+                x.local_start_time.day,
+            )
 
         # We only want to display approved minutes
         minutes_queryset = EventDocument.objects.filter(
@@ -758,6 +754,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         topic_facets = [facet for facet, _ in LAMetroSubject.CLASSIFICATION_CHOICES]
 
         return {
+            "search_term": search_term,
             "facets": self.results.facet_counts(),
             "topic_facets": topic_facets,
             "selected_facets": selected_facets,
@@ -961,11 +958,10 @@ class MinutesView(EventsView):
         )
 
         all_minutes_grouped = []
-        day_grouper = lambda x: x["start_time"]
         for event_date, events in itertools.groupby(
-            all_minutes_sorted, key=day_grouper
+            all_minutes_sorted, key=lambda x: x["start_time"]
         ):
-            events = sorted(events, key=day_grouper)
+            events = sorted(events, key=lambda x: x["start_time"])
             all_minutes_grouped.append([event_date, events])
 
         context["all_minutes"] = all_minutes_grouped

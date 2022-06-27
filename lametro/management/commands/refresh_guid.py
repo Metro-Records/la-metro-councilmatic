@@ -3,7 +3,6 @@ from itertools import chain
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from django.db.utils import IntegrityError
 
 from legistar.bills import LegistarAPIBillScraper
 from opencivicdata.legislative.models import Bill
