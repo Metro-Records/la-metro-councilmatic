@@ -18,23 +18,23 @@ def test_person_page_redirects(client, metro_person, mocker):
     # routing cases appropriately, not the particular contents of a
     # returned view. So, in the case of a happy routing, we'll mock
     # the response of a successful dispatch
-    mocker.patch.object(PersonDetailView, 'dispatch', return_value=response)
+    mocker.patch.object(PersonDetailView, "dispatch", return_value=response)
 
     # Assert navigating to a valid slug works.
 
     view = LAPersonDetailView()
-    view.kwargs = {'slug': person.slug}
+    view.kwargs = {"slug": person.slug}
 
     response = view.dispatch(None)
     assert response.status_code == 200
 
     # Assert navigating to a partially valid slug, redirects to a valid slug.
 
-    partial_slug = '-'.join(person.slug.split('-')[:-1])
-    new_slug = '-'.join([partial_slug, get_uid_chunk()])
+    partial_slug = "-".join(person.slug.split("-")[:-1])
+    new_slug = "-".join([partial_slug, get_uid_chunk()])
 
     view = LAPersonDetailView()
-    view.kwargs = {'slug': new_slug}
+    view.kwargs = {"slug": new_slug}
     # Assert navigating to a valid slug works.
 
     response = view.dispatch(None)
@@ -46,7 +46,7 @@ def test_person_page_redirects(client, metro_person, mocker):
     person_of_same_name = metro_person.build()
 
     view = LAPersonDetailView()
-    view.kwargs = {'slug': partial_slug}
+    view.kwargs = {"slug": partial_slug}
 
     response = view.dispatch(None)
     assert response.status_code == 404
@@ -54,7 +54,7 @@ def test_person_page_redirects(client, metro_person, mocker):
     # Assert navigating to a slug that does not exist returns a 404.
 
     view = LAPersonDetailView()
-    view.kwargs = {'slug': 'the-hulk'}
+    view.kwargs = {"slug": "the-hulk"}
     # Assert navigating to a valid slug works.
 
     response = view.dispatch(None)

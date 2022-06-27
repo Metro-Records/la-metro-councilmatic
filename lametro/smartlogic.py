@@ -5,18 +5,19 @@ from requests.exceptions import HTTPError
 
 
 class SmartLogic(object):
-    BASE_URL = 'https://cloud.smartlogic.com/'
-    SERVICE_URL = 'svc/d3807554-347e-4091-90ea-f107a906aaff/ses/CombinedModel/'
+
+    BASE_URL = "https://cloud.smartlogic.com/"
+    SERVICE_URL = "svc/d3807554-347e-4091-90ea-f107a906aaff/ses/CombinedModel/"
 
     def __init__(self, api_key):
         self.api_key = api_key
-        self._token = self.token()['access_token']
+        self._token = self.token()["access_token"]
 
     @property
     def auth_headers(self):
         return {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer {}'.format(self._token)
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer {}".format(self._token),
         }
 
     def endpoint(self, method, route, **kwargs):
@@ -33,13 +34,13 @@ class SmartLogic(object):
             return response
 
     def token(self):
-        data = {'grant_type': 'apikey', 'key': self.api_key}
-        return self.endpoint('post', 'token', data=data)
+        data = {"grant_type": "apikey", "key": self.api_key}
+        return self.endpoint("post", "token", data=data)
 
     def terms(self, params):
         return self.endpoint(
-            'post',
-            self.SERVICE_URL + 'terms.json',
+            "post",
+            self.SERVICE_URL + "terms.json",
             params=params,
-            headers=self.auth_headers
+            headers=self.auth_headers,
         )
