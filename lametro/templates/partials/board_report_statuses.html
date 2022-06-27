@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th>Status</th>
+            <th>Displayed Status</th>
             <th class="desktop-only">Description</th>
         </tr>
     </thead>
@@ -9,12 +10,11 @@
     {% for status, obj in BILL_STATUS_DESCRIPTIONS.items %}
         <tr>
             <td>
-                <p class='nowrap'>
-                    {% if obj.search_term %}
-                    <a href='/search/?selected_facets=inferred_status_exact%3A{{obj.search_term}}'>{{status | title}}</a>
-                    {% else %}
-                    <p>{{status | title}}</p>
-                    {% endif %}
+                <p class="nowrap desktop-only">
+                    {{status | title}}
+                </p>
+                <p class="nowrap non-desktop-only">
+					<a href="/search/?selected_facets=inferred_status_exact%3A{{obj.search_term}}">{{status | title}}</a>
                 </p>
                 <div class="non-desktop-only">
                     <p>
@@ -22,9 +22,18 @@
                     </p>
                 </div>
             </td>
+            <td>
+                <p>
+                    {% if obj.search_term %}
+					<a href="/search/?selected_facets=inferred_status_exact%3A{{obj.search_term}}">{{obj.search_term}}</a>
+                    {% else %}
+                    <p>N/A</p>
+                    {% endif %}
+                </p>
+			</td>
             <td class="desktop-only">
                 <p>
-                    <p>{{obj.definition}}</p>
+                    {{obj.definition}}
                 </p>
             </td>
         </tr>
