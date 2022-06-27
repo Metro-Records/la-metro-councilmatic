@@ -12,14 +12,16 @@ logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("pysolr").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
+
 class Command(data_integrity.Command):
-    '''
+    """
     Subclasses the data_integrity management command in django-councilmatic:
     https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/data_integrity.py
 
-    This command counts LAMetroBill objects, which undergo additional fiiltering 
+    This command counts LAMetroBill objects, which undergo additional fiiltering
     via the LAMetroBillManager.
-    '''
+    """
+
     class Meta:
         proxy = True
 
