@@ -10,8 +10,9 @@ from django.utils import timezone
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
+
 def format_full_text(full_text):
-    '''
+    """
     The search results and board report titles (on the BillDetail) should show the "SUBJECT:" header from the board report when present.
     The ocr_full_text contains this information. Some example snippets:
 
@@ -23,37 +24,49 @@ def format_full_text(full_text):
 
     # Subject header with a linebreak in the middle and without an ACTION header.
     ..Subject\nSUBJECT:    REVISED MOTION BY DIRECTORS HAHN, SOLIS, \nGARCIA, AND DUPONT-WALKER\n..Title\n
-    '''
-    results = ''
+    """
+    results = ""
 
     if full_text:
-        clean_full_text = full_text.replace('\n\n', 'NEWLINE').replace('\r\n', 'NEWLINE').replace('\n..', 'NEWLINE').replace('\n', ' ')
-        match = re.search('(SUBJECT:)(.*?)(NEWLINE|ACTION:)', clean_full_text)
+        clean_full_text = (
+            full_text.replace("\n\n", "NEWLINE")
+            .replace("\r\n", "NEWLINE")
+            .replace("\n..", "NEWLINE")
+            .replace("\n", " ")
+        )
+        match = re.search("(SUBJECT:)(.*?)(NEWLINE|ACTION:)", clean_full_text)
         if match:
             results = match.group(2)
 
     return results
 
+
 def parse_subject(text):
-    if ('[PROJECT OR SERVICE NAME]' not in text) and ('[DESCRIPTION]' not in text) and ('[CONTRACT NUMBER]' not in text):
+    if (
+        ("[PROJECT OR SERVICE NAME]" not in text)
+        and ("[DESCRIPTION]" not in text)
+        and ("[CONTRACT NUMBER]" not in text)
+    ):
         return text.strip()
+
 
 def get_identifier(obj_or_string):
     if isinstance(obj_or_string, str):
         return obj_or_string
     return obj_or_string.id
 
+
 def get_list_from_csv(filename):
     file_directory = os.path.dirname(__file__)
     absolute_file_directory = os.path.abspath(file_directory)
-    my_file = os.path.join(absolute_file_directory, '..', 'data', filename)
+    my_file = os.path.join(absolute_file_directory, "..", "data", filename)
 
     with open(my_file) as f:
         reader = csv.DictReader(f)
 
         new_fieldnames = []
         for field in reader.fieldnames:
-            new_fieldname = field.lower().replace(' ', '_')
+            new_fieldname = field.lower().replace(" ", "_")
             new_fieldnames.append(new_fieldname)
         reader.fieldnames = new_fieldnames
 

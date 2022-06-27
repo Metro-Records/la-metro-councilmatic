@@ -7,74 +7,100 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('legislative', '0010_auto_20191031_1507'),
-        ('councilmatic_core', '0049_auto_20191114_1142'),
-        ('lametro', '0001_initial'),
+        ("legislative", "0010_auto_20191031_1507"),
+        ("councilmatic_core", "0049_auto_20191114_1142"),
+        ("lametro", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='EventAgendaItem',
-            fields=[
-            ],
+            name="EventAgendaItem",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('legislative.eventagendaitem',),
+            bases=("legislative.eventagendaitem",),
         ),
         migrations.CreateModel(
-            name='EventRelatedEntity',
-            fields=[
-            ],
+            name="EventRelatedEntity",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('legislative.eventrelatedentity',),
+            bases=("legislative.eventrelatedentity",),
         ),
         migrations.CreateModel(
-            name='Membership',
-            fields=[
-            ],
+            name="Membership",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('councilmatic_core.membership',),
+            bases=("councilmatic_core.membership",),
         ),
         migrations.CreateModel(
-            name='RelatedBill',
-            fields=[
-            ],
+            name="RelatedBill",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('legislative.relatedbill',),
+            bases=("legislative.relatedbill",),
         ),
         migrations.CreateModel(
-            name='EventPacket',
+            name="EventPacket",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('url', models.URLField()),
-                ('ready', models.BooleanField(default=False)),
-                ('event', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='packet', to='lametro.LAMetroEvent')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("url", models.URLField()),
+                ("ready", models.BooleanField(default=False)),
+                (
+                    "event",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="packet",
+                        to="lametro.LAMetroEvent",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='BillPacket',
+            name="BillPacket",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('url', models.URLField()),
-                ('ready', models.BooleanField(default=False)),
-                ('bill', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='packet', to='lametro.LAMetroBill')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("url", models.URLField()),
+                ("ready", models.BooleanField(default=False)),
+                (
+                    "bill",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="packet",
+                        to="lametro.LAMetroBill",
+                    ),
+                ),
             ],
         ),
     ]

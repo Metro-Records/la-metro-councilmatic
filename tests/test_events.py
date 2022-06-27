@@ -28,15 +28,15 @@ def mock_streaming_meetings(mocker, return_value=None):
     mock_response.json.return_value = return_value if return_value else []
     mock_response.status_code = 200
 
-    mocker.patch('lametro.models.requests.get', return_value=mock_response)
+    mocker.patch("lametro.models.requests.get", return_value=mock_response)
 
     return mock_response
 
 
 def test_agenda_creation(event, event_document):
-    '''
+    """
     Test that the same agenda url does not get added twice.
-    '''
+    """
     event = event.build()
     agenda = event_document.build()
 
@@ -46,37 +46,52 @@ def test_agenda_creation(event, event_document):
 
 
 def test_agenda_pdf_form_submit():
-    '''
+    """
     This unit test checks that a pdf validates the form.
-    '''
+    """
 
-    with open('tests/test_agenda.pdf', 'rb') as agenda:
+    with open("tests/test_agenda.pdf", "rb") as agenda:
         agenda_file = agenda.read()
 
-        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_agenda.pdf', agenda_file, content_type='application/pdf')})
+        agenda_pdf_form = AgendaPdfForm(
+            files={
+                "agenda": SimpleUploadedFile(
+                    "test_agenda.pdf", agenda_file, content_type="application/pdf"
+                )
+            }
+        )
 
         assert agenda_pdf_form.is_valid() == True
 
 
 def test_agenda_pdf_form_error():
-    '''
+    """
     This unit test checks that a non-pdf raises an error.
-    '''
+    """
 
-    with open('tests/test_image.gif', 'rb') as agenda:
+    with open("tests/test_image.gif", "rb") as agenda:
         bad_agenda_file = agenda.read()
 
-        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_image.gif', bad_agenda_file, content_type='image/gif')})
+        agenda_pdf_form = AgendaPdfForm(
+            files={
+                "agenda": SimpleUploadedFile(
+                    "test_image.gif", bad_agenda_file, content_type="image/gif"
+                )
+            }
+        )
 
         assert agenda_pdf_form.is_valid() == False
 
 
-@pytest.mark.parametrize('has_updates,has_agenda', [
-    (True, True),
-    (True, False),
-    (False, True),
-    (False, False),
-])
+@pytest.mark.parametrize(
+    "has_updates,has_agenda",
+    [
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False),
+    ],
+)
 def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
     if has_updates:
         updated_at = LAMetroEvent._time_ago(days=1)
@@ -87,15 +102,19 @@ def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
     # the current date on save. Mock that attribute to return values useful for
     # testing. More on auto_now:
     # https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.DateField.auto_now
-    mock_update = mocker.patch('lametro.models.LAMetroEvent.updated_at', new_callable=mocker.PropertyMock)
+    mock_update = mocker.patch(
+        "lametro.models.LAMetroEvent.updated_at", new_callable=mocker.PropertyMock
+    )
     mock_update.return_value = updated_at
 
-    event = event.build(start_date=datetime.now().isoformat()[:25])
+    event = event.build(
+        start_date=LAMetroEvent._time_from_now(hours=1).isoformat()[:25]
+    )
 
     if has_agenda:
-        document = event_document.build(note='Agenda')
+        document = event_document.build(note="Agenda")
     else:
-        document = event_document.build(note='Some document')
+        document = event_document.build(note="Some document")
 
     event.documents.add(document)
 
@@ -109,14 +128,16 @@ def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
 
 
 def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
-    '''
+    """
     Test that if an event is streaming, it alone is returned as current.
-    '''
-    dummy_guid = 'a super special guid'
+    """
+    dummy_guid = "a super special guid"
 
     # Add dummy GUID to one of our events.
     live_meeting, _ = concurrent_current_meetings
-    live_meeting.extras = {'guid': dummy_guid.upper()}  # GUIDs in the Legistar API are all caps.
+    live_meeting.extras = {
+        "guid": dummy_guid.upper()
+    }  # GUIDs in the Legistar API are all caps.
     live_meeting.save()
 
     mock_streaming_meetings(mocker, return_value=[dummy_guid])
@@ -127,35 +148,34 @@ def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
     assert current_meetings.get() == live_meeting
 
 
-def test_current_meeting_no_streaming_event(concurrent_current_meetings,
-                                            mocker):
-    '''
+def test_current_meeting_no_streaming_event(concurrent_current_meetings, mocker):
+    """
     Test that if an event is not streaming, and there are concurrently
     scheduled events, both events are returned as current.
-    '''
+    """
     mock_streaming_meetings(mocker)
 
     current_meetings = LAMetroEvent.current_meeting()
 
     # Test that the board meeting is returned first.
-    assert current_meetings.first().name == 'Regular Board Meeting'
+    assert current_meetings.first().name == "Regular Board Meeting"
 
     # Test that both meetings are returned.
     assert all(m in current_meetings for m in concurrent_current_meetings)
 
 
 def test_current_meeting_no_streaming_event_late_start(event, mocker):
-    '''
+    """
     Test that if an meeting is scheduled but not yet streaming, it is returned
     as current up to 20 minutes past its scheduled start.
-    '''
+    """
     # Build an event scheduled to start 15 minutes ago.
     crenshaw_meeting_info = {
-        'id': 'ocd-event/3c93e81f-f1a9-42ce-97fe-30c77a4a6740',
-        'name': 'Crenshaw Project Corporation',
-        'start_date': LAMetroEvent._time_ago(minutes=15)\
-            .replace(second=0, microsecond=0)\
-            .isoformat(),
+        "id": "ocd-event/3c93e81f-f1a9-42ce-97fe-30c77a4a6740",
+        "name": "Crenshaw Project Corporation",
+        "start_date": LAMetroEvent._time_ago(minutes=15)
+        .replace(second=0, microsecond=0)
+        .isoformat(),
     }
     late_current_meeting = event.build(**crenshaw_meeting_info)
 
@@ -168,18 +188,18 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
 
 
 def test_current_meeting_no_potentially_current(event):
-    '''
+    """
     Test that if there are no potentially current meetings (scheduled to
     start in the last six hours, or in the next five minutes), no meetings
     are returned as current.
-    '''
+    """
     # Build an event outside of the "potentially current" timeframe.
     safety_meeting_info = {
-        'id': 'ocd-event/5e84e91d-279c-4c83-a463-4a0e05784b62',
-        'name': 'System Safety, Security and Operations Committee',
-        'start_date': LAMetroEvent._time_from_now(hours=12)\
-            .replace(second=0, microsecond=0)\
-            .isoformat(),
+        "id": "ocd-event/5e84e91d-279c-4c83-a463-4a0e05784b62",
+        "name": "System Safety, Security and Operations Committee",
+        "start_date": LAMetroEvent._time_from_now(hours=12)
+        .replace(second=0, microsecond=0)
+        .isoformat(),
     }
     event.build(**safety_meeting_info)
 
@@ -189,7 +209,9 @@ def test_current_meeting_no_potentially_current(event):
     assert not current_meetings
 
 
-def test_upcoming_meetings_are_not_marked_as_broadcast(concurrent_current_meetings, mocker):
+def test_upcoming_meetings_are_not_marked_as_broadcast(
+    concurrent_current_meetings, mocker
+):
     # Create two potentially current meetings
     test_event_a, test_event_b = concurrent_current_meetings
 
@@ -212,14 +234,16 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
     test_event_a, test_event_b = concurrent_current_meetings
 
     # Return the event from the running events endpoint
-    dummy_guid = 'a super special guid'
+    dummy_guid = "a super special guid"
 
-    test_event_a.extras = {'guid': dummy_guid.upper()}  # GUIDs in the Legistar API are all caps.
+    test_event_a.extras = {
+        "guid": dummy_guid.upper()
+    }  # GUIDs in the Legistar API are all caps.
     test_event_a.save()
 
     mock_response = mock_streaming_meetings(mocker, return_value=[dummy_guid])
 
-    call_command('check_current_meeting')
+    call_command("check_current_meeting")
 
     # Assert Event A is the only event returned, and is marked as having
     # been broadcast and has the correct status
@@ -240,7 +264,7 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
     assert not any([test_event_b.is_ongoing, test_event_b.has_passed])
 
     # Test that duplicate broadcast records are not created
-    call_command('check_current_meeting')
+    call_command("check_current_meeting")
 
     test_event_a.refresh_from_db()
     assert test_event_a.broadcast.count() == 1
@@ -263,21 +287,19 @@ def test_check_current_meeting():
 
 
 def get_event_id():
-    return 'ocd-event/{}'.format(str(uuid4()))
+    return "ocd-event/{}".format(str(uuid4()))
 
 
-@pytest.mark.parametrize('n_before_board', [1, 4, 8])
+@pytest.mark.parametrize("n_before_board", [1, 4, 8])
 def test_upcoming_committee_meetings(event, n_before_board):
-    board_date = LAMetroEvent._time_from_now(days=7).strftime('%Y-%m-%d %H:%M')
+    board_date = LAMetroEvent._time_from_now(days=7).strftime("%Y-%m-%d %H:%M")
 
     board_meeting = event.build(
-        name='Regular Board Meeting',
-        start_date=board_date,
-        id=get_event_id()
+        name="Regular Board Meeting", start_date=board_date, id=get_event_id()
     )
 
-    before_board_date = LAMetroEvent._time_from_now(days=6).strftime('%Y-%m-%d %H:%M')
-    after_board_date = LAMetroEvent._time_from_now(days=8).strftime('%Y-%m-%d %H:%M')
+    before_board_date = LAMetroEvent._time_from_now(days=6).strftime("%Y-%m-%d %H:%M")
+    after_board_date = LAMetroEvent._time_from_now(days=8).strftime("%Y-%m-%d %H:%M")
 
     # Create ten test meetings.
     for i in range(1, 11):
@@ -292,11 +314,7 @@ def test_upcoming_committee_meetings(event, n_before_board):
         else:
             start_date = after_board_date
 
-        event.build(
-            name='Test Committee',
-            start_date=start_date,
-            id=get_event_id()
-        )
+        event.build(name="Test Committee", start_date=start_date, id=get_event_id())
 
     upcoming_meetings = LAMetroEvent.upcoming_committee_meetings()
 
@@ -318,39 +336,33 @@ def test_upcoming_committee_meetings(event, n_before_board):
 
 
 def test_upcoming_board_meetings(event):
-    one_minute_from_now = LAMetroEvent._time_from_now(minutes=1).strftime('%Y-%m-%d %H:%M')
-    forty_days_ago = LAMetroEvent._time_ago(days=40).strftime('%Y-%m-%d %H:%M')
-    forty_days_from_now = LAMetroEvent._time_from_now(days=40).strftime('%Y-%m-%d %H:%M')
+    one_minute_from_now = LAMetroEvent._time_from_now(minutes=1).strftime(
+        "%Y-%m-%d %H:%M"
+    )
+    forty_days_ago = LAMetroEvent._time_ago(days=40).strftime("%Y-%m-%d %H:%M")
+    forty_days_from_now = LAMetroEvent._time_from_now(days=40).strftime(
+        "%Y-%m-%d %H:%M"
+    )
 
     # Create a past meeting
     past_board_meeting = event.build(
-        name='Regular Board Meeting',
-        start_date=forty_days_ago,
-        id=get_event_id()
+        name="Regular Board Meeting", start_date=forty_days_ago, id=get_event_id()
     )
 
     # Create some meetings for the current date, i.e., upcoming meetings
     upcoming_board_meeting = event.build(
-        name='Regular Board Meeting',
-        start_date=one_minute_from_now,
-        id=get_event_id()
+        name="Regular Board Meeting", start_date=one_minute_from_now, id=get_event_id()
     )
     upcoming_special_board_meeting = event.build(
-        name='Special Board Meeting',
-        start_date=one_minute_from_now,
-        id=get_event_id()
+        name="Special Board Meeting", start_date=one_minute_from_now, id=get_event_id()
     )
     upcoming_committee_meeting = event.build(
-        name='Committee Meeting',
-        start_date=one_minute_from_now,
-        id=get_event_id()
+        name="Committee Meeting", start_date=one_minute_from_now, id=get_event_id()
     )
 
     # Create a future meeting
     future_board_meeting = event.build(
-        name='Regular Board Meeting',
-        start_date=forty_days_from_now,
-        id=get_event_id()
+        name="Regular Board Meeting", start_date=forty_days_from_now, id=get_event_id()
     )
 
     upcoming_meetings = LAMetroEvent.upcoming_board_meetings()
@@ -360,7 +372,11 @@ def test_upcoming_board_meetings(event):
     for meeting in (upcoming_board_meeting, upcoming_special_board_meeting):
         assert meeting in upcoming_meetings
 
-    for meeting in (past_board_meeting, upcoming_committee_meeting, future_board_meeting):
+    for meeting in (
+        past_board_meeting,
+        upcoming_committee_meeting,
+        future_board_meeting,
+    ):
         assert meeting not in upcoming_meetings
 
 
@@ -370,14 +386,16 @@ def test_event_is_upcoming(event, mocker):
     in_an_hour = LAMetroEvent._time_from_now(hours=1)
 
     # Build an event that starts in an hour
-    test_event = event.build(start_date=in_an_hour.strftime('%Y-%m-%d %H:%M'))
+    test_event = event.build(start_date=in_an_hour.strftime("%Y-%m-%d %H:%M"))
 
     # Create three timestamps to test upcoming at three points in time...
     yesterday = (in_an_hour - timedelta(days=1)).date()
     tomorrow = (in_an_hour + timedelta(days=1)).date()
 
     # Before the upcoming window
-    yesterday_afternoon = datetime(yesterday.year, yesterday.month, yesterday.day, 12, 0)
+    yesterday_afternoon = datetime(
+        yesterday.year, yesterday.month, yesterday.day, 12, 0
+    )
 
     # During the upcoming window
     yesterday_evening = datetime(yesterday.year, yesterday.month, yesterday.day, 17, 0)
@@ -392,12 +410,12 @@ def test_event_is_upcoming(event, mocker):
         assert test_event.is_upcoming
 
         # Test that cancelled meetings are not upcoming, even during the window
-        test_event.status = 'cancelled'
+        test_event.status = "cancelled"
         test_event.save()
 
         assert not test_event.is_upcoming
 
-    test_event.status = 'confirmed'
+    test_event.status = "confirmed"
     EventBroadcast.objects.create(event=test_event)
     test_event.save()
 
@@ -407,33 +425,37 @@ def test_event_is_upcoming(event, mocker):
 
 @freeze_time("2021-02-07 10:00:00")
 def test_most_recent_past_meetings(event):
-    three_weeks_ago = LAMetroEvent._time_ago(
-        days=21).strftime('%Y-%m-%d %H:%M')
-    five_days_ago = LAMetroEvent._time_ago(days=5).strftime('%Y-%m-%d %H:%M')
-    four_days_ago = LAMetroEvent._time_ago(days=4).strftime('%Y-%m-%d %H:%M')
+    three_weeks_ago = LAMetroEvent._time_ago(days=21).strftime("%Y-%m-%d %H:%M")
+    five_days_ago = LAMetroEvent._time_ago(days=5).strftime("%Y-%m-%d %H:%M")
+    four_days_ago = LAMetroEvent._time_ago(days=4).strftime("%Y-%m-%d %H:%M")
 
-    earlier_today = LAMetroEvent._time_ago(
-        minutes=120).strftime('%Y-%m-%d %H:%M')
-    one_hour_from_now = LAMetroEvent._time_from_now(
-        minutes=60).strftime('%Y-%m-%d %H:%M')
-    one_week_from_now = LAMetroEvent._time_from_now(
-        days=7).strftime('%Y-%m-%d %H:%M')
+    earlier_today = LAMetroEvent._time_ago(minutes=120).strftime("%Y-%m-%d %H:%M")
+    one_hour_from_now = LAMetroEvent._time_from_now(minutes=60).strftime(
+        "%Y-%m-%d %H:%M"
+    )
+    one_week_from_now = LAMetroEvent._time_from_now(days=7).strftime("%Y-%m-%d %H:%M")
 
     # Events that shouldn't be returned
     event_older_than_two_weeks = event.build(
-        name='Board Meeting', start_date=three_weeks_ago, id=get_event_id())
+        name="Board Meeting", start_date=three_weeks_ago, id=get_event_id()
+    )
     event_later_today = event.build(
-        name='Board Meeting', start_date=one_hour_from_now, id=get_event_id())
+        name="Board Meeting", start_date=one_hour_from_now, id=get_event_id()
+    )
     event_one_week_from_now = event.build(
-        name='Board Meeting', start_date=one_week_from_now, id=get_event_id())
+        name="Board Meeting", start_date=one_week_from_now, id=get_event_id()
+    )
 
     # Events that should be returned
     event_earlier_today = event.build(
-        name='Board Meeting', start_date=earlier_today, id=get_event_id())
+        name="Board Meeting", start_date=earlier_today, id=get_event_id()
+    )
     event_four_days_ago = event.build(
-        name='Board Meeting', start_date=four_days_ago, id=get_event_id())
+        name="Board Meeting", start_date=four_days_ago, id=get_event_id()
+    )
     event_five_days_ago = event.build(
-        name='Board Meeting', start_date=five_days_ago, id=get_event_id())
+        name="Board Meeting", start_date=five_days_ago, id=get_event_id()
+    )
 
     recent_past_meetings = LAMetroEvent.most_recent_past_meetings()
 
@@ -450,24 +472,26 @@ def test_most_recent_past_meetings(event):
 
 @freeze_time("2021-02-07 12:00:00")
 def test_display_status(event):
-    this_morning = LAMetroEvent._time_ago(minutes=120).strftime('%Y-%m-%d %H:%M')
+    this_morning = LAMetroEvent._time_ago(minutes=120).strftime("%Y-%m-%d %H:%M")
 
     cancelled_this_morning = event.build(
-        name='Board Meeting',
+        name="Board Meeting",
         start_date=this_morning,
-        status='cancelled',
-        id=get_event_id()
+        status="cancelled",
+        id=get_event_id(),
     )
 
     assert cancelled_this_morning.has_passed == True
-    assert cancelled_this_morning.display_status == 'Cancelled'
+    assert cancelled_this_morning.display_status == "Cancelled"
 
 
 def test_todays_meetings(event):
     # create event for some day
-    event_time = app_timezone.localize(datetime(2020, 3, 15, 15, 0, 0, 0)) # March 15, 2020 at 3pm LA time
+    event_time = app_timezone.localize(
+        datetime(2020, 3, 15, 15, 0, 0, 0)
+    )  # March 15, 2020 at 3pm LA time
 
-    time_string = event_time.strftime('%Y-%m-%d %H:%M')
+    time_string = event_time.strftime("%Y-%m-%d %H:%M")
 
     e = event.build(start_date=time_string)
 
@@ -479,52 +503,59 @@ def test_todays_meetings(event):
         assert e in LAMetroEvent.todays_meetings()
 
 
-@pytest.mark.parametrize('event_name', [
-    ('Regular Board Meeting'),
-    ('Finance, Budget and Audit Committee')
-])
-def test_delete_button_shows(event, admin_client, django_user_model, mocker, event_name):
+@pytest.mark.parametrize(
+    "event_name", [("Regular Board Meeting"), ("Finance, Budget and Audit Committee")]
+)
+def test_delete_button_shows(
+    event, admin_client, django_user_model, mocker, event_name
+):
     e = event.build(name=event_name)
-    event_template = reverse('lametro:events', args=[e.slug])
+    event_template = reverse("lametro:events", args=[e.slug])
 
-    api_source = f'http://webapi.legistar.com/v1/metro/events/{e.slug}'
+    api_source = f"http://webapi.legistar.com/v1/metro/events/{e.slug}"
 
     mock_source = mocker.MagicMock()
     mock_source.url = api_source
     mock_api_source = mocker.patch(
-        'lametro.models.LAMetroEvent.api_source',
+        "lametro.models.LAMetroEvent.api_source",
         new_callable=mocker.PropertyMock,
-        return_value=mock_source
+        return_value=mock_source,
     )
 
     source_matcher = re.compile(api_source)
-    cal_matcher = re.compile('https://metro.legistar.com/calendar.aspx')
-    running_events_matcher = re.compile('http://metro.granicus.com/running_events.php')
+    cal_matcher = re.compile("https://metro.legistar.com/calendar.aspx")
+    running_events_matcher = re.compile("http://metro.granicus.com/running_events.php")
 
-    delete_button_text = ('This event does not exist in Legistar. It may have '
-                          'been deleted from Legistar due to being a duplicate. '
-                          'To delete this event, click the button below.')
+    delete_button_text = (
+        "This event does not exist in Legistar. It may have "
+        "been deleted from Legistar due to being a duplicate. "
+        "To delete this event, click the button below."
+    )
 
     with requests_mock.Mocker() as m:
         m.get(running_events_matcher, status_code=302)
         m.get(cal_matcher, status_code=200)
 
-        m.get(source_matcher, status_code=200, json={'EventBodyName': 'Planning and Programming Committee'})
+        m.get(
+            source_matcher,
+            status_code=200,
+            json={"EventBodyName": "Planning and Programming Committee"},
+        )
         response = admin_client.get(event_template)
-        assert delete_button_text in response.content.decode('utf-8')
+        assert delete_button_text in response.content.decode("utf-8")
 
-        if event_name == 'Regular Board Meeting':
-            api_event_name = 'Board of Directors - Regular Board Meeting'
+        if event_name == "Regular Board Meeting":
+            api_event_name = "Board of Directors - Regular Board Meeting"
         else:
             api_event_name = event_name
 
-        m.get(source_matcher, status_code=200, json={'EventBodyName': api_event_name})
+        m.get(source_matcher, status_code=200, json={"EventBodyName": api_event_name})
         response = admin_client.get(event_template)
-        assert delete_button_text not in response.content.decode('utf-8')
+        assert delete_button_text not in response.content.decode("utf-8")
 
         m.get(source_matcher, status_code=404)
         response = admin_client.get(event_template)
-        assert delete_button_text in response.content.decode('utf-8')
+        assert delete_button_text in response.content.decode("utf-8")
 
 
 @pytest.mark.django_db
@@ -534,8 +565,8 @@ def test_delete_event(event, client, admin_client):
     event_in_db = LAMetroEvent.objects.filter(id=e.id)
     assert event_in_db.exists()
 
-    delete_event = reverse('delete_event', args=[e.slug])
-    admin_redirect_url = reverse('lametro:event')
+    delete_event = reverse("delete_event", args=[e.slug])
+    admin_redirect_url = reverse("lametro:event")
 
     user_response = client.get(delete_event)
     assert user_response.url != admin_redirect_url
@@ -554,7 +585,7 @@ def test_private_event(client, event, event_location):
     private_event.location = location
     private_event.save()
 
-    url = reverse('lametro:events', args=[private_event.slug])
+    url = reverse("lametro:events", args=[private_event.slug])
     response = client.get(url)
 
     assert response.status_code == 404
@@ -562,12 +593,12 @@ def test_private_event(client, event, event_location):
 
 @pytest.mark.django_db
 def test_meeting_stream_link_unavailable(mocker):
-    '''
+    """
     Check that an empty queryset is returned if external site for retrieving meeting stream links is unavailable.
-    '''
+    """
     mock_response = mocker.MagicMock(spec=requests.Response)
     mock_response.status_code = 404
-    mocker.patch('lametro.models.requests.get')
+    mocker.patch("lametro.models.requests.get")
 
     current_meeting = LAMetroEvent.current_meeting()
 
@@ -576,50 +607,51 @@ def test_meeting_stream_link_unavailable(mocker):
 
 
 LIVE_COMMENT_PARAMETERS = [
-    ('Special Operations, Safety, and Customer Experience Committee', True),
-    ('Planning and Programming Committee', True),
-    ('Operations, Safety, and Customer Experience Committee', True),
-    ('Finance, Budget and Audit Committee', True),
-    ('Executive Management Committee', True),
-    ('Construction Committee', True),
-    ('Measure R Independent Taxpayer Oversight Committee', False),
-    ('Measure M Independent Taxpayer Oversight Committee', False),
-    ('Independent Citizen’s Advisory and Oversight Committee', False),
+    ("Special Operations, Safety, and Customer Experience Committee", True),
+    ("Planning and Programming Committee", True),
+    ("Operations, Safety, and Customer Experience Committee", True),
+    ("Finance, Budget and Audit Committee", True),
+    ("Executive Management Committee", True),
+    ("Construction Committee", True),
+    ("Measure R Independent Taxpayer Oversight Committee", False),
+    ("Measure M Independent Taxpayer Oversight Committee", False),
+    ("Independent Citizen’s Advisory and Oversight Committee", False),
 ]
 
 
-@pytest.mark.parametrize('event_name,expected_live_comment_value', LIVE_COMMENT_PARAMETERS)
-def test_accepts_live_comment(event,
-                              event_document,
-                              event_name,
-                              expected_live_comment_value):
+@pytest.mark.parametrize(
+    "event_name,expected_live_comment_value", LIVE_COMMENT_PARAMETERS
+)
+def test_accepts_live_comment(
+    event, event_document, event_name, expected_live_comment_value
+):
 
-    in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime('%Y-%m-%d %H:%M')
+    in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime("%Y-%m-%d %H:%M")
     test_event = event.build(name=event_name, start_date=in_an_hour)
-    event_document.build(note='Agenda', event_id=test_event.id)
+    event_document.build(note="Agenda", event_id=test_event.id)
 
     assert test_event.accepts_live_comment == expected_live_comment_value
 
 
-@pytest.mark.parametrize('event_name,expected_live_comment_value', LIVE_COMMENT_PARAMETERS)
-def test_live_comment_details_display_as_expected(client,
-                                                  event,
-                                                  event_document,
-                                                  event_name,
-                                                  expected_live_comment_value):
+@pytest.mark.parametrize(
+    "event_name,expected_live_comment_value", LIVE_COMMENT_PARAMETERS
+)
+def test_live_comment_details_display_as_expected(
+    client, event, event_document, event_name, expected_live_comment_value
+):
 
-    in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime('%Y-%m-%d %H:%M')
+    in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime("%Y-%m-%d %H:%M")
     test_event = event.build(name=event_name, start_date=in_an_hour)
-    event_document.build(note='Agenda', event_id=test_event.id)
+    event_document.build(note="Agenda", event_id=test_event.id)
 
-    url = reverse('lametro:events', args=[test_event.slug])
+    url = reverse("lametro:events", args=[test_event.slug])
     response = client.get(url)
-    response_content = response.content.decode('utf-8')
+    response_content = response.content.decode("utf-8")
 
     live_comment_signature = (
-        'During the meeting',
-        'By phone:',
-        'You may join the public comment participation call 5 minutes prior to the start of the meeting.',
+        "During the meeting",
+        "By phone:",
+        "You may join the public comment participation call 5 minutes prior to the start of the meeting.",
     )
 
     for line in live_comment_signature:

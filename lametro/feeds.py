@@ -7,6 +7,7 @@ from councilmatic_core.models import Person
 
 from lametro.models import LAMetroPerson
 
+
 class LAMetroPersonDetailFeed(PersonDetailFeed):
     """The PersonDetailFeed provides an RSS feed for a given committee member,
     returning the most recent 20 bills for which they are the primary sponsor;
