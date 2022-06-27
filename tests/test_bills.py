@@ -9,14 +9,13 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 
 from opencivicdata.legislative.models import (
-    EventAgendaItem,
     RelatedBill,
     EventParticipant,
-    EventRelatedEntity,
 )
-from councilmatic_core.models import Bill, Event
+from councilmatic_core.models import Event
 from lametro.models import LAMetroBill
-from lametro.utils import format_full_text, parse_subject
+from lametro.utils import format_full_text
+
 
 # This collection of tests checks the functionality of Bill-specific views, helper functions, and relations.
 def test_bill_url(client, bill):
@@ -40,7 +39,7 @@ def test_related_bill_relation(client, bill):
 
     related_bill_info = {
         "id": "ocd-bill/8b90f9f4-1421-4450-a34e-766ca2f8be26",
-        "title": "RECEIVE AND FILE the Draft Measure M Project Acceleration/Deceleration Factors and Evaluation Process",
+        "title": "RECEIVE AND FILE the Draft Measure M",
         "updated_at": "2017-07-26 11:06:47.1853",
         "identifier": "2017-0596",
         "classification": ["Report"],
@@ -146,7 +145,7 @@ def test_bill_manager(
     try:
         some_bill.refresh_from_db()
     except ObjectDoesNotExist:
-        assert is_public == False
+        assert is_public is False
     else:
         bill_qs_with_manager = LAMetroBill.objects.filter(id=some_bill.id)
         assert is_public == (some_bill in bill_qs_with_manager)

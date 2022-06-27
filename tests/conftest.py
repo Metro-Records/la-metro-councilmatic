@@ -3,8 +3,6 @@ import pytest
 from uuid import uuid4
 from random import randrange
 
-from django.core.management import call_command
-
 from opencivicdata.legislative.models import (
     LegislativeSession,
     EventAgendaItem,
@@ -12,7 +10,8 @@ from opencivicdata.legislative.models import (
 )
 from opencivicdata.core.models import Jurisdiction, Division
 from opencivicdata.legislative.models import EventDocument, BillAction, EventLocation
-from councilmatic_core.models import Bill, Membership
+import requests
+from councilmatic_core.models import Membership
 from lametro.models import (
     LAMetroPerson,
     LAMetroEvent,
@@ -288,31 +287,7 @@ def membership(db, metro_organization, metro_person):
 
 @pytest.fixture
 @pytest.mark.django_db
-def subject(db, bill):
-    class SubjectFactory:
-        def build(self, **kwargs):
-
-            if "bill" in kwargs:
-                current_bill = kwargs.get("bill")
-            else:
-                current_bill = bill.build()
-
-            subject_name = "Metro Gold Line"
-
-            subject_info = {"bill": current_bill, "subject": subject_name}
-
-            subject_info.update(kwargs)
-
-            subject = Subject.objects.create(**subject_info)
-
-            return subject
-
-    return SubjectFactory()
-
-
-@pytest.fixture
-@pytest.mark.django_db
-def metro_subject(db, subject):
+def metro_subject(db):
     class LAMetroSubjectFactory:
         def build(self, **kwargs):
 

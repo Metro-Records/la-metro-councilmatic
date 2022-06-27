@@ -2,24 +2,18 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import logging
 import pytz
-import re
 
 import requests
 from django.conf import settings
-from django.db import models, connection
+from django.db import models
 from django.db.models.expressions import RawSQL
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.contrib.auth.models import User
-from django.db.models import Max, Min, Prefetch, Case, When, Value, Q, F
+from django.db.models import Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
-import django.contrib.postgres.fields as postgres_fields
 from django.templatetags.static import static
 from opencivicdata.legislative.models import (
     EventMedia,
-    EventDocument,
-    EventDocumentLink,
     EventAgendaItem,
     EventRelatedEntity,
     RelatedBill,
@@ -27,7 +21,6 @@ from opencivicdata.legislative.models import (
 )
 from proxy_overrides.related import ProxyForeignKey
 
-import councilmatic_core.models
 from councilmatic_core.models import (
     Bill,
     Event,
@@ -35,7 +28,7 @@ from councilmatic_core.models import (
     Person,
     Organization,
     EventManager,
-    Membership,
+    Membership as CoreMembership,
 )
 
 from lametro.utils import format_full_text, parse_subject
@@ -892,7 +885,7 @@ class LAMetroOrganization(Organization, SourcesMixin):
         return events
 
 
-class Membership(councilmatic_core.models.Membership):
+class Membership(CoreMembership):
     class Meta:
         proxy = True
 

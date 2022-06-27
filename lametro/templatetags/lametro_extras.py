@@ -65,18 +65,20 @@ def full_text_doc_url(url):
     return urllib.parse.urlencode(pic_query)
 
 
-"""
-This filter converts the post title into a prose-style format with nomination info,
-(e.g., "Appointee of Los Angeles County City Selection Committee, Southeast Long Beach sector" into "Appointee of [Committee], nominated by the [Subcommittee]")
-Some posts do not require modification, e.g., "Caltrans District 7 Director, Appointee of Governor of California."
-A full list of posts resides in the scraper: https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/people.py
-"""
-
-
 @register.filter
 def appointment_label(label):
-    # The District 7 Director does not require modification.
-    # The scraper imports it as it should be: https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/__init__.py
+    """
+    This filter converts the post title into a prose-style format with
+    nomination info, e.g., "Appointee of Los Angeles County City Selection
+    Committee, Southeast Long Beach sector" into "Appointee of [Committee],
+    nominated by the [Subcommittee]".
+
+    Some posts do not require modification, e.g., "Caltrans District 7 Director,
+    Appointee of Governor of California."
+
+    A full list of posts resides in the scraper:
+    https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/people.py
+    """
     if "District 7 Director" in label:
         return label
 
@@ -105,11 +107,8 @@ def clean_membership_extras(extras):
 
 @register.filter
 def clean_role(role_list):
-    if len(role_list) > 1:
-        try:
-            role_list.remove("Board Member")
-        except:
-            pass
+    if "Board Member" in role_list:
+        role_list.remove("Board Member")
 
     return role_list[0]
 
@@ -168,7 +167,8 @@ def updates_made(event):
 @register.filter
 def find_agenda_url(all_documents):
     """
-    This filter determines how to format the URL link, particularly, in the case of manually uploaded agenda.
+    This filter determines how to format the URL link, particularly, in the
+    case of manually uploaded agenda.
     """
     valid_urls = [
         link.url
@@ -181,7 +181,7 @@ def find_agenda_url(all_documents):
         ("static/" + link.url)
         for doc in all_documents
         if doc.note == "Event Document - Manual upload PDF"
-        for url in doc.links.all()
+        for link in doc.links.all()
     ]
 
     valid_urls += pdf_url

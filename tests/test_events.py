@@ -5,20 +5,15 @@ from uuid import uuid4
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
-from django.conf import settings
 from django.db.models.query import QuerySet
-from django.utils import timezone
 from django.urls import reverse
 from freezegun import freeze_time
 import requests
 import requests_mock
-from unittest.mock import patch
 
-from opencivicdata.legislative.models import EventDocument, EventLocation
-from councilmatic_core.models import Bill
+from opencivicdata.legislative.models import EventDocument
 
 from lametro.models import LAMetroEvent, app_timezone, EventBroadcast
-from lametro.views import LAMetroEventDetail
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
 
@@ -42,7 +37,7 @@ def test_agenda_creation(event, event_document):
 
     agenda, created = EventDocument.objects.get_or_create(event=event)
 
-    assert not created == True
+    assert created is False
 
 
 def test_agenda_pdf_form_submit():
@@ -61,7 +56,7 @@ def test_agenda_pdf_form_submit():
             }
         )
 
-        assert agenda_pdf_form.is_valid() == True
+        assert agenda_pdf_form.is_valid() is True
 
 
 def test_agenda_pdf_form_error():
@@ -80,7 +75,7 @@ def test_agenda_pdf_form_error():
             }
         )
 
-        assert agenda_pdf_form.is_valid() == False
+        assert agenda_pdf_form.is_valid() is False
 
 
 @pytest.mark.parametrize(
@@ -481,7 +476,7 @@ def test_display_status(event):
         id=get_event_id(),
     )
 
-    assert cancelled_this_morning.has_passed == True
+    assert cancelled_this_morning.has_passed is True
     assert cancelled_this_morning.display_status == "Cancelled"
 
 
@@ -516,7 +511,7 @@ def test_delete_button_shows(
 
     mock_source = mocker.MagicMock()
     mock_source.url = api_source
-    mock_api_source = mocker.patch(
+    mocker.patch(
         "lametro.models.LAMetroEvent.api_source",
         new_callable=mocker.PropertyMock,
         return_value=mock_source,

@@ -145,7 +145,7 @@ def test_sponsorships(bill, metro_organization, event, event_related_entity, moc
             "organization": event1_participant,
         },
     ]
-    mock_actions_and_agendas = mocker.patch(
+    mocker.patch(
         "lametro.models.LAMetroBill.actions_and_agendas",
         new_callable=mocker.PropertyMock,
         return_value=actions_and_agendas,

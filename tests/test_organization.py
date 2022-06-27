@@ -1,8 +1,4 @@
-import pytest
-
 from django.urls import reverse
-
-from councilmatic_core.models import Organization
 
 
 def test_organization_url(client, metro_organization):
@@ -26,7 +22,7 @@ def test_membership_context(client, metro_organization, membership, metro_person
         "organization": organization,
         "role": "Vice Chair",
     }
-    chair_membership = membership.build(**membership_info)
+    membership.build(**membership_info)
 
     new_member = metro_person.build()
     membership_info = {
@@ -34,7 +30,7 @@ def test_membership_context(client, metro_organization, membership, metro_person
         "organization": organization,
         "role": "Chair",
     }
-    vice_chair_membership = membership.build(**membership_info)
+    membership.build(**membership_info)
 
     new_member = metro_person.build()
     membership_info = {
@@ -42,7 +38,7 @@ def test_membership_context(client, metro_organization, membership, metro_person
         "organization": organization,
         "role": "Member",
     }
-    regular_membership = membership.build(**membership_info)
+    membership.build(**membership_info)
 
     url = reverse("committee_detail", kwargs={"slug": organization.slug})
     response = client.get(url)
