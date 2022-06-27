@@ -14,7 +14,7 @@
                     {{status | title}}
                 </p>
                 <p class="nowrap non-desktop-only">
-					<a href='/search/?selected_facets=inferred_status_exact%3A{{obj.search_term}}'>{{status | title}}</a>
+					<a href="/search/?selected_facets=inferred_status_exact%3A{{obj.search_term}}">{{status | title}}</a>
                 </p>
                 <div class="non-desktop-only">
                     <p>
@@ -25,7 +25,7 @@
             <td class="desktop-only">
                 <p class="nowrap">
                     {% if obj.search_term %}
-					<a href='/search/?selected_facets=inferred_status_exact%3A{{obj.search_term}}'>{{obj.search_term}}</a>
+					<a href="/search/?selected_facets=inferred_status_exact%3A{{obj.search_term}}">{{obj.search_term}}</a>
                     {% else %}
                     <p>N/A</p>
                     {% endif %}
