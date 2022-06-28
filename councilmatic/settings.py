@@ -113,6 +113,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+MEDIA_URL = "/media/"
+
 PIC_BASE_URL = "https://pic.datamade.us/lametro/document/"
 # PIC_BASE_URL = 'http://127.0.0.1:5000/lametro/document/'
 

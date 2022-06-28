@@ -9,6 +9,7 @@ source /home/datamade/lametro/configs/$DEPLOYMENT_GROUP_NAME-config.conf
 DEPLOYMENT_NAME="$APP_NAME-$DEPLOYMENT_ID"
 PROJECT_DIR="/home/datamade/$DEPLOYMENT_NAME"
 VENV_DIR="/home/datamade/.virtualenvs/$DEPLOYMENT_NAME"
+MEDIA_DIR="/home/datamade/media/$DOMAIN"
 
 # Move the contents of the folder that CodeDeploy used to "Install" the app to
 # the deployment specific folder
@@ -17,9 +18,13 @@ mv /home/datamade/lametro $PROJECT_DIR
 # Create a deployment specific virtual environment
 python3 -m venv $VENV_DIR
 
+# Create media directory, if it does not exist
+test -d $MEDIA_DIR || (mkdir $MEDIA_DIR && echo "Created $MEDIA_DIR")
+
 # Set the ownership of the project files and the virtual environment
 chown -R datamade.www-data $PROJECT_DIR
 chown -R datamade.www-data $VENV_DIR
+chown -R datamade.www-data $MEDIA_DIR
 
 # Upgrade pip and setuptools. This is needed because sometimes python packages
 # that we rely upon will use more recent packaging methods than the ones
@@ -34,11 +39,6 @@ sudo -H -u datamade $VENV_DIR/bin/pip install -r $PROJECT_DIR/requirements.txt -
 
 # Move project configuration files into the appropriate locations within the project.
 mv $PROJECT_DIR/configs/settings_deployment.$DEPLOYMENT_GROUP_NAME.py $PROJECT_DIR/councilmatic/settings_deployment.py
-
-# Move uploaded agenda PDFs
-if [ -f /tmp/agenda-*.pdf ]; then
-   mv /tmp/agenda-*.pdf $PROJECT_DIR/lametro/static/pdf
-fi
 
 # If you're using PostgreSQL, check to see if the database that you
 # need is present and, if not, create it setting the datamade user as it's
