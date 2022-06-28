@@ -7,14 +7,14 @@ RUN apt-get update && \
     cd blackbox && \
     make copy-install
 
-FROM python:3.10
+FROM python:3.10-slim-bullseye
 LABEL maintainer "DataMade <info@datamade.us>"
 
-# TODO: Figure out how to install pstotext
 RUN apt-get update && \
+    apt-get install -y libpq-dev gcc gdal-bin gnupg && \
     apt-get install -y libxml2-dev libxslt1-dev antiword unrtf poppler-utils \
-                       tesseract-ocr flac ffmpeg lame libmad0 libpq-dev \
-                       libsox-fmt-mp3 sox libjpeg-dev swig gdal-bin gnupg && \
+                       tesseract-ocr flac ffmpeg lame libmad0 libsox-fmt-mp3 \
+                       sox libjpeg-dev swig libpulse-dev && \
     apt-get clean && \
     rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
