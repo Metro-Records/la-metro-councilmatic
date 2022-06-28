@@ -24,7 +24,6 @@ debug.log
 
 .cache
 /configs/lametro.conf.nginx
-/configs/lametro-staging.conf.supervisor
 /configs/lametro.conf.supervisor
 /configs/settings_deployment.production.py
 /configs/settings_deployment.staging.py

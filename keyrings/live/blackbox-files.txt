@@ -1,4 +1,3 @@
-configs/lametro-staging.conf.supervisor
 configs/lametro.conf.nginx
 configs/lametro.conf.supervisor
 configs/lametro_service_acct_key.json
