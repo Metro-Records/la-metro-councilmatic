@@ -1,3 +1,4 @@
+configs/lametro-upgrade.conf.nginx
 configs/lametro_service_acct_key.json
 configs/settings_deployment.production.py
 configs/settings_deployment.staging.py
