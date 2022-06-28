@@ -7,7 +7,7 @@ import urllib
 from django import template
 from django.utils import timezone
 
-from councilmatic.settings_jurisdiction import *  # noqa
+from councilmatic.settings_jurisdiction import legislation_types
 from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Bill
 from councilmatic_core.utils import ExactHighlighter
@@ -145,7 +145,7 @@ def updates_made(event):
     document, agenda item, status, etc), in a four-day window before the
     event's scheduled start time.
     """
-    four_days_before_meeting = event.start_date - timedelta(days=4)
+    four_days_before_meeting = event.start_time - timedelta(days=4)
 
     updates_made = False
 
@@ -285,10 +285,11 @@ def all_have_extra(entities, extra):
 def get_list(querydict, key):
     return querydict.getlist(key)
 
+
 @register.filter
 def get_bill_type_link(bill_type):
-    for legislation_type in LEGISLATION_TYPE_DESCRIPTIONS:
-        if legislation_type['search_term'].upper() == bill_type.upper():
+    for legislation_type in legislation_types:
+        if legislation_type["search_term"].upper() == bill_type.upper():
             return f'/about#{legislation_type["html_id"]}'
 
-    return ''
+    return ""
