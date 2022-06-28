@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Make sure the deployment group specific variables are available to this
 # script.
-source /home/datamade/lametro/configs/$DEPLOYMENT_GROUP_NAME-config.conf
+source /home/datamade/la-metro-councilmatic/configs/$DEPLOYMENT_GROUP_NAME-config.conf
 
 # Set some useful variables
 DEPLOYMENT_NAME="$APP_NAME-$DEPLOYMENT_ID"
@@ -13,7 +13,7 @@ MEDIA_DIR="/home/datamade/media/$DOMAIN"
 
 # Move the contents of the folder that CodeDeploy used to "Install" the app to
 # the deployment specific folder
-mv /home/datamade/lametro $PROJECT_DIR
+mv /home/datamade/la-metro-councilmatic $PROJECT_DIR
 
 # Create a deployment specific virtual environment
 python3 -m venv $VENV_DIR
