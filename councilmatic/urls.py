@@ -37,6 +37,7 @@ from lametro.views import (
     LAMetroArchiveSearch,
     LAMetroContactView,
     MinutesView,
+    pong,
 )
 from lametro.feeds import LAMetroPersonDetailFeed
 
@@ -106,6 +107,10 @@ urlpatterns = [
         name="delete_submission",
     ),
     url(r"^delete-event/(?P<event_slug>[^/]+)/$", delete_event, name="delete_event"),
+    url(
+        r"^pong/$",
+        pong,
+    ),
     url(r"", include("councilmatic_core.urls")),
 ]
 

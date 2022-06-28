@@ -313,8 +313,7 @@ class LAMetroEventsView(EventsView):
 
         # We only want to display approved minutes
         minutes_queryset = EventDocument.objects.filter(
-            event__extras__approved_minutes=True,
-            note__icontains="minutes"
+            event__extras__approved_minutes=True, note__icontains="minutes"
         )
 
         # If yes...
@@ -986,3 +985,14 @@ def metro_login(request):
 def metro_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
+
+
+def pong(request):
+    from django.http import HttpResponse
+
+    try:
+        from .deployment import DEPLOYMENT_ID
+    except ImportError as e:
+        return HttpResponse(f"Bad deployment: {e}", status=401)
+
+    return HttpResponse(DEPLOYMENT_ID)
