@@ -1,4 +1,3 @@
-configs/lametro.conf.supervisor
 configs/lametro_service_acct_key.json
 configs/settings_deployment.production.py
 configs/settings_deployment.staging.py
