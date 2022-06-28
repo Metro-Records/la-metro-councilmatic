@@ -48,8 +48,6 @@ psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = '${DATABASE}'" |
 # Create any extensions within your database that your project needs.
 psql -U postgres -d ${DATABASE} -c "CREATE EXTENSION IF NOT EXISTS postgis"
 
-cd $PROJECT_DIR && docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAME
-
 # Run migrations and other management commands that should be run with
 # every deployment
 sudo -H -u datamade $VENV_DIR/bin/python $PROJECT_DIR/manage.py migrate
