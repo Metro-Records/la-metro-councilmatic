@@ -153,13 +153,13 @@ def test_updates_made(event, event_document, mocker, has_updates, has_agenda):
 
     event.documents.add(document)
 
-    assert updates_made(event.id) == (has_updates and has_agenda)
+    assert updates_made(event) == (has_updates and has_agenda)
 
     if not has_updates:
         # Also test updates after start time
         updated_at = LAMetroEvent._time_from_now(days=3)
         mock_update.return_value = updated_at
-        assert updates_made(event.id) == (has_updates and has_agenda)
+        assert updates_made(event) == (has_updates and has_agenda)
 
 
 def test_current_meeting_streaming_event(concurrent_current_meetings, mocker):
