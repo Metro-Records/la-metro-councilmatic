@@ -70,7 +70,7 @@ app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 
 class LAMetroIndexView(IndexView):
-    template_name = "lametro/index.html"
+    template_name = "index/index.html"
 
     event_model = LAMetroEvent
 
@@ -98,7 +98,7 @@ class LAMetroIndexView(IndexView):
 
 class LABillDetail(BillDetailView):
     model = LAMetroBill
-    template_name = "lametro/legislation.html"
+    template_name = "legislation.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -126,7 +126,7 @@ class LABillDetail(BillDetailView):
 
 class LAMetroEventDetail(EventDetailView):
     model = LAMetroEvent
-    template_name = "lametro/event.html"
+    template_name = "event/event.html"
 
     def post(self, request, *args, **kwargs):
         # Assign object to detail view, so that get_context_data can find this
@@ -295,7 +295,7 @@ def delete_event(request, event_slug):
 
 
 class LAMetroEventsView(EventsView):
-    template_name = "lametro/events.html"
+    template_name = "events/events.html"
 
     def get_context_data(self, **kwargs):
         context = {}
@@ -399,7 +399,7 @@ class LAMetroEventsView(EventsView):
 
 
 class LABoardMembersView(CouncilMembersView):
-    template_name = "lametro/board_members.html"
+    template_name = "board_members/board_members.html"
 
     def map(self):
 
@@ -499,12 +499,12 @@ class LABoardMembersView(CouncilMembersView):
 
 
 class LAMetroAboutView(AboutView):
-    template_name = "lametro/about.html"
+    template_name = "about/about.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["timestamp"] = datetime.datetime.now(app_timezone).strftime("%m%d%Y%s")
+        context["timestamp"] = datetime.now(app_timezone).strftime("%m%d%Y%s")
 
         context["BILL_STATUS_DESCRIPTIONS"] = BILL_STATUS_DESCRIPTIONS
 
@@ -512,7 +512,7 @@ class LAMetroAboutView(AboutView):
 
 
 class LACommitteesView(CommitteesView):
-    template_name = "lametro/committees.html"
+    template_name = "committees.html"
 
     def get_queryset(self):
         """
@@ -543,7 +543,7 @@ class LACommitteesView(CommitteesView):
 class LACommitteeDetailView(CommitteeDetailView):
 
     model = LAMetroOrganization
-    template_name = "lametro/committee.html"
+    template_name = "committee.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -581,7 +581,7 @@ class LACommitteeDetailView(CommitteeDetailView):
 
 class LAPersonDetailView(PersonDetailView):
 
-    template_name = "lametro/person.html"
+    template_name = "person/person.html"
     model = LAMetroPerson
 
     def dispatch(self, request, *args, **kwargs):
@@ -825,19 +825,19 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
 
 class GoogleView(IndexView):
-    template_name = "lametro/google66b34bb6957ad66c.html"
+    template_name = "google66b34bb6957ad66c.html"
 
 
 class LAMetroArchiveSearch(TemplateView):
-    template_name = "lametro/archive_search.html"
+    template_name = "archive_search.html"
 
 
 class LAMetroContactView(IndexView):
-    template_name = "lametro/contact.html"
+    template_name = "contact.html"
 
 
 class MinutesView(EventsView):
-    template_name = "lametro/minutes.html"
+    template_name = "minutes/minutes.html"
 
     def _get_historical_events(self, start_datetime=None, end_datetime=None):
         csv_events = get_list_from_csv("historical_events.csv")
@@ -845,7 +845,7 @@ class MinutesView(EventsView):
         filtered_historical_events = []
         if start_datetime or end_datetime:
             for e in csv_events:
-                e_datetime = datetime.datetime.strptime(e["date"], "%Y-%m-%d")
+                e_datetime = datetime.strptime(e["date"], "%Y-%m-%d")
                 if start_datetime and end_datetime:
                     if e_datetime >= start_datetime and e_datetime <= end_datetime:
                         filtered_historical_events.append(e)
@@ -860,7 +860,7 @@ class MinutesView(EventsView):
 
         for obj in filtered_historical_events:
             obj["start_time"] = timezone.make_aware(
-                datetime.datetime.strptime(obj["date"], "%Y-%m-%d")
+                datetime.strptime(obj["date"], "%Y-%m-%d")
             ).date()
             obj["agenda_link"] = obj["agenda_link"].split("\n")
             obj["minutes_link"] = obj["minutes_link"].split("\n")
@@ -935,11 +935,11 @@ class MinutesView(EventsView):
 
         start_date_str = self.request.GET.get("minutes-from", "")
         if start_date_str:
-            start_datetime = datetime.datetime.strptime(start_date_str, "%m/%d/%Y")
+            start_datetime = datetime.strptime(start_date_str, "%m/%d/%Y")
 
         end_date_str = self.request.GET.get("minutes-to", "")
         if end_date_str:
-            end_datetime = datetime.datetime.strptime(end_date_str, "%m/%d/%Y")
+            end_datetime = datetime.strptime(end_date_str, "%m/%d/%Y")
 
         context["start_date"] = start_date_str
         context["end_date"] = end_date_str
@@ -976,7 +976,7 @@ def metro_login(request):
                 return HttpResponseRedirect("/events/")
     else:
         form = AuthenticationForm()
-    return render(request, "lametro/metro_login.html", {"form": form})
+    return render(request, "metro_login.html", {"form": form})
 
 
 def metro_logout(request):

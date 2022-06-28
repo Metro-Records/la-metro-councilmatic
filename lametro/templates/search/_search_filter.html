@@ -25,7 +25,7 @@
             <ul class="search-facet-list">
             {% if facet_name in 'topics,lines_and_ways,phase,bill_type,project,metro_location,geo_admin_location,significant_date,motion_by,plan_program_policy' %}
 
-                {% include 'partials/ordered_search_filter_items.html' %}
+                {% include 'search/_ordered_search_filter_items.html' %}
 
             {% elif facet_name == 'sponsorships' %}
 
@@ -76,7 +76,7 @@
 
                 {% for name, count in item_list %}
                     {% if count %}
-                        {% include 'partials/search_filter_item.html' %}
+                        {% include 'search/_search_filter_item.html' %}
                     {% endif %}
                 {% endfor %}
 

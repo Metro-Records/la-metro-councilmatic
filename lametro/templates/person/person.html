@@ -35,7 +35,7 @@
         His/her/their detail view provides a bio, in lieu of the 'Sponsorhsips' and 'Committees' lists.
     {% endcomment %}
     {% if qualifying_post == 'Chief Executive Officer' %}
-        {% include 'partials/person_ceo.html' %}
+        {% include 'person/_person_ceo.html' %}
     {% else %}
     <div class="row-fluid">
         <div class="col-sm-4 non-mobile-only">
@@ -159,7 +159,7 @@
 
                 {% for legislation in sponsored_legislation %}
 
-                    {% include "partials/legislation_item.html" %}
+                    {% include "person/_legislation_item.html" %}
 
                 {% endfor %}
 
