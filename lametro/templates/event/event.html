@@ -5,7 +5,7 @@
 {% block title %}{{event.name}}{% endblock %}
 
 {% block content %}
-    {% include 'partials/banner.html' %}
+    {% include 'common/banner.html' %}
 
     <div class="row-fluid">
         <div class="col-sm-12">
@@ -54,9 +54,9 @@
             </h1>
 
             {% if event.accepts_live_comment %}
-                {% include 'partials/event_header_live_public_comment.html' %}
+                {% include 'event/_event_header_live_public_comment.html' %}
             {% else %}
-                {% include 'partials/event_header_no_live_public_comment.html' %}
+                {% include 'event/_event_header_no_live_public_comment.html' %}
             {% endif %}
 
             <hr />
@@ -155,7 +155,7 @@
                                 <p>Find the corresponding agenda URL on Legistar, and paste it here.</p>
                                 <!-- The variable "name" identifies the modal and form submit button -->
                                 {% with form=url_form name='url_form' %}
-                                    {% include 'partials/agenda_url_form.html' %}
+                                    {% include 'event/_agenda_url_form.html' %}
                                 {% endwith %}
 
                               </div>
@@ -180,7 +180,7 @@
 
                                 <!-- The variable "name" identifies the modal and form submit button -->
                                 {% with form=pdf_form name='pdf_form' %}
-                                    {% include 'partials/agenda_pdf_form.html' %}
+                                    {% include 'event/_agenda_pdf_form.html' %}
                                 {% endwith %}
 
                               </div>
@@ -195,7 +195,7 @@
                 </div>
                 <div class="col-md-5">
                     {% if event.documents.all %}
-                        {% include 'partials/related_bills.html' %}
+                        {% include 'event/_related_bills.html' %}
                     {% endif %}
                 </div>
             </div>
