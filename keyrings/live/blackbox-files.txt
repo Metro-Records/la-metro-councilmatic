@@ -1,4 +1,3 @@
-configs/lametro-staging.conf.nginx
 configs/lametro-staging.conf.supervisor
 configs/lametro.conf.nginx
 configs/lametro.conf.supervisor
