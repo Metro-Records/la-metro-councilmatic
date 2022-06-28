@@ -6,5 +6,4 @@ configs/lametro_service_acct_key.json
 configs/settings_deployment.production.py
 configs/settings_deployment.staging.py
 configs/settings_deployment.upgrade.py
-scripts/app_stop.sh
 scripts/validate_service.sh
