@@ -18,7 +18,6 @@ downloads
 /keyrings/live/pubring.gpg~
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
-/scripts/validate_service.sh
 
 merged_pdfs/*
 debug.log
