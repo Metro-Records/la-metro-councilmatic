@@ -53,7 +53,7 @@ psql -U postgres -d ${DATABASE} -c "CREATE EXTENSION IF NOT EXISTS postgis"
 sudo -H -u datamade $VENV_DIR/bin/python $PROJECT_DIR/manage.py migrate
 sudo -H -u datamade $VENV_DIR/bin/python $PROJECT_DIR/manage.py createcachetable
 sudo -H -u datamade $VENV_DIR/bin/python $PROJECT_DIR/manage.py collectstatic --no-input
-sudo -H -u datamade $VENV_DIR/bin/python $PROJECT_DIR/manage.py import_shapes data/final/boundary.geojson
+sudo -H -u datamade $VENV_DIR/bin/python $PROJECT_DIR/manage.py import_shapes $PROJECT_DIR/data/final/boundary.geojson
 
 # Echo a simple nginx configuration into the correct place, and tell
 # certbot to request a cert if one does not already exist.
