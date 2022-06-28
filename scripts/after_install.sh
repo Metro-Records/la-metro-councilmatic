@@ -19,7 +19,7 @@ mv /home/datamade/la-metro-councilmatic $PROJECT_DIR
 python3 -m venv $VENV_DIR
 
 # Create media directory, if it does not exist
-test -d $MEDIA_DIR || (mkdir $MEDIA_DIR && echo "Created $MEDIA_DIR")
+test -d $MEDIA_DIR || (mkdir -p $MEDIA_DIR && echo "Created $MEDIA_DIR")
 
 # Set the ownership of the project files and the virtual environment
 chown -R datamade.www-data $PROJECT_DIR
