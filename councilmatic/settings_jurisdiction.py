@@ -38,7 +38,7 @@ APP_NAME = "lametro"
 #########################
 
 # this is for populating meta tags
-SITE_META = {}
+SITE_META = {"site_name": "Metro Board"}
 
 LEGISTAR_URL = ""  # e.g. 'https://chicago.legistar.com/Legislation.aspx'
 

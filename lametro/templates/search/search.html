@@ -1,4 +1,4 @@
-{% extends "search/search.html" %}
+{% extends "base_with_margins.html" %}
 
 {% load static extras lametro_extras %}
 
@@ -18,8 +18,8 @@
 
     <br/>
     <div class='jumbotron' id='search-jumbotron'>
-        {% include 'partials/search_header.html' %}
-        {% include 'partials/search_bar.html' %}
+        {% include 'search/_search_header.html' %}
+        {% include 'common/search_bar.html' %}
     </div>
 
     <div class="row" style="margin-left:unset;">
@@ -46,14 +46,14 @@
             <!-- Meetings -->
             {% if facets.fields.sponsorships %}
                 {% with facet_name='sponsorships' facet_label='Meeting' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
             <!-- Significant Date -->
             {% if facets.fields.significant_date %}
                 {% with facet_name='significant_date' facet_label='Significant Date' item_list=facets.fields.significant_date selected_list=selected_facets.significant_date %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
@@ -63,7 +63,7 @@
                 {% if facets.fields.legislative_session|length > 1 %}
 
                     {% with facet_name='legislative_session' facet_label='Legislative Session' item_list=facets.fields.legislative_session selected_list=selected_facets.legislative_session %}
-                        {% include 'partials/search_filter.html' %}
+                        {% include 'search/_search_filter.html' %}
                     {% endwith %}
 
                 {% endif %}
@@ -71,19 +71,19 @@
 
             <!-- Legislation Type -->
             {% with facet_name='bill_type' facet_label='Legislation Type' item_list=facets.fields.bill_type selected_list=selected_facets.bill_type %}
-                {% include 'partials/search_filter.html' %}
+                {% include 'search/_search_filter.html' %}
             {% endwith %}
 
             <!-- Motion By -->
             {% if facets.fields.motion_by %}
                 {% with facet_name='motion_by' facet_label='Motion By' item_list=facets.fields.motion_by selected_list=selected_facets.motion_by %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
             <!-- Legislation Status -->
             {% with facet_name='inferred_status' facet_label='Status' item_list=facets.fields.inferred_status selected_list=selected_facets.inferred_status %}
-                {% include 'partials/search_filter.html' %}
+                {% include 'search/_search_filter.html' %}
             {% endwith %}
 
             <!---------- REPORT KEYWORDS ------------>
@@ -92,49 +92,49 @@
             <!-- Lines / Ways -->
             {% if facets.fields.lines_and_ways %}
                 {% with facet_name='lines_and_ways' facet_label='Lines / Ways' item_list=facets.fields.lines_and_ways selected_list=selected_facets.lines_and_ways %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
             <!-- Phase -->
             {% if facets.fields.phase %}
                 {% with facet_name='phase' facet_label='Phase' item_list=facets.fields.phase selected_list=selected_facets.phase %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
             <!-- Project -->
             {% if facets.fields.project %}
                 {% with facet_name='project' facet_label='Project' item_list=facets.fields.project selected_list=selected_facets.project %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
             <!-- Plan, Program, or Policy -->
             {% if facets.fields.plan_program_policy %}
                 {% with facet_name='plan_program_policy' facet_label='Plan, Program, or Policy' item_list=facets.fields.plan_program_policy selected_list=selected_facets.plan_program_policy %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
             <!-- Geographic / Admin Location -->
             {% if facets.fields.geo_admin_location %}
                 {% with facet_name='geo_admin_location' facet_label='Geographic / Administrative Location' item_list=facets.fields.geo_admin_location selected_list=selected_facets.geo_admin_location %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
             <!-- Metro Location -->
             {% if facets.fields.metro_location %}
                 {% with facet_name='metro_location' facet_label='Metro Location' item_list=facets.fields.metro_location selected_list=selected_facets.metro_location %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
             <!-- Subject -->
             {% if facets.fields.topics %}
                 {% with facet_name='topics' facet_label='Subject' item_list=facets.fields.topics selected_list=selected_facets.topics %}
-                    {% include 'partials/search_filter.html' %}
+                    {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
 
@@ -152,11 +152,11 @@
                 Order by:
 
                 {% with sort_name='date' order_name='desc' %}
-                    {% include 'partials/order_by_filter.html' %}
+                    {% include 'search/_order_by_filter.html' %}
                 {% endwith %}
 
                 {% with sort_name='title' order_name='asc' %}
-                    {% include 'partials/order_by_filter.html' %}
+                    {% include 'search/_order_by_filter.html' %}
                 {% endwith %}
 
                 <!-- The templating logic is different for Relevance sort. The Relevance sort does not require a direction, and it should be bolded by default after submitting a query.-->
@@ -202,41 +202,9 @@
             {% if query or selected_facets %}
             <h3 class="modal-links">
 
-                {% include 'partials/search_results_header.html' %}
+                {% include 'search/_search_results_header.html' %}
 
                 <small>
-                {% if USING_NOTIFICATIONS %}
-                    {% if user_subscribed %}
-                    <a href="#" class="removeSubscription" data-toggle="tooltip" data-placement="top" data-html="true" title="You are subscribed to searches for {{request.GET.q}}!<br> Visit your accounts page to unsubscribe.">
-                        <i class="fa fa-envelope fa-fw" aria-hidden="true"></i>
-                    </a>
-                    {% else %}
-
-                        <!-- Monstrous code for using modal partials with three different RSS links -->
-                        {% if query and selected_facets %}
-
-                            {% with link_id='searchSubscribe' modal_id='Search' custom_text='searches for '|add:request.GET.q href='#' RSS_href=selected_facets.items|create_facet_string:request.GET.q RSS_for='RSS feed' %}
-                                {% include 'partials/subscription_modal.html' %}
-                            {% endwith %}
-
-                        {% elif selected_facets %}
-
-                            {% with link_id='searchSubscribe' modal_id='Search' custom_text='filters for '|add:'your filtered search' href='#' RSS_href=selected_facets.items|create_facet_string RSS_for='RSS feed' %}
-                                {% include 'partials/subscription_modal.html' %}
-                            {% endwith %}
-
-                        {% else %}
-
-                            {% with link_id='searchSubscribe' modal_id='Search' custom_text='searches for '|add:request.GET.q href='#' RSS_href='/search/rss/?q='|add:request.GET.q RSS_for='RSS feed' %}
-                                {% include 'partials/subscription_modal.html' %}
-                            {% endwith %}
-
-                        {% endif %}
-
-
-                    {% endif %}
-                {% else %}
-
                     {% if query and selected_facets %}
                         <a href="/search/rss/?q={{request.GET.q}}{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
                     {% elif selected_facets %}
@@ -246,8 +214,6 @@
                     {% endif %}
 
                     <i class="fa fa-rss-square" aria-hidden="true"></i></a>
-
-                {% endif %}
                 </small>
             </h3>
             <div class='row'>
@@ -262,13 +228,13 @@
             <!-- Legislation result -->
 
             {% with r=result %}
-                {% include 'partials/search_result.html' %}
+                {% include 'search/_search_result.html' %}
             {% endwith %}
 
-            {% include 'partials/tags.html' %}
+            {% include 'search/_tags.html' %}
 
             {% empty %}
-            {% include 'partials/empty_search_message.html' %}
+            {% include 'search/_empty_search_message.html' %}
         {% endfor %}
         </div>
     </div>

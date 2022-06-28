@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-  {% include 'partials/banner.html' %}
+  {% include 'common/banner.html' %}
   <div class="row-fluid">
     <div class="col-sm-9 no-pad-mobile">
       <br/><br class="non-mobile-only"/>
@@ -44,7 +44,7 @@
             <div class="divider"></div>
           </h5>
           {% for e in minutes_list %}
-            {% include 'partials/minutes_item.html' %}
+            {% include 'minutes/_minutes_item.html' %}
           {% endfor %}
         </div>
         {% endfor %}
