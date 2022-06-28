@@ -4,3 +4,4 @@ configs/lametro_service_acct_key.json
 configs/settings_deployment.production.py
 configs/settings_deployment.staging.py
 configs/settings_deployment.upgrade.py
+configs/upgrade-config.conf
