@@ -5,6 +5,7 @@ configs/lametro.conf.supervisor
 configs/lametro_service_acct_key.json
 configs/settings_deployment.production.py
 configs/settings_deployment.staging.py
+configs/settings_deployment.upgrade.py
 scripts/after_install.sh
 scripts/app_start.sh
 scripts/app_stop.sh
