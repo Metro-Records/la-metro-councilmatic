@@ -41,3 +41,4 @@ debug.log
 .gnupg/
 
 lametro/secrets.py
+/configs/settings_deployment.upgrade.py
