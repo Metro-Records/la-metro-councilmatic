@@ -32,7 +32,11 @@ debug.log
 !lametro_divisions.csv
 .gnupg/
 
+*_bk/
+
 lametro/secrets.py
 /configs/settings_deployment.upgrade.py
 /configs/lametro-upgrade.conf.nginx
 /configs/lametro-upgrade.conf.supervisor
+
+/configs/upgrade-config.conf
