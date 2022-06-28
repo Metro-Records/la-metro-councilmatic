@@ -31,3 +31,6 @@ branch_config:
 
   deploy:
     deploymentGroupName: production
+
+  hcg/upgrade:
+    deploymentGroupName: upgrade
