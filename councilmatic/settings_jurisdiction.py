@@ -259,7 +259,7 @@ legislation_types = [
 ]
 
 # we want board report types to be in alphabetical order on Metro's About page
-LEGISLATION_TYPE_DESCRIPTIONS = sorted(legislation_types, key=itemgetter('name'))
+LEGISLATION_TYPE_DESCRIPTIONS = sorted(legislation_types, key=itemgetter("name"))
 
 BILL_STATUS_DESCRIPTIONS = {
     "ADOPTED": {
