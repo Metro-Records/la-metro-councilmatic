@@ -395,7 +395,9 @@ class LABoardMembersView(CouncilMembersView):
             district = post.label
 
             try:
-                current_membership = post.memberships.get(end_date_dt__gt=Now())
+                current_membership = post.memberships.get(
+                    start_date_dt__lte=Now(), end_date_dt__gt=Now()
+                )
 
             except ObjectDoesNotExist:
                 council_member = 'Vacant'
