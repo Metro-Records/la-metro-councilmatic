@@ -39,3 +39,4 @@ lametro/secrets.py
 
 /configs/upgrade-config.conf
 /configs/upgrade.conf.nginx
+/configs/upgrade.conf.supervisor
