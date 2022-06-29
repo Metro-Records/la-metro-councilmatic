@@ -836,6 +836,22 @@ class LAMetroOrganization(Organization, SourcesMixin):
             start_date_dt__lte=Now(), end_date_dt__gt=Now()
         )
 
+    @property
+    def chairs(self):
+        if hasattr(settings, 'COMMITTEE_CHAIR_TITLE'):
+            chairs = self.memberships.filter(
+                role=settings.COMMITTEE_CHAIR_TITLE,
+                start_date_dt__lte=Now(),
+                end_date_dt__gt=Now(),
+            ).select_related('person__councilmatic_person')
+
+#            for chair in chairs:
+#                chair.person = chair.person.councilmatic_person
+
+            return chairs
+        else:
+            return []
+
 
 class Membership(councilmatic_core.models.Membership):
     class Meta:
