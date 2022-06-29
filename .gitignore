@@ -38,3 +38,4 @@ lametro/secrets.py
 /configs/settings_deployment.upgrade.py
 
 /configs/upgrade-config.conf
+/configs/upgrade.conf.nginx
