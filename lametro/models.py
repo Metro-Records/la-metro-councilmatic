@@ -331,10 +331,9 @@ class LAMetroPerson(Person, SourcesMixin):
         office_roles = ('Chair', '1st Chair', 'Vice Chair', '1st Vice Chair', '2nd Chair', '2nd Vice Chair')
 
         try:
-            office_membership = self.memberships\
+            office_membership = self.current_memberships\
                                     .filter(organization__name=settings.OCD_CITY_COUNCIL_NAME,
-                                            role__in=office_roles)\
-                                    .get(end_date_dt__gt=Now())
+                                            role__in=office_roles)
         except Membership.DoesNotExist:
             office_membership = None
 
@@ -379,6 +378,10 @@ class LAMetroPerson(Person, SourcesMixin):
             image_url = 'images/headshot_placeholder.png'
 
         return static(image_url)
+
+    @property
+    def current_memberships(self):
+        return self.memberships.filter(start_date_dt__lte=Now(), end_date_dt__gt=Now())
 
 
 class LAMetroEventManager(EventManager):
