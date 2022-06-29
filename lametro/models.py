@@ -361,6 +361,7 @@ class LAMetroPerson(Person, SourcesMixin):
         try:
             ceo = Membership.objects\
                 .get(post__role='Chief Executive Officer',
+                     start_date_dt__lte=Now(),
                      end_date_dt__gt=Now())\
                 .person
         except Membership.DoesNotExist:

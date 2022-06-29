@@ -503,8 +503,8 @@ class LACommitteesView(CommitteesView):
 
         memberships = Membership.objects\
             .exclude(person=ceo)\
-            .filter(start_date_dt__gte=Now(),
-                    end_date_dt__lt=Now(),
+            .filter(start_date_dt__lte=Now(),
+                    end_date_dt__gt=Now(),
                     organization__classification='committee')
 
         qs = LAMetroOrganization.objects\
