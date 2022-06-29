@@ -254,6 +254,7 @@ def membership(db, metro_organization, metro_person):
                 'id': randrange(10000),
                 'organization': related_org,
                 'person': related_person,
+                'start_date': datetime.now().date().isoformat(),
                 'end_date': (datetime.now() + timedelta(days=7)).date().isoformat()
             }
 

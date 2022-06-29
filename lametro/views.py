@@ -495,16 +495,16 @@ class LACommitteesView(CommitteesView):
 
     def get_queryset(self):
         '''
-        We only want committees that have at least one member who is not
+        We only want committees that have at least one current member who is not
         the CEO. We also want to not count the CEO in the committee
-        size
-
+        size.
         '''
         ceo = LAMetroPerson.ceo()
 
         memberships = Membership.objects\
             .exclude(person=ceo)\
-            .filter(end_date_dt__gt=Now(),
+            .filter(start_date_dt__gte=Now(),
+                    end_date_dt__lt=Now(),
                     organization__classification='committee')
 
         qs = LAMetroOrganization.objects\

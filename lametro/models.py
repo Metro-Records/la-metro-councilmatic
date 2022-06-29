@@ -829,6 +829,12 @@ class LAMetroOrganization(Organization, SourcesMixin):
                              .all()
         return events
 
+    @property
+    def all_members(self):
+        return self.memberships.filter(
+            start_date_dt__lte=Now(), end_date_dt__gt=Now()
+        )
+
 
 class Membership(councilmatic_core.models.Membership):
     class Meta:
