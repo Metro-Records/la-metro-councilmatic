@@ -36,6 +36,5 @@ debug.log
 
 lametro/secrets.py
 /configs/settings_deployment.upgrade.py
-/configs/lametro-upgrade.conf.nginx
 
 /configs/upgrade-config.conf
