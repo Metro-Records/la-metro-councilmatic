@@ -332,8 +332,8 @@ class LAMetroPerson(Person, SourcesMixin):
 
         try:
             office_membership = self.current_memberships\
-                                    .filter(organization__name=settings.OCD_CITY_COUNCIL_NAME,
-                                            role__in=office_roles)
+                                    .get(organization__name=settings.OCD_CITY_COUNCIL_NAME,
+                                         role__in=office_roles)
         except Membership.DoesNotExist:
             office_membership = None
 
