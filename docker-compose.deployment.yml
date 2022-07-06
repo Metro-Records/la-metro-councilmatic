@@ -2,7 +2,7 @@ version: '3.3'
 services:
   solr-production:
     image: solr:8.8
-    container_name: lametro-production-solr
+    container_name: solr-production
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
       - data:/opt/solr/server/solr/mycores
@@ -15,7 +15,7 @@ services:
     restart: on-failure
   solr-staging:
     image: solr:8.8
-    container_name: lametro-staging-solr
+    container_name: solr-staging
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
       - data:/opt/solr/server/solr/mycores
@@ -28,7 +28,7 @@ services:
   # TODO: Remove post upgrade
   solr-upgrade:
     image: solr:8.8
-    container_name: lametro-staging-solr
+    container_name: solr-upgrade
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
       - data:/opt/solr/server/solr/mycores
