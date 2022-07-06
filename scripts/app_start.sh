@@ -58,9 +58,9 @@ service nginx reload || service nginx start
 # docker-compose.deployment.yml. Data should be persisted between containers,
 # thanks to our volume use.
 [ -n "$(docker ps -f NAME=solr-$DEPLOYMENT_GROUP_NAME -q)" ] && \
-    cd $PROJECT_DIR; \
+    (cd $PROJECT_DIR; \
     docker stop solr-$DEPLOYMENT_GROUP_NAME; \
-    docker rm solr-$DEPLOYMENT_GROUP_NAME
+    docker rm solr-$DEPLOYMENT_GROUP_NAME)
 
 docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAME
 
