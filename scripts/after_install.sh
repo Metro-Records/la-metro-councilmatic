@@ -81,4 +81,4 @@ $VENV_DIR/bin/python $PROJECT_DIR/scripts/render_configs.py $DEPLOYMENT_ID $DEPL
 
 # Write out the deployment ID to a Python module that can get imported by the
 # app and returned by the /pong/ route (see above).
-echo "DEPLOYMENT_ID='$DEPLOYMENT_ID'" > $PROJECT_DIR/councilmatic/deployment.py
+echo "DEPLOYMENT_ID='$DEPLOYMENT_ID'" > $PROJECT_DIR/lametro/deployment.py
