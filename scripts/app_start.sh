@@ -57,10 +57,14 @@ service nginx reload || service nginx start
 # Once the app has started, reboot the Solr container using the current app
 # docker-compose.deployment.yml. Data should be persisted between containers,
 # thanks to our volume use.
-cd $PROJECT_DIR && \
-    docker stop solr-$DEPLOYMENT_GROUP_NAME && \
-    docker rm solr-$DEPLOYMENT_GROUP_NAME && \
-    docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAME
+SOLR_CONTAINER="solr-$DEPLOYMENT_GROUP_NAME"
+
+[ -n "$(docker ps -f NAME=$SOLR_CONTAINER -q)" ] && \
+    cd $PROJECT_DIR; \
+    docker stop $SOLR_CONTAINER; \
+    docker rm $SOLR_CONTAINER
+
+docker-compose -f docker-compose.deployment.yml up -d $SOLR_CONTAINER
 
 # It's safe to terminate the older version of the site
 # by sending the TERM signal to old gunicorn processes.
