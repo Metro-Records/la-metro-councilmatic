@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - deploy
+      - hcg/upgrade
 
 jobs:
   publish:
