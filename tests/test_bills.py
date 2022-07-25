@@ -198,11 +198,10 @@ def test_actions_and_agendas(
     some_action = bill_action.build(bill=some_bill)
 
     assert some_bill.actions_and_agendas == []
-    assert len(caplog.records) == 1
 
-    (record,) = caplog.records
+    (log_record,) = (r for r in caplog.records if r.module == "models")
 
-    assert "Could not find event corresponding to action" in record.message
+    assert "Could not find event corresponding to action" in log_record.message
 
     # add event to action and confirm action appears
     action_org = some_action.organization

@@ -81,15 +81,15 @@
             </div>
             <div class="col-sm-6 no-pad-mobile">
               <div id="council-member-scroll-area">
-                    {% include 'partials/council_member_table.html' %}
+                    {% include 'board_members/_council_member_table.html' %}
                 </div>
             </div>
         {% else %}
             <div class="col-sm-8 no-pad-mobile">
-                {% include 'partials/council_member_table.html' %}
+                {% include 'board_members/_council_member_table.html' %}
             </div>
             <div class='col-sm-4'>
-                {% include 'partials/council_info_blurb.html' %}
+                {% include 'board_members/_council_info_blurb.html' %}
             </div>
         {% endif %}
     </div>
@@ -154,7 +154,7 @@
 
 
 {% block extra_js %}
-    {% include 'partials/map.html' %}
+    {% include 'board_members/_map.html' %}
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'js/jquery.dataTables.sorting.js' %}"></script>
     <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
