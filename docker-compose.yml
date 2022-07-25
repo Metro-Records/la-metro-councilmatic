@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile.dev
       context: .
     container_name: lametro
-    restart: always
     stdin_open: true
     tty: true
     ports:
@@ -53,7 +52,7 @@ services:
     restart: on-failure
 
   scrapers:
-    build: https://github.com/datamade/scrapers-us-municipal.git
+    image: ghcr.io/datamade/scrapers-us-municipal:master
     stdin_open: true
     tty: true
     depends_on:

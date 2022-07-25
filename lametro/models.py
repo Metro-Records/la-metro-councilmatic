@@ -504,7 +504,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             ).order_by('-start_time')
 
         # since has_passed is a property of LAMetroEvent rather than
-        # a model attribute, we have to make sure returned meetings 
+        # a model attribute, we have to make sure returned meetings
         # have concluded separately from the above Queryset filter
         past_meetings = list(filter(lambda m: m.has_passed, meetings_in_past_two_weeks))
 
@@ -770,6 +770,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         '''
         if self.name == 'Regular Board Meeting':
             return 'Board of Directors - Regular Board Meeting'
+
+        elif self.name == 'Special Board Meeting':
+            return 'Board of Directors - Special Board Meeting'
+
         return self.name
 
 
