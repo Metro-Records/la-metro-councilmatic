@@ -12,9 +12,6 @@ PROJECT_DIR="/home/datamade/$APP_NAME-$DEPLOYMENT_ID"
 supervisorctl reread
 supervisorctl add $APP_NAME-$DEPLOYMENT_ID
 
-echo 'Sleeping for 30s at L15...'
-sleep 30
-
 # Check to see if our /pong/ endpoint responds with the correct deployment ID.
 loop_counter=0
 while true; do
@@ -46,9 +43,6 @@ while true; do
     loop_counter=$(expr $loop_counter + 1)
 done
 
-echo 'Sleeping for 30s at L48...'
-sleep 30
-
 # If everything is OK, check the integrity of the nginx configuration and
 # reload (or start for the first time) Nginx. Because of the pipefail setting
 # at the beginning of this script, if any of the configuration files that Nginx
@@ -58,23 +52,15 @@ echo "Reloading nginx"
 nginx -t
 service nginx reload || service nginx start
 
-echo 'Sleeping for 30s at L57...'
-sleep 30
+echo 'Sleeping at L57...'
+sleep 10
 
 # It's safe to terminate the older version of the site
-# by sending the TERM signal to old gunicorn processes.
-# This code block iterates over deployments for a particular deployment group,
-# checks each status (is it "RUNNING"?), and terminates the old, running deployment.
-old_deployments=`(ls /opt/codedeploy-agent/deployment-root/$DEPLOYMENT_GROUP_ID | grep -Po "d-[A-Z0-9]{9}") || echo ''`
+# by sending the TERM signal to old supervisor processes.
+old_deployments=`sudo supervisorctl status | grep -v $DEPLOYMENT_ID | grep RUNNING | cut -d ' ' -f 1`
 for deployment in $old_deployments; do
-    if [[ ! $deployment == $DEPLOYMENT_ID && ! -z `supervisorctl status | grep $DEPLOYMENT_ID` ]]; then
-        echo "Signalling application processes from $deployment"
-
-        STATUS=`supervisorctl status $APP_NAME-$deployment:*`
-        if [[ $STATUS == *"RUNNING"* ]]; then
-            supervisorctl signal TERM $APP_NAME-$deployment:*
-        fi
-    fi
+    echo "Signalling application process $deployment"
+    sudo supervisorctl signal TERM $deployment:*
 done;
 
 # Once the app has started, reboot the Solr container using the current app
@@ -111,7 +97,7 @@ done;
 # their own and look for the ones that are for our project. The processes that we
 # sent the TERM signal to above should be amongst these.
 
-old_procs=`(supervisorctl status | grep -P '(EXITED|STOPPED|FATAL)' | grep -Po "$APP_NAME-d-[A-Z0-9]{9}") || echo ''`
+old_procs=`(supervisorctl status | grep -P '(EXITED|STOPPED|FATAL)'`
 for proc in $old_procs; do
     echo "Removing $proc"
     supervisorctl remove $proc
