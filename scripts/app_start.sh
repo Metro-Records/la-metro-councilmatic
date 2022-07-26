@@ -54,15 +54,6 @@ echo "Reloading nginx"
 nginx -t
 service nginx reload || service nginx start
 
-# Once the app has started, reboot the Solr container using the current app
-# docker-compose.deployment.yml. Data should be persisted between containers,
-# thanks to our volume use.
-[ -n "$(docker ps -f NAME=solr-$DEPLOYMENT_GROUP_NAME -q)" ] && \
-    (docker stop solr-$DEPLOYMENT_GROUP_NAME; docker rm solr-$DEPLOYMENT_GROUP_NAME)
-
-cd $PROJECT_DIR
-docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAME
-
 # It's safe to terminate the older version of the site
 # by sending the TERM signal to old gunicorn processes.
 # This code block iterates over deployments for a particular deployment group,
@@ -78,6 +69,18 @@ for deployment in $old_deployments; do
         fi
     fi
 done;
+
+echo 'Sleeping for 30s...'
+sleep 30
+
+# Once the app has started, reboot the Solr container using the current app
+# docker-compose.deployment.yml. Data should be persisted between containers,
+# thanks to our volume use.
+[ -n "$(docker ps -f NAME=solr-$DEPLOYMENT_GROUP_NAME -q)" ] && \
+    (docker stop solr-$DEPLOYMENT_GROUP_NAME; docker rm solr-$DEPLOYMENT_GROUP_NAME)
+
+cd $PROJECT_DIR
+docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAME
 
 # Cleanup all versions except the most recent 3. This uses the find command to
 # search for directories within the home directory of the datamade user, sorts
