@@ -69,7 +69,7 @@ docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAM
 # checks each status (is it "RUNNING"?), and terminates the old, running deployment.
 old_deployments=`(ls /opt/codedeploy-agent/deployment-root/$DEPLOYMENT_GROUP_ID | grep -Po "d-[A-Z0-9]{9}") || echo ''`
 for deployment in $old_deployments; do
-    if [[ ! $deployment == $DEPLOYMENT_ID ]]; then
+    if [[ ! $deployment == $DEPLOYMENT_ID && ! -z `supervisorctl status | grep $DEPLOYMENT_ID` ]]; then
         echo "Signalling application processes from $deployment"
 
         STATUS=`supervisorctl status $APP_NAME-$deployment:*`
