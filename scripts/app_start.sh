@@ -55,7 +55,7 @@ service nginx reload || service nginx start
 
 # It's safe to terminate the older version of the site
 # by sending the TERM signal to old supervisor processes.
-old_deployments=`supervisorctl status | grep -v $DEPLOYMENT_ID | grep RUNNING | cut -d ' ' -f 1`
+old_deployments=`(supervisorctl status | grep -v $DEPLOYMENT_ID | grep RUNNING | cut -d ' ' -f 1) || echo ''`
 for deployment in $old_deployments; do
     echo "Signalling application process $deployment"
     supervisorctl signal TERM $deployment
@@ -95,7 +95,7 @@ done;
 # their own and look for the ones that are for our project. The processes that we
 # sent the TERM signal to above should be amongst these.
 
-old_procs=`(supervisorctl status | grep -P '(EXITED|STOPPED|FATAL)'`
+old_procs=`(supervisorctl status | grep -P '(EXITED|STOPPED|FATAL)') || echo ''`
 for proc in $old_procs; do
     echo "Removing $proc"
     supervisorctl remove $proc
