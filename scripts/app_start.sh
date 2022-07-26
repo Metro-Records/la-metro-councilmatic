@@ -57,10 +57,10 @@ sleep 10
 
 # It's safe to terminate the older version of the site
 # by sending the TERM signal to old supervisor processes.
-old_deployments=`sudo supervisorctl status | grep -v $DEPLOYMENT_ID | grep RUNNING | cut -d ' ' -f 1`
+old_deployments=`supervisorctl status | grep -v $DEPLOYMENT_ID | grep RUNNING | cut -d ' ' -f 1`
 for deployment in $old_deployments; do
     echo "Signalling application process $deployment"
-    sudo supervisorctl signal TERM $deployment:*
+    supervisorctl signal TERM $deployment:*
 done;
 
 # Once the app has started, reboot the Solr container using the current app
