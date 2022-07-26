@@ -95,7 +95,7 @@ done;
 # their own and look for the ones that are for our project. The processes that we
 # sent the TERM signal to above should be amongst these.
 
-old_procs=`(supervisorctl status | grep -P '(EXITED|STOPPED|FATAL)') || echo ''`
+old_procs=`(supervisorctl status | grep -P '(EXITED|STOPPED|FATAL)' | cut -d: -f 1) || echo ''`
 for proc in $old_procs; do
     echo "Removing $proc"
     supervisorctl remove $proc
