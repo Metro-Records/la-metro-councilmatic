@@ -12,8 +12,10 @@ PROJECT_DIR="/home/datamade/$APP_NAME-$DEPLOYMENT_ID"
 supervisorctl reread
 supervisorctl add $APP_NAME-$DEPLOYMENT_ID
 
-# Check to see if our /pong/ endpoint responds with the correct deployment ID.
+echo 'Sleeping for 30s at L15...'
+sleep 30
 
+# Check to see if our /pong/ endpoint responds with the correct deployment ID.
 loop_counter=0
 while true; do
     # check to see if the socket file that the gunicorn process that is running
@@ -44,15 +46,20 @@ while true; do
     loop_counter=$(expr $loop_counter + 1)
 done
 
+echo 'Sleeping for 30s at L48...'
+sleep 30
+
 # If everything is OK, check the integrity of the nginx configuration and
 # reload (or start for the first time) Nginx. Because of the pipefail setting
 # at the beginning of this script, if any of the configuration files that Nginx
 # knows about contain errors, this will cause this script to exit with a non-zero
 # status and cause the deployment as a whole to fail.
-
 echo "Reloading nginx"
 nginx -t
 service nginx reload || service nginx start
+
+echo 'Sleeping for 30s at L57...'
+sleep 30
 
 # It's safe to terminate the older version of the site
 # by sending the TERM signal to old gunicorn processes.
@@ -69,9 +76,6 @@ for deployment in $old_deployments; do
         fi
     fi
 done;
-
-echo 'Sleeping for 30s...'
-sleep 30
 
 # Once the app has started, reboot the Solr container using the current app
 # docker-compose.deployment.yml. Data should be persisted between containers,
