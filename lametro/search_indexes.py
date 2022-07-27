@@ -132,7 +132,9 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
             return obj.primary_sponsor.name
 
     def prepare_rich_topics(self, obj):
-        return json.dumps(list(obj.rich_topics.values("name", "classification")))
+        if rich_topics := list(obj.rich_topics.values("name", "classification")):
+            return json.dumps(rich_topics)
 
     def prepare_pseudo_topics(self, obj):
-        return json.dumps(list({"name": o.name} for o in obj.pseudo_topics))
+        if pseudo_topics := list({"name": o} for o in obj.pseudo_topics):
+            return json.dumps(pseudo_topics)

@@ -41,12 +41,14 @@
         <br /><br />
     {% elif result.pseudo_topics|length %}
         <i class="fa fa-fw fa-tag"></i>
-        {% hits_first result.pseudo_topics|safe selected_facets.topics as tags %}
+        {% hits_first result.pseudo_topics|safe selected_facets as tags %}
         {% for tag in tags %}
-            {% with "sponsorships_exact:"|add:tag as tag_facet %}
+            {% with tag.name as tag_name %}
+            {% with "sponsorships_exact:"|add:tag_name as tag_facet %}
             <span class="badge{% if tag|matches_query:request or tag|matches_facet:selected_facets.topics %} badge-highlight{% else %} badge-muted{% endif %} pseudo-topic-tag">
-                <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{ tag | committee_topic_only }}</a>
+                <a href="{% search_with_querystring request selected_facets=tag_facet %}">{{ tag_name | committee_topic_only }}</a>
             </span>&nbsp;
+            {% endwith %}
             {% endwith %}
         {% endfor %}
         <br/>
