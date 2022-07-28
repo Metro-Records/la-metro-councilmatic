@@ -301,3 +301,13 @@ def get_bill_type_link(bill_type):
 @register.filter
 def query_encode(query):
     return urllib.parse.quote_plus(query)
+
+
+@register.filter
+def group_by_classification(queryset):
+    for group, members in itertools.groupby(
+        queryset.order_by("classification"),
+        lambda item: item.get_classification_display(),
+    ):
+
+        yield group, list(members)
