@@ -5,7 +5,7 @@ services:
     container_name: solr-production
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
-      - lametro-solr-data:/opt/solr/server/solr/mycores
+      - lametro-solr-data:/var/solr/data/
     command: sh -c 'solr-create -c lametro -d /la-metro-councilmatic_configs'
     ports:
       - '0.0.0.0:8985:8983'
@@ -18,7 +18,7 @@ services:
     container_name: solr-staging
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
-      - lametro-solr-data:/opt/solr/server/solr/mycores
+      - lametro-solr-data:/var/solr/data/
     command: sh -c 'solr-create -c lametro-staging -d /la-metro-councilmatic_configs'
     ports:
       - '0.0.0.0:8986:8983'
@@ -31,7 +31,7 @@ services:
     container_name: solr-upgrade
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
-      - lametro-solr-data:/opt/solr/server/solr/mycores
+      - lametro-solr-data:/var/solr/data/
     command: sh -c 'solr-create -c lametro-staging -d /la-metro-councilmatic_configs'
     ports:
       - '0.0.0.0:8986:8983'
