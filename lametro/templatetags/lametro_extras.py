@@ -293,3 +293,13 @@ def get_bill_type_link(bill_type):
             return f'/about#{legislation_type["html_id"]}'
 
     return ""
+
+
+@register.filter
+def group_by_classification(queryset):
+    for group, members in itertools.groupby(
+        queryset.order_by("classification"),
+        lambda item: item.get_classification_display(),
+    ):
+
+        yield group, list(members)
