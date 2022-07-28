@@ -3,7 +3,7 @@
 {% load highlight %}
 
 <p>
-    <a class="small" target='_blank' href="#">
+    <a class="small" target='_blank' href="{% url 'lametro:bill_detail' r.slug %}">
         {{ r.friendly_name }}
     </a>
     {% if r.inferred_status %}{{ r.inferred_status | inferred_status_label | safe }}{% endif %}
