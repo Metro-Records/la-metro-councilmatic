@@ -375,3 +375,8 @@ hr .events-line {
 	visibility: hidden; 
 	pointer-events: none;
 }
+
+.current-meeting-info {
+	margin-top: 10px;
+	margin-left: 5px;
+}
