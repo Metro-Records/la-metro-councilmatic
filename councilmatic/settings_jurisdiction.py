@@ -397,6 +397,7 @@ MANUAL_HEADSHOTS = {
     'fernando-dutra-19bb1bb05d11': {'source': '', 'image': 'manual-headshots/fernando-dutra.png'},
     'tim-sandoval-387c30ca1882': {'source': '', 'image': 'manual-headshots/tim-sandoval.jpeg'},
     'stephanie-wiggins-9076299471ab': {'source': '', 'image': 'manual-headshots/stephanie-wiggins.jpeg'},
+    'gloria-roberts-40fe59756b68': {'source': '', 'image': 'manual-headshots/gloria-roberts.jpg'},
 }
 
 MEMBER_BIOS = {
