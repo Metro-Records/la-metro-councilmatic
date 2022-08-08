@@ -88,34 +88,34 @@
 				<!-- Buttons -->
 				<div class="text-center">
 					<div style="display:inline-block;">
-					  <div class="btn-group btn-group-sm current-meeting-info" role="toolbar">
-						<a class="btn btn-salmon" href="{{ current_meeting.first.english_live_media_url }}" target="_blank" >
-						  <i class="fa fa-headphones" aria-hidden="true"></i>
-						  Watch in English
-						</a>
+						<div class="btn-group btn-group-sm current-meeting-info" role="toolbar">
+							<a class="btn btn-salmon" href="{{ current_meeting.first.english_live_media_url }}" target="_blank" >
+								<i class="fa fa-headphones" aria-hidden="true"></i>
+								Watch in English
+							</a>
 
-						{% if bilingual %}
-						<a class="btn btn-salmon" href="{{ current_meeting.first.spanish_live_media_url }}" target="_blank">
-						  <i class="fa fa-headphones" aria-hidden="true"></i>
-						  Ver en Español
-						</a>
+							{% if bilingual %}
+								<a class="btn btn-salmon" href="{{ current_meeting.first.spanish_live_media_url }}" target="_blank">
+									<i class="fa fa-headphones" aria-hidden="true"></i>
+									Ver en Español
+								</a>
+							{% endif %}
+
+						</div>
+
+						{% if USING_ECOMMENT %}
+							<a class="btn btn-sm btn-salmon current-meeting-info" href="{{ current_meeting.first.ecomment_url }}" target="_blank">
+								<i class='fa fa-fw fa-external-link'></i>
+								Go to public comment
+							</a>
 						{% endif %}
 
-					  </div>
-
-					  {% if USING_ECOMMENT %}
-					  <a class="btn btn-sm btn-salmon current-meeting-info" href="{{ current_meeting.first.ecomment_url }}" target="_blank">
-						<i class='fa fa-fw fa-external-link'></i>
-						Go to public comment
-					  </a>
-					  {% endif %}
-
-					  {% if current_meeting.first.documents.all %}
-						<a class="btn btn-sm btn-teal current-meeting-info" id="pdf-download-link" target='_blank' href='{{ current_meeting.first.documents.all|find_agenda_url }}'>
-						  <i class='fa fa-fw fa-download'></i>
-						  Get Agenda PDF
-						</a>
-					  {% endif %}
+						{% if current_meeting.first.documents.all %}
+							<a class="btn btn-sm btn-teal current-meeting-info" id="pdf-download-link" target='_blank' href='{{ current_meeting.first.documents.all|find_agenda_url }}'>
+								<i class='fa fa-fw fa-download'></i>
+								Get Agenda PDF
+							</a>
+						{% endif %}
 
 					</div>
 				</div>
