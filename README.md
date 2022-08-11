@@ -238,18 +238,14 @@ new member that were created without a post.
 ### Update the Metro app
 
 - Add the new member's headshot to the `lametro/static/images/manual-headshots`
-directory, then update the `MANUAL_HEADSHOTS` object in `councilmatic/settings_jurisdiction.py`. **Be sure to key the headshot off the person slug
-from the production site.**
-    - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
-- Add the new member's bio to the `MEMBER_BIOS` object in `councilmatic/settings_jurisdiction.py`, again **using the person slug from production.**
+directory. **Be sure to follow the naming convention `${given_name}-${family_name}.jpg`, all lowercase with punctuation stripped.** 
+- Add the new member's bio to the `MEMBER_BIOS` object in `councilmatic/settings_jurisdiction.py`, again **following the `${given_name}-${family_name}.jpg` naming convention.**
     - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
     - Tip: Replace newlines in the provided bio with `<br /><br />`.
 
 ### Check your work
 
-Since you keyed the changes off the production person slug, they won't be
-visible locally or on the staging site. To confirm your changes worked, deploy
-them to production, then:
+To confirm your changes worked, run the app locally and confirm the following:
 
 - View [the Board of Directors](https://boardagendas.metro.net/board-members/)
 listing and confirm the new member is listed with the correct post, e.g.,
@@ -261,6 +257,8 @@ listing and confirm the new member is listed with the correct post, e.g.,
     that a person scrape has been run since the deployment.
 - View the new member's detail page and confirm that their headshot and bio
 appear as expected, and without any formatting issues.
+
+If everything looks good, you can deploy to staging, check again, then push the changes to the live site.
 
 ## A note on tests
 

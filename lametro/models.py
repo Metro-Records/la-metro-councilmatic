@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import logging
+import os
+from pathlib import Path
 import pytz
 import re
 
@@ -11,6 +13,7 @@ from django.db.models.expressions import RawSQL
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db.models import Max, Min, Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
@@ -300,6 +303,10 @@ class LAMetroPerson(Person, SourcesMixin):
         proxy = True
 
     @property
+    def slug_name(self):
+        return slugify(self.name)
+
+    @property
     def latest_council_membership(self):
         filter_kwarg = {'organization__name': settings.OCD_CITY_COUNCIL_NAME,}
         city_council_memberships = self.memberships.filter(**filter_kwarg)
@@ -371,10 +378,25 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def headshot_url(self):
-        if self.slug in settings.MANUAL_HEADSHOTS:
-            image_url = 'images/' + settings.MANUAL_HEADSHOTS[self.slug]['image']
+        file_directory = os.path.dirname(__file__)
+        absolute_file_directory = os.path.abspath(file_directory)
+
+        filename = self.slug_name + '.jpg'
+
+        manual_headshot = os.path.join(
+            absolute_file_directory,
+            'static',
+            'images',
+            'manual-headshots',
+            filename
+        )
+
+        if Path(manual_headshot).exists():
+            image_url = 'images/manual-headshots/' + filename
+
         elif self.headshot:
             image_url = self.headshot.url
+
         else:
             image_url = 'images/headshot_placeholder.png'
 
