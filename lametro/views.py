@@ -625,8 +625,8 @@ class LAPersonDetailView(PersonDetailView):
                 output_field=IntegerField()))\
             .order_by('index')
 
-        if person.slug in MEMBER_BIOS:
-            context['member_bio'] = MEMBER_BIOS[person.slug]
+        if person.slug_name in MEMBER_BIOS:
+            context['member_bio'] = MEMBER_BIOS[person.slug_name]
 
         try:
             context['website_url'] = person.links.get(note='web_site').url
