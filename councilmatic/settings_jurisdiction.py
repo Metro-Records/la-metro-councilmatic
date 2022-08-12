@@ -94,7 +94,7 @@ legislation_types = [
         'desc': 'A plan of financial operations for a given period, including proposed expenditures, authorized staffing levels, and a proposed means of financing them. Metro follows a July 1 to June 30 Fiscal Year.  Its annual budgets are typically approved by the Board after a public hearing in May of each year. Individual capital projects over $5 million have a Life of Project (LOP) budget estimate reviewed by the Board of Directors.',
     },
     {
-        'name': 'Fare/Tariff/Service Change',
+        'name': 'Fare / Tariff / Service Change',
         'search_term': 'fare / tariff / service change',
         'html_id': 'fare-tariff-service-change',
         'fa_icon': 'dollar',
@@ -206,7 +206,7 @@ legislation_types = [
         'desc': 'The permanent official legal record of the business transacted, resolutions adopted, votes taken, and general proceedings of the Board of Directors. ',
     },
     {
-        'name': 'Motion/Motion Response',
+        'name': 'Motion / Motion Response',
         'search_term': 'motion / motion response',
         'html_id': 'motion-response',
         'fa_icon': 'bullhorn',
@@ -214,7 +214,7 @@ legislation_types = [
         'desc': 'These are issues raised by Board Members during meetings. Motions are usually proposed in writing by one or more Board Members. Motions include background information and a specific directive to staff after the words “I therefore move”, and then voted on. When adopted by the Board with a majority vote, staff is given a specific timeframe to research and respond back.',
     },
     {
-        'name': 'Oral Report/Presentation',
+        'name': 'Oral Report / Presentation',
         'search_term': 'oral report / presentation',
         'html_id': 'oral-report-presentation',
         'fa_icon': 'bullhorn',
