@@ -244,7 +244,7 @@ def get_list(querydict, key):
 @register.filter
 def get_bill_type_link(bill_type):
     for legislation_type in LEGISLATION_TYPE_DESCRIPTIONS:
-        if legislation_type['search_term'].title() == bill_type:
+        if legislation_type['search_term'].upper() == bill_type.upper():
             return f'/about#{legislation_type["html_id"]}'
 
     return ''
