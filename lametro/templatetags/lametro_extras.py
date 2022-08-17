@@ -248,3 +248,7 @@ def get_bill_type_link(bill_type):
             return f'/about#{legislation_type["html_id"]}'
 
     return ''
+
+@register.filter
+def query_encode(query):
+    return urllib.parse.quote_plus(query)

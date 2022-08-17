@@ -148,14 +148,14 @@
                     $target = $target.parent();
                 }
 
-                if ($target.attr('href') != '#') {
-                    var targetUrl = new URL(window.location.origin + $target.attr('href'));
-                } else {
+                if ($target.hasClass('filter-value')) {
                     // Search filters have an href of "#". There is logic below
                     // to construct the correct URL. Start with the current URL
                     // as a basis for this construction.
                     var targetUrl = new URL(window.location.href);
-                }
+                } else {
+                    var targetUrl = new URL(window.location.origin + $target.attr('href'));
+				}
 
                 var isSearch = ['/search', '/search/'].indexOf(targetUrl.pathname) >= 0;
 
