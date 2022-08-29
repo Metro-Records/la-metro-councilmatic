@@ -158,7 +158,7 @@ def find_agenda_url(all_documents):
 
     pdf_url = [('static/' + link.url) for doc in all_documents
                if doc.note == 'Event Document - Manual upload PDF'
-               for url in doc.links.all()]
+               for link in doc.links.all()]
 
     valid_urls += pdf_url
 
