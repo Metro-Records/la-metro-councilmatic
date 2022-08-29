@@ -239,7 +239,7 @@ def handle_uploaded_agenda(agenda, event):
         event=event,
         note='Event Document - Manual upload PDF')
 
-    document_obj.date = timezone.now().date
+    document_obj.date = timezone.now().date()
     document_obj.links.create(url='pdf/agenda-%s.pdf' % event.slug)
     document_obj.save()
 

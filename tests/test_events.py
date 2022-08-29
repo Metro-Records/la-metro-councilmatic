@@ -2,6 +2,7 @@ import pytest
 import re
 from datetime import datetime, timedelta
 from uuid import uuid4
+from urllib.parse import urlencode
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
@@ -18,7 +19,7 @@ from opencivicdata.legislative.models import EventDocument, EventLocation
 from councilmatic_core.models import Bill
 
 from lametro.models import LAMetroEvent, app_timezone, EventBroadcast
-from lametro.views import LAMetroEventDetail
+from lametro.views import LAMetroEventDetail, handle_uploaded_agenda
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
 
@@ -58,6 +59,44 @@ def test_agenda_pdf_form_submit():
         assert agenda_pdf_form.is_valid() == True
 
 
+def test_handle_uploaded_agenda(event):
+    event = event.build()
+
+    assert not event.documents.filter(note__icontains='Manual')
+
+    with open('tests/test_agenda.pdf', 'rb') as agenda:
+        agenda_file = agenda.read()
+
+    agenda_file = SimpleUploadedFile('test_agenda.pdf', agenda_file, content_type='application/pdf')
+
+    handle_uploaded_agenda(agenda_file, event)
+
+    assert event.documents.filter(note__icontains='Manual')
+
+
+def test_can_manually_upload_agenda(event, admin_client, mocker):
+    event = event.build()
+
+    mock_api_representation = mocker.patch('lametro.models.SourcesMixin.api_representation', new_callable=mocker.PropertyMock)
+    mock_api_representation.return_value = {}
+
+    assert not event.documents.filter(note__icontains='Manual')
+
+    with open('tests/test_agenda.pdf', 'rb') as agenda:
+        agenda_file = SimpleUploadedFile(
+            "test_agenda.pdf",
+            agenda.read(),
+            content_type="application/pdf"
+        )
+
+        admin_client.post(
+            reverse("lametro:events", args=[event.slug]),
+            data={"pdf_form": "", "agenda": agenda_file},
+        )
+
+    assert event.documents.filter(note__icontains='Manual')
+
+
 def test_agenda_pdf_form_error():
     '''
     This unit test checks that a non-pdf raises an error.
@@ -66,9 +105,9 @@ def test_agenda_pdf_form_error():
     with open('tests/test_image.gif', 'rb') as agenda:
         bad_agenda_file = agenda.read()
 
-        agenda_pdf_form = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_image.gif', bad_agenda_file, content_type='image/gif')})
+        agenda = AgendaPdfForm(files={'agenda': SimpleUploadedFile('test_image.gif', bad_agenda_file, content_type='image/gif')})
 
-        assert agenda_pdf_form.is_valid() == False
+        assert agenda.is_valid() == False
 
 
 @pytest.mark.parametrize('has_updates,has_agenda', [
