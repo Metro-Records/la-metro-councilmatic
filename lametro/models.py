@@ -9,6 +9,7 @@ import requests
 from django.conf import settings
 from django.db import models
 from django.db.models.expressions import RawSQL
+from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
 
@@ -370,9 +371,9 @@ class LAMetroPerson(Person, SourcesMixin):
         )
 
         try:
-            office_membership = self.current_memberships\
-                                    .get(organization__name=settings.OCD_CITY_COUNCIL_NAME,
-                                         role__in=office_roles)
+            office_membership = self.current_memberships.get(
+                organization__name=settings.OCD_CITY_COUNCIL_NAME, role__in=office_roles
+            )
         except Membership.DoesNotExist:
             office_membership = None
 
@@ -401,11 +402,11 @@ class LAMetroPerson(Person, SourcesMixin):
     @classmethod
     def ceo(cls):
         try:
-            ceo = Membership.objects\
-                            .get(post__role="Chief Executive Officer",
-                                 start_date_dt__lte=Now(),
-                                 end_date_dt__gt=Now())\
-                            .person
+            ceo = Membership.objects.get(
+                post__role="Chief Executive Officer",
+                start_date_dt__lte=Now(),
+                end_date_dt__gt=Now(),
+            ).person
         except Membership.DoesNotExist:
             ceo = None
 
@@ -419,11 +420,7 @@ class LAMetroPerson(Person, SourcesMixin):
         filename = self.slug_name + ".jpg"
 
         manual_headshot = os.path.join(
-            absolute_file_directory,
-            "static",
-            "images",
-            "manual-headshots",
-            filename
+            absolute_file_directory, "static", "images", "manual-headshots", filename
         )
 
         if Path(manual_headshot).exists():
@@ -918,21 +915,19 @@ class LAMetroOrganization(Organization, SourcesMixin):
 
     @property
     def all_members(self):
-        return self.memberships.filter(
-            start_date_dt__lte=Now(), end_date_dt__gt=Now()
-        )
+        return self.memberships.filter(start_date_dt__lte=Now(), end_date_dt__gt=Now())
 
     @property
     def chairs(self):
-        if hasattr(settings, 'COMMITTEE_CHAIR_TITLE'):
+        if hasattr(settings, "COMMITTEE_CHAIR_TITLE"):
             chairs = self.memberships.filter(
                 role=settings.COMMITTEE_CHAIR_TITLE,
                 start_date_dt__lte=Now(),
                 end_date_dt__gt=Now(),
-            ).select_related('person__councilmatic_person')
+            ).select_related("person__councilmatic_person")
 
-#            for chair in chairs:
-#                chair.person = chair.person.councilmatic_person
+            #            for chair in chairs:
+            #                chair.person = chair.person.councilmatic_person
 
             return chairs
         else:
