@@ -148,7 +148,8 @@
                     $target = $target.parent();
                 }
 
-                if ($target.hasClass('filter-value')) {
+				const isSearchFilter = $target.hasClass('filter-value') || $target.hasClass('remove-filter-value')
+                if (isSearchFilter) {
                     // Search filters have an href of "#". There is logic below
                     // to construct the correct URL. Start with the current URL
                     // as a basis for this construction.
