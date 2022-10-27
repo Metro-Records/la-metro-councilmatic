@@ -1,6 +1,6 @@
 var SmartLogic = {
   query: {},
-  baseUrl: 'https://cloud.smartlogic.com/svc/0dcee7c7-1667-4164-81e5-c16e46f2f74c/ses/CombinedModel/concepts/',
+  baseUrl: 'https://cloud.smartlogic.com/svc/d3807554-347e-4091-90ea-f107a906aaff/ses/CombinedModel/concepts/',
   getToken: function () {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
