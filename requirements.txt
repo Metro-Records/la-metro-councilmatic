@@ -6,6 +6,8 @@ https://github.com/datamade/django-councilmatic/zipball/hcg/3.0
 django-debug-toolbar>=3.4,<3.5
 sentry-sdk==0.14.2
 gunicorn==19.6.0
+gevent>=20.9
+greenlet>=0.4.17
 pytest
 pytest-django
 pytest-mock==1.6.3
