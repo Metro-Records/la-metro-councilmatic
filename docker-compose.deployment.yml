@@ -37,7 +37,6 @@ services:
       - '0.0.0.0:8986:8983'
     environment:
       - SOLR_LOG_LEVEL=ERROR
-      - SOLR_HEAP=0.5g
     restart: on-failure
 volumes:
   lametro-solr-data:
