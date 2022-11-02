@@ -15,7 +15,7 @@ requests-mock==1.8.0
 freezegun==1.0.0
 dj_database_url
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
-locustio==0.13.2
+locust==2.5.0
 django-recaptcha==2.0.6
 google-api-python-client==2.42.0
 google-auth-oauthlib

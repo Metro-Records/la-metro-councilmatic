@@ -1,4 +1,4 @@
-from locust import HttpLocust, TaskSet, task, between
+from locust import HttpUser, TaskSet, task, between
 
 
 class UserBehavior(TaskSet):
@@ -15,8 +15,8 @@ class UserBehavior(TaskSet):
         self.client.get("/event/regular-board-meeting-9db63964de28/")
 
 
-class WebsiteUser(HttpLocust):
-    host = "https://lametro-upgrade.datamade.us"
-    task_set = UserBehavior
+class WebsiteUser(HttpUser):
+    host = "https://lametro-app-upgrade.datamade.us"
+    tasks = [UserBehavior]
     # Average time on page is 1:18
     wait_time = between(60, 90)
