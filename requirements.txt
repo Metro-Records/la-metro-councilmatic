@@ -11,6 +11,8 @@ google-api-python-client==2.42.0
 google-auth-oauthlib
 google-auth-httplib2
 textract
+django-haystack[elasticsearch]
+elasticsearch>=7.0.0,<7.14.0
 
 # Development
 django-debug-toolbar>=3.4,<3.5
