@@ -1,9 +1,9 @@
 version: '2.4'
 services:
   app:
-    image: lametro
+    #image: ghcr.io/datamade/la-metro-councilmatic:hcg-upgrade
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: .
     container_name: lametro
     stdin_open: true
@@ -13,11 +13,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      solr:
+      elasticsearch:
         condition: service_started
     volumes:
       - .:/app
-      - /Users/hannah/projects/django-councilmatic:/django-councilmatic
     environment:
       DJANGO_MANAGEPY_MIGRATE: "on"
     entrypoint: /app/docker-entrypoint.sh
@@ -39,18 +38,20 @@ services:
     ports:
       - 32006:5432
 
-  solr:
-    image: solr:8.8
-    container_name: lametro-solr
-    volumes:
-      - ./solr_configs:/la-metro-councilmatic_configs
-      - lametro-solr-data:/var/solr/data/
-    command: sh -c 'solr-create -c lametro -d /la-metro-councilmatic_configs'
-    ports:
-      - 8987:8983
-    environment:
-      - SOLR_LOG_LEVEL=INFO
 
+  elasticsearch:
+    image: elasticsearch:7.14.2
+    container_name: chi-councilmatic-elasticsearch
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - logger.org.elasticsearch.discovery=DEBUG
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    mem_limit: 1g
+    volumes:
+      - lametro-es-data:/usr/share/elasticsearch/data
+  
   scrapers:
     build: https://github.com/datamade/scrapers-us-municipal.git
     stdin_open: true
@@ -68,5 +69,5 @@ services:
       - ./data/lametro_divisions.csv:/app/lametro_divisions.csv
 
 volumes:
-  lametro-solr-data:
+  lametro-es-data:
   lametro-db-data:

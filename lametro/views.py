@@ -768,10 +768,10 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         form_kwargs["result_type"] = self.request.GET.get("result_type", "all")
 
         sqs = (
-            SearchQuerySet(query=IdentifierBoostSearchQuery("default"))
-            .facet("bill_type", sort="index")
-            .facet("sponsorships", sort="index")
-            .facet("legislative_session", sort="index")
+            SearchQuerySet()
+            .facet("bill_type")
+            .facet("sponsorships")
+            .facet("legislative_session")
             .facet("inferred_status")
             .facet("topics")
             .facet("lines_and_ways")
@@ -782,7 +782,6 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             .facet("motion_by")
             .facet("significant_date")
             .facet("plan_program_policy")
-            .highlight(**{"hl.fl": "text,attachment_text"})
         )
 
         data = None
