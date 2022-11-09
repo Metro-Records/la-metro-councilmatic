@@ -35,10 +35,11 @@ DATABASES = {
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://solr:8983/solr/lametro',
-        'SILENTLY_FAIL': False,  # Raise Solr errors
-        'BATCH_SIZE': 100,  # Reduce the default batch size for index updates
+        'ENGINE': 'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
+        'URL': 'http://elasticsearch:9200',
+        'INDEX_NAME': 'lametro',
+        'SILENTLY_FAIL': False,
+        'BATCH_SIZE': 10,
     },
 }
 
