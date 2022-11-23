@@ -46,7 +46,7 @@ services:
 
   elasticsearch:
     image: elasticsearch:7.14.2
-    container_name: chi-councilmatic-elasticsearch
+    container_name: lametro-councilmatic-elasticsearch
     ports:
       - 9200:9200
     environment:
