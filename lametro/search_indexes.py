@@ -11,6 +11,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     topics = indexes.MultiValueField(faceted=True)
     attachment_text = indexes.CharField()
     viewable = indexes.BooleanField()
+    identifier = indexes.CharField(model_attr='identifier', boost=3.0)
 
     # Custom Metro facets
     bill_type = indexes.MultiValueField(faceted=True)
@@ -39,6 +40,9 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     def prepare_sponsorships(self, obj):
         orgs_list = [action["organization"].name for action in obj.actions_and_agendas]
         return set(orgs_list)
+
+    def prepare_actions(self, obj):
+        return [str(action) for action in obj.actions.all()]
 
     def prepare_sort_name(self, obj):
         full_text = obj.extras.get("plain_text")
