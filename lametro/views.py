@@ -434,7 +434,7 @@ class LABoardMembersView(CouncilMembersView):
 
         memberships = board.memberships.filter(Q(role='Board Member') |
                                                Q(role='Nonvoting Board Member'))\
-                                       .filter(end_date_dt__gte=Now())
+                                       .filter(start_date_dt__lt=Now(), end_date_dt__gte=Now())
 
         display_order = {
             'Chair': 0,
