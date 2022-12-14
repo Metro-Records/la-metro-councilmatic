@@ -51,6 +51,7 @@
 
             {% if user.is_authenticated %}
             {% include 'partials/person_headshot_form.html' %}
+            {{person.given_name}}
             {% endif %}
 
             <hr />
@@ -104,6 +105,8 @@
 
             {% if user.is_authenticated %}
             {% include 'partials/person_bio_form.html' %}
+            <p>here is what is currently in person.biography</p>
+            <p>{{person.biography}}</p>
             {% endif %}
             <br />
 

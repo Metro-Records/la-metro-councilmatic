@@ -5,7 +5,7 @@
     {% csrf_token %}
 
     {{form.headshot.errors}}
-    {{form.update_headshot}}
+    {{form.headshot_form}}
     <label for="{{form.headshot.id_for_label}}">{{form.headshot.label}}</label>
     {{form.headshot}}
     <input type="submit" value="Submit">

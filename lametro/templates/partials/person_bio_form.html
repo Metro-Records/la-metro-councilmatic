@@ -4,10 +4,10 @@
 <form role="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    {{form2.bio.errors}}
-    {{form2.update_bio}}
-    <label for="{{form2.bio.id_for_label}}">{{form2.bio.label}}</label>
-    {{form2.bio}}
+    {{form2.biography.errors}}
+    {{form2.bio_form}}
+    <label for="{{form2.biography.id_for_label}}">Update {{form2.biography.label}}:</label>
+    {{form2.biography}}
     <input type="submit" value="Submit">
     
 </form>
