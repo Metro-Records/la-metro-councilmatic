@@ -1,0 +1,13 @@
+{% load extras %}
+{% load lametro_extras %}
+
+<form role="form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{form.headshot.errors}}
+    {{form.update_headshot}}
+    <label for="{{form.headshot.id_for_label}}">{{form.headshot.label}}</label>
+    {{form.headshot}}
+    <input type="submit" value="Submit">
+
+</form>

@@ -41,6 +41,7 @@ from django.shortcuts import render_to_response, redirect
 from django.core import management
 from django.core.serializers import serialize
 from django.views.generic import View
+from django.views.generic.edit import FormMixin
 
 from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
@@ -51,7 +52,8 @@ from opencivicdata.core.models import PersonLink
 
 from lametro.models import LAMetroBill, LAMetroPost, LAMetroPerson, \
     LAMetroEvent, LAMetroOrganization, LAMetroSubject
-from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm
+from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm, \
+    PersonHeadshotForm, PersonBioForm
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
 from councilmatic.settings import PIC_BASE_URL
@@ -554,10 +556,13 @@ class LACommitteeDetailView(CommitteeDetailView):
         return context
 
 
-class LAPersonDetailView(PersonDetailView):
+class LAPersonDetailView(PersonDetailView, FormMixin):
 
     template_name = 'lametro/person.html'
     model = LAMetroPerson
+
+    form_class = PersonHeadshotForm
+    second_form_class = PersonBioForm
 
     def dispatch(self, request, *args, **kwargs):
         slug = self.kwargs['slug']
@@ -589,6 +594,7 @@ class LAPersonDetailView(PersonDetailView):
 
         context = super().get_context_data(**kwargs)
         person = context['person']
+        context['form2'] = self.second_form_class
 
         council_post = person.latest_council_membership.post
 
