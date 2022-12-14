@@ -12,7 +12,7 @@ from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
 
-from lametro.models import LAMetroBill
+from lametro.models import LAMetroBill, LAMetroPerson
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
@@ -159,15 +159,20 @@ class PersonHeadshotForm(forms.Form):
             widget=forms.FileInput(attrs={'id':'headshot-form-input'})
         )
 
-    update_headshot = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+    headshot_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
 
 
-class PersonBioForm(forms.Form):
+class PersonBioForm(forms.ModelForm): # can change this to just forms.Form if getting weird
 
-    bio = forms.CharField(
-            label='Bio',
-            error_messages={ 'required': 'Whoops! Please provide a bio.' },
-            widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter bio', 'id': 'bio'})
-        )
+    # bio = forms.CharField(
+    #         label='Bio',
+    #         error_messages={ 'required': 'Whoops! Please provide a bio.' },
+    #         widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter bio', 'id': 'bio'})
+    #     )
 
-    update_bio = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+    bio_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+
+    class Meta:
+        model = LAMetroPerson
+        fields = ['biography']
+

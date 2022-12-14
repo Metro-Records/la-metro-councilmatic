@@ -607,6 +607,11 @@ class LAPersonDetailView(PersonDetailView, FormMixin):
             person = None
 
         else:
+            # TODO: delete these when done testing
+            print('the request method is:', request.method)
+            print('the POST data is:', request.POST)
+            print(person.__dict__)
+
             response = super().dispatch(request, *args, **kwargs)
 
         if not person:
@@ -624,6 +629,15 @@ class LAPersonDetailView(PersonDetailView, FormMixin):
                 )
 
         return response
+
+    def post(self, request, *args, **kwargs):
+        slug = self.kwargs['slug']
+        person = self.model.objects.get(slug=slug)
+
+        # TODO: make this conditional based on which hidden form gets sent through
+        form = PersonBioForm(request.POST, instance=person)
+        form.save()
+        return HttpResponseRedirect(self.request.path_info)
 
     def get_context_data(self, **kwargs):
 
