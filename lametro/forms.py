@@ -149,3 +149,25 @@ class AgendaPdfForm(forms.Form):
             return agenda_pdf
         else:
             raise forms.ValidationError("File type not supported. Please submit a PDF.")
+
+
+class PersonHeadshotForm(forms.Form):
+
+    headshot = forms.FileField(
+            label='Headshot File',
+            error_messages={'required': 'Oops! Please provide a valid image file.'},
+            widget=forms.FileInput(attrs={'id':'headshot-form-input'})
+        )
+
+    update_headshot = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+
+
+class PersonBioForm(forms.Form):
+
+    bio = forms.CharField(
+            label='Bio',
+            error_messages={ 'required': 'Whoops! Please provide a bio.' },
+            widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter bio', 'id': 'bio'})
+        )
+
+    update_bio = forms.BooleanField(widget=forms.HiddenInput, initial=True)

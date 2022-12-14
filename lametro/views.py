@@ -32,6 +32,7 @@ from django.http import (
 )
 from django.core import management
 from django.core.serializers import serialize
+from django.views.generic import View
 
 from councilmatic_core.views import (
     IndexView,
@@ -57,7 +58,13 @@ from lametro.models import (
     LAMetroOrganization,
     LAMetroSubject,
 )
-from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm
+from lametro.forms import (
+    AgendaUrlForm,
+    AgendaPdfForm,
+    LAMetroCouncilmaticSearchForm,
+    PersonHeadshotForm,
+    PersonBioForm
+)
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
 from councilmatic.settings import PIC_BASE_URL
@@ -582,10 +589,13 @@ class LACommitteeDetailView(CommitteeDetailView):
         return context
 
 
-class LAPersonDetailView(PersonDetailView):
+class LAPersonDetailView(PersonDetailView, FormMixin):
 
     template_name = "person/person.html"
     model = LAMetroPerson
+
+    form_class = PersonHeadshotForm
+    second_form_class = PersonBioForm
 
     def dispatch(self, request, *args, **kwargs):
         slug = self.kwargs["slug"]

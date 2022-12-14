@@ -1,0 +1,13 @@
+{% load extras %}
+{% load lametro_extras %}
+
+<form role="form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{form2.bio.errors}}
+    {{form2.update_bio}}
+    <label for="{{form2.bio.id_for_label}}">{{form2.bio.label}}</label>
+    {{form2.bio}}
+    <input type="submit" value="Submit">
+    
+</form>
