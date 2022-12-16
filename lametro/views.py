@@ -574,11 +574,6 @@ class LAPersonDetailView(PersonDetailView, FormMixin):
             person = None
 
         else:
-            # TODO: delete these when done testing
-            print('the request method is:', request.method)
-            print('the POST data is:', request.POST)
-            print(person.__dict__)
-
             response = super().dispatch(request, *args, **kwargs)
 
         if not person:
@@ -598,16 +593,27 @@ class LAPersonDetailView(PersonDetailView, FormMixin):
     def post(self, request, *args, **kwargs):
         slug = self.kwargs['slug']
         person = self.model.objects.get(slug=slug)
+        self.object = self.get_object()
 
-        # TODO: make this conditional based on which hidden form gets sent through
-        form = PersonBioForm(request.POST, instance=person)
-        form.save()
-        return HttpResponseRedirect(self.request.path_info)
+        # The submitted hidden field determines which form was used
+        if 'bio_form' in request.POST:
+            form = PersonBioForm(request.POST, instance=person)
+        elif 'headshot_form' in request.POST:
+            form = PersonHeadshotForm(request.POST, instance=person)
+
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(self.request.path_info)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
         person = context['person']
+
+        # The first form is set with form_class, but we need to explicitly
+        # add the second, different form to the context.
         context['form2'] = self.second_form_class
 
         council_post = person.latest_council_membership.post

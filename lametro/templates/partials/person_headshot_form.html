@@ -4,10 +4,13 @@
 <form role="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    {{form.headshot.errors}}
+    {% if form.image.errors %}
+        <br>
+        <p style="color: #eb6864;">{{form.image.errors.as_text}}</p>
+    {% endif %}
     {{form.headshot_form}}
-    <label for="{{form.headshot.id_for_label}}">{{form.headshot.label}}</label>
-    {{form.headshot}}
+    <label for="{{form.image.id_for_label}}">Update Headshot:</label>
+    <p>{{form.image}}</p>
     <input type="submit" value="Submit">
 
 </form>
