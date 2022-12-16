@@ -4,7 +4,10 @@
 <form role="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    {{form2.biography.errors}}
+    {% if form2.biography.errors %}
+        <br>
+        <p style="color: #eb6864;">{{form2.biography.errors.as_text}}</p>
+    {% endif %}
     {{form2.bio_form}}
     <label for="{{form2.biography.id_for_label}}">Update {{form2.biography.label}}:</label>
     {{form2.biography}}

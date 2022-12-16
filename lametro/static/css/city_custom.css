@@ -380,3 +380,11 @@ hr .events-line {
 	margin-top: 10px;
 	margin-left: 5px;
 }
+
+.bio {
+    white-space: pre-line
+}
+
+#id_image {
+    width: 100%;
+}

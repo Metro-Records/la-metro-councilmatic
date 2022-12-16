@@ -151,26 +151,63 @@ class AgendaPdfForm(forms.Form):
             raise forms.ValidationError("File type not supported. Please submit a PDF.")
 
 
-class PersonHeadshotForm(forms.Form):
-
-    headshot = forms.FileField(
-            label='Headshot File',
-            error_messages={'required': 'Oops! Please provide a valid image file.'},
-            widget=forms.FileInput(attrs={'id':'headshot-form-input'})
-        )
+class PersonHeadshotForm(forms.ModelForm):
 
     headshot_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
 
+    def __init__(self, *args, **kwargs):
+        super(PersonHeadshotForm, self).__init__(*args, **kwargs)
+        self.fields['image'].widget.attrs.update({
+                    'required': 'True',
+                    'placeholder': 'Enter URL to image...'
+                })
 
-class PersonBioForm(forms.ModelForm): # can change this to just forms.Form if getting weird
+    def clean_image(self):
+        image_url = self.cleaned_data['image']
 
-    # bio = forms.CharField(
-    #         label='Bio',
-    #         error_messages={ 'required': 'Whoops! Please provide a bio.' },
-    #         widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter bio', 'id': 'bio'})
-    #     )
+        try:
+            r = requests.head(image_url)
+            image_found = self.is_url_image(image_url, r)
+
+            if r.status_code == 200 and image_found:
+                return image_url
+            elif r.status_code == 404:
+                raise forms.ValidationError('Broken URL! Returns a 404.')
+            elif image_found is False:
+                raise forms.ValidationError('URL does not lead to an image.')
+        except requests.exceptions.MissingSchema as e:
+            raise forms.ValidationError('Not a valid URL! Check your link, and resubmit.')
+
+    def is_url_image(self, image_url, r):
+        image_formats = (
+            "image/png",
+            "image/jpeg",
+            "image/jpg",
+            "image/tif",
+            "image/tiff",
+            "image/webp",
+            "image/avif"
+        )
+
+        if r.headers["content-type"] in image_formats:
+            return True
+        return False
+
+    class Meta:
+        model = LAMetroPerson
+        fields = ['image']
+
+
+class PersonBioForm(forms.ModelForm):
 
     bio_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super(PersonBioForm, self).__init__(*args, **kwargs)
+        self.fields['biography'].widget.attrs.update({
+                    'rows': '5',
+                    'required': 'True'
+                })
 
     class Meta:
         model = LAMetroPerson
