@@ -40,14 +40,6 @@ sudo -H -u datamade $VENV_DIR/bin/pip install -r $PROJECT_DIR/requirements.txt -
 # Move project configuration files into the appropriate locations within the project.
 mv $PROJECT_DIR/configs/settings_deployment.$DEPLOYMENT_GROUP_NAME.py $PROJECT_DIR/councilmatic/settings_deployment.py
 
-# If you're using PostgreSQL, check to see if the database that you
-# need is present and, if not, create it setting the datamade user as it's
-# owner.
-psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = '${DATABASE}'" | grep -q 1 || createdb -U postgres -O datamade ${DATABASE}
-
-# Create any extensions within your database that your project needs.
-psql -U postgres -d ${DATABASE} -c "CREATE EXTENSION IF NOT EXISTS postgis"
-
 # Run migrations and other management commands that should be run with
 # every deployment
 sudo -H -u datamade $VENV_DIR/bin/python $PROJECT_DIR/manage.py migrate
