@@ -1,5 +1,4 @@
-#django-councilmatic[convert_docs]==2.6.1
-https://github.com/datamade/django-councilmatic/zipball/hcg/3.0
+django-councilmatic[convert_docs]>=3.0
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
 pysolr
 sentry-sdk==0.14.2
