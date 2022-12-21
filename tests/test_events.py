@@ -2,7 +2,6 @@ import pytest
 import re
 from datetime import datetime, timedelta
 from uuid import uuid4
-from urllib.parse import urlencode
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
@@ -64,31 +63,34 @@ def test_agenda_pdf_form_submit():
 def test_handle_uploaded_agenda(event):
     event = event.build()
 
-    assert not event.documents.filter(note__icontains='Manual')
+    assert not event.documents.filter(note__icontains="Manual")
 
-    with open('tests/test_agenda.pdf', 'rb') as agenda:
+    with open("tests/test_agenda.pdf", "rb") as agenda:
         agenda_file = agenda.read()
 
-    agenda_file = SimpleUploadedFile('test_agenda.pdf', agenda_file, content_type='application/pdf')
+    agenda_file = SimpleUploadedFile(
+        "test_agenda.pdf", agenda_file, content_type="application/pdf"
+    )
 
     handle_uploaded_agenda(agenda_file, event)
 
-    assert event.documents.filter(note__icontains='Manual')
+    assert event.documents.filter(note__icontains="Manual")
 
 
 def test_can_manually_upload_agenda(event, admin_client, mocker):
     event = event.build()
 
-    mock_api_representation = mocker.patch('lametro.models.SourcesMixin.api_representation', new_callable=mocker.PropertyMock)
+    mock_api_representation = mocker.patch(
+        "lametro.models.SourcesMixin.api_representation",
+        new_callable=mocker.PropertyMock,
+    )
     mock_api_representation.return_value = {}
 
-    assert not event.documents.filter(note__icontains='Manual')
+    assert not event.documents.filter(note__icontains="Manual")
 
-    with open('tests/test_agenda.pdf', 'rb') as agenda:
+    with open("tests/test_agenda.pdf", "rb") as agenda:
         agenda_file = SimpleUploadedFile(
-            "test_agenda.pdf",
-            agenda.read(),
-            content_type="application/pdf"
+            "test_agenda.pdf", agenda.read(), content_type="application/pdf"
         )
 
         admin_client.post(
@@ -96,7 +98,7 @@ def test_can_manually_upload_agenda(event, admin_client, mocker):
             data={"pdf_form": "", "agenda": agenda_file},
         )
 
-    assert event.documents.filter(note__icontains='Manual')
+    assert event.documents.filter(note__icontains="Manual")
 
 
 def test_agenda_pdf_form_error():

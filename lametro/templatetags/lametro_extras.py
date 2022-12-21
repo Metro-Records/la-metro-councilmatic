@@ -85,7 +85,7 @@ def appointment_label(label):
     elif "Chief Executive Officer" in label:
         return label
 
-    elif label == 'Mayor of the City of Los Angeles':
+    elif label == "Mayor of the City of Los Angeles":
         return label
 
     full_label = label.replace("Appointee of", "Appointee of the")
