@@ -3,24 +3,27 @@ set -euo pipefail
 
 # Make sure the deployment group specific variables are available to this
 # script.
+echo "Loading config"
 source ${BASH_SOURCE%/*}/../configs/$DEPLOYMENT_GROUP_NAME-config.conf
 
 # Set some useful variables
 PROJECT_DIR="/home/datamade/$APP_NAME-$DEPLOYMENT_ID"
 
 # Re-read supervisor config, and add new processes
+echo "Updating Supervisor"
 supervisorctl reread
 supervisorctl add $APP_NAME-$DEPLOYMENT_ID
 
 # Check to see if our /pong/ endpoint responds with the correct deployment ID.
 loop_counter=0
 while true; do
+    echo "Running loop $loop_counter..."
     # check to see if the socket file that the gunicorn process that is running
     # the app has been created. If not, wait for a second.
     if [[ -e /tmp/$APP_NAME-${DEPLOYMENT_ID}.sock ]]; then
-
         # Pipe an HTTP request into the netcat tool (nc) and grep the response
         # for the deployment ID. If it's not there, wait for a second.
+        echo "Socket exists"
         running_app=`printf "GET /pong/ HTTP/1.1 \r\nHost: localhost \r\n\r\n" | nc -U /tmp/$APP_NAME-${DEPLOYMENT_ID}.sock | grep -e "$DEPLOYMENT_ID" -e 'Bad deployment*'`
         echo $running_app
         if [[ $running_app == $DEPLOYMENT_ID ]] ; then
@@ -51,7 +54,6 @@ done
 echo "Reloading nginx"
 nginx -t
 service nginx reload || service nginx start
-
 
 # It's safe to terminate the older version of the site
 # by sending the TERM signal to old supervisor processes.
