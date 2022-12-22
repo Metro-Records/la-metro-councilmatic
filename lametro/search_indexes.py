@@ -1,10 +1,11 @@
-import re
+import json
 
 from haystack import indexes
 from councilmatic_core.haystack_indexes import BillIndex
 
 from lametro.models import LAMetroBill, LAMetroSubject
 from lametro.utils import format_full_text, parse_subject
+
 
 class LAMetroBillIndex(BillIndex, indexes.Indexable):
     topics = indexes.MultiValueField(faceted=True)
@@ -22,6 +23,13 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     motion_by = indexes.MultiValueField(faceted=True)
     plan_program_policy = indexes.MultiValueField(faceted=True)
 
+    # Preloaded fields for display
+    listing_description = indexes.CharField(indexed=False)
+    last_action_description = indexes.CharField(indexed=False)
+    primary_sponsor = indexes.CharField(indexed=False)
+    rich_topics = indexes.CharField(indexed=False)
+    pseudo_topics = indexes.CharField(indexed=False)
+
     def get_model(self):
         return LAMetroBill
 
@@ -29,12 +37,12 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return None
 
     def prepare_sponsorships(self, obj):
-        orgs_list = [action['organization'].name for action in obj.actions_and_agendas]
+        orgs_list = [action["organization"].name for action in obj.actions_and_agendas]
         return set(orgs_list)
 
     def prepare_sort_name(self, obj):
-        full_text = obj.extras.get('plain_text')
-        results = ''
+        full_text = obj.extras.get("plain_text")
+        results = ""
 
         if full_text:
             results = format_full_text(full_text)
@@ -44,19 +52,20 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
             return obj.bill_type
 
     def prepare_attachment_text(self, obj):
-        return ' '.join(
-            d.extras['full_text'] for d in obj.documents.all()
-            if d.extras.get('full_text')
+        return " ".join(
+            d.extras["full_text"]
+            for d in obj.documents.all()
+            if d.extras.get("full_text")
         )
 
     def prepare_legislative_session(self, obj):
-        aa = sorted(obj.actions_and_agendas, key=lambda i: i['date'],reverse=True)
-        agendas = [a for a in aa if a['description'] == 'SCHEDULED']
+        aa = sorted(obj.actions_and_agendas, key=lambda i: i["date"], reverse=True)
+        agendas = [a for a in aa if a["description"] == "SCHEDULED"]
         if len(aa) > 1:
             if agendas:
-                action_date = agendas[0]['date']
+                action_date = agendas[0]["date"]
             else:
-                action_date = aa[0]['date']
+                action_date = aa[0]["date"]
 
             if action_date.month <= 6:
                 start_year = action_date.year - 1
@@ -65,49 +74,67 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
                 start_year = action_date.year
                 end_year = action_date.year + 1
 
-            session = '7/1/{start_year} to 6/30/{end_year}'.format(start_year=start_year,
-                                                                   end_year=end_year)
+            session = "7/1/{start_year} to 6/30/{end_year}".format(
+                start_year=start_year, end_year=end_year
+            )
             return session
         return None
 
-
     def prepare_topics(self, obj):
-        return self._topics_from_classification(obj, 'topics_exact')
+        return self._topics_from_classification(obj, "topics_exact")
 
     def prepare_bill_type(self, obj):
-        return self._topics_from_classification(obj, 'bill_type_exact')
+        return self._topics_from_classification(obj, "bill_type_exact")
 
     def prepare_lines_and_ways(self, obj):
-        return self._topics_from_classification(obj, 'lines_and_ways_exact')
+        return self._topics_from_classification(obj, "lines_and_ways_exact")
 
     def prepare_phase(self, obj):
-        return self._topics_from_classification(obj, 'phase_exact')
+        return self._topics_from_classification(obj, "phase_exact")
 
     def prepare_project(self, obj):
-        return self._topics_from_classification(obj, 'project_exact')
+        return self._topics_from_classification(obj, "project_exact")
 
     def prepare_metro_location(self, obj):
-        return self._topics_from_classification(obj, 'metro_location_exact')
+        return self._topics_from_classification(obj, "metro_location_exact")
 
     def prepare_geo_admin_location(self, obj):
-        return self._topics_from_classification(obj, 'geo_admin_location_exact')
+        return self._topics_from_classification(obj, "geo_admin_location_exact")
 
     def prepare_significant_date(self, obj):
-        return self._topics_from_classification(obj, 'significant_date_exact')
+        return self._topics_from_classification(obj, "significant_date_exact")
 
     def prepare_motion_by(self, obj):
-        return self._topics_from_classification(obj, 'motion_by_exact')
+        return self._topics_from_classification(obj, "motion_by_exact")
 
     def prepare_plan_program_policy(self, obj):
-        return self._topics_from_classification(obj, 'plan_program_policy_exact')
+        return self._topics_from_classification(obj, "plan_program_policy_exact")
 
     def _topics_from_classification(self, obj, classification):
-        '''
+        """
         Retrieve a list of topics with the given classification.
-        '''
+        """
         topics = LAMetroSubject.objects.filter(
-            name__in=obj.subject,
-            classification=classification
-        ).values_list('name', flat=True)
+            name__in=obj.subject, classification=classification
+        ).values_list("name", flat=True)
 
         return list(topics)
+
+    def prepare_listing_description(self, obj):
+        return obj.listing_description
+
+    def prepare_last_action_description(self, obj):
+        if obj.current_action:
+            return obj.current_action.description
+
+    def prepare_primary_sponsor(self, obj):
+        if obj.primary_sponsor:
+            return obj.primary_sponsor.name
+
+    def prepare_rich_topics(self, obj):
+        if rich_topics := list(obj.rich_topics.values("name", "classification")):
+            return json.dumps(rich_topics)
+
+    def prepare_pseudo_topics(self, obj):
+        if pseudo_topics := list({"name": o} for o in obj.pseudo_topics):
+            return json.dumps(pseudo_topics)

@@ -3,7 +3,7 @@ services:
   app:
     image: lametro
     build:
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       context: .
     container_name: lametro
     stdin_open: true
@@ -17,6 +17,7 @@ services:
         condition: service_started
     volumes:
       - .:/app
+      - /Users/hannah/projects/django-councilmatic:/django-councilmatic
     environment:
       DJANGO_MANAGEPY_MIGRATE: "on"
     entrypoint: /app/docker-entrypoint.sh
@@ -24,8 +25,7 @@ services:
 
   postgres:
     container_name: lametro-postgres
-    restart: always
-    image: mdillon/postgis:9.6
+    image: postgis/postgis:14-3.2
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -33,23 +33,23 @@ services:
       retries: 5
     environment:
       POSTGRES_DB: lametro
+      POSTGRES_PASSWORD: postgres
     volumes:
       - lametro-db-data:/var/lib/postgresql/data
     ports:
       - 32006:5432
 
   solr:
-    image: solr:7.5
+    image: solr:8.8
     container_name: lametro-solr
     volumes:
       - ./solr_configs:/la-metro-councilmatic_configs
-      - lametro-solr-data:/opt/solr/server/solr/
+      - lametro-solr-data:/var/solr/data/
     command: sh -c 'solr-create -c lametro -d /la-metro-councilmatic_configs'
     ports:
       - 8987:8983
     environment:
       - SOLR_LOG_LEVEL=INFO
-    restart: on-failure
 
   scrapers:
     image: ghcr.io/datamade/scrapers-us-municipal:master
@@ -59,7 +59,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: 'postgis://postgres:@postgres/lametro'
+      DATABASE_URL: 'postgis://postgres:postgres@postgres/lametro'
       SHARED_DB: "True"
       OCD_DIVISION_CSV: '/app/lametro_divisions.csv'
     command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=14 && pupa update --rpm=600 lametro events window=14'

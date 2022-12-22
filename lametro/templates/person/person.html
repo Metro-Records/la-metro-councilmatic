@@ -1,0 +1,242 @@
+{% extends "base_with_margins.html" %}
+
+{% load adv_cache extras lametro_extras static %}
+
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block extra_css %}
+    {% if map_geojson %}
+        <link rel="stylesheet" href="{% static 'css/leaflet.css' %}" />
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row-fluid">
+        <div class="col-sm-12">
+            <br/>
+            <h1>
+                <span>{{ person.name }}</span>
+                <br class="non-desktop-only"/>
+                <small>
+            {% if person.current_council_seat %}
+                {{ person.current_council_seat.role }}
+    	    {% else %}
+    	        Former {{ person.latest_council_membership.role }}
+    	    {% endif %}
+            <a href="rss/" title="RSS feed for Sponsored Board Actions by {{person.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
+                </small>
+            </h1>
+        </div>
+    </div>
+
+    {% comment %}
+        The Metro CEO does not sponsor reports or serve as a committee member.
+        His/her/their detail view provides a bio, in lieu of the 'Sponsorhsips' and 'Committees' lists.
+    {% endcomment %}
+    {% if qualifying_post == 'Chief Executive Officer' %}
+        {% include 'person/_person_ceo.html' %}
+    {% else %}
+    <div class="row-fluid">
+        <div class="col-sm-4 non-mobile-only">
+            <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail img-padded' id="person-detail-headshot" />
+            <p class="small">
+                {% if qualifying_post %}
+                    <i class='fa fa-fw fa-briefcase'></i>
+                    {{ qualifying_post | appointment_label }}
+                {% endif %}
+            </p>
+            <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
+
+            <hr />
+
+            {% if map_geojson %}
+                <hr />
+                <h4>
+                    {% if person.current_district %}
+                        {{ person.current_district | format_district }} map
+                    {% endif %}
+                </h4>
+                <div id='map-detail'></div>
+            {% endif %}
+
+            {% if person.headshot_source %}
+                <p class='small'>
+                    <i class='fa fa-fw fa-camera'></i> Credit: {{person.headshot_source}}
+                </p>
+            {% endif %}
+
+        </div>
+
+        <div class="col-sm-4 mobile-only">
+            <div class="row">
+                <div class="col-xs-4">
+                    <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail' />
+                </div>
+                <div class="col-xs-8">
+                    <p class="small">
+                        {% if qualifying_post %}
+                            <i class='fa fa-fw fa-briefcase'></i>
+                            {{ qualifying_post | appointment_label }}
+                        {% endif %}
+                    </p>
+
+                    <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
+                </div>
+            </div>
+
+            <hr/>
+        </div>
+
+        <div class='col-sm-8 no-pad-mobile'>
+            {% if member_bio %}
+                <h3>
+                    <i class="fa fa-user" aria-hidden="true"></i> About {{ person.name }}
+                </h3>
+
+                <p>{{ member_bio | safe }}</p><br />
+            {% endif %}
+
+            <ul class="nav nav-pills">
+                <li role="presentation" {% if request.GET.view == 'committees'  or request.GET.view == None %}class='active' {% endif %}>    <a href="/person/{{person.slug}}/?view=committees">
+                        <span class="small-pill">
+                            <i class='fa fa-fw fa-group'></i>
+                            Committees
+                        </span>
+                    </a>
+                </li>
+                <li role="presentation" {% if request.GET.view == 'board-reports' %}class='active' {% endif %}>
+                    <a href="/person/{{person.slug}}/?view=board-reports">
+                        <span class="small-pill">
+                            <i class='fa fa-fw fa-files-o'></i>
+                            Board Reports
+                        </span>
+                    </a>
+                </li>
+            </ul>
+
+            {% if request.GET.view == 'committees' or request.GET.view == None %}
+
+                <h3>
+                    <i class='fa fa-fw fa-group'></i>
+                    Committees
+                </h3>
+
+                <p>Committees to which {{person.name}} belongs</p><br />
+
+                <div class="table-responsive">
+                    <table class='table table-responsive'>
+                        <thead>
+                            <tr>
+                                <th>Member of</th>
+                                <th>Position</th>
+                                <th>Committee actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for membership in memberships_list %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'lametro:committee' membership.organization.slug %}">{{membership.organization}}</a>
+                                    </td>
+                                    <td>{{membership.role}}</td>
+                                    <td>
+                                        <a href="/search/?q=&selected_facets=sponsorships_exact:{{membership.organization.name}}">View board reports &raquo;</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            {% elif request.GET.view == 'board-reports' %}
+                <h3>
+                    <i class='fa fa-fw fa-files-o'></i>
+                    Board Reports
+                </h3>
+
+                <p>Board reports acted upon most recently by committees to which {{person.name}} belongs</p><br />
+
+                {% for legislation in sponsored_legislation %}
+
+                    {% include "person/_legislation_item.html" %}
+
+                {% endfor %}
+
+            {% endif %}
+
+        </div>
+    </div>
+    {% endif %}
+
+    <script type="application/ld+json">
+        {
+          "@context": "http://schema.org",
+          "@type": "Person",
+          "email": "{{person.email}}",
+          "image": "{{person.headshot_url}}",
+          {% if person.current_council_seat %}
+          "jobTitle": "{{ person.current_council_seat }} Representative",
+          {% endif %}
+          "affiliation":    {
+                                "@type": "Organization",
+                                "name": "{{ CITY_COUNCIL_NAME }}"
+                            },
+          "name": "{{person.name}}",
+          "url": "{{website_url}}"
+        }
+    </script>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    {% if map_geojson %}
+        <script src="{% static 'js/lib/leaflet.js' %}" /></script>
+        <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&libraries=places&v=3.17&key={{GOOGLE_API_KEY}}"></script>
+        <script type="text/javascript" src="{% static 'js/lib/leaflet-google.js' %}" ></script>
+        <script>
+            var map = L.map('map-detail', {
+                scrollWheelZoom: false,
+                dragging: false,
+                touchZoom: false,
+                doubleClickZoom: false,
+                center: {{MAP_CONFIG.center}},
+                zoom: {{MAP_CONFIG.zoom}},
+                zoomControl: false
+            });
+            var google_map_styles = [
+                {
+                    stylers: [
+                        { saturation: -100 },
+                        { lightness: 40 }
+                    ]
+                }
+            ];
+            var layer = new L.Google('ROADMAP', {
+                animate: false,
+                mapOptions: {styles: google_map_styles}
+            });
+            map.addLayer(layer);
+            var geojson = L.geoJson({{ map_geojson |safe }}, {
+                style: {
+                        "color": "#3D8A8E",
+                        "weight": 1.2,
+                        "opacity": 1,
+                        "fillOpacity": .3
+                    }
+            });
+
+            $(function() {
+                geojson.addTo(map);
+                map.fitBounds(geojson.getBounds());
+            });
+
+            geojson.on('click', function(){
+                window.location.href="{% url 'lametro:council_members' %}";
+            });
+        </script>
+
+    {% endif %}
+
+{% endblock %}
