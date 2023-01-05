@@ -5,6 +5,8 @@ django-councilmatic[convert_docs]==2.6.1
 django-debug-toolbar==1.9.1
 sentry-sdk==0.14.2
 gunicorn==19.6.0
+gevent>=20.9
+greenlet>=0.4.17
 pytest
 pytest-django
 pytest-mock==1.6.3
@@ -13,7 +15,7 @@ freezegun==1.0.0
 lxml==4.1.1
 dj_database_url
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
-locustio==0.13.2
+locust==2.5.0
 django-recaptcha==2.0.6
 google-api-python-client==2.42.0
 google-auth-oauthlib
