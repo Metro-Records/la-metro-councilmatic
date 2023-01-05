@@ -1,0 +1,122 @@
+{% load lametro_extras static %}
+
+<div>
+    <div>
+        {% if current_meeting|length > 1 %}
+
+            <div class="col-md-12">
+                <p>There are <strong>{{ current_meeting|length }}</strong> meetings in session:</p>
+
+                {% for meeting in current_meeting %}
+                    <p>
+                        <h4>
+                            {{ meeting.link_html | safe }}<br/>
+                            <span class="small text-muted">{{ meeting.description }}</span>
+                        </h4>
+
+                        <p class="small text-muted">
+                            <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y"}}<br/>
+                            <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a"}}<br/>
+                            <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name }}<br />
+                        </p>
+
+                        <div class="text-center">
+                            {% if meeting.documents.all %}
+                                <p>
+                                    <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{ meeting.documents.all|find_agenda_url }}'>
+                                        <i class='fa fa-fw fa-download'></i>
+                                        Get Agenda PDF
+                                    </a>
+                                </p>
+                            {% endif %}
+
+                            {% if meeting.is_ongoing and USING_ECOMMENT %}
+                                <p>
+                                    <a class="btn btn-salmon" href="{{ event.ecomment_url }}" target="_blank">
+                                        <i class='fa fa-fw fa-external-link'></i>
+                                        Go to public comment
+                                    </a>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </p>
+                    <br />
+                {% endfor %}
+
+                <p class="small">These meetings will take place in succession. The broadcast for the second meeting will begin immediately after the first concludes.</p>
+
+                <div class="text-center">
+                    <p>
+                        <a class="btn btn-link" href="{{ current_meeting.first.GENERIC_ENGLISH_MEDIA_URL }}" target="_blank">
+                            <i class="fa fa-headphones" aria-hidden="true"></i>
+                            Watch in English
+                        </a>
+
+                        {% if bilingual %}
+                            <a class="btn btn-link" href="{{ current_meeting.first.GENERIC_SPANISH_MEDIA_URL }}" target="_blank">
+                                <i class="fa fa-headphones" aria-hidden="true"></i>
+                                Ver en Español
+                            </a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+        {% else %}
+
+            <!-- Display meeting details and image side by side -->
+            <div class="row" style="margin-top: 1em;">
+                <div class="col-md-6 current-meeting-img">
+                    <img src='{% static "images/Gateway03RT.jpg" %}' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
+                </div>
+
+                <div class="col-md-6">
+                    <h4>
+                      {{ current_meeting.first.link_html | safe }}<br/>
+                      <span class="small text-muted">{{ current_meeting.first.description }}</span>
+                    </h4>
+
+                    <!-- Meeting info -->
+                    <p class="small text-muted">
+                        <i class="fa fa-fw fa-calendar-o"></i> {{ current_meeting.first.start_time | date:"D n/d/Y"}}<br/>
+                        <i class="fa fa-fw fa-clock-o"></i> {{ current_meeting.first.start_time | date:"g:i a"}}<br/>
+                        <i class="fa fa-fw fa-map-marker"></i> {{ current_meeting.first.location.name}}<br />
+                    </p>
+                </div>
+
+				<!-- Buttons -->
+				<div class="text-center">
+					<div style="display:inline-block;">
+						<a class="btn btn-sm btn-salmon current-meeting-info" href="{{ current_meeting.first.english_live_media_url }}" target="_blank" >
+							<i class="fa fa-headphones" aria-hidden="true"></i>
+							Watch in English
+						</a>
+
+						{% if bilingual %}
+						<a class="btn btn-sm btn-salmon current-meeting-info" href="{{ current_meeting.first.spanish_live_media_url }}" target="_blank">
+							<i class="fa fa-headphones" aria-hidden="true"></i>
+							Ver en Español
+						</a>
+						{% endif %}
+
+						{% if USING_ECOMMENT %}
+							<a class="btn btn-sm btn-salmon current-meeting-info" href="{{ current_meeting.first.ecomment_url }}" target="_blank">
+								<i class='fa fa-fw fa-external-link'></i>
+								Go to public comment
+							</a>
+						{% endif %}
+
+						{% if current_meeting.first.documents.all %}
+							<a class="btn btn-sm btn-teal current-meeting-info" id="pdf-download-link" target='_blank' href='{{ current_meeting.first.documents.all|find_agenda_url }}'>
+								<i class='fa fa-fw fa-download'></i>
+								Get Agenda PDF
+							</a>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+        {% endif %}
+    </div>
+</div>
+
