@@ -11,6 +11,8 @@ google-api-python-client==2.42.0
 google-auth-oauthlib
 google-auth-httplib2
 textract
+django-storages[boto3]
+python-dotenv==0.20.0
 
 # Development
 django-debug-toolbar>=3.4,<3.5

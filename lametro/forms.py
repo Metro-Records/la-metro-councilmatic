@@ -153,6 +153,7 @@ class AgendaPdfForm(forms.Form):
 
 class PersonHeadshotForm(forms.ModelForm):
 
+    # TODO: delete commented out portions once the uploads start to work
     headshot_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
 
     def __init__(self, *args, **kwargs):
@@ -162,22 +163,23 @@ class PersonHeadshotForm(forms.ModelForm):
                     'placeholder': 'Enter URL to image...'
                 })
 
-    def clean_image(self):
-        image_url = self.cleaned_data['image']
+    # def clean_image(self):
+    #     image_url = self.cleaned_data['image']
 
-        try:
-            r = requests.head(image_url)
-            image_found = self.is_url_image(image_url, r)
+    #     try:
+    #         r = requests.head(image_url)
+    #         image_found = self.is_url_image(image_url, r)
 
-            if r.status_code == 200 and image_found:
-                return image_url
-            elif r.status_code == 404:
-                raise forms.ValidationError('Broken URL! Returns a 404.')
-            elif image_found is False:
-                raise forms.ValidationError('URL does not lead to an image.')
-        except requests.exceptions.MissingSchema as e:
-            raise forms.ValidationError('Not a valid URL! Check your link, and resubmit.')
+    #         if r.status_code == 200 and image_found:
+    #             return image_url
+    #         elif r.status_code == 404:
+    #             raise forms.ValidationError('Broken URL! Returns a 404.')
+    #         elif image_found is False:
+    #             raise forms.ValidationError('URL does not lead to an image.')
+    #     except requests.exceptions.MissingSchema as e:
+    #         raise forms.ValidationError('Not a valid URL! Check your link, and resubmit.')
 
+    # TODO: if this is done in the view instead, then it won't be needed here; can remove
     def is_url_image(self, image_url, r):
         image_formats = (
             "image/png",
