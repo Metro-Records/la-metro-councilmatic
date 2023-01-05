@@ -6,22 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("lametro", "0003_add_lametro_subject"),
+        ('lametro', '0003_add_lametro_subject'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="lametrosubject",
-            name="classification",
-            field=models.CharField(
-                choices=[
-                    ("bill_type_exact", "Board Report Type"),
-                    ("lines_and_ways_exact", "Lines / Ways"),
-                    ("phases_exact", "Phases"),
-                    ("topics_exact", "Subject"),
-                ],
-                default="topics_exact",
-                max_length=256,
-            ),
+            model_name='lametrosubject',
+            name='classification',
+            field=models.CharField(choices=[('bill_type_exact', 'Board Report Type'), ('lines_and_ways_exact', 'Lines / Ways'), ('phases_exact', 'Phases'), ('topics_exact', 'Subject')], default='topics_exact', max_length=256),
         ),
     ]

@@ -18,11 +18,19 @@ downloads
 /keyrings/live/pubring.gpg~
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
+/scripts/app_start.sh
+/scripts/app_stop.sh
+/scripts/validate_service.sh
 
 merged_pdfs/*
 debug.log
 
 .cache
+/configs/lametro-staging.conf.nginx
+/configs/lametro.conf.nginx
+/configs/lametro-staging.conf.supervisor
+/configs/lametro.conf.supervisor
+/scripts/after_install.sh
 /configs/settings_deployment.production.py
 /configs/settings_deployment.staging.py
 /configs/lametro_service_acct_key.json
@@ -32,11 +40,4 @@ debug.log
 !lametro_divisions.csv
 .gnupg/
 
-*_bk/
-
 lametro/secrets.py
-/configs/settings_deployment.upgrade.py
-
-/configs/upgrade-config.conf
-/configs/upgrade.conf.nginx
-/configs/upgrade.conf.supervisor

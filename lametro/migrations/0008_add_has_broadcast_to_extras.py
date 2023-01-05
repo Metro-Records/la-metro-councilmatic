@@ -7,28 +7,30 @@ from lametro.models import app_timezone
 
 
 def populate_has_broadcast(apps, schema_editor):
-    Event = apps.get_model("legislative", "Event")
+    Event = apps.get_model('legislative', 'Event')
     past_events = Event.objects.filter(
         start_date__lte=app_timezone.localize(datetime.now()).isoformat()
     )
     for event in past_events:
-        event.extras["has_broadcast"] = True
-    Event.objects.bulk_update(past_events, ["extras"])
+        event.extras['has_broadcast'] = True
+    Event.objects.bulk_update(past_events, ['extras'])
 
 
 def flush_has_broadcast(apps, schema_editor):
-    Event = apps.get_model("legislative", "Event")
+    Event = apps.get_model('legislative', 'Event')
     broadcast_events = Event.objects.filter(extras__has_broadcast=True)
     for event in broadcast_events:
-        del event.extras["has_broadcast"]
-    Event.objects.bulk_update(broadcast_events, ["extras"])
+        del event.extras['has_broadcast']
+    Event.objects.bulk_update(broadcast_events, ['extras'])
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("lametro", "0007_update_packet_links"),
-        ("legislative", "0001_initial"),
+        ('lametro', '0007_update_packet_links'),
+        ('legislative', '0001_initial'),
     ]
 
-    operations = [migrations.RunPython(populate_has_broadcast, flush_has_broadcast)]
+    operations = [
+        migrations.RunPython(populate_has_broadcast, flush_has_broadcast)
+    ]
