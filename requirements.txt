@@ -1,7 +1,7 @@
 Django>=2.2,<2.2.26
 psycopg2-binary>=2.8,<2.9
 opencivicdata>=3.1.0
-django-councilmatic[convert_docs]==2.6.1
+django-councilmatic==2.6.1
 django-debug-toolbar==1.9.1
 sentry-sdk==0.14.2
 gunicorn==19.6.0
@@ -18,3 +18,7 @@ django-recaptcha==2.0.6
 google-api-python-client==2.42.0
 google-auth-oauthlib
 google-auth-httplib2
+django-storages[boto3]
+# boto3==1.23.10
+# boto==2.38.0
+python-dotenv==0.20.0

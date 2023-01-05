@@ -41,3 +41,5 @@ debug.log
 .gnupg/
 
 lametro/secrets.py
+.env
+.venv

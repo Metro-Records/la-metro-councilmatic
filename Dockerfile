@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y build-essential git-core && \
     cd blackbox && \
     make copy-install
 
-FROM python:3.6-slim-stretch
+FROM python:3.6
 LABEL maintainer "DataMade <info@datamade.us>"
 
 ENV PYTHONUNBUFFERED=1

@@ -41,7 +41,6 @@ from django.shortcuts import render_to_response, redirect
 from django.core import management
 from django.core.serializers import serialize
 from django.views.generic import View
-from django.views.generic.edit import FormMixin
 
 from councilmatic_core.views import IndexView, BillDetailView, \
     CouncilMembersView, AboutView, CommitteeDetailView, CommitteesView, \
@@ -57,6 +56,7 @@ from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearc
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
 from councilmatic.settings import PIC_BASE_URL
+from councilmatic.custom_storage import MediaStorage
 
 from opencivicdata.legislative.models import EventDocument
 
@@ -556,13 +556,10 @@ class LACommitteeDetailView(CommitteeDetailView):
         return context
 
 
-class LAPersonDetailView(PersonDetailView, FormMixin):
+class LAPersonDetailView(PersonDetailView):
 
     template_name = 'lametro/person.html'
     model = LAMetroPerson
-
-    form_class = PersonHeadshotForm
-    second_form_class = PersonBioForm
 
     def dispatch(self, request, *args, **kwargs):
         slug = self.kwargs['slug']
@@ -598,23 +595,55 @@ class LAPersonDetailView(PersonDetailView, FormMixin):
         # The submitted hidden field determines which form was used
         if 'bio_form' in request.POST:
             form = PersonBioForm(request.POST, instance=person)
+
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(self.request.path_info)
+            else:
+                return self.render_to_response(self.get_context_data(form=form))
+
         elif 'headshot_form' in request.POST:
             form = PersonHeadshotForm(request.POST, instance=person)
+            file_obj = request.FILES.get('headshot', '')
 
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(self.request.path_info)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
+            # TODO: your validation here e.g. file size/type check
+
+            file_dir_within_bucket = 'user_upload_files/{username}'.format(username=request.user)
+
+            # create full file path
+            file_path_within_bucket = os.path.join(
+                file_dir_within_bucket,
+                file_obj.name
+            )
+
+            media_storage = MediaStorage()
+
+            if not media_storage.exists(file_path_within_bucket):  # avoid overwriting existing file
+                media_storage.save(file_path_within_bucket, file_obj)
+                file_url = media_storage.url(file_path_within_bucket)
+
+                # TODO: at this point we have the file_url, the next thing
+                # would be to save this url in the db under LAMetroPerson's
+                # image field.
+                # I imagine it would be something like setting
+                # it onto the form here and then saving the form
+                # If that's the case, I also imagine I'll be moving the bottom
+                # ifelse up into this if, and if I do that, then i'll need to
+                # include that into the bio_form if above as well. We'll see
+                person.image = file_url
+                person.save()
+                return HttpResponseRedirect(self.request.path_info)
+
+            else:
+                return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
         person = context['person']
 
-        # The first form is set with form_class, but we need to explicitly
-        # add the second, different form to the context.
-        context['form2'] = self.second_form_class
+        context['headshot_form'] = PersonHeadshotForm
+        context['biography_form'] = PersonBioForm
 
         council_post = person.latest_council_membership.post
 

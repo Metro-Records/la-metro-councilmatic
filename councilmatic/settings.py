@@ -15,6 +15,11 @@ import os
 from .settings_deployment import *
 from .settings_jurisdiction import *
 
+from dotenv import load_dotenv
+
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -134,3 +139,8 @@ DEBUG_TOOLBAR_PANELS = [
 
 SERVICE_ACCOUNT_KEY_PATH = 'configs/lametro_service_acct_key.json'
 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_STORAGE_BUCKET_NAME = 'la-metro-headshots-staging'
+AWS_ACCESS_KEY_ID = os.getenv('ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('SECRET_KEY')
