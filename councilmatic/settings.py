@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from .settings_deployment import *  # noqa
-from .settings_jurisdiction import *  # noqa
+from .settings_deployment import *
+from .settings_jurisdiction import *
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,80 +25,85 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 try:
     from .settings_deployment import ALLOWED_HOSTS
 except ImportError:
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".datamade.us", ".councilmatic.org"]
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        '.datamade.us',
+        '.councilmatic.org'
+    ]
 
 try:
-    from .settings_deployment import RECAPTCHA_PUBLIC_KEY, RECAPTCHA_PRIVATE_KEY  # noqa
+    from .settings_deployment import RECAPTCHA_PUBLIC_KEY, RECAPTCHA_PRIVATE_KEY
 except ImportError:
-    SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+    SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 
 
 # Application definition
 
 INSTALLED_APPS = (
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django.contrib.gis",
-    "haystack",
-    "opencivicdata.core",
-    "opencivicdata.legislative",
-    "lametro",
-    "councilmatic_core",
-    "adv_cache_tag",
-    "debug_toolbar",
-    "captcha",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.gis',
+    'haystack',
+    'opencivicdata.core',
+    'opencivicdata.legislative',
+    'lametro',
+    'councilmatic_core',
+    'adv_cache_tag',
+    'debug_toolbar',
+    'captcha',
 )
 
 try:
-    INSTALLED_APPS += EXTRA_APPS  # noqa
+    INSTALLED_APPS += EXTRA_APPS
 except NameError:
     pass
 
 MIDDLEWARE = (
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = "councilmatic.urls"
+ROOT_URLCONF = 'councilmatic.urls'
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "lametro/templates")],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-                "councilmatic_core.views.city_context",
-                "lametro.context_processors.recaptcha_public_key",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'lametro/templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'councilmatic_core.views.city_context',
+                'lametro.context_processors.recaptcha_public_key',
             ],
         },
     },
 ]
 
 
-WSGI_APPLICATION = "councilmatic.wsgi.application"
+WSGI_APPLICATION = 'councilmatic.wsgi.application'
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = "America/Los_Angeles"
+TIME_ZONE = 'America/Los_Angeles'
 
 USE_I18N = True
 
@@ -110,23 +115,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_URL = "/media/"
-
-PIC_BASE_URL = "https://pic.datamade.us/lametro/document/"
+PIC_BASE_URL = 'https://pic.datamade.us/lametro/document/'
 # PIC_BASE_URL = 'http://127.0.0.1:5000/lametro/document/'
 
-HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
-HAYSTACK_IDENTIFIER_METHOD = "lametro.utils.get_identifier"
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+HAYSTACK_IDENTIFIER_METHOD = 'lametro.utils.get_identifier'
 
 ADV_CACHE_INCLUDE_PK = True
 
 # Django Debug Toolbar Panel Settings
 DEBUG_TOOLBAR_PANELS = [
-    "debug_toolbar.panels.sql.SQLPanel",
-    "debug_toolbar.panels.cache.CachePanel",
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.cache.CachePanel',
 ]
 
-SERVICE_ACCOUNT_KEY_PATH = "configs/lametro_service_acct_key.json"
+SERVICE_ACCOUNT_KEY_PATH = 'configs/lametro_service_acct_key.json'
+

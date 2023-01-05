@@ -21,7 +21,7 @@ class KeyedEvent(LAMetroEvent):
     @classmethod
     def transform_key(cls, key):
         # 2019-08-15 18:30:00+00 => 2019-08-15
-        dt = datetime.strptime(key[1], "%Y-%m-%d %H:%M:%S+00").date().isoformat()
+        dt = datetime.strptime(key[1], '%Y-%m-%d %H:%M:%S+00').date().isoformat()
         return (key[0], dt)
 
 
@@ -47,7 +47,7 @@ class KeyedCSVGenerator(object):
     def __call__(self):
         filepath = os.path.join(settings.BASE_DIR, self.infile)
 
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
 
             for row in reader:
@@ -59,32 +59,28 @@ class Command(BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._event_generator = KeyedCSVGenerator(
-            "councilmatic_core_event.csv", ("name", "start_time")
-        )
-        self._person_generator = KeyedCSVGenerator(
-            "councilmatic_core_person.csv", ("name",)
-        )
+        self._event_generator = KeyedCSVGenerator('councilmatic_core_event.csv', ('name', 'start_time'))
+        self._person_generator = KeyedCSVGenerator('councilmatic_core_person.csv', ('name',))
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            "--events_only", action="store_true", help="Migrate events only"
-        )
+        parser.add_argument('--events_only',
+                            action='store_true',
+                            help='Migrate events only')
 
-        parser.add_argument(
-            "--people_only", action="store_true", help="Migrate people only"
-        )
+        parser.add_argument('--people_only',
+                            action='store_true',
+                            help='Migrate people only')
 
     @transaction.atomic
     def handle(self, *args, **options):
-        if not any([options["events_only"], options["people_only"]]):
+        if not any([options['events_only'], options['people_only']]):
             self._migrate(KeyedEvent, self._event_generator)
             self._migrate(KeyedPerson, self._person_generator)
 
-        elif options["events_only"]:
+        elif options['events_only']:
             self._migrate(KeyedEvent, self._event_generator)
 
-        elif options["people_only"]:
+        elif options['people_only']:
             self._migrate(KeyedPerson, self._person_generator)
 
     def _migrate(self, model, generator):
@@ -95,20 +91,20 @@ class Command(BaseCommand):
             entity = self.councilmatic_entity(obj, generator)
 
             if entity is None:
-                print("Could not find match for {0} object {1}".format(obj, obj.key))
+                print('Could not find match for {0} object {1}'.format(obj, obj.key))
                 continue
 
-            obj.slug = entity["slug"]
+            obj.slug = entity['slug']
             obj_cache.append(obj)
 
             if obj_cache and len(obj_cache) % 250 == 0:
-                model.objects.bulk_update(obj_cache, ["slug"])
+                model.objects.bulk_update(obj_cache, ['slug'])
                 total_updates += 250
-                print("Updated 250 objects")
+                print('Updated 250 objects')
                 obj_cache = []
 
         if obj_cache:
-            model.objects.bulk_update(obj_cache, ["slug"])
+            model.objects.bulk_update(obj_cache, ['slug'])
             total_updates += len(obj_cache)
             obj_cache = []
 
@@ -117,13 +113,9 @@ class Command(BaseCommand):
         try:
             assert total_updates == event_count
         except AssertionError:
-            print(
-                "Found only {0} updates for {1} total objects of type {2}".format(
-                    total_updates, event_count, model
-                )
-            )
+            print('Found only {0} updates for {1} total objects of type {2}'.format(total_updates, event_count, model))
         else:
-            print("Updated all {0} objects of type {1}".format(event_count, model))
+            print('Updated all {0} objects of type {1}'.format(event_count, model))
 
     def councilmatic_entity(self, ocd_entity, entity_generator):
         entity_key = ocd_entity.key

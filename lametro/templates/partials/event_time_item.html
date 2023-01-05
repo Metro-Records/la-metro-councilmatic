@@ -1,0 +1,45 @@
+{% load lametro_extras %}
+
+<a href="{{event.event_page_url}}">
+  {% if forloop.last %}
+  <div class="row" style="margin-bottom: 30px;">
+  {% else %}
+  <div class="row">
+  {% endif %}
+
+  {% if not forloop.first %}
+    <hr class="events-line"/>
+  {% endif %}
+        <div class="col-xs-3 no-pad-right">
+
+            {% if event.status == 'cancelled' %}<strike>{% endif %}
+
+            <p class="small">
+                <span class="non-mobile-only">
+                    <i class="fa fa-fw fa-clock-o"></i> {{event.start_time| date:"g:i a"}}<br/>
+                </span>
+                <span class="mobile-only">
+                    {{event.start_time| date:"g:i a"}}<br/>
+                </span>
+            </p>
+
+            {% if event.status == 'cancelled' %}</strike>{% endif %}
+
+        </div>
+        <div class="col-xs-9">
+            <p>
+                {% if event.status == 'cancelled' %}
+                    <strike>{{event.name}}</strike>
+                    <span class="label label-stale">Cancelled</span>
+                    <br/>
+                {% else %}
+                    {{event.name}}
+                    {% if event.id|updates_made %}
+                        <span class='label label-info label-teal'>Updated</span>
+                    {% endif %}
+                    <br/>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</a>

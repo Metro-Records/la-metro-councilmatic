@@ -1,0 +1,139 @@
+{% extends "base_with_margins.html" %}
+{% load extras %}
+{% load staticfiles %}
+{% block title %}{{CITY_COUNCIL_NAME}} Committees{% endblock %}
+{% block content %}
+
+    <div class="row-fluid">
+        <div class="col-sm-12">
+            <br class="non-mobile-only"/>
+            <h1>Metro Committees</h1>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="col-sm-8 table-col">
+
+            <div class="table-responsive">
+                <table class='table' id='committees'>
+                    <thead>
+                        <tr>
+                            <th>Committee</th>
+                            <th>Chairperson(s)</th>
+                            <th>Members</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for committee in committees %}
+                            <tr>
+                              <td align="left">
+                                    <a href="{% url 'lametro:committee' committee.slug %}">{{ committee.name | committee_topic_only }}</a>
+                                </td>
+                                <td align="left">
+                                    {% for membership in committee.chairs %}
+                                            {{ membership.person.name }}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ committee.current_members | length }}</td>
+                            </tr>
+                        {% endfor %}
+                        {% for committee in ad_hoc_list %}
+                            <tr>
+                                <td align="left">
+                                    <a href="{% url 'lametro:committee' committee.slug %}">{{ committee.name | committee_topic_only }}</a></br>
+                                </td>
+                                <td align="left">
+                                    {% for person in committee %}
+                                        {% if person.role == 'Chair' %}
+                                            {{ person.9 }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ committee | length }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class='well info-blurb'>
+                <h4><i class='fa fa-fw fa-info-circle'></i> What do committees do?</h4>
+
+                {{ ABOUT_BLURBS.COMMITTEES | safe }}
+
+                <p>The Metro Board of Directors is currently composed of <strong>{{ committees | length }} Committees</strong>. Committees set policy and discuss matters related to the transit system in Los Angeles County.</p>
+
+                <p>In addition to these committees, other entities are created by state statute, or by the Board for gathering public input in support of various public purposes beyond routine monthly business. For example, the Service Authority for Freeway Emergencies (SAFE) which oversees:
+                    <ol type="a">
+                        <li>the freeway callboxes and freeway service patrol tow truck services</li>
+                        <li>the Congestional Management Program (CMP) required by the State</li>
+                        <li>the Independent Citizens Advisory and Oversight Committee created by Measure R</li>
+                        <li>the Public Transportation Services Corporation (PTSC) created by the Board to </li>facilitate the 1993 merger of the transportation commission and transit district
+                        <li>the Advanced Transit Vehicle Consortium (ATVC)</li>
+                        <li>the Citizens Advisory Council (CAC) created by the State for public input on </li>Metro's work
+                        <li>the Technical Advisory Committee created by the State and its subcommittees</li>
+                        <li>the Bus Operations Subcommittee</li>
+                        <li>the Transit Demand Management/Air Quality Subcommittee</li>
+                        <li>the Streets and Freeways Subcommittee for input from our municipal operator </li>partners and other Los Angeles County transportation program providers
+                        <li>Metro's Service Councils for public input into proposes transit service </li>changes, and others.
+                    </ol>
+                </p>
+
+                <p><strong>Ad-hoc Committees</strong> are created at the Board Chair's discretion to review and discuss high priority public policy matters. They may be continued, suspended, or revived by any future Board Chair.</p>
+
+                <p>In addition to the Board of Directors, Metro also has appointed Advisory Committees. <a href="https://www.metro.net/calendar/category/committees-subcommittees/" target="_blank">Learn more about "Advisory Committees" here.</a></p>
+
+                <p><a href='/about/#about-la-metro'>More on how Metro works &raquo;</a></p>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/jquery.dataTables.sorting.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+
+    <script>
+        $("#committees").DataTable({
+            "info": false,
+            "searching": false,
+            "bLengthChange": false,
+            "paging": false,
+            "aaSorting": [ [0,'desc'] ],
+            "aoColumns": [
+                null,
+                null,
+                null
+            ]
+        });
+        $("#subcommittees").DataTable({
+            "info": false,
+            "searching": false,
+            "bLengthChange": false,
+            "paging": false,
+            "aaSorting": [ [0,'asc'] ],
+            "aoColumns": [
+                null,
+                null,
+                null
+            ]
+        });
+        $("#taskforces").DataTable({
+            "info": false,
+            "searching": false,
+            "bLengthChange": false,
+            "paging": false,
+            "aaSorting": [ [0,'asc'] ],
+            "aoColumns": [
+                null,
+                null,
+                null
+            ]
+        });
+    </script>
+{% endblock %}

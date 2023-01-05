@@ -4,21 +4,21 @@ from django.db import migrations
 
 
 def resave_packets(apps, schema_editor):
-    """
+    '''
     Re-save all existing packets to update their URLs based on the
     new value of MERGE_HOST.
-    """
-    #    for packet in ('BillPacket', 'EventPacket'):
-    #        packet_model = apps.get_model('lametro', packet)
-    #        for p in packet_model.objects.all():
-    #            p.save(merge=False)
+    '''
+#    for packet in ('BillPacket', 'EventPacket'):
+#        packet_model = apps.get_model('lametro', packet)
+#        for p in packet_model.objects.all():
+#            p.save(merge=False)
     return
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("lametro", "0006_add_plan_program_policy"),
+        ('lametro', '0006_add_plan_program_policy'),
     ]
 
     operations = [

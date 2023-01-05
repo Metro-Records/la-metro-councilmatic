@@ -9,73 +9,70 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("councilmatic_core", "0048_post_shape"),
+        ('councilmatic_core', '0048_post_shape'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="SubjectGuid",
+            name='SubjectGuid',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("guid", models.CharField(max_length=256)),
-                ("name", models.CharField(max_length=256, unique=True)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('guid', models.CharField(max_length=256)),
+                ('name', models.CharField(max_length=256, unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name="LAMetroBill",
-            fields=[],
+            name='LAMetroBill',
+            fields=[
+            ],
             options={
-                "proxy": True,
-                "indexes": [],
+                'proxy': True,
+                'indexes': [],
             },
-            bases=("councilmatic_core.bill",),
+            bases=('councilmatic_core.bill',),
         ),
         migrations.CreateModel(
-            name="LAMetroEvent",
-            fields=[],
+            name='LAMetroEvent',
+            fields=[
+            ],
             options={
-                "proxy": True,
-                "indexes": [],
+                'proxy': True,
+                'indexes': [],
             },
-            bases=("councilmatic_core.event", lametro.models.LiveMediaMixin),
+            bases=('councilmatic_core.event', lametro.models.LiveMediaMixin),
         ),
         migrations.CreateModel(
-            name="LAMetroOrganization",
-            fields=[],
+            name='LAMetroOrganization',
+            fields=[
+            ],
             options={
-                "proxy": True,
-                "indexes": [],
+                'proxy': True,
+                'indexes': [],
             },
-            bases=("councilmatic_core.organization",),
+            bases=('councilmatic_core.organization',),
         ),
         migrations.CreateModel(
-            name="LAMetroPerson",
-            fields=[],
+            name='LAMetroPerson',
+            fields=[
+            ],
             options={
-                "proxy": True,
-                "indexes": [],
+                'proxy': True,
+                'indexes': [],
             },
-            bases=("councilmatic_core.person",),
+            bases=('councilmatic_core.person',),
         ),
         migrations.CreateModel(
-            name="LAMetroPost",
-            fields=[],
+            name='LAMetroPost',
+            fields=[
+            ],
             options={
-                "proxy": True,
-                "indexes": [],
+                'proxy': True,
+                'indexes': [],
             },
-            bases=("councilmatic_core.post",),
+            bases=('councilmatic_core.post',),
         ),
         migrations.AlterUniqueTogether(
-            name="subjectguid",
-            unique_together={("guid", "name")},
+            name='subjectguid',
+            unique_together={('guid', 'name')},
         ),
     ]
