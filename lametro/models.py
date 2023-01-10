@@ -36,7 +36,7 @@ from councilmatic_core.models import (
 )
 
 from lametro.utils import format_full_text, parse_subject
-from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS
+from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -423,8 +423,13 @@ class LAMetroPerson(Person, SourcesMixin):
             absolute_file_directory, "static", "images", "manual-headshots", filename
         )
 
-        if Path(manual_headshot).exists():
-            image_url = "images/manual-headshots/" + filename
+        if self.image:
+            # Assigning this to image_url would make the return static() at the
+            # end of this add 'static' to the url. Returning here solves that.
+            return self.image
+
+        elif Path(manual_headshot).exists():
+            image_url = 'images/manual-headshots/' + filename
 
         elif self.headshot:
             image_url = self.headshot.url
@@ -433,6 +438,16 @@ class LAMetroPerson(Person, SourcesMixin):
             image_url = "images/headshot_placeholder.png"
 
         return static(image_url)
+
+    @property
+    def current_bio(self):
+        if self.biography:
+            bio = self.biography
+
+        elif self.slug_name in MEMBER_BIOS:
+            bio = MEMBER_BIOS[self.slug_name]
+
+        return bio
 
     @property
     def current_memberships(self):

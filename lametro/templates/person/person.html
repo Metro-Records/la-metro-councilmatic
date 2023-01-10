@@ -39,7 +39,7 @@
     {% else %}
     <div class="row-fluid">
         <div class="col-sm-4 non-mobile-only">
-            <img src='{% if person.image %}{{person.image}}{% else %}{{person.headshot_url}}{% endif %}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail img-padded' id="person-detail-headshot" />
+            <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail img-padded' id="person-detail-headshot" />
             <p class="small">
                 {% if qualifying_post %}
                     <i class='fa fa-fw fa-briefcase'></i>
@@ -75,7 +75,7 @@
         <div class="col-sm-4 mobile-only">
             <div class="row">
                 <div class="col-xs-4">
-                    <img src='{% if person.image %}{{person.image}}{% else %}{{person.headshot_url}}{% endif %}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail' />
+                    <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail' />
                 </div>
                 <div class="col-xs-8">
                     <p class="small">
@@ -96,18 +96,13 @@
         </div>
 
         <div class='col-sm-8 no-pad-mobile'>
-            {% if member_bio or person.biography %}
+            {% if person.biography %}
                 <h3>
                     <i class="fa fa-user" aria-hidden="true"></i> About {{ person.name }}
                 </h3>
-
-                {% if person.biography %}
-                    <p class="bio">{{person.biography}}</p>
-                {% else %}
-                    <p>{{ member_bio | safe }}</p>
-                {% endif %}
-
+                <p class="bio">{{person.current_bio | safe}}</p>
             {% endif %}
+
 
             {% if user.is_authenticated %}
             {% include 'partials/person_bio_form.html' %} 
