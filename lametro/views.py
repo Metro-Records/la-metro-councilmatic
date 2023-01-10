@@ -606,7 +606,10 @@ class LAPersonDetailView(PersonDetailView):
             form = PersonHeadshotForm(request.POST, instance=person)
             file_obj = request.FILES.get('headshot', '')
 
-            # TODO: your validation here e.g. file size/type check
+            is_valid_file = self.validate_file(file_obj)
+
+            if not is_valid_file:
+                return self.render_to_response(self.get_context_data(form=form))
 
             file_dir_within_bucket = 'user_upload_files/{username}'.format(username=request.user)
 
@@ -618,24 +621,30 @@ class LAPersonDetailView(PersonDetailView):
 
             media_storage = MediaStorage()
 
-            if not media_storage.exists(file_path_within_bucket):  # avoid overwriting existing file
-                media_storage.save(file_path_within_bucket, file_obj)
-                file_url = media_storage.url(file_path_within_bucket)
+            media_storage.save(file_path_within_bucket, file_obj)
+            file_url = media_storage.url(file_path_within_bucket)
 
-                # TODO: at this point we have the file_url, the next thing
-                # would be to save this url in the db under LAMetroPerson's
-                # image field.
-                # I imagine it would be something like setting
-                # it onto the form here and then saving the form
-                # If that's the case, I also imagine I'll be moving the bottom
-                # ifelse up into this if, and if I do that, then i'll need to
-                # include that into the bio_form if above as well. We'll see
-                person.image = file_url
-                person.save()
-                return HttpResponseRedirect(self.request.path_info)
+            person.image = file_url
+            person.save()
+            return HttpResponseRedirect(self.request.path_info)
 
-            else:
-                return self.render_to_response(self.get_context_data(form=form))
+    def validate_file(self, file):
+        image_formats = (
+            ".png",
+            ".jpeg",
+            ".jpg",
+            ".tif",
+            ".tiff",
+            ".webp",
+            ".avif"
+        )
+
+        is_image = file.name.endswith(tuple(image_formats))
+        max_file_size = 7864320  # 7.5mb
+
+        if is_image and file.size <= max_file_size:
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
 
@@ -679,9 +688,6 @@ class LAPersonDetailView(PersonDetailView):
                 default=Value(999),
                 output_field=IntegerField()))\
             .order_by('index')
-
-        if person.slug_name in MEMBER_BIOS:
-            context['member_bio'] = MEMBER_BIOS[person.slug_name]
 
         try:
             context['website_url'] = person.links.get(note='web_site').url
