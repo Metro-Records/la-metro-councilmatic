@@ -3,6 +3,7 @@ from io import StringIO, BytesIO
 from datetime import datetime
 from tqdm import tqdm
 from time import sleep
+from shutil import copyfileobj
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -21,11 +22,26 @@ class Command(BaseCommand):
     help = "This command produces a CSV file that lists each Board Report's tags and \
         uploads it to the 'LA Metro Reports' folder in Google Drive."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '-l',
+            '--local',
+            action='store_true',
+            help='Output the generated CSV file to the current directory'
+        )
+
     def handle(self, *args, **options):
+        local = options['local']
 
         csv_string = self.generate_tag_analytics()
         date = datetime.today().strftime('%m_%d_%y')
         output_file_name = f'{date}_tag_analytics.csv'
+
+        if local:
+            with open(output_file_name, 'wb') as f:
+                copyfileobj(csv_string, f)
+
+            return
 
         file_metadata = {
             'name': output_file_name,
