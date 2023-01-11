@@ -2,6 +2,7 @@ import csv
 from io import StringIO, BytesIO
 from datetime import datetime
 from tqdm import tqdm
+from time import sleep
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -49,30 +50,47 @@ class Command(BaseCommand):
         csv_string = StringIO()
         writer = csv.writer(csv_string, delimiter=',')
         writer.writerow(
-            ('File ID',
-             'Identifier',
+            ('File GUID',
+             'File ID'
+             'Matter ID',
              'File Name',
              'Last Action Date',
              'Tag',
+             'Tag GUID',
              'Tag Classification')
         )
 
         self.stdout.write('\nGenerating tag analytics...')
 
         for bill in tqdm(LAMetroBill.objects.iterator(chunk_size=200)):
+            matter_id = bill.api_representation['MatterId']
             for tag in bill.rich_topics:
                 writer.writerow(
                     (bill.board_report.id,
                      bill.identifier,
+                     matter_id,
                      bill.friendly_name,
                      bill.last_action_date,
                      tag.name,
-                     tag.classification)
+                     tag.guid,
+                     self.get_tag_classification(tag))
                 )
+
+            # Each call to a bill's api_representation is a
+            # direct request to the API server
+            sleep(1)
 
         csv_string.seek(0)
 
         return BytesIO(csv_string.read().encode('utf-8'))
+
+    def get_tag_classification(self, tag):
+        """Strips out '_exact' from the end of a tag's classification."""
+
+        if tag.classification.endswith('_exact'):
+            return tag.classification[:-6]
+
+        return tag.classification
 
     def get_google_drive(self):
         """Authenticates a service account and returns a Google Drive object."""
