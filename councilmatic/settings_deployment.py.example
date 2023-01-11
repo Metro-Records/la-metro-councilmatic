@@ -116,6 +116,13 @@ SMART_LOGIC_ENVIRONMENT = 'd3807554-347e-4091-90ea-f107a906aaff'
 # RECAPTCHA_PUBLIC_KEY = ''
 # RECAPTCHA_PRIVATE_KEY = ''
 
+# Django-storages S3 settings
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME = 'bucket name'
+AWS_ACCESS_KEY_ID = 'super public key'
+AWS_SECRET_ACCESS_KEY = 'amazingly secret key'
+AWS_QUERYSTRING_AUTH = False
+
 MERGE_HOST = 'https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/'
 
 # Assumes a locally running instance of the dashboard
