@@ -1,7 +1,9 @@
-django-councilmatic[convert_docs]>=3.2
-https://github.com/opencivicdata/python-legistar-scraper/zipball/master
-pysolr
-sentry-sdk
+django-councilmatic[convert_docs]>=3.0
+Django>=3.2,<3.3
+psycopg2-binary>=2.8
+opencivicdata>=3.1.0
+django-debug-toolbar>=3.4,<3.5
+sentry-sdk==0.14.2
 gunicorn==19.6.0
 dj_database_url
 django-recaptcha==2.0.6
