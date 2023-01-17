@@ -1,5 +1,5 @@
 Django>=3.2,<3.3
-psycopg2-binary>=2.8,<2.9
+psycopg2-binary>=2.8
 opencivicdata>=3.1.0
 #django-councilmatic[convert_docs]==2.6.1
 https://github.com/datamade/django-councilmatic/zipball/hcg/3.0
