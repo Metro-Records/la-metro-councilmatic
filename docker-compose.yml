@@ -1,6 +1,8 @@
 version: '2.4'
 services:
   app:
+    env_file:
+      - .env.local
     #image: ghcr.io/datamade/la-metro-councilmatic:hcg-upgrade
     build:
       dockerfile: Dockerfile.dev
