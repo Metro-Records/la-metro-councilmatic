@@ -1,4 +1,3 @@
-import re
 from operator import attrgetter
 import itertools
 import urllib
@@ -685,7 +684,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         except requests.ConnectionError:
             raise Exception(
                 "ConnectionError: Unable to connect to the searchg engine at {}. Is the search engine running?".format(
-                search_engine_url
+                    search_engine_url
                 )
             )
 

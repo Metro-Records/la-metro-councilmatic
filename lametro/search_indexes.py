@@ -11,7 +11,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     topics = indexes.MultiValueField(faceted=True)
     attachment_text = indexes.CharField()
     viewable = indexes.BooleanField()
-    identifier = indexes.CharField(model_attr='identifier', boost=3.0)
+    identifier = indexes.CharField(model_attr="identifier", boost=3.0)
 
     # Custom Metro facets
     bill_type = indexes.MultiValueField(faceted=True)
