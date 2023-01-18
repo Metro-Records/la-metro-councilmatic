@@ -26,3 +26,4 @@ pytest-mock==1.6.3
 requests-mock==1.8.0
 freezegun==1.0.0
 locust==2.5.0
+pytest-dotenv
