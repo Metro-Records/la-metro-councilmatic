@@ -17,6 +17,8 @@ python-dotenv==0.20.0
 esprima==4.0.1
 django-haystack[elasticsearch]
 elasticsearch>=7.0.0,<7.14.0
+django-environ
+whitenoise
 
 # Development
 django-debug-toolbar
