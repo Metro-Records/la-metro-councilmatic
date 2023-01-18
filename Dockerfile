@@ -18,7 +18,7 @@ RUN pip install --upgrade pip setuptools && \
 
 COPY . /app
 
-RUN mkdir /app/static
+RUN DJANGO_SETTINGS_MODULE=councilmatic.minimal_settings python manage.py collectstatic
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
 
