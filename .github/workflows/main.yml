@@ -25,6 +25,18 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+       elasticsearch:
+         image: elasticsearch:7.14.2
+         ports:
+          - 9200:9200
+         env:
+          discovery.type: single-node
+         options: >-
+           --health-cmd "curl http://localhost:9200/_cluster/health"
+           --health-interval 10s
+           --health-timeout 5s
+           --health-retries 10
+
     steps:
     - uses: actions/checkout@v2
     - name: Lint the code
@@ -47,6 +59,7 @@ jobs:
     - name: Test with pytest
       env:
         DATABASE_URL: postgis://postgres:postgres@localhost:5432/lametro
+        SEARCH_URL: elasticsearch7://localhost:9200/lametro?BATCH_SIZE=10
       run: |
         mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
         pytest -sv
