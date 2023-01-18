@@ -18,4 +18,7 @@ RUN pip install --upgrade pip setuptools && \
 
 COPY . /app
 
+RUN mkdir /app/static
+
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
+
