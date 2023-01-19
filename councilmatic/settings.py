@@ -40,7 +40,15 @@ DATABASES["default"] = dj_database_url.parse(
     ssl_require=True if os.getenv("POSTGRES_REQUIRE_SSL") else False,
 )
 
-HAYSTACK_CONNECTIONS = {"default": env.search_url()}
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine",
+        "URL": env("SEARCH_URL"),
+        "INDEX_NAME": "lametro",
+        "SILENTLY_FAIL": False,
+        "BATCH_SIZE": 10,
+    }
+}
 HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
 HAYSTACK_IDENTIFIER_METHOD = "lametro.utils.get_identifier"
 
