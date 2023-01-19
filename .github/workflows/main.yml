@@ -60,7 +60,6 @@ jobs:
       run: |
         flake8 .
         black --check .
-        mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
         pytest -sv
 
   deploy:
