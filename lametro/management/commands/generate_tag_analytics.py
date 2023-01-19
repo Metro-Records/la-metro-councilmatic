@@ -2,6 +2,8 @@ import csv
 from io import StringIO, BytesIO
 from datetime import datetime
 from tqdm import tqdm
+from time import sleep
+from shutil import copyfileobj
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -20,11 +22,26 @@ class Command(BaseCommand):
     help = "This command produces a CSV file that lists each Board Report's tags and \
         uploads it to the 'LA Metro Reports' folder in Google Drive."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '-l',
+            '--local',
+            action='store_true',
+            help='Output the generated CSV file to the current directory'
+        )
+
     def handle(self, *args, **options):
+        local = options['local']
 
         csv_string = self.generate_tag_analytics()
         date = datetime.today().strftime('%m_%d_%y')
         output_file_name = f'{date}_tag_analytics.csv'
+
+        if local:
+            with open(output_file_name, 'wb') as f:
+                copyfileobj(csv_string, f)
+
+            return
 
         file_metadata = {
             'name': output_file_name,
@@ -49,11 +66,13 @@ class Command(BaseCommand):
         csv_string = StringIO()
         writer = csv.writer(csv_string, delimiter=',')
         writer.writerow(
-            ('File ID',
-             'Identifier',
+            ('File GUID',
+             'File ID'
+             'Matter ID',
              'File Name',
              'Last Action Date',
              'Tag',
+             'Tag GUID',
              'Tag Classification')
         )
 
@@ -64,15 +83,30 @@ class Command(BaseCommand):
                 writer.writerow(
                     (bill.board_report.id,
                      bill.identifier,
+                     self.get_matter_id(bill.api_source.url),
                      bill.friendly_name,
                      bill.last_action_date,
                      tag.name,
-                     tag.classification)
+                     tag.guid,
+                     self.get_tag_classification(tag))
                 )
 
         csv_string.seek(0)
 
         return BytesIO(csv_string.read().encode('utf-8'))
+
+    def get_matter_id(self, source_url):
+        """Parses out the matter ID from a bill's source URL."""
+        prefix = "https://webapi.legistar.com/v1/metro/matters/"
+        return source_url.split(prefix)[-1]
+
+    def get_tag_classification(self, tag):
+        """Strips out '_exact' from the end of a tag's classification."""
+
+        if tag.classification.endswith('_exact'):
+            return tag.classification[:-6]
+
+        return tag.classification
 
     def get_google_drive(self):
         """Authenticates a service account and returns a Google Drive object."""
