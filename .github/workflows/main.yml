@@ -61,7 +61,8 @@ jobs:
         DATABASE_URL: postgis://postgres:postgres@localhost:5432/lametro
         SEARCH_URL: elasticsearch7://localhost:9200/lametro?BATCH_SIZE=10
       run: |
-        mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
+        flake8 .
+        black --check .
         pytest -sv
 
   deploy:
