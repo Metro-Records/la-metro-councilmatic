@@ -79,12 +79,11 @@ class Command(BaseCommand):
         self.stdout.write('\nGenerating tag analytics...')
 
         for bill in tqdm(LAMetroBill.objects.iterator(chunk_size=200)):
-            matter_id = bill.api_representation['MatterId']
             for tag in bill.rich_topics:
                 writer.writerow(
                     (bill.board_report.id,
                      bill.identifier,
-                     matter_id,
+                     self.get_matter_id(bill.api_source.url),
                      bill.friendly_name,
                      bill.last_action_date,
                      tag.name,
@@ -92,13 +91,14 @@ class Command(BaseCommand):
                      self.get_tag_classification(tag))
                 )
 
-            # Each call to a bill's api_representation is a
-            # direct request to the API server
-            sleep(1)
-
         csv_string.seek(0)
 
         return BytesIO(csv_string.read().encode('utf-8'))
+
+    def get_matter_id(self, source_url):
+        """Parses out the matter ID from a bill's source URL."""
+        prefix = "https://webapi.legistar.com/v1/metro/matters/"
+        return source_url.split(prefix)[-1]
 
     def get_tag_classification(self, tag):
         """Strips out '_exact' from the end of a tag's classification."""
