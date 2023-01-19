@@ -59,7 +59,7 @@ jobs:
     - name: Test with pytest
       env:
         DATABASE_URL: postgis://postgres:postgres@localhost:5432/lametro
-        SEARCH_URL: elasticsearch7://localhost:9200/lametro?BATCH_SIZE=10
+        SEARCH_URL: http://localhost:9200
       run: |
         flake8 .
         black --check .
