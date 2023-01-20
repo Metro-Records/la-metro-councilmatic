@@ -645,7 +645,8 @@ class LAPersonDetailView(PersonDetailView):
             is_valid_file = self.validate_file(file_obj)
 
             if not is_valid_file:
-                return self.render_to_response(self.get_context_data(form=form))
+                error = 'Must be a valid image file, and size must be under 7.5mb.'
+                return self.render_to_response(self.get_context_data(form=form, error=error))
 
             file_dir_within_bucket = 'user_upload_files/{username}'.format(username=request.user)
 
