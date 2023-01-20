@@ -136,9 +136,17 @@ DEBUG_TOOLBAR_PANELS = [
 
 SERVICE_ACCOUNT_KEY_PATH = 'configs/lametro_service_acct_key.json'
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-AWS_STORAGE_BUCKET_NAME = 'la-metro-headshots-staging'
-AWS_ACCESS_KEY_ID = os.getenv('ACCESS_KEY')
-AWS_SECRET_ACCESS_KEY = os.getenv('SECRET_KEY')
-AWS_QUERYSTRING_AUTH = False
+try:
+    AWS_ACCESS_KEY_ID = os.getenv('ACCESS_KEY')
+    AWS_SECRET_ACCESS_KEY = os.getenv('SECRET_KEY')
+    AWS_STORAGE_BUCKET_NAME = 'la-metro-headshots-staging'
+    AWS_QUERYSTRING_AUTH = False
+except KeyError:
+    # Handle no settings values
+    print('AWS config not found, defaulting to local storage')
+else:
+    if AWS_SECRET_ACCESS_KEY:
+        DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    else:
+        # Handle blank settings values
+        print('AWS config not found, defaulting to local storage')
