@@ -182,6 +182,9 @@ class LAMetroEventDetail(EventDetailView):
         context = super(EventDetailView, self).get_context_data(**kwargs)
         event = context["event"]
 
+        sources = list(event.sources.all())
+        context['sources'] = sources
+
         # Metro admins should see a status report if Legistar is down.
         # GET the calendar page, which contains relevant URL for agendas.
         if self.request.user.is_authenticated:
@@ -687,6 +690,9 @@ class LAPersonDetailView(PersonDetailView):
 
         context["headshot_form"] = PersonHeadshotForm
         context["biography_form"] = PersonBioForm
+
+        sources = list(person.sources.all())
+        context['sources'] = sources
 
         council_post = person.latest_council_membership.post
 
