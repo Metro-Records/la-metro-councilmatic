@@ -90,6 +90,9 @@ class LABillDetail(BillDetailView):
         context = super().get_context_data(**kwargs)
         bill = self.get_object()
 
+        sources = list(bill.sources.all())
+        context['sources'] = sources
+
         context['attachments'] = bill.attachments.all().order_by(Lower('note'))
 
         actions = bill.actions.all()
@@ -155,6 +158,9 @@ class LAMetroEventDetail(EventDetailView):
     def get_context_data(self, **kwargs):
         context = super(EventDetailView, self).get_context_data(**kwargs)
         event = context['event']
+
+        sources = list(event.sources.all())
+        context['sources'] = sources
 
         # Metro admins should see a status report if Legistar is down.
         # GET the calendar page, which contains relevant URL for agendas.
@@ -589,6 +595,9 @@ class LAPersonDetailView(PersonDetailView):
 
         context = super().get_context_data(**kwargs)
         person = context['person']
+
+        sources = list(person.sources.all())
+        context['sources'] = sources
 
         council_post = person.latest_council_membership.post
 
