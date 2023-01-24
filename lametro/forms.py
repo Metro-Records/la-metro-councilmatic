@@ -159,7 +159,6 @@ class PersonHeadshotForm(forms.ModelForm):
         super(PersonHeadshotForm, self).__init__(*args, **kwargs)
         self.fields['image'].widget.attrs.update({
                     'required': 'True',
-                    'placeholder': 'Enter URL to image...'
                 })
 
     class Meta:
