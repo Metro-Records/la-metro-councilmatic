@@ -237,6 +237,17 @@ consult the Solr logs to confirm the core was remade.
 Nice! The production server should have the newly edited schema and freshly
 built index, ready to search, filter, and facet.
 
+## Connecting to AWS S3 for development
+
+If you want to use the S3 bucket, you’ll need the AWS S3 API keys. This can be found by running:
+    ```bash
+    blackbox_cat configs/settings_deployment.staging.py
+    ```
+
+Grab the values for the `AWS_S3_ACCESS_KEY_ID` and the `AWS_S3_SECRET_ACCESS_KEY`. Then, find/create your `.env` file in the `councilmatic/` folder and paste in your values, naming them `ACCESS_KEY` and `SECRET_KEY` respectively.
+
+Now you should be able to start uploading some files!
+
 ## Adding a new board member
 
 Hooray! A new member has been elected or appointed to the Board of Directors.
