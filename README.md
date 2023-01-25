@@ -40,9 +40,16 @@ When the command exits (`-d`) or your logs indicate that your app is up and runn
 
 ### Load in the data
 
-Every hour, DataMade scrapes the Legistar Web API and makes the results available on the Open Civic Data API, which hosts standardized data patterns about government organizations, people, legislation, and events. Metro Board Reports relies upon this data.
+The Metro app ingests updated data from the Legistar API several times an hour.
 
-To import data, simply run:
+To import data into your local instance, first decrypt the bundled `secrets.py` file, so you can
+retrieve information about private bills.
+
+```
+blackbox_decrypt_file lametro/secrets.py.gpg
+```
+
+Then, simply run:
 
 ```bash
 docker-compose run --rm scrapers
