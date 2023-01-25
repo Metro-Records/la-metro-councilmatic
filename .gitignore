@@ -41,3 +41,4 @@ debug.log
 .gnupg/
 
 lametro/secrets.py
+/lametro/secrets.py
