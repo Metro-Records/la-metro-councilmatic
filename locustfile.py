@@ -16,7 +16,7 @@ class UserBehavior(TaskSet):
 
 
 class WebsiteUser(HttpUser):
-    host = "https://lametro-app-upgrade.datamade.us"
+    host = "https://lametro.datamade.us"
     tasks = [UserBehavior]
     # Average time on page is 1:18
     wait_time = between(60, 90)
