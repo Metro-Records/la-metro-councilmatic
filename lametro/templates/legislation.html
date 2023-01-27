@@ -300,7 +300,7 @@
         // for reference purposes
         console.log( "OCD ID: {{legislation.id}}" )
 
-        {% for source in sources %}
+        {% for source in legislation.sources.all %}
             console.log('source: {{source}}');
         {% endfor %}
     </script>
