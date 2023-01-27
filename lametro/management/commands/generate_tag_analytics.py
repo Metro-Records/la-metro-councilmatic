@@ -2,7 +2,6 @@ import csv
 from io import StringIO, BytesIO
 from datetime import datetime
 from tqdm import tqdm
-from time import sleep
 from shutil import copyfileobj
 
 from django.conf import settings
@@ -23,21 +22,21 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '-l',
-            '--local',
-            action='store_true',
-            help='Output the generated CSV file to the current directory'
+            "-l",
+            "--local",
+            action="store_true",
+            help="Output the generated CSV file to the current directory",
         )
 
     def handle(self, *args, **options):
-        local = options['local']
+        local = options["local"]
 
         csv_string = self.generate_tag_analytics()
         date = datetime.today().strftime("%m_%d_%y")
         output_file_name = f"{date}_tag_analytics.csv"
 
         if local:
-            with open(output_file_name, 'wb') as f:
+            with open(output_file_name, "wb") as f:
                 copyfileobj(csv_string, f)
 
             return
@@ -90,7 +89,7 @@ class Command(BaseCommand):
                         bill.last_action_date,
                         tag.name,
                         tag.guid,
-                        self.get_tag_classification(tag)
+                        self.get_tag_classification(tag),
                     )
                 )
 
@@ -106,7 +105,7 @@ class Command(BaseCommand):
     def get_tag_classification(self, tag):
         """Strips out '_exact' from the end of a tag's classification."""
 
-        if tag.classification.endswith('_exact'):
+        if tag.classification.endswith("_exact"):
             return tag.classification[:-6]
 
         return tag.classification
