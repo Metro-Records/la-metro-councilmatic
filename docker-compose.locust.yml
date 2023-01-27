@@ -3,7 +3,9 @@ version: '2.4'
 services:
   locust:
     container_name: lametro-locust
-    image: lametro:upgrade
+    build:
+      dockerfile: Dockerfile
+      context: .
     volumes:
       - .:/app
     ports:
