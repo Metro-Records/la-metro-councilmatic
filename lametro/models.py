@@ -430,7 +430,7 @@ class LAMetroPerson(Person, SourcesMixin):
         )
 
         if Path(manual_headshot).exists():
-            image_url = 'images/manual-headshots/' + filename
+            image_url = "images/manual-headshots/" + filename
 
         elif self.headshot:
             image_url = self.headshot.url

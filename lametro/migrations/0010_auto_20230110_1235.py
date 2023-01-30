@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lametro', '0009_addeventbroadcast'),
+        ("lametro", "0009_addeventbroadcast"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='eventbroadcast',
-            name='observed',
+            model_name="eventbroadcast",
+            name="observed",
             field=models.BooleanField(default=True),
         ),
     ]

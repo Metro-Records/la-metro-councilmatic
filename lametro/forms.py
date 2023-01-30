@@ -157,13 +157,15 @@ class PersonHeadshotForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PersonHeadshotForm, self).__init__(*args, **kwargs)
-        self.fields['image'].widget.attrs.update({
-                    'required': 'True',
-                })
+        self.fields["image"].widget.attrs.update(
+            {
+                "required": "True",
+            }
+        )
 
     class Meta:
         model = LAMetroPerson
-        fields = ['image']
+        fields = ["image"]
 
 
 class PersonBioForm(forms.ModelForm):
@@ -172,12 +174,8 @@ class PersonBioForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PersonBioForm, self).__init__(*args, **kwargs)
-        self.fields['biography'].widget.attrs.update({
-                    'rows': '5',
-                    'required': 'True'
-                })
+        self.fields["biography"].widget.attrs.update({"rows": "5", "required": "True"})
 
     class Meta:
         model = LAMetroPerson
-        fields = ['biography']
-
+        fields = ["biography"]
