@@ -192,7 +192,7 @@
 
 {% block extra_js %}
     <script>
-        {% for source in sources %}
+        {% for source in person.sources.all %}
             console.log('source: {{source}}');
         {% endfor %}
     </script>
