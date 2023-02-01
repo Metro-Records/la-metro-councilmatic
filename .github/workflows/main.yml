@@ -26,13 +26,26 @@ jobs:
         ports:
           - 5432:5432
     steps:
-    - name: Upgrade setuptools
-      run: |
-        pip install --upgrade setuptools
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install gdal-bin
+        sudo apt-get install gdal-bin \
+          python-dev \
+          libxml2-dev \
+          libxslt1-dev \
+          antiword \
+          unrtf \
+          poppler-utils \
+          pstotext \
+          tesseract-ocr \
+          flac \
+          ffmpeg \
+          lame \
+          libmad0 \
+          libsox-fmt-mp3 \
+          sox \
+          libjpeg-dev \
+          swig
     - uses: actions/checkout@v2
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
