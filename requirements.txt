@@ -10,7 +10,7 @@ django-recaptcha==2.0.6
 google-api-python-client==2.42.0
 google-auth-oauthlib
 google-auth-httplib2
-textract
+textract==1.6.5
 django-storages[boto3]<1.13
 urllib3>1.25.0
 python-dotenv==0.20.0
