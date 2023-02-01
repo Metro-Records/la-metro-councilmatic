@@ -630,7 +630,6 @@ class LAPersonDetailView(PersonDetailView):
         # The submitted hidden field determines which form was used
         if "bio_form" in request.POST:
             form = PersonBioForm(request.POST, instance=person)
-            print(request.POST.get("biography"))
             bio_content = request.POST.get("biography")
 
             # Prevent whitespace from being submitted
