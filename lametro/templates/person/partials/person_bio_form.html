@@ -1,0 +1,16 @@
+{% load extras %}
+{% load lametro_extras %}
+
+<form role="form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if biography_form.biography.errors %}
+        <br>
+        <p style="color: #eb6864;">{{biography_form.biography.errors.as_text}}</p>
+    {% endif %}
+    {{biography_form.bio_form}}
+    <label for="{{biography_form.biography.id_for_label}}">Update {{biography_form.biography.label}}:</label>
+    {{biography_form.biography}}
+    <button class="btn btn-primary">Submit</button>
+
+</form>

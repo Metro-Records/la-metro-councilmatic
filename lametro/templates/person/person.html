@@ -49,7 +49,7 @@
             <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
 
             {% if user.is_authenticated %}
-            {% include 'partials/person_headshot_form.html' %}
+            {% include './partials/person_headshot_form.html' %}
             {% endif %}
 
             <hr />
@@ -87,7 +87,7 @@
 
                     <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
                     {% if user.is_authenticated %}
-                    {% include 'partials/person_headshot_form.html' %}
+                    {% include './partials/person_headshot_form.html' %}
                     {% endif %}
                 </div>
             </div>
@@ -105,7 +105,7 @@
 
 
             {% if user.is_authenticated %}
-            {% include 'partials/person_bio_form.html' %} 
+            {% include './partials/person_bio_form.html' %}
             {% endif %}
             <br />
 

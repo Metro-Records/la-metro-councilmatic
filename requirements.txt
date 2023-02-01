@@ -12,7 +12,9 @@ google-auth-oauthlib
 google-auth-httplib2
 textract
 django-storages[boto3]<1.13
+urllib3>1.25.0
 python-dotenv==0.20.0
+esprima==4.0.1
 
 # Development
 django-debug-toolbar>=3.4,<3.5
