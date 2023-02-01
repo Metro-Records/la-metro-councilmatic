@@ -630,12 +630,18 @@ class LAPersonDetailView(PersonDetailView):
         # The submitted hidden field determines which form was used
         if "bio_form" in request.POST:
             form = PersonBioForm(request.POST, instance=person)
+            print(request.POST.get("biography"))
+            bio_content = request.POST.get("biography")
 
-            if form.is_valid():
+            # Prevent whitespace from being submitted
+            if bio_content.isspace():
+                error = "Please fill out the bio"
+                return self.render_to_response(
+                    self.get_context_data(form=form, bio_error=error)
+                )
+            else:
                 form.save()
                 return HttpResponseRedirect(self.request.path_info)
-            else:
-                return self.render_to_response(self.get_context_data(form=form))
 
         elif "headshot_form" in request.POST:
             form = PersonHeadshotForm(request.POST, instance=person)
@@ -646,7 +652,7 @@ class LAPersonDetailView(PersonDetailView):
             if not is_valid_file:
                 error = "Must be a valid image file, and size must be under 7.5mb."
                 return self.render_to_response(
-                    self.get_context_data(form=form, error=error)
+                    self.get_context_data(form=form, headshot_error=error)
                 )
 
             person.image = self.get_file_url(request, file_obj)

@@ -4,9 +4,9 @@
 <form role="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    {% if biography_form.biography.errors %}
+    {% if bio_error %}
         <br>
-        <p style="color: #eb6864;">{{biography_form.biography.errors.as_text}}</p>
+        <p style="color: #eb6864;">*{{bio_error}}</p>
     {% endif %}
     {{biography_form.bio_form}}
     <label for="{{biography_form.biography.id_for_label}}">Update {{biography_form.biography.label}}:</label>
