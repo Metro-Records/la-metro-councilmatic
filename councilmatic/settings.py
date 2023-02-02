@@ -144,8 +144,4 @@ except KeyError:
     # Handle no settings values
     print("AWS config not found, defaulting to local storage")
 else:
-    if AWS_SECRET_ACCESS_KEY:
-        DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    else:
-        # Handle blank settings values
-        print("AWS config not found, defaulting to local storage")
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
