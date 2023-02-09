@@ -240,10 +240,10 @@
             document.getElementById('pdf-form-input').value= null;
             $('#pdf-form-message, #pdf-check-viewer-test, #pdf-form-cancel, #pdf-form-submit').addClass('hidden');
         });
-
-        // for reference purposes
-        console.log( "OCD ID: {{event.id}}" )
     });
+    {% for source in event.sources.all %}
+        console.log('source: {{source}}');
+    {% endfor %}
     </script>
 
 {% endblock %}
