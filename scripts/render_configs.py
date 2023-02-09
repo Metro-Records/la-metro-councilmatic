@@ -1,5 +1,4 @@
 if __name__ == "__main__":
-
     import sys
 
     from os.path import abspath, dirname, join

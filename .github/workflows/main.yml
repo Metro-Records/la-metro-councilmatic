@@ -43,8 +43,8 @@ jobs:
         pip install black flake8
     - name: Test with pytest
       run: |
-        flake8 .
-        black --check .
+        flake8 . --exclude lametro/migrations
+        black --check . --exclude lametro/migrations
         mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
         pytest -sv
 
