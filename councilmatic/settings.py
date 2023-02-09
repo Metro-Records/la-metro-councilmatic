@@ -17,11 +17,11 @@ from .settings_jurisdiction import *  # noqa
 
 from dotenv import load_dotenv
 
-dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(dotenv_path)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+dotenv_path = os.path.join(BASE_DIR, ".env")
+load_dotenv(dotenv_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -36,6 +36,18 @@ try:
 except ImportError:
     SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
 
+try:
+    from .settings_deployment import (
+        AWS_ACCESS_KEY_ID,
+        AWS_SECRET_ACCESS_KEY,
+        AWS_STORAGE_BUCKET_NAME,
+    )
+except ImportError:
+    # Handle no credentials configured
+    print("AWS config not found, defaulting to local storage")
+else:
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    AWS_QUERYSTRING_AUTH = False
 
 # Application definition
 
@@ -134,13 +146,3 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 SERVICE_ACCOUNT_KEY_PATH = "configs/lametro_service_acct_key.json"
-
-try:
-    AWS_ACCESS_KEY_ID = os.getenv("ACCESS_KEY")
-    AWS_SECRET_ACCESS_KEY = os.getenv("SECRET_KEY")
-    AWS_QUERYSTRING_AUTH = False
-except KeyError:
-    # Handle no settings values
-    print("AWS config not found, defaulting to local storage")
-else:
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
