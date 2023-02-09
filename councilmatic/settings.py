@@ -138,7 +138,6 @@ SERVICE_ACCOUNT_KEY_PATH = "configs/lametro_service_acct_key.json"
 try:
     AWS_ACCESS_KEY_ID = os.getenv("ACCESS_KEY")
     AWS_SECRET_ACCESS_KEY = os.getenv("SECRET_KEY")
-    AWS_STORAGE_BUCKET_NAME = BUCKET_NAME  # noqa: F405
     AWS_QUERYSTRING_AUTH = False
 except KeyError:
     # Handle no settings values
