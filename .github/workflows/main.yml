@@ -44,7 +44,7 @@ jobs:
     - name: Test with pytest
       run: |
         flake8 . --exclude lametro/migrations --exclude councilmatic/settings_jurisdiction.py
-        black --check . --exclude lametro/migrations --exclude councilmatic/settings_jurisdiction.py
+        black --check . --exclude lametro/migrations councilmatic/settings_jurisdiction.py
         mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
         pytest -sv
 
