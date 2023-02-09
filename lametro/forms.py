@@ -16,7 +16,6 @@ from lametro.models import LAMetroBill, LAMetroPerson
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
-
     captcha = ReCaptchaField(widget=ReCaptchaV3)
 
     def __init__(self, *args, **kwargs):
@@ -101,7 +100,6 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
 
 class AgendaUrlForm(forms.Form):
-
     agenda = forms.CharField(
         label="Agenda URL",
         max_length=500,
@@ -131,7 +129,6 @@ class AgendaUrlForm(forms.Form):
 
 
 class AgendaPdfForm(forms.Form):
-
     agenda = forms.FileField(
         label="Agenda PDF",
         error_messages={"required": "Oh no! Please provide a valid PDF."},
@@ -152,7 +149,6 @@ class AgendaPdfForm(forms.Form):
 
 
 class PersonHeadshotForm(forms.ModelForm):
-
     headshot_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
 
     def __init__(self, *args, **kwargs):
@@ -169,7 +165,6 @@ class PersonHeadshotForm(forms.ModelForm):
 
 
 class PersonBioForm(forms.ModelForm):
-
     bio_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
 
     def __init__(self, *args, **kwargs):

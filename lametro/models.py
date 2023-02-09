@@ -196,7 +196,6 @@ class LAMetroBill(Bill, SourcesMixin):
 
     @property
     def board_report(self):
-
         try:
             br = self.versions.get(note="Board Report")
             br.url = br.links.get().url
@@ -1036,7 +1035,6 @@ class Packet(models.Model):
 
 
 class BillPacket(Packet):
-
     bill = models.OneToOneField(
         LAMetroBill, related_name="packet", on_delete=models.CASCADE
     )
@@ -1069,7 +1067,6 @@ class BillPacket(Packet):
 
 
 class EventPacket(Packet):
-
     event = models.OneToOneField(
         LAMetroEvent, related_name="packet", on_delete=models.CASCADE
     )
@@ -1080,7 +1077,6 @@ class EventPacket(Packet):
 
     @property
     def related_files(self):
-
         agenda_doc = self.event.documents.get(note="Agenda")
 
         related = [agenda_doc.links.get().url]
@@ -1114,7 +1110,6 @@ class EventPacket(Packet):
 
 
 class LAMetroSubject(models.Model):
-
     CLASSIFICATION_CHOICES = [
         ("bill_type_exact", "Board Report Type"),
         ("lines_and_ways_exact", "Lines / Ways"),

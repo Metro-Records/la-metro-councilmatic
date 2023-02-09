@@ -309,5 +309,4 @@ def group_by_classification(queryset):
         queryset.order_by("classification"),
         lambda item: item.get_classification_display(),
     ):
-
         yield group, list(members)

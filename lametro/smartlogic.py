@@ -5,7 +5,6 @@ from requests.exceptions import HTTPError
 
 
 class SmartLogic(object):
-
     BASE_URL = "https://cloud.smartlogic.com/"
     SERVICE_URL = "svc/d3807554-347e-4091-90ea-f107a906aaff/ses/CombinedModel/"
 

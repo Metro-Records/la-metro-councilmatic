@@ -12,7 +12,6 @@ from lametro.smartlogic import SmartLogic
 
 
 class ClassificationMixin:
-
     DEFAULT_FACET = "topics_exact"
 
     FACET_CLASSES = {

@@ -662,7 +662,6 @@ LIVE_COMMENT_PARAMETERS = [
 def test_accepts_live_comment(
     event, event_document, event_name, expected_live_comment_value
 ):
-
     in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime("%Y-%m-%d %H:%M")
     test_event = event.build(name=event_name, start_date=in_an_hour)
     event_document.build(note="Agenda", event_id=test_event.id)
@@ -676,7 +675,6 @@ def test_accepts_live_comment(
 def test_live_comment_details_display_as_expected(
     client, event, event_document, event_name, expected_live_comment_value
 ):
-
     in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime("%Y-%m-%d %H:%M")
     test_event = event.build(name=event_name, start_date=in_an_hour)
     event_document.build(note="Agenda", event_id=test_event.id)

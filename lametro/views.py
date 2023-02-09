@@ -409,7 +409,6 @@ class LABoardMembersView(CouncilMembersView):
     template_name = "board_members/board_members.html"
 
     def map(self):
-
         maps = {
             "map_geojson_districts": {"type": "FeatureCollection", "features": []},
             "map_geojson_sectors": {"type": "FeatureCollection", "features": []},
@@ -551,7 +550,6 @@ class LACommitteesView(CommitteesView):
 
 
 class LACommitteeDetailView(CommitteeDetailView):
-
     model = LAMetroOrganization
     template_name = "committee.html"
 
@@ -590,7 +588,6 @@ class LACommitteeDetailView(CommitteeDetailView):
 
 
 class LAPersonDetailView(PersonDetailView):
-
     template_name = "person/person.html"
     model = LAMetroPerson
 
@@ -685,7 +682,6 @@ class LAPersonDetailView(PersonDetailView):
         return file_url
 
     def get_context_data(self, **kwargs):
-
         context = super().get_context_data(**kwargs)
         person = context["person"]
 
@@ -770,7 +766,6 @@ class IdentifierBoostSearchQuery(SolrSearchQuery):
 
 
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
-
     load_all = False
 
     def __init__(self, *args, **kwargs):
@@ -943,7 +938,6 @@ class MinutesView(EventsView):
         return filtered_historical_events
 
     def _get_stored_events(self, start_datetime=None, end_datetime=None):
-
         # we only want to display meetings that can have minutes
         meetings_with_minutes = (
             Q(event__name__icontains="LA SAFE")

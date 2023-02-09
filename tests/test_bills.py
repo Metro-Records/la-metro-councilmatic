@@ -185,7 +185,6 @@ def test_actions_and_agendas(
     caplog,
     event_has_related_org,
 ):
-
     caplog.set_level(logging.WARNING)
 
     # create a bill with no actions or agendas and confirm actions and agendas

@@ -16,7 +16,6 @@ from lametro.exceptions import UploadError
 
 
 class Command(BaseCommand):
-
     help = "This command produces a CSV file that lists each Board Report's tags and \
         uploads it to the 'LA Metro Reports' folder in Google Drive."
 
