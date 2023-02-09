@@ -116,6 +116,13 @@ SMART_LOGIC_ENVIRONMENT = 'd3807554-347e-4091-90ea-f107a906aaff'
 # RECAPTCHA_PUBLIC_KEY = ''
 # RECAPTCHA_PRIVATE_KEY = ''
 
+# Django-storages S3 settings
+# Uncomment and set secret values in a .env file as documented in the README to enable
+# remote storage
+# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = "la-metro-headshots-staging"
+
 MERGE_HOST = 'https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/'
 
 # Assumes a locally running instance of the dashboard

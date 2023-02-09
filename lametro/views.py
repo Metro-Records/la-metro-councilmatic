@@ -57,10 +57,17 @@ from lametro.models import (
     LAMetroOrganization,
     LAMetroSubject,
 )
-from lametro.forms import AgendaUrlForm, AgendaPdfForm, LAMetroCouncilmaticSearchForm
+from lametro.forms import (
+    AgendaUrlForm,
+    AgendaPdfForm,
+    LAMetroCouncilmaticSearchForm,
+    PersonHeadshotForm,
+    PersonBioForm,
+)
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
 from councilmatic.settings import PIC_BASE_URL
+from councilmatic.custom_storage import MediaStorage
 
 from opencivicdata.legislative.models import EventDocument
 
@@ -402,7 +409,6 @@ class LABoardMembersView(CouncilMembersView):
     template_name = "board_members/board_members.html"
 
     def map(self):
-
         maps = {
             "map_geojson_districts": {"type": "FeatureCollection", "features": []},
             "map_geojson_sectors": {"type": "FeatureCollection", "features": []},
@@ -544,7 +550,6 @@ class LACommitteesView(CommitteesView):
 
 
 class LACommitteeDetailView(CommitteeDetailView):
-
     model = LAMetroOrganization
     template_name = "committee.html"
 
@@ -583,7 +588,6 @@ class LACommitteeDetailView(CommitteeDetailView):
 
 
 class LAPersonDetailView(PersonDetailView):
-
     template_name = "person/person.html"
     model = LAMetroPerson
 
@@ -615,10 +619,74 @@ class LAPersonDetailView(PersonDetailView):
 
         return response
 
-    def get_context_data(self, **kwargs):
+    def post(self, request, *args, **kwargs):
+        slug = self.kwargs["slug"]
+        person = self.model.objects.get(slug=slug)
+        self.object = self.get_object()
 
+        # The submitted hidden field determines which form was used
+        if "bio_form" in request.POST:
+            form = PersonBioForm(request.POST, instance=person)
+            bio_content = request.POST.get("biography")
+
+            # Prevent whitespace from being submitted
+            if bio_content.isspace():
+                error = "Please fill out the bio"
+                return self.render_to_response(
+                    self.get_context_data(form=form, bio_error=error)
+                )
+            else:
+                form.save()
+                return HttpResponseRedirect(self.request.path_info)
+
+        elif "headshot_form" in request.POST:
+            form = PersonHeadshotForm(request.POST, instance=person)
+            file_obj = request.FILES.get("headshot", "")
+
+            is_valid_file = self.validate_file(file_obj)
+
+            if not is_valid_file:
+                error = "Must be a valid image file, and size must be under 7.5mb."
+                return self.render_to_response(
+                    self.get_context_data(form=form, headshot_error=error)
+                )
+
+            person.image = self.get_file_url(request, file_obj)
+            person.save()
+            return HttpResponseRedirect(self.request.path_info)
+
+    def validate_file(self, file):
+        image_formats = (".png", ".jpeg", ".jpg", ".tif", ".tiff", ".webp", ".avif")
+
+        is_image = file.name.endswith(tuple(image_formats))
+        max_file_size = 7864320  # 7.5mb
+
+        if is_image and file.size <= max_file_size:
+            return True
+        return False
+
+    def get_file_url(self, request, file):
+        # Save file in bucket and return the resulting url
+
+        file_dir_within_bucket = "user_upload_files/{username}".format(
+            username=request.user
+        )
+
+        # create full file path
+        file_path_within_bucket = os.path.join(file_dir_within_bucket, file.name)
+
+        media_storage = MediaStorage()
+
+        media_storage.save(file_path_within_bucket, file)
+        file_url = media_storage.url(file_path_within_bucket)
+        return file_url
+
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         person = context["person"]
+
+        context["headshot_form"] = PersonHeadshotForm
+        context["biography_form"] = PersonBioForm
 
         council_post = person.latest_council_membership.post
 
@@ -698,7 +766,6 @@ class IdentifierBoostSearchQuery(SolrSearchQuery):
 
 
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
-
     load_all = False
 
     def __init__(self, *args, **kwargs):
@@ -871,7 +938,6 @@ class MinutesView(EventsView):
         return filtered_historical_events
 
     def _get_stored_events(self, start_datetime=None, end_datetime=None):
-
         # we only want to display meetings that can have minutes
         meetings_with_minutes = (
             Q(event__name__icontains="LA SAFE")

@@ -36,7 +36,7 @@ from councilmatic_core.models import (
 )
 
 from lametro.utils import format_full_text, parse_subject
-from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS
+from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -196,7 +196,6 @@ class LAMetroBill(Bill, SourcesMixin):
 
     @property
     def board_report(self):
-
         try:
             br = self.versions.get(note="Board Report")
             br.url = br.links.get().url
@@ -414,6 +413,12 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def headshot_url(self):
+        if self.image:
+            # Assigning this to image_url would make 'return static(image_url)'
+            # at the end of this property concatenate 'static' to the url.
+            # Returning here solves that.
+            return self.image
+
         file_directory = os.path.dirname(__file__)
         absolute_file_directory = os.path.abspath(file_directory)
 
@@ -433,6 +438,19 @@ class LAMetroPerson(Person, SourcesMixin):
             image_url = "images/headshot_placeholder.png"
 
         return static(image_url)
+
+    @property
+    def current_bio(self):
+        if self.biography:
+            bio = self.biography
+
+        elif self.slug_name in MEMBER_BIOS:
+            bio = MEMBER_BIOS[self.slug_name]
+
+        else:
+            return False
+
+        return bio
 
     @property
     def current_memberships(self):
@@ -1017,7 +1035,6 @@ class Packet(models.Model):
 
 
 class BillPacket(Packet):
-
     bill = models.OneToOneField(
         LAMetroBill, related_name="packet", on_delete=models.CASCADE
     )
@@ -1050,7 +1067,6 @@ class BillPacket(Packet):
 
 
 class EventPacket(Packet):
-
     event = models.OneToOneField(
         LAMetroEvent, related_name="packet", on_delete=models.CASCADE
     )
@@ -1061,7 +1077,6 @@ class EventPacket(Packet):
 
     @property
     def related_files(self):
-
         agenda_doc = self.event.documents.get(note="Agenda")
 
         related = [agenda_doc.links.get().url]
@@ -1095,7 +1110,6 @@ class EventPacket(Packet):
 
 
 class LAMetroSubject(models.Model):
-
     CLASSIFICATION_CHOICES = [
         ("bill_type_exact", "Board Report Type"),
         ("lines_and_ways_exact", "Lines / Ways"),

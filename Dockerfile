@@ -7,7 +7,7 @@ RUN apt-get update && \
     cd blackbox && \
     make copy-install
 
-FROM python:3.10-slim-bullseye
+FROM python:3.10
 LABEL maintainer "DataMade <info@datamade.us>"
 
 RUN apt-get update && \

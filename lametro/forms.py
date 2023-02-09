@@ -12,11 +12,10 @@ from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
 
-from lametro.models import LAMetroBill
+from lametro.models import LAMetroBill, LAMetroPerson
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
-
     captcha = ReCaptchaField(widget=ReCaptchaV3)
 
     def __init__(self, *args, **kwargs):
@@ -101,7 +100,6 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
 
 class AgendaUrlForm(forms.Form):
-
     agenda = forms.CharField(
         label="Agenda URL",
         max_length=500,
@@ -131,7 +129,6 @@ class AgendaUrlForm(forms.Form):
 
 
 class AgendaPdfForm(forms.Form):
-
     agenda = forms.FileField(
         label="Agenda PDF",
         error_messages={"required": "Oh no! Please provide a valid PDF."},
@@ -149,3 +146,31 @@ class AgendaPdfForm(forms.Form):
             return agenda_pdf
         else:
             raise forms.ValidationError("File type not supported. Please submit a PDF.")
+
+
+class PersonHeadshotForm(forms.ModelForm):
+    headshot_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super(PersonHeadshotForm, self).__init__(*args, **kwargs)
+        self.fields["image"].widget.attrs.update(
+            {
+                "required": "True",
+            }
+        )
+
+    class Meta:
+        model = LAMetroPerson
+        fields = ["image"]
+
+
+class PersonBioForm(forms.ModelForm):
+    bio_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super(PersonBioForm, self).__init__(*args, **kwargs)
+        self.fields["biography"].widget.attrs.update({"rows": "5", "required": "True"})
+
+    class Meta:
+        model = LAMetroPerson
+        fields = ["biography"]

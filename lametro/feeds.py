@@ -17,7 +17,6 @@ class LAMetroPersonDetailFeed(PersonDetailFeed):
         return o
 
     def items(self, person):
-
         person.committee_sponsorships
 
         if person.committee_sponsorships:

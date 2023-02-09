@@ -75,6 +75,8 @@ HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), ".." "/lametro/static/im
 
 SHOW_TEST_EVENTS = False
 
+AWS_STORAGE_BUCKET_NAME = "la-metro-headshots-staging"
+
 SMART_LOGIC_KEY = "smartlogic api key"
 SMART_LOGIC_ENVIRONMENT = "0ef5d755-1f43-4a7e-8b06-7591bed8d453"
 

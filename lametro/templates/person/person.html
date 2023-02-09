@@ -48,6 +48,10 @@
             </p>
             <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
 
+            {% if user.is_authenticated %}
+            {% include './partials/person_headshot_form.html' %}
+            {% endif %}
+
             <hr />
 
             {% if map_geojson %}
@@ -82,6 +86,9 @@
                     </p>
 
                     <p class="small"><a href="/about/#about-la-metro"><i class="fa fa-info-circle" aria-hidden="true"></i> More about Metro appointments</a> </p>
+                    {% if user.is_authenticated %}
+                    {% include './partials/person_headshot_form.html' %}
+                    {% endif %}
                 </div>
             </div>
 
@@ -89,13 +96,18 @@
         </div>
 
         <div class='col-sm-8 no-pad-mobile'>
-            {% if member_bio %}
+            {% if person.current_bio %}
                 <h3>
                     <i class="fa fa-user" aria-hidden="true"></i> About {{ person.name }}
                 </h3>
-
-                <p>{{ member_bio | safe }}</p><br />
+                <p class="bio">{{person.current_bio | safe}}</p>
             {% endif %}
+
+
+            {% if user.is_authenticated %}
+            {% include './partials/person_bio_form.html' %}
+            {% endif %}
+            <br />
 
             <ul class="nav nav-pills">
                 <li role="presentation" {% if request.GET.view == 'committees'  or request.GET.view == None %}class='active' {% endif %}>    <a href="/person/{{person.slug}}/?view=committees">

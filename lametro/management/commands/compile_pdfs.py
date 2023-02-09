@@ -7,11 +7,9 @@ import tqdm
 
 
 class Command(BaseCommand):
-
     help = "This command compiles PDF packets for LA Metro events and board reports."
 
     def add_arguments(self, parser):
-
         group = parser.add_mutually_exclusive_group(required=False)
 
         group.add_argument(
@@ -37,7 +35,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-
         self.all_documents = options.get("all_documents")
         self.merge = not options.get("db_only")
 
@@ -50,7 +47,6 @@ class Command(BaseCommand):
             self._compile_board_reports()
 
     def _compile_events(self):
-
         events = self._events_to_compile()
 
         for event in tqdm.tqdm(events, desc="Events"):
@@ -62,7 +58,6 @@ class Command(BaseCommand):
                 event_packet.save(merge=self.merge)
 
     def _events_to_compile(self):
-
         events = (
             LAMetroEvent.objects.filter(documents__note="Agenda")
             .filter(agenda__related_entities__bill__documents__isnull=False)
@@ -71,7 +66,6 @@ class Command(BaseCommand):
         )
 
         if not self.all_documents:
-
             # if an event, or its related objects are changed, the
             # updated_at of the event field will update.
             #
@@ -111,7 +105,6 @@ class Command(BaseCommand):
         return events
 
     def _compile_board_reports(self):
-
         bills = self._board_reports_to_compile()
 
         for bill in tqdm.tqdm(bills, desc="Board Reports"):
@@ -124,7 +117,6 @@ class Command(BaseCommand):
                 bill_packet.save(merge=self.merge)
 
     def _board_reports_to_compile(self):
-
         bills = (
             LAMetroBill.objects.filter(documents__isnull=False)
             .only("id", "slug")
@@ -132,7 +124,6 @@ class Command(BaseCommand):
         )
 
         if not self.all_documents:
-
             # If a document has been added, removed, or changed on a bill
             # then the bill's updated_at field will update.
             #

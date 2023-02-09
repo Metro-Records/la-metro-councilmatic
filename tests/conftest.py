@@ -291,7 +291,6 @@ def membership(db, metro_organization, metro_person):
 def metro_subject(db):
     class LAMetroSubjectFactory:
         def build(self, **kwargs):
-
             if "name" in kwargs:
                 current_subject = kwargs.get("name")
             else:
