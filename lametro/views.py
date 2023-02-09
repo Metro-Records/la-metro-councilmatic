@@ -688,9 +688,6 @@ class LAPersonDetailView(PersonDetailView):
         context["headshot_form"] = PersonHeadshotForm
         context["biography_form"] = PersonBioForm
 
-        sources = list(person.sources.all())
-        context["sources"] = sources
-
         council_post = person.latest_council_membership.post
 
         try:
