@@ -114,6 +114,7 @@ div#collapseURL .panel-body, div#collapsePDF .panel-body {
 
 .popover.right {
     margin-right: 1%;
+    margin-top: 200px;
 }
 
 .leaflet-control-attribution { display: none; }
@@ -368,11 +369,11 @@ hr .events-line {
  * https://css-tricks.com/hash-tag-links-padding/
  */
 #legislation-types td > p::before {
-	display: block; 
-	content: " "; 
-	margin-top: -100px !important; 
-	height: 100px; 
-	visibility: hidden; 
+	display: block;
+	content: " ";
+	margin-top: -100px !important;
+	height: 100px;
+	visibility: hidden;
 	pointer-events: none;
 }
 
@@ -387,4 +388,42 @@ hr .events-line {
 
 #id_image {
     width: 100%;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.bg-white {
+    background-color: rgba(255, 255, 255, .7);
+}
+
+.w-80 {
+    width: 80%;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+#hero {
+    background-image:
+        linear-gradient(
+          rgba(0, 0, 0, 0.9),
+          rgba(270, 270, 270, 0.6)
+        ),
+        url('../images/la-metro-regional-rail-map-copy.gif');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    min-height: 200px;
+    height: unset;
 }
