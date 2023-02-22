@@ -19,18 +19,12 @@
 
 <div class="container-fluid">
     {% if MAP_CONFIG %}
-    <div class="row">
-        <div class="col-sm-6">
-            <h1 class="map-heading">
-                Metro Board of Directors
-            </h1>
-        </div>
-    </div>
+    <h1 class="map-heading">Metro Board of Directors</h1>
 </div>
 
-<div class="container-fluid d-flex justify-center align-center" id="hero">
-    <div class="row d-flex justify-center w-100">
-        <div class="col-sm-9 bg-white w-80">
+<div class="container-fluid" id="search-header">
+    <div class="row d-flex align-center h-100">
+        <div class="col-sm-10 col-sm-offset-1 bg-white ">
             <h4>Look up your Metro Board Members</h4>
             <div class="input-group address-search">
                 <input name="search_address" id='search_address' type="text" class="form-control" placeholder="Enter your address">
@@ -43,7 +37,7 @@
                     </a>
                 </div>
             </div>
-            <p>Search by zip (ex. 90012), city (ex. Acton, Los Angeles), or street address (ex. 200 N Spring St, Los Angeles)</p>
+            <p class="search-example">Search by zip (ex. 90012), city (ex. Acton, Los Angeles), or street address (ex. 200 N Spring St, Los Angeles)</p>
         </div>
     </div>
 </div>
@@ -76,7 +70,7 @@
                   <label id="cityToggle" class="btn btn-xs btn-city">
                     <input type="radio" name="options" autocomplete="off"> City of LA
                   </label>
-                  <a tabindex="0" class="map-info" data-container="body" data-toggle="popover" data-placement="right" title="What does this map represent?" data-content="<p style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px;'>The three layers of this map show areas from which members of the Metro Board of Directors are nominated:<br><br>
+                  <a tabindex="0" class="map-info" data-container="body" data-toggle="popover" data-placement="right" title="What do these map layers represent?" data-content="<p style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px;'>The three layers of this map show areas from which members of the Metro Board of Directors are nominated:<br><br>
                     <strong>(1) Los Angeles County Districts</strong> – The elected representative from each district from the Los Angeles County Board of Supervisors serves on the Metro Board.<br><br>
                     <strong>(2) Sectors</strong> – As defined by the California League of Cities, all the incorporated and unincorporated areas in Los Angeles County, excluding the City of Los Angeles, are divided into four sectors. Each sector nominates one representative, which is approved and appointed by all members of the California League of Cities, to serve on the Metro Board.<br><br>
                     <strong>(3) City of Los Angeles</strong> – Residents within the City of Los Angeles are represented by the mayor and three city appointees on the Metro Board.<br><br>

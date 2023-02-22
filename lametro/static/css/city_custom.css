@@ -406,24 +406,24 @@ hr .events-line {
     background-color: rgba(255, 255, 255, .7);
 }
 
-.w-80 {
-    width: 80%;
+.h-100 {
+    height: 100%;
 }
 
-.w-100 {
-    width: 100%;
+.search-example {
+    margin-top: 10px;
+    color:black
 }
 
-#hero {
+#search-header {
     background-image:
         linear-gradient(
           rgba(0, 0, 0, 0.9),
-          rgba(270, 270, 270, 0.6)
+          rgba(270, 270, 270, 0.4)
         ),
-        url('../images/la-metro-regional-rail-map-copy.gif');
+        url('../images/la-metro-subway.jpeg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
-    min-height: 200px;
-    height: unset;
+    height: 200px;
 }
