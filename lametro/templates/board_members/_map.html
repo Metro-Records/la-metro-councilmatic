@@ -368,6 +368,29 @@
         });
     }
 
+    function activateButton(button) {
+        $('#' + button + 'Toggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
+        $('#' + button + 'Toggle').addClass('active')
+    }
+
+    function changeLayersDistrict() {
+        map.addLayer(districts);
+        map.removeLayer(sectors);
+        map.removeLayer(los_angeles_city);
+    }
+
+    function changeLayersSector() {
+        map.addLayer(sectors);
+        map.removeLayer(districts);
+        map.removeLayer(los_angeles_city);
+    }
+
+    function changeLayersCity() {
+        map.addLayer(los_angeles_city);
+        map.removeLayer(districts);
+        map.removeLayer(sectors);
+    }
+
     $(function() {
         initialize();
 
@@ -393,27 +416,38 @@
         });
 
         $('#districtToggle').on('click', function() {
-            map.addLayer(districts);
-            map.removeLayer(sectors);
-            map.removeLayer(los_angeles_city);
+            changeLayersDistrict();
             $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
             removeCheck();
         });
 
         $('#sectorToggle').on('click', function() {
-            map.addLayer(sectors);
-            map.removeLayer(districts);
-            map.removeLayer(los_angeles_city);
+            changeLayersSector();
             $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
             removeCheck();
         });
 
         $('#cityToggle').on('click', function() {
-            map.addLayer(los_angeles_city);
-            map.removeLayer(districts);
-            map.removeLayer(sectors);
+            changeLayersCity();
             $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
             removeCheck();
+        });
+
+        // TODO: get each person's section to highlight correctly on the map
+        $('#council-members tbody tr').on('mouseover', function(e) {
+            removeCheck();
+            $('#toggleControls label').removeClass('active');
+
+            if ($(this).is(':contains("District appointee")')) {
+                activateButton('district');
+                changeLayersDistrict();
+            } else if ($(this).is(':contains("Sector appointee")')) {
+                activateButton('sector');
+                changeLayersSector();
+            } else if ($(this).is(':contains("Los Angeles")')) {
+                activateButton('city');
+                changeLayersCity();
+            };
         });
 
     });
