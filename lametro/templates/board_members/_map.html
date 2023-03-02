@@ -369,8 +369,18 @@
     }
 
     function activateButton(button) {
-        $('#' + button + 'Toggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
-        $('#' + button + 'Toggle').addClass('active')
+        $('#' + button + 'Toggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>');
+        $('#' + button + 'Toggle').addClass('active');
+
+        // Remove the 'active' class from unused layer buttons
+        let layersArr = ['district', 'section', 'city'];
+        layersArr = jQuery.grep(layersArr, function(value) {
+            return value != button;
+        });
+
+        layersArr.forEach(element => {
+            $('#' + element + 'Toggle').removeClass('active');
+        });
     }
 
     function changeLayersDistrict() {
@@ -434,9 +444,8 @@
         });
 
         // TODO: get each person's section to highlight correctly on the map
-        $('#council-members tbody tr').on('mouseover', function(e) {
+        $('#council-members tbody tr').on('mouseover', function() {
             removeCheck();
-            $('#toggleControls label').removeClass('active');
 
             if ($(this).is(':contains("District appointee")')) {
                 activateButton('district');
