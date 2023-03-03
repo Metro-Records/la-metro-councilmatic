@@ -362,30 +362,34 @@
     }
 
     function removeCheck() {
-        $('div#toggleControls .active').html( function(){
-            var buttonLabel = $('div#toggleControls .active').html();
-            return buttonLabel.replace('<i class="fa fa-check" aria-hidden="true"></i>', '');
-        });
+        $('#toggleControls .fa.fa-check').remove();
     }
 
     function changeLayers(layer) {
         $('#' + layer + 'Toggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
+        $('#' + layer + 'Toggle').addClass('active')
 
         switch (layer) {
             case 'district':
                 map.addLayer(districts);
                 map.removeLayer(sectors);
                 map.removeLayer(los_angeles_city);
+                $('#sectorToggle').removeClass('active');
+                $('#cityToggle').removeClass('active');
                 break;
             case 'sector':
                 map.addLayer(sectors);
                 map.removeLayer(districts);
                 map.removeLayer(los_angeles_city);
+                $('#districtToggle').removeClass('active');
+                $('#cityToggle').removeClass('active');
                 break;
             case 'city':
                 map.addLayer(los_angeles_city);
                 map.removeLayer(districts);
                 map.removeLayer(sectors);
+                $('#districtToggle').removeClass('active');
+                $('#sectorToggle').removeClass('active');
                 break;
         }
     }
@@ -415,25 +419,22 @@
         });
 
         $('#districtToggle').on('click', function() {
-            changeLayersDistrict();
-            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
             removeCheck();
+            changeLayers('district');
         });
 
         $('#sectorToggle').on('click', function() {
-            changeLayersSector();
-            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
             removeCheck();
+            changeLayers('sector');
         });
 
         $('#cityToggle').on('click', function() {
-            changeLayersCity();
-            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
             removeCheck();
+            changeLayers('city');
         });
 
-        $('#council-members tbody tr').on('click', function() {
-            $('#toggleControls .fa.fa-check').remove();
+        $('#council-members tbody tr').on('click', function(e) {
+            removeCheck();
 
             if ($(this).is(':contains("District appointee")')) {
                 changeLayers('district');
