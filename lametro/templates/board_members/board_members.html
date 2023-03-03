@@ -194,6 +194,14 @@
         $('tbody tr').on( 'mouseover', function () {
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
+            // TODO: maybe make this is switch case?
+            if ($(this).is(':contains("District appointee")')) {
+                activateButton('district');
+            } else if ($(this).is(':contains("Sector appointee")')) {
+                activateButton('sector');
+            } else if ($(this).is(':contains("Los Angeles")')) {
+                activateButton('city');
+            };
             activeToggle = $('#toggleControls').find('.active').attr('id');
             memberNameSlug = $(this).attr('data')
             hoverOnRow(this.id, activeToggle, memberNameSlug);
@@ -204,6 +212,11 @@
             activeToggle = $('#toggleControls').find('.active').attr('id');
             hoverOffRow(this.id, activeToggle);
         } )
+
+        function activateButton(button) {
+            $('#districtToggle, #sectorToggle, #cityToggle').removeClass('active');
+            $('#' + button + 'Toggle').addClass('active');
+        }
 
         function hoverOffRow(select_id, active_id){
             var controlView = $("#toggleControls").is(":hidden");

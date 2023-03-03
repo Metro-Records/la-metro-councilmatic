@@ -368,21 +368,6 @@
         });
     }
 
-    function activateButton(button) {
-        $('#' + button + 'Toggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>');
-        $('#' + button + 'Toggle').addClass('active');
-
-        // Remove the 'active' class from unused layer buttons
-        let layersArr = ['district', 'section', 'city'];
-        layersArr = jQuery.grep(layersArr, function(value) {
-            return value != button;
-        });
-
-        layersArr.forEach(element => {
-            $('#' + element + 'Toggle').removeClass('active');
-        });
-    }
-
     function changeLayersDistrict() {
         map.addLayer(districts);
         map.removeLayer(sectors);
@@ -443,18 +428,17 @@
             removeCheck();
         });
 
-        // TODO: get each person's section to highlight correctly on the map
         $('#council-members tbody tr').on('mouseover', function() {
-            removeCheck();
+            $('#toggleControls .fa.fa-check').remove();
 
             if ($(this).is(':contains("District appointee")')) {
-                activateButton('district');
+                $('#districtToggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
                 changeLayersDistrict();
             } else if ($(this).is(':contains("Sector appointee")')) {
-                activateButton('sector');
+                $('#sectorToggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
                 changeLayersSector();
             } else if ($(this).is(':contains("Los Angeles")')) {
-                activateButton('city');
+                $('#cityToggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
                 changeLayersCity();
             };
         });
