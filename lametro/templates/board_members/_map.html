@@ -368,22 +368,26 @@
         });
     }
 
-    function changeLayersDistrict() {
-        map.addLayer(districts);
-        map.removeLayer(sectors);
-        map.removeLayer(los_angeles_city);
-    }
+    function changeLayers(layer) {
+        $('#' + layer + 'Toggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
 
-    function changeLayersSector() {
-        map.addLayer(sectors);
-        map.removeLayer(districts);
-        map.removeLayer(los_angeles_city);
-    }
-
-    function changeLayersCity() {
-        map.addLayer(los_angeles_city);
-        map.removeLayer(districts);
-        map.removeLayer(sectors);
+        switch (layer) {
+            case 'district':
+                map.addLayer(districts);
+                map.removeLayer(sectors);
+                map.removeLayer(los_angeles_city);
+                break;
+            case 'sector':
+                map.addLayer(sectors);
+                map.removeLayer(districts);
+                map.removeLayer(los_angeles_city);
+                break;
+            case 'city':
+                map.addLayer(los_angeles_city);
+                map.removeLayer(districts);
+                map.removeLayer(sectors);
+                break;
+        }
     }
 
     $(function() {
@@ -428,18 +432,15 @@
             removeCheck();
         });
 
-        $('#council-members tbody tr').on('mouseover', function() {
+        $('#council-members tbody tr').on('click', function() {
             $('#toggleControls .fa.fa-check').remove();
 
             if ($(this).is(':contains("District appointee")')) {
-                $('#districtToggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
-                changeLayersDistrict();
+                changeLayers('district');
             } else if ($(this).is(':contains("Sector appointee")')) {
-                $('#sectorToggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
-                changeLayersSector();
+                changeLayers('sector');
             } else if ($(this).is(':contains("Los Angeles")')) {
-                $('#cityToggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
-                changeLayersCity();
+                changeLayers('city');
             };
         });
 
