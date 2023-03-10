@@ -323,8 +323,8 @@ class LAMetroEventsView(EventsView):
             event__extras__approved_minutes=True, note__icontains="minutes"
         )
 
-        # A base queryset for objects with media
-        media_events = LAMetroEvent.objects.with_media()
+        # A base queryset for non-test objects with media
+        media_events = LAMetroEvent.objects.with_media().exclude(name__icontains="test")
 
         # If yes...
         if start_date_str and end_date_str:

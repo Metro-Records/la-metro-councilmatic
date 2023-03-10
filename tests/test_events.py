@@ -691,3 +691,18 @@ def test_live_comment_details_display_as_expected(
 
     for line in live_comment_signature:
         assert (line in response_content) == expected_live_comment_value
+
+
+@pytest.mark.django_db
+def test_exclude_events_with_test_in_name(event, client):
+    # TODO: make sure that we can correctly search for events on the page
+    event_regular = event.build()
+
+    url = reverse("lametro:events")
+    response = client.get(url)
+    print(response.content.decode("utf-8"))
+
+    assert event_regular.name in response.content.decode("utf-8")
+    # event_test = event.build(name="Test - Live Regular Meeting Test")
+    # event_test.save()
+    # assert event_test.name not in response.content.decode("utf-8")
