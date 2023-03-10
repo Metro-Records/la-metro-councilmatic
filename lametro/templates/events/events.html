@@ -94,6 +94,24 @@
                 <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
                 <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
 
+            {% elif past_events %}
+                <h2 style="margin-top: 40px;"><span>Past {{ CITY_VOCAB.EVENTS }}</span>
+                <br class="non-desktop-only"/>
+                <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
+                </h2><br class="non-mobile-only"/>
+
+                <div class='row'>
+                    <div class='col-sm-8' id='events_message'></div>
+                </div>
+
+                {% for date, event_list in past_events %}
+                    <div class='event-listing'>
+                    {% include "events/_past_event_day.html" %}
+                    </div>
+                {% endfor %}
+
+                <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
+                <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
             {% elif select_events %}
                 <h2><span>{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</span>
                 <br class="non-desktop-only"/>
