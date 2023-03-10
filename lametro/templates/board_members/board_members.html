@@ -194,7 +194,15 @@
         $('tbody tr').on( 'mouseover', function () {
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
-            activeToggle = $('#toggleControls').find('.active').attr('id');
+
+            if ($(this).is(':contains("District appointee")')) {
+                activeToggle = activateButton('district');
+            } else if ($(this).is(':contains("Sector appointee")')) {
+                activeToggle = activateButton('sector');
+            } else if ($(this).is(':contains("Los Angeles")')) {
+                activeToggle = activateButton('city');
+            };
+
             memberNameSlug = $(this).attr('data')
             hoverOnRow(this.id, activeToggle, memberNameSlug);
         } );
@@ -204,6 +212,12 @@
             activeToggle = $('#toggleControls').find('.active').attr('id');
             hoverOffRow(this.id, activeToggle);
         } )
+
+        function activateButton(button) {
+            $('#districtToggle, #sectorToggle, #cityToggle').removeClass('active');
+            $('#' + button + 'Toggle').addClass('active');
+            return (button + 'Toggle')
+        }
 
         function hoverOffRow(select_id, active_id){
             var controlView = $("#toggleControls").is(":hidden");
