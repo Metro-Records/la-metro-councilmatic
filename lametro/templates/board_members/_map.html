@@ -361,11 +361,27 @@
         }
     }
 
-    function removeCheck() {
-        $('div#toggleControls .active').html( function(){
-            var buttonLabel = $('div#toggleControls .active').html();
-            return buttonLabel.replace('<i class="fa fa-check" aria-hidden="true"></i>', '');
-        });
+    function changeLayers(layer) {
+        $('#toggleControls .fa.fa-check').remove();
+        $('#' + layer + 'Toggle').prepend('<i class="fa fa-check" aria-hidden="true"></i>')
+
+        switch (layer) {
+            case 'district':
+                map.addLayer(districts);
+                map.removeLayer(sectors);
+                map.removeLayer(los_angeles_city);
+                break;
+            case 'sector':
+                map.addLayer(sectors);
+                map.removeLayer(districts);
+                map.removeLayer(los_angeles_city);
+                break;
+            case 'city':
+                map.addLayer(los_angeles_city);
+                map.removeLayer(districts);
+                map.removeLayer(sectors);
+                break;
+        }
     }
 
     $(function() {
@@ -393,27 +409,26 @@
         });
 
         $('#districtToggle').on('click', function() {
-            map.addLayer(districts);
-            map.removeLayer(sectors);
-            map.removeLayer(los_angeles_city);
-            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
-            removeCheck();
+            changeLayers('district');
         });
 
         $('#sectorToggle').on('click', function() {
-            map.addLayer(sectors);
-            map.removeLayer(districts);
-            map.removeLayer(los_angeles_city);
-            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
-            removeCheck();
+            changeLayers('sector');
         });
 
         $('#cityToggle').on('click', function() {
-            map.addLayer(los_angeles_city);
-            map.removeLayer(districts);
-            map.removeLayer(sectors);
-            $(this).prepend('<i class="fa fa-check" aria-hidden="true"></i>')
-            removeCheck();
+            changeLayers('city');
+
+        });
+
+        $('#council-members tbody tr').on('mouseover', function() {
+            if ($(this).is(':contains("District appointee")')) {
+                changeLayers('district');
+            } else if ($(this).is(':contains("Sector appointee")')) {
+                changeLayers('sector');
+            } else if ($(this).is(':contains("Los Angeles")')) {
+                changeLayers('city');
+            };
         });
 
     });
