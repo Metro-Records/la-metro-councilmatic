@@ -323,6 +323,9 @@ class LAMetroEventsView(EventsView):
             event__extras__approved_minutes=True, note__icontains="minutes"
         )
 
+        # A base queryset for non-test objects with media
+        media_events = LAMetroEvent.objects.with_media().exclude(name__icontains="test")
+
         # If yes...
         if start_date_str and end_date_str:
             context["start_date"] = start_date_str
@@ -331,8 +334,7 @@ class LAMetroEventsView(EventsView):
             end_date_time = parser.parse(end_date_str)
 
             select_events = (
-                LAMetroEvent.objects.with_media()
-                .filter(start_time__gt=start_date_time)
+                media_events.filter(start_time__gt=start_date_time)
                 .filter(start_time__lt=end_date_time)
                 .order_by("start_time")
             )
@@ -350,7 +352,7 @@ class LAMetroEventsView(EventsView):
 
         # If all meetings
         elif self.request.GET.get("show"):
-            all_events = LAMetroEvent.objects.with_media().order_by("-start_time")
+            all_events = media_events.order_by("-start_time")
             org_all_events = []
 
             for event_date, events in itertools.groupby(all_events, key=day_grouper):
@@ -361,10 +363,8 @@ class LAMetroEventsView(EventsView):
         # If no...
         else:
             # Upcoming events
-            future_events = (
-                LAMetroEvent.objects.with_media()
-                .filter(start_time__gt=timezone.now())
-                .order_by("start_time")
+            future_events = media_events.filter(start_time__gt=timezone.now()).order_by(
+                "start_time"
             )
             org_future_events = []
 
@@ -375,10 +375,8 @@ class LAMetroEventsView(EventsView):
             context["future_events"] = org_future_events
 
             # Past events
-            past_events = (
-                LAMetroEvent.objects.with_media()
-                .filter(start_time__lt=timezone.now())
-                .order_by("-start_time")
+            past_events = media_events.filter(start_time__lt=timezone.now()).order_by(
+                "-start_time"
             )
 
             past_events = past_events.prefetch_related(
