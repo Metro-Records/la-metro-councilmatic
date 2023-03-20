@@ -351,7 +351,7 @@ def test_upcoming_committee_meetings(event, n_before_board):
         else:
             start_date = after_board_date
 
-        event.build(name="Test Committee", start_date=start_date, id=get_event_id())
+        event.build(name="Sample Committee", start_date=start_date, id=get_event_id())
 
     upcoming_meetings = LAMetroEvent.upcoming_committee_meetings()
 
@@ -701,7 +701,25 @@ def test_exclude_events_with_test_in_name(event, client):
     event_test = event.build(name="Test - Live Regular Meeting Test")
     event_regular = event.build(name="Live Regular Meeting", id=101)
 
+    # Check the events calendar
     url = reverse("lametro:event")
+    response = client.get(url)
+
+    assert event_test.name not in response.content.decode("utf-8")
+    assert event_regular.name in response.content.decode("utf-8")
+
+    # Check the homepage for upcoming events
+    next_year = str(datetime.now().year + 1)
+    event_test = event.build(
+        name="Test - Live Regular Meeting Test",
+        id=102,
+        start_date=next_year + "-05-18 12:15",
+    )
+    event_regular = event.build(
+        name="Live Regular Meeting", id=103, start_date=next_year + "-05-18 12:15"
+    )
+
+    url = reverse("lametro:index")
     response = client.get(url)
 
     assert event_test.name not in response.content.decode("utf-8")
