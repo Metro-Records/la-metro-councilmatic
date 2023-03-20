@@ -78,8 +78,7 @@ class LAMetroBillManager(models.Manager):
         Metro staff devised three checks for knowing when to hide or show a report:
 
         (1) Is the bill private (i.e., `restrict_view` is True)? Then, do not show it.
-        N.b., the scrapers contain logic for populating the restrict_view field:
-        https://github.com/opencivicdata/scrapers-us-municipal/blob/master/lametro/bills.py
+        N.b., the scrapers contain logic for populating the restrict_view field.
 
         (2) Does the Bill have a classification of "Board Box" or "Board
         Correspondence"? Then, show it.

@@ -14,7 +14,7 @@ Metro Board Reports is a member of the [Councilmatic family](https://www.council
 
 ## Setup
 
-These days, we run apps in containers for local development. More on that [here](https://github.com/datamade/how-to/blob/master/docker/local-development.md). Prefer to run the app locally? See the [legacy setup instructions](https://github.com/datamade/la-metro-councilmatic/blob/b8bc14f6d90f1b05e24b5076b1bfcd5e0d37527a/README.md).
+These days, we run apps in containers for local development. More on that [here](https://github.com/datamade/how-to/docker/local-development.md). Prefer to run the app locally? See the [legacy setup instructions](https://github.com/datamade/la-metro-councilmatic/blob/b8bc14f6d90f1b05e24b5076b1bfcd5e0d37527a/README.md).
 
 ### Set-up pre-commit
 
@@ -166,7 +166,7 @@ the following steps first on staging, then – after confirming that everything
 is working as expected – on production.
 
 1. Deploy your changes to the appropriate environment (staging or production).
-    - To deploy to staging, merge the relevant PR into `master`.
+    - To deploy to staging, merge the relevant PR into `main`.
     - To deploy to production, [create and push a tag](https://github.com/datamade/deploy-a-site/blob/master/How-to-deploy-with-continuous-deployment.md#3-deploy-to-production).
 
 2. Shell into the server, and `cd` into the relevant project directory.
@@ -278,7 +278,7 @@ new member that were created without a post.
 ### Update the Metro app
 
 - Add the new member's headshot to the `lametro/static/images/manual-headshots`
-directory. **Be sure to follow the naming convention `${given_name}-${family_name}.jpg`, all lowercase with punctuation stripped.** 
+directory. **Be sure to follow the naming convention `${given_name}-${family_name}.jpg`, all lowercase with punctuation stripped.**
 - Add the new member's bio to the `MEMBER_BIOS` object in `councilmatic/settings_jurisdiction.py`, again **following the `${given_name}-${family_name}.jpg` naming convention.**
     - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
     - Tip: Replace newlines in the provided bio with `<br /><br />`.
@@ -339,4 +339,4 @@ Report it here: https://github.com/datamade/la-metro-councilmatic/issues
 
 ## Copyright
 
-Copyright (c) 2021 DataMade. Released under the [MIT License](https://github.com/datamade/la-metro-councilmatic/blob/master/LICENSE).
+Copyright (c) 2023 DataMade. Released under the [MIT License](https://github.com/datamade/la-metro-councilmatic/blob/main/LICENSE).
