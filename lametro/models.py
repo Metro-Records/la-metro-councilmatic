@@ -750,7 +750,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
                 )
             )
             .order_by("start_time", "is_board_meeting")
-        )
+        ).exclude(name__icontains="test")
 
         if not cls.upcoming_board_meetings().exists():
             return meetings[:5]
