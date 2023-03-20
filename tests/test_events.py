@@ -351,7 +351,7 @@ def test_upcoming_committee_meetings(event, n_before_board):
         else:
             start_date = after_board_date
 
-        event.build(name="Test Committee", start_date=start_date, id=get_event_id())
+        event.build(name="Sample Committee", start_date=start_date, id=get_event_id())
 
     upcoming_meetings = LAMetroEvent.upcoming_committee_meetings()
 
