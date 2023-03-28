@@ -650,7 +650,7 @@ class LAPersonDetailView(PersonDetailView):
                     self.get_context_data(form=form, headshot_error=error)
                 )
 
-            # cache.clear()
+            cache.clear()
             person.image = self.get_file_url(request, file_obj)
             person.save()
             return HttpResponseRedirect(self.request.path_info)
