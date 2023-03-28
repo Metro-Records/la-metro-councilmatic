@@ -32,6 +32,7 @@ from django.http import (
 )
 from django.core import management
 from django.core.serializers import serialize
+from django.core.cache import cache
 
 from councilmatic_core.views import (
     IndexView,
@@ -649,6 +650,7 @@ class LAPersonDetailView(PersonDetailView):
                     self.get_context_data(form=form, headshot_error=error)
                 )
 
+            cache.clear()
             person.image = self.get_file_url(request, file_obj)
             person.save()
             return HttpResponseRedirect(self.request.path_info)
