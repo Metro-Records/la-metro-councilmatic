@@ -412,11 +412,11 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def headshot_url(self):
-        if self.image:
+        if self.headshot:
             # Assigning this to image_url would make 'return static(image_url)'
             # at the end of this property concatenate 'static' to the url.
             # Returning here solves that.
-            return self.image
+            return self.headshot
 
         file_directory = os.path.dirname(__file__)
         absolute_file_directory = os.path.abspath(file_directory)
@@ -440,8 +440,8 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def current_bio(self):
-        if self.biography:
-            bio = self.biography
+        if self.councilmatic_biography:
+            bio = self.councilmatic_biography
 
         elif self.slug_name in MEMBER_BIOS:
             bio = MEMBER_BIOS[self.slug_name]

@@ -51,7 +51,7 @@ services:
       - SOLR_LOG_LEVEL=INFO
 
   scrapers:
-    image: ghcr.io/datamade/scrapers-us-municipal:main
+    image: ghcr.io/metro-records/scrapers-lametro:deploy
     stdin_open: true
     tty: true
     depends_on:

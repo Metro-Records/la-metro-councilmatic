@@ -1,4 +1,4 @@
-FROM ghcr.io/datamade/la-metro-councilmatic:main
+FROM ghcr.io/metro-records/la-metro-councilmatic:main
 
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip && \
