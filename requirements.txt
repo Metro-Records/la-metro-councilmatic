@@ -1,4 +1,4 @@
-django-councilmatic[convert_docs]>=3.1
+django-councilmatic[convert_docs]>=3.2
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
 pysolr
 sentry-sdk

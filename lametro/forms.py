@@ -169,8 +169,10 @@ class PersonBioForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PersonBioForm, self).__init__(*args, **kwargs)
-        self.fields["biography"].widget.attrs.update({"rows": "5", "required": "True"})
+        self.fields["councilmatic_biography"].widget.attrs.update(
+            {"rows": "5", "required": "True"}
+        )
 
     class Meta:
         model = LAMetroPerson
-        fields = ["biography"]
+        fields = ["councilmatic_biography"]

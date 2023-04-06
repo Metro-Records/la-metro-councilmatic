@@ -626,7 +626,7 @@ class LAPersonDetailView(PersonDetailView):
         # The submitted hidden field determines which form was used
         if "bio_form" in request.POST:
             form = PersonBioForm(request.POST, instance=person)
-            bio_content = request.POST.get("biography")
+            bio_content = request.POST.get("councilmatic_biography")
 
             # Prevent whitespace from being submitted
             if bio_content.isspace():
@@ -650,9 +650,11 @@ class LAPersonDetailView(PersonDetailView):
                     self.get_context_data(form=form, headshot_error=error)
                 )
 
-            cache.clear()
-            person.image = self.get_file_url(request, file_obj)
+            person.headshot = self.get_file_url(request, file_obj)
             person.save()
+
+            cache.clear()
+
             return HttpResponseRedirect(self.request.path_info)
 
     def validate_file(self, file):
