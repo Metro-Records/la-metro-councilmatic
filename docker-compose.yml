@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile.dev
       context: .
     container_name: lametro
+    env_file:
+      - .env
     stdin_open: true
     tty: true
     ports:

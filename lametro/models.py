@@ -416,7 +416,8 @@ class LAMetroPerson(Person, SourcesMixin):
             # Assigning this to image_url would make 'return static(image_url)'
             # at the end of this property concatenate 'static' to the url.
             # Returning here solves that.
-            return self.headshot
+            if "headshot_placeholder.png" not in self.headshot.path:
+                return self.headshot
 
         file_directory = os.path.dirname(__file__)
         absolute_file_directory = os.path.abspath(file_directory)
