@@ -203,7 +203,7 @@ def test_current_meeting_no_streaming_event(concurrent_current_meetings, mocker)
 
 def test_current_meeting_no_streaming_event_late_start(event, mocker):
     """
-    Test that if an meeting is scheduled but not yet streaming, it is returned
+    Test that if a meeting is scheduled but not yet streaming, it is returned
     as current up to 20 minutes past its scheduled start.
     """
     # Build an event scheduled to start 15 minutes ago.
@@ -215,6 +215,10 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
         .isoformat(),
     }
     late_current_meeting = event.build(**crenshaw_meeting_info)
+
+    # Remove the broadcast since it hasn't been started. If it were kept,
+    # it would be filtered out by potentially_current_meetings
+    late_current_meeting.broadcast.get().delete()
 
     mock_streaming_meetings(mocker)
 
@@ -724,3 +728,23 @@ def test_exclude_events_with_test_in_name(event, client):
 
     assert event_test.name not in response.content.decode("utf-8")
     assert event_regular.name in response.content.decode("utf-8")
+
+
+@pytest.mark.django_db
+def test_exclude_short_broadcasted_events(event):
+    """
+    Check that a meeting that is not streaming past it's start time, but that has
+    already been broadcasted does not get returned as potentially current.
+    """
+    test_event = event.build(
+        start_date=LAMetroEvent._time_from_now(minutes=3)
+        .replace(second=0, microsecond=0)
+        .isoformat()
+    )
+
+    test_event.status = "confirmed"
+    EventBroadcast.objects.create(event=test_event)
+    test_event.save()
+
+    potentially_current = LAMetroEvent._potentially_current_meetings()
+    assert test_event not in potentially_current
