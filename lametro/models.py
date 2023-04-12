@@ -641,7 +641,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return cls.objects.filter(
             start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
-        ).exclude(status="cancelled")
+        ).exclude(status="cancelled", broadcast__observed=True)
 
     @classmethod
     def _streaming_meeting(cls):
