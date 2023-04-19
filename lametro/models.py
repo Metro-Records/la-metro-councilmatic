@@ -639,9 +639,14 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         six_hours_ago = cls._time_ago(hours=6)
         five_minutes_from_now = cls._time_from_now(minutes=5)
 
+        was_cancelled = Q(status="cancelled")
+        has_passed = Q(broadcast__observed=True) & ~Q(
+            pk__in=cls._streaming_meeting().values_list("pk")
+        )
+
         return cls.objects.filter(
             start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
-        ).exclude(Q(status="cancelled") | Q(broadcast__observed=True))
+        ).exclude(was_cancelled | has_passed)
 
     @classmethod
     def _streaming_meeting(cls):
