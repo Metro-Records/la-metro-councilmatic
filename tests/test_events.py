@@ -216,10 +216,6 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
     }
     late_current_meeting = event.build(**crenshaw_meeting_info)
 
-    # Remove the broadcast since it hasn't been started. If it were kept,
-    # it would be filtered out by potentially_current_meetings
-    late_current_meeting.broadcast.get().delete()
-
     mock_streaming_meetings(mocker)
 
     current_meetings = LAMetroEvent.current_meeting()
@@ -478,7 +474,10 @@ def test_most_recent_past_meetings(event):
 
     # Events that shouldn't be returned
     event_older_than_two_weeks = event.build(
-        name="Board Meeting", start_date=three_weeks_ago, id=get_event_id()
+        name="Board Meeting",
+        start_date=three_weeks_ago,
+        has_broadcast=True,
+        id=get_event_id(),
     )
     event_later_today = event.build(
         name="Board Meeting", start_date=one_hour_from_now, id=get_event_id()
@@ -489,13 +488,22 @@ def test_most_recent_past_meetings(event):
 
     # Events that should be returned
     event_earlier_today = event.build(
-        name="Board Meeting", start_date=earlier_today, id=get_event_id()
+        name="Board Meeting",
+        start_date=earlier_today,
+        has_broadcast=True,
+        id=get_event_id(),
     )
     event_four_days_ago = event.build(
-        name="Board Meeting", start_date=four_days_ago, id=get_event_id()
+        name="Board Meeting",
+        start_date=four_days_ago,
+        has_broadcast=True,
+        id=get_event_id(),
     )
     event_five_days_ago = event.build(
-        name="Board Meeting", start_date=five_days_ago, id=get_event_id()
+        name="Board Meeting",
+        start_date=five_days_ago,
+        has_broadcast=True,
+        id=get_event_id(),
     )
 
     recent_past_meetings = LAMetroEvent.most_recent_past_meetings()
@@ -520,6 +528,7 @@ def test_display_status(event):
         start_date=this_morning,
         status="cancelled",
         id=get_event_id(),
+        has_broadcast=True,
     )
 
     assert cancelled_this_morning.has_passed is True
@@ -737,13 +746,13 @@ def test_exclude_short_broadcasted_events(event):
     already been broadcasted does not get returned as potentially current.
     """
     test_event = event.build(
+        has_broadcast=True,
         start_date=LAMetroEvent._time_from_now(minutes=3)
         .replace(second=0, microsecond=0)
-        .isoformat()
+        .isoformat(),
     )
 
     test_event.status = "confirmed"
-    EventBroadcast.objects.create(event=test_event)
     test_event.save()
 
     potentially_current = LAMetroEvent._potentially_current_meetings()
