@@ -427,7 +427,7 @@ hr .events-line {
 @-moz-document url-prefix() {
     @media only screen and (max-device-width : 415px) and (orientation: portrait) {
         .blurb {
-            font-size: 2vh;
+            font-size: 35px;
         }
     }
 }
