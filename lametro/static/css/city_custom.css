@@ -423,3 +423,11 @@ hr .events-line {
     background-position: center center;
     height: 200px;
 }
+
+@-moz-document url-prefix() {
+    @media only screen and (max-device-width : 415px) and (orientation: portrait) {
+        .blurb {
+            font-size: 2vh;
+        }
+    }
+}
