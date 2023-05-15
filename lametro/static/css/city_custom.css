@@ -424,10 +424,19 @@ hr .events-line {
     height: 200px;
 }
 
-@-moz-document url-prefix() {
+body {
+    /* text-size-adjust: none; */
+    -moz-text-size-adjust: none;
+    /* font-size: 30px; */
+}
+
+
+/* @-moz-document url-prefix() {
     @media only screen and (max-device-width : 415px) and (orientation: portrait) {
         .blurb {
-            font-size: 35px;
+            text-size-adjust: none;
+            -moz-text-size-adjust: none;
+            font-size: 30px;
         }
     }
-}
+} */
