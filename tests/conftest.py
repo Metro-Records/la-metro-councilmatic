@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytest
 from uuid import uuid4
 from random import randrange
+from operator import xor
 
 from opencivicdata.legislative.models import (
     LegislativeSession,
@@ -127,7 +128,7 @@ def legislative_session(db, jurisdiction):
 @pytest.mark.django_db
 def event(db, jurisdiction):
     class EventFactory:
-        def build(self, has_broadcast=False, **kwargs):
+        def build(self, has_broadcast=True, **kwargs):
             event_info = {
                 "id": "ocd-event/17fdaaa3-0aba-4df0-9893-2c2e8e94d18d",
                 "created_at": "2017-05-27 11:10:46.574-05",
@@ -145,7 +146,7 @@ def event(db, jurisdiction):
             # Get event from queryset so it has the start_time annotation from the manager
             metro_event = LAMetroEvent.objects.get(id=event.id)
 
-            if has_broadcast:
+            if metro_event.start_time < datetime.now(timezone.utc) and has_broadcast:
                 EventBroadcast.objects.create(event=metro_event)
 
             return metro_event

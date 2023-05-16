@@ -210,6 +210,7 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
     crenshaw_meeting_info = {
         "id": "ocd-event/3c93e81f-f1a9-42ce-97fe-30c77a4a6740",
         "name": "Crenshaw Project Corporation",
+        "has_broadcast": False,
         "start_date": LAMetroEvent._time_ago(minutes=15)
         .replace(second=0, microsecond=0)
         .isoformat(),
@@ -476,7 +477,6 @@ def test_most_recent_past_meetings(event):
     event_older_than_two_weeks = event.build(
         name="Board Meeting",
         start_date=three_weeks_ago,
-        has_broadcast=True,
         id=get_event_id(),
     )
     event_later_today = event.build(
@@ -490,19 +490,19 @@ def test_most_recent_past_meetings(event):
     event_earlier_today = event.build(
         name="Board Meeting",
         start_date=earlier_today,
-        has_broadcast=True,
+        # has_broadcast=True,
         id=get_event_id(),
     )
     event_four_days_ago = event.build(
         name="Board Meeting",
         start_date=four_days_ago,
-        has_broadcast=True,
+        # has_broadcast=True,
         id=get_event_id(),
     )
     event_five_days_ago = event.build(
         name="Board Meeting",
         start_date=five_days_ago,
-        has_broadcast=True,
+        # has_broadcast=True,
         id=get_event_id(),
     )
 
@@ -528,7 +528,7 @@ def test_display_status(event):
         start_date=this_morning,
         status="cancelled",
         id=get_event_id(),
-        has_broadcast=True,
+        # has_broadcast=True,
     )
 
     assert cancelled_this_morning.has_passed is True
@@ -746,11 +746,11 @@ def test_exclude_short_broadcasted_events(event):
     already been broadcasted does not get returned as potentially current.
     """
     test_event = event.build(
-        has_broadcast=True,
         start_date=LAMetroEvent._time_from_now(minutes=3)
         .replace(second=0, microsecond=0)
         .isoformat(),
     )
+    EventBroadcast.objects.create(event=test_event)
 
     test_event.status = "confirmed"
     test_event.save()
