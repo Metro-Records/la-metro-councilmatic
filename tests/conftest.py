@@ -2,7 +2,6 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from uuid import uuid4
 from random import randrange
-from operator import xor
 
 from opencivicdata.legislative.models import (
     LegislativeSession,

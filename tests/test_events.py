@@ -490,19 +490,16 @@ def test_most_recent_past_meetings(event):
     event_earlier_today = event.build(
         name="Board Meeting",
         start_date=earlier_today,
-        # has_broadcast=True,
         id=get_event_id(),
     )
     event_four_days_ago = event.build(
         name="Board Meeting",
         start_date=four_days_ago,
-        # has_broadcast=True,
         id=get_event_id(),
     )
     event_five_days_ago = event.build(
         name="Board Meeting",
         start_date=five_days_ago,
-        # has_broadcast=True,
         id=get_event_id(),
     )
 
@@ -528,7 +525,6 @@ def test_display_status(event):
         start_date=this_morning,
         status="cancelled",
         id=get_event_id(),
-        # has_broadcast=True,
     )
 
     assert cancelled_this_morning.has_passed is True
@@ -750,6 +746,8 @@ def test_exclude_short_broadcasted_events(event):
         .replace(second=0, microsecond=0)
         .isoformat(),
     )
+
+    # Manually create the associated event since the start time for this event is in the future
     EventBroadcast.objects.create(event=test_event)
 
     test_event.status = "confirmed"
