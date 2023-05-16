@@ -14,7 +14,7 @@
       {% with associated_bill=report.related_entities.all.0.bill %}
       <tr>
         <td><strong>{{ report.notes.0 | parse_agenda_item }}</strong></td>
-        <td class="blurb">{{associated_bill.identifier}} {{report.description | short_blurb}} {{ associated_bill.inferred_status | inferred_status_label | safe }}</td>
+        <td>{{associated_bill.identifier}} {{report.description | short_blurb}} {{ associated_bill.inferred_status | inferred_status_label | safe }}</td>
         <td>
           <a href='/board-report/{{ associated_bill.slug }}/' target="_blank">View</a>
         </td>
