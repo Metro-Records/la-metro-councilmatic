@@ -23,11 +23,11 @@
         </div>
         <div class="panel-body {% if facet_name in selected_facets %}panel-show{% endif %} collapse" id="filter-{{facet_name}}">
             <ul class="search-facet-list">
-            {% if facet_name in 'topics,lines_and_ways,phase,bill_type,project,metro_location,geo_admin_location,significant_date,motion_by,plan_program_policy' %}
+            {% if facet_name != 'sponsorships' %}
 
                 {% include 'search/_ordered_search_filter_items.html' %}
 
-            {% elif facet_name == 'sponsorships' %}
+            {% else %}
 
                 {% if facets.fields.legislative_session|length > 1 %}
 
@@ -71,14 +71,6 @@
 
                     {% endfor %}
                 {% endif %}
-
-            {% else %}
-
-                {% for name, count in item_list %}
-                    {% if count %}
-                        {% include 'search/_ordered_search_filter_items.html' %}
-                    {% endif %}
-                {% endfor %}
 
             {% endif %}
             </ul>
