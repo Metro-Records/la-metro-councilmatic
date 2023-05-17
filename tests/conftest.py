@@ -302,9 +302,8 @@ def metro_subject(db):
                 guid = "0000-0-0000"
 
             subject_info = {
-                'name': current_subject,
-                'guid': guid,
-                'bill_count': 1,
+                "name": current_subject,
+                "guid": guid,
             }
 
             subject_info.update(kwargs)

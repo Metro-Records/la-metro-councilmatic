@@ -6,16 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lametro', '0007_update_packet_links'),
+        ("lametro", "0010_auto_20230110_1235"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='lametrosubject',
-            name='bills',
-            field=models.ManyToManyField(related_name='subjects', to='lametro.LAMetroBill'),
+            model_name="lametrosubject",
+            name="bills",
+            field=models.ManyToManyField(
+                related_name="subjects", to="lametro.LAMetroBill"
+            ),
         ),
-        migrations.RunSQL('''
+        migrations.RunSQL(
+            """
             INSERT INTO lametro_lametrosubject_bills (
                 lametrosubject_id,
                 lametrobill_id
@@ -31,7 +34,9 @@ class Migration(migrations.Migration):
             ) bill_subjects
             JOIN lametro_lametrosubject subject
             ON bill_subjects.subject = subject.name
-        ''', reverse_sql='''
+        """,
+            reverse_sql="""
             DELETE FROM lametro_lametrosubject_bills
-        '''),
+        """,
+        ),
     ]

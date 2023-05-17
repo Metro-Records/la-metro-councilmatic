@@ -72,8 +72,8 @@ class ClassificationMixin:
     def smartlogic(self):
         if not hasattr(self, "_smartlogic"):
             self._smartlogic = SmartLogic(settings.SMART_LOGIC_KEY)
-            self._smartlogic._authorization = 'Bearer {}'.format(
-                self._smartlogic.token()['access_token']
+            self._smartlogic._authorization = "Bearer {}".format(
+                self._smartlogic.token()["access_token"]
             )
         return self._smartlogic
 
@@ -138,43 +138,6 @@ class Command(BaseCommand, ClassificationMixin):
             ],
             ignore_conflicts=True,
         )
-
-        with connection.cursor() as cursor:
-            # Create new LAMetroSubject-Bill relationships, ignoring conflicts
-            # from relationships that already exist
-            cursor.execute('''
-                INSERT INTO lametro_lametrosubject_bills (
-                    lametrosubject_id,
-                    lametrobill_id
-                )
-                SELECT
-                    subject.id,
-                    bill_subjects.id
-                FROM (
-                    SELECT
-                        id,
-                        UNNEST(subject) AS subject
-                    FROM opencivicdata_bill
-                ) bill_subjects
-                JOIN lametro_lametrosubject subject
-                ON bill_subjects.subject = subject.name
-                ON CONFLICT DO NOTHING
-            ''')
-
-            # Cache the number of associated bills so it doesn't need to be
-            # calculated on the fly for filtering and sorting during suggestion
-            cursor.execute('''
-                UPDATE lametro_lametrosubject subject
-                SET bill_count = counts.count
-                FROM (
-                    SELECT
-                        lametrosubject_id AS subject_id,
-                        COUNT(*)
-                    FROM lametro_lametrosubject_bills
-                    GROUP BY lametrosubject_id
-                ) counts
-                WHERE subject.id = counts.subject_id
-            ''')
 
         for_update = []
 

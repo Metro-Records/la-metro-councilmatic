@@ -45,18 +45,17 @@ def refresh_guid_trigger(request, refresh_key):
 
 
 class LAMetroSmartLogicAPI(SmartLogicAPI):
-
     def get_queryset(self, *args, **kwargs):
-        self.kwargs['endpoint'] = 'concepts'
+        self.kwargs["endpoint"] = "concepts"
 
         qs = super().get_queryset(*args, **kwargs)
 
-        action = self.kwargs.get('action', 'suggest')
+        action = self.kwargs.get("action", "suggest")
 
-        if action not in ('suggest', 'relate'):
-            raise ValueError('action must be one of: suggest, relate')
+        if action not in ("suggest", "relate"):
+            raise ValueError("action must be one of: suggest, relate")
 
-        if action == 'suggest':
+        if action == "suggest":
             return self.get_suggestions(qs)
 
         else:
@@ -65,67 +64,74 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
     def get_suggestions(self, concepts):
         suggestions = {}
 
-        if concepts.get('terms'):
-            for result in concepts['terms']:
-                term = result['term']
-                synonym_label = ''
+        if concepts.get("terms"):
+            for result in concepts["terms"]:
+                term = result["term"]
+                synonym_label = ""
 
-                if term.get('equivalence') and len(term['equivalence']) > 0:
-                    for equivalent_term in term['equivalence']:
+                if term.get("equivalence") and len(term["equivalence"]) > 0:
+                    for equivalent_term in term["equivalence"]:
                         try:
                             synonym = [
-                                s['field']['name'] for s in equivalent_term['fields']
-                                if s['field']['name'].lower() == self.kwargs['term'].lower()
+                                s["field"]["name"]
+                                for s in equivalent_term["fields"]
+                                if s["field"]["name"].lower()
+                                == self.kwargs["term"].lower()
                             ][0]
                         except IndexError:
                             continue
                         else:
-                            synonym_label = ' ({})'.format(synonym)
+                            synonym_label = " ({})".format(synonym)
                             break
 
-                suggestions[term['id']] = {
-                    'name': term['name'],
-                    'synonym_label': synonym_label,
+                suggestions[term["id"]] = {
+                    "name": term["name"],
+                    "synonym_label": synonym_label,
                 }
 
         return self.filter_concepts(suggestions)
 
     def get_relations(self, concepts):
-        if int(concepts['total']) == 1:
+        if int(concepts["total"]) == 1:
             relations = {}
 
-            if concepts['terms'][0]['term'].get('associated') and \
-                    len(concepts['terms'][0]['term']['associated']) > 0:
+            if (
+                concepts["terms"][0]["term"].get("associated")
+                and len(concepts["terms"][0]["term"]["associated"]) > 0
+            ):
 
-                for field in concepts['terms'][0]['term']['associated']:
-                    relations.update({
-                        term['field']['id']: {'name': term['field']['name']}
-                        for term in field['fields']
-                    })
+                for field in concepts["terms"][0]["term"]["associated"]:
+                    relations.update(
+                        {
+                            term["field"]["id"]: {"name": term["field"]["name"]}
+                            for term in field["fields"]
+                        }
+                    )
 
         else:
             relations = {
-                term['term']['id']: {'name': term['term']['name']}
-                for term in concepts['terms']
+                term["term"]["id"]: {"name": term["term"]["name"]}
+                for term in concepts["terms"]
             }
 
         return self.filter_concepts(relations)
 
     def filter_concepts(self, concepts):
-        result_count = int(self.request.GET.get('maxResultCount', 10))
+        result_count = int(self.request.GET.get("maxResultCount", 10))
         guids = list(concepts.keys())
-        subjects = list(LAMetroSubject.objects.filter(guid__in=guids, bill_count__gt=0)\
-                                              .order_by('-bill_count')\
-                                              .values('name', 'guid'))[:result_count]
+        subjects = list(
+            LAMetroSubject.objects.filter(guid__in=guids).values("name", "guid")
+        )[:result_count]
 
         for subject in subjects:
-            subject['display_name'] = subject['name'] + \
-                concepts[subject['guid']].get('synonym_label', '')
+            subject["display_name"] = subject["name"] + concepts[subject["guid"]].get(
+                "synonym_label", ""
+            )
 
         return {
-            'status_code': 200,
-            'concepts': concepts,
-            'subjects': subjects,
+            "status_code": 200,
+            "concepts": concepts,
+            "subjects": subjects,
         }
 
 

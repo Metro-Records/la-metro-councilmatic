@@ -1,6 +1,5 @@
 var SmartLogic = {
   query: {},
-  baseUrl: 'https://cloud.smartlogic.com/svc/d3807554-347e-4091-90ea-f107a906aaff/ses/CombinedModel/concepts/',
   getToken: function () {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
@@ -14,7 +13,7 @@ var SmartLogic = {
           window.localStorage.setItem('ses_token', response.access_token);
           window.localStorage.setItem('ses_issued', Date.now());
       }).fail(function() {
-          console.log('Failed to retrieve token');
+          console.error('Failed to retrieve SES API token. Autocomplete is disabled.');
       });
     };
   },
