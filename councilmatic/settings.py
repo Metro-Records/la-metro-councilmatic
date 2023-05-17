@@ -49,6 +49,28 @@ else:
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
     AWS_QUERYSTRING_AUTH = False
 
+try:
+    from .settings_deployment import SENTRY_DSN, SENTRY_ENVIRONMENT
+except ImportError:
+    print("SENTRY_DSN not found, error reporting is disabled")
+else:
+    import logging
+
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.logging import LoggingIntegration
+
+    from councilmatic.logging import before_send
+
+    sentry_logging = LoggingIntegration(level=logging.INFO, event_level=logging.WARNING)
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), sentry_logging],
+        environment=SENTRY_ENVIRONMENT,
+        before_send=before_send,
+    )
+
 # Application definition
 
 INSTALLED_APPS = (

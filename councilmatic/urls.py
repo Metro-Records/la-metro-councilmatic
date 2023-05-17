@@ -38,6 +38,7 @@ from lametro.views import (
     LAMetroContactView,
     MinutesView,
     pong,
+    test_logging,
 )
 from lametro.feeds import LAMetroPersonDetailFeed
 
@@ -112,6 +113,7 @@ urlpatterns = [
         pong,
     ),
     url(r"", include("councilmatic_core.urls")),
+    url(r"^test-logging/$", test_logging, name="test_logging"),
 ]
 
 if settings.DEBUG:
