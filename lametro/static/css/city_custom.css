@@ -423,20 +423,3 @@ hr .events-line {
     background-position: center center;
     height: 200px;
 }
-/*
-body {
-    /* text-size-adjust: none; */
-    /* -moz-text-size-adjust: none; */
-    /* font-size: 30px; */
-} */
-
-
-/* @-moz-document url-prefix() {
-    @media only screen and (max-device-width : 415px) and (orientation: portrait) {
-        .blurb {
-            text-size-adjust: none;
-            -moz-text-size-adjust: none;
-            font-size: 30px;
-        }
-    }
-} */
