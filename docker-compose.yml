@@ -21,7 +21,10 @@ services:
       - .:/app
     environment:
       DJANGO_MANAGEPY_MIGRATE: "on"
-    # entrypoint: /app/docker-entrypoint.sh
+      # Uncomment the following variable to import the legislative
+      # boundaries that power the Board Members map
+      # DJANGO_MANAGEPY_IMPORT_SHAPES: "on"
+    entrypoint: /app/docker-entrypoint.sh
     command: python manage.py runserver 0.0.0.0:8000
 
   postgres:
