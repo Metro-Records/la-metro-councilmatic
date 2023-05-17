@@ -210,15 +210,12 @@ def test_current_meeting_no_streaming_event_late_start(event, mocker):
     crenshaw_meeting_info = {
         "id": "ocd-event/3c93e81f-f1a9-42ce-97fe-30c77a4a6740",
         "name": "Crenshaw Project Corporation",
+        "has_broadcast": False,
         "start_date": LAMetroEvent._time_ago(minutes=15)
         .replace(second=0, microsecond=0)
         .isoformat(),
     }
     late_current_meeting = event.build(**crenshaw_meeting_info)
-
-    # Remove the broadcast since it hasn't been started. If it were kept,
-    # it would be filtered out by potentially_current_meetings
-    late_current_meeting.broadcast.get().delete()
 
     mock_streaming_meetings(mocker)
 
@@ -478,7 +475,9 @@ def test_most_recent_past_meetings(event):
 
     # Events that shouldn't be returned
     event_older_than_two_weeks = event.build(
-        name="Board Meeting", start_date=three_weeks_ago, id=get_event_id()
+        name="Board Meeting",
+        start_date=three_weeks_ago,
+        id=get_event_id(),
     )
     event_later_today = event.build(
         name="Board Meeting", start_date=one_hour_from_now, id=get_event_id()
@@ -489,13 +488,19 @@ def test_most_recent_past_meetings(event):
 
     # Events that should be returned
     event_earlier_today = event.build(
-        name="Board Meeting", start_date=earlier_today, id=get_event_id()
+        name="Board Meeting",
+        start_date=earlier_today,
+        id=get_event_id(),
     )
     event_four_days_ago = event.build(
-        name="Board Meeting", start_date=four_days_ago, id=get_event_id()
+        name="Board Meeting",
+        start_date=four_days_ago,
+        id=get_event_id(),
     )
     event_five_days_ago = event.build(
-        name="Board Meeting", start_date=five_days_ago, id=get_event_id()
+        name="Board Meeting",
+        start_date=five_days_ago,
+        id=get_event_id(),
     )
 
     recent_past_meetings = LAMetroEvent.most_recent_past_meetings()
@@ -739,11 +744,13 @@ def test_exclude_short_broadcasted_events(event):
     test_event = event.build(
         start_date=LAMetroEvent._time_from_now(minutes=3)
         .replace(second=0, microsecond=0)
-        .isoformat()
+        .isoformat(),
     )
 
-    test_event.status = "confirmed"
+    # Manually create the associated event since the start time for this event is in the future
     EventBroadcast.objects.create(event=test_event)
+
+    test_event.status = "confirmed"
     test_event.save()
 
     potentially_current = LAMetroEvent._potentially_current_meetings()
