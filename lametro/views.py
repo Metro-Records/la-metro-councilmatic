@@ -1064,3 +1064,7 @@ def pong(request):
         return HttpResponse(f"Bad deployment: {e}", status=401)
 
     return HttpResponse(DEPLOYMENT_ID)
+
+
+def test_logging(request):
+    raise ValueError("Testing logging...")
