@@ -7,6 +7,7 @@ from requests.exceptions import HTTPError, ConnectTimeout
 
 from smartlogic.client import SmartLogic
 from smartlogic.exceptions import (
+    RequestFailed,
     RequestNotAuthenticated,
     AuthenticationFailed,
     ResponseNotSerializable,
@@ -42,6 +43,7 @@ class SmartLogicAPI(ListView):
             status_code = 504
 
         except (
+            RequestFailed,
             RequestNotAuthenticated,
             AuthenticationFailed,
             ResponseNotSerializable,
