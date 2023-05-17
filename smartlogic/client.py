@@ -47,7 +47,7 @@ class SmartLogic(object):
 
         try:
             response = getattr(requests, method)(url, timeout=5, **requests_kwargs)
-        except (HTTPError, ConnectTimeout) as e:
+        except (HTTPError, ConnectTimeout):
             raise
 
         if response.status_code == 403:

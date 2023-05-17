@@ -106,6 +106,10 @@ urlpatterns = [
         name="delete_submission",
     ),
     url(r"^delete-event/(?P<event_slug>[^/]+)/$", delete_event, name="delete_event"),
+    url(
+        r"^pong/$",
+        pong,
+    ),
     path(
         "smartlogic/concepts/<str:term>/<str:action>",
         LAMetroSmartLogicAPI.as_view(),

@@ -1,11 +1,8 @@
-import json
-
 from django.conf import settings
 from django.core import management
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, RedirectView
+from django.views.generic import RedirectView
 
 from haystack.query import SearchQuerySet
 
@@ -99,7 +96,6 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
                 concepts["terms"][0]["term"].get("associated")
                 and len(concepts["terms"][0]["term"]["associated"]) > 0
             ):
-
                 for field in concepts["terms"][0]["term"]["associated"]:
                     relations.update(
                         {
