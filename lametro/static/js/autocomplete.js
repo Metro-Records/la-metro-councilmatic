@@ -1,6 +1,5 @@
 var SmartLogic = {
   query: {},
-  baseUrl: 'https://cloud.smartlogic.com/svc/d3807554-347e-4091-90ea-f107a906aaff/ses/CombinedModel/concepts/',
   getToken: function () {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
@@ -9,59 +8,33 @@ var SmartLogic = {
 
     if ( (tokenNeeded || tokenExpired) ) {
       return $.get(
-        '/ses-token/'
+        '/smartlogic/token/'
       ).then(function(response) {
           window.localStorage.setItem('ses_token', response.access_token);
           window.localStorage.setItem('ses_issued', Date.now());
       }).fail(function() {
-          console.log('Failed to retrieve token');
+          console.error('Failed to retrieve SES API token. Autocomplete is disabled.');
       });
     };
   },
   buildServiceUrl: function (query) {
-    var queryLocation = query.term + '.json';
+    // Remove slashes from term, as not to confuse routing
+    var sanitizedTerm = query.term.replaceAll('/', ' ')
+    var action = query.action ? query.action : 'suggest';
     var stop = query.stop_cm_after_stage ? query.stop_cm_after_stage : '3';
     var maxResults = query.maxResultCount ? query.maxResultCount : '10';
 
-    return SmartLogic.baseUrl + queryLocation
-        + '?FILTER=AT=System:%20Legistar&stop_cm_after_stage=' + stop
-        + '&maxResultCount=' + maxResults;
+    return '/smartlogic/concepts/' + sanitizedTerm + '/' + action
+        + '?stop_cm_after_stage=' + stop
+        + '&maxResultCount=' + maxResults
+        + '&FILTER=AT=System:%20Legistar';
   },
   transformResponse: function (data, params) {
     SmartLogic.query = params;
 
-    var results = data.terms
-      ? $.map(data.terms, function(d) {
-        /* d.term.equivalence is an array of objects. Each object contains
-        a "fields" array, also an array of objects, containing alternative
-        names for the concept. Identify whether our search term matches one
-        of these labels, so we can include it in the suggestion. */
-        var nptLabel = '';
-
-        if ( d.term.equivalence !== undefined && d.term.equivalence.length > 0 ) {
-          var npt;
-
-          $.each(d.term.equivalence, function(idx, el) {
-            npt = el.fields.reduce(function(inp, el) {
-              if (inp) {
-                return inp
-              } else {
-                if (el.field.name.toLowerCase() == params.term.toLowerCase()) {
-                  return el.field.name;
-                }
-              }
-            }, undefined);
-
-            if ( npt ) {
-              nptLabel = ' (' + npt + ')';
-              return false; // Equivalent to "break"
-            }
-          });
-        };
-
-        return {'text': d.term.name + nptLabel, 'id': d.term.name};
-      })
-      : [];
+    var results = $.map(data.subjects, function(result) {
+        return {text: result.display_name, id: result.name}
+    });
 
     // Only show the suggested group if there are suggestions
     var groupedResults = results.length > 0
@@ -225,8 +198,6 @@ function showRelatedTerms (termArray) {
         return;
     };
 
-    var relatedTerms = [];
-
     // Execute all Ajax requests before proceeding:
     // https://stackoverflow.com/a/5627301/7142170
     $.when.apply(
@@ -239,6 +210,8 @@ function showRelatedTerms (termArray) {
         // If there is only one request, then args is an array with three items:
         // the response, status, and Ajax object. If there is more than one,
         // then args is an array of these arrays.
+        var relatedTerms = [];
+
         if ( termArray.length === 1 ) {
             var response = arguments[0];
             relatedTerms = parseRelatedTerms(response);
@@ -249,11 +222,7 @@ function showRelatedTerms (termArray) {
             });
         };
 
-        $.when(
-            getSubjectsFromTerms(relatedTerms)
-        ).then(function (response) {
-            renderRelatedTerms(response);
-        });
+        renderRelatedTerms(relatedTerms);
     })
 }
 
@@ -262,6 +231,7 @@ function getRelatedTerms (term) {
 
     var url = SmartLogic.buildServiceUrl({
         'term': term,
+        'action': 'relate',
         'stop_cm_after_stage': 1,
         'maxResultCount': 5,
     });
@@ -276,40 +246,22 @@ function getRelatedTerms (term) {
 }
 
 function parseRelatedTerms (response) {
-    if ( response.total === '1' ) {
-        // If there is only one term, then the supplied term exactly
-        // matches a term in SES. Display associated terms, if any.
-        return response.terms[0].term.associated.length
-            ? response.terms[0].term.associated[0].fields.map(function (el) {
-                return {'name': el.field.name, 'id': el.field.id}
-            })
-            : [];
-    } else {
-        // If there is more than one term, then the supplied term
-        // does not exactly match a term in SES. Display all results
-        // (limited to at most 5 by our query.)
-        return response.terms.map(function (el) {
-            return {'name': el.term.name, 'id': el.term.id}
+    if ( response.status_code == 200 && response.subjects.length > 0) {
+        return $.map(response.subjects, function (subject) {
+            return subject.name
         });
+    } else {
+        return [];
     };
 }
 
-function getSubjectsFromTerms (terms) {
-    var termNames = terms.map(function(el) {return el.name});
-
-    return $.ajax({
-        url: '/subjects/',
-        data: {related_terms: termNames}
-    });
-}
-
-function renderRelatedTerms (response) {
-    if ( response.status_code == 200 && response.subjects.length > 0 ) {
+function renderRelatedTerms (subjects) {
+    if ( subjects.length > 0 ) {
         $('#related-terms').removeClass('hidden');
 
-        $.each(response.subjects, function (idx, subject) {
+        $.each(subjects, function (idx, subject) {
             var link = $('<a />').attr('href', '/search/?q=' + subject).text(subject);
             $('#related-terms').append(link).append('<br />');
         });
-    };
+    }
 }

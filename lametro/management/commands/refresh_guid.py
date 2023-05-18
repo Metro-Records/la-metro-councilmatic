@@ -8,7 +8,7 @@ from legistar.bills import LegistarAPIBillScraper
 from opencivicdata.legislative.models import Bill
 
 from lametro.models import LAMetroSubject
-from lametro.smartlogic import SmartLogic
+from smartlogic.client import SmartLogic
 
 
 class ClassificationMixin:
@@ -70,6 +70,9 @@ class ClassificationMixin:
     def smartlogic(self):
         if not hasattr(self, "_smartlogic"):
             self._smartlogic = SmartLogic(settings.SMART_LOGIC_KEY)
+            self._smartlogic._authorization = "Bearer {}".format(
+                self._smartlogic.token()["access_token"]
+            )
         return self._smartlogic
 
     @property
