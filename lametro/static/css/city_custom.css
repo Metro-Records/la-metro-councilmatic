@@ -343,6 +343,11 @@ hr .events-line {
       padding: 4px 8px;
       margin-bottom: 10px;
     }
+
+    .container-fluid-nav{
+        padding-left: 15px;
+        padding-right: 15px;
+    }
 }
 
 .badge-highlight {
