@@ -95,16 +95,13 @@ def test_lametro_smartlogic_api_suggest(client, metro_subject, mocker):
     response = client.get(lametro_ses_endpoint).json()
 
     assert response["status_code"] == 200
-    assert len(response["subjects"]) == 2
+    assert len(response["subjects"]) == 10
 
     # Test that the red line is the first result
     assert response["subjects"][0]["guid"] == red_line.guid
 
     # Test that the synonym matching the search term was appended to the subject name
     assert response["subjects"][0]["display_name"] == "Metro Red Line (Red Line)"
-
-    # Test that the second result is rail operations
-    assert response["subjects"][1]["guid"] == rail_operations.guid
 
 
 def test_lametro_smartlogic_api_relate(client, metro_subject, mocker):
@@ -121,10 +118,7 @@ def test_lametro_smartlogic_api_relate(client, metro_subject, mocker):
     response = client.get(lametro_ses_endpoint).json()
 
     assert response["status_code"] == 200
-    assert len(response["subjects"]) == 1
-
-    # Test that the result is our existent subject
-    assert response["subjects"][0]["guid"] == b_line.guid
+    assert len(response["subjects"]) == 10
 
 
 @pytest.mark.django_db

@@ -86,7 +86,7 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
                     "synonym_label": synonym_label,
                 }
 
-        return self.filter_concepts(suggestions)
+        return self.map_to_subject(suggestions)
 
     def get_relations(self, concepts):
         if int(concepts["total"]) == 1:
@@ -110,24 +110,34 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
                 for term in concepts["terms"]
             }
 
-        return self.filter_concepts(relations)
+        return self.map_to_subject(relations)
 
-    def filter_concepts(self, concepts):
+    def map_to_subject(self, concepts):
         result_count = int(self.request.GET.get("maxResultCount", 10))
-        guids = list(concepts.keys())
-        subjects = list(
-            LAMetroSubject.objects.filter(guid__in=guids).values("name", "guid")
-        )[:result_count]
 
-        for subject in subjects:
-            subject["display_name"] = subject["name"] + concepts[subject["guid"]].get(
-                "synonym_label", ""
+        matched_subjects = {
+            sub["guid"]: {"name": sub["name"]}
+            for sub in LAMetroSubject.objects.filter(
+                guid__in=list(concepts.keys())
+            ).values("name", "guid")
+        }
+
+        subjects = []
+
+        for guid, concept in concepts.items():
+            base_obj = matched_subjects.get(guid, concept)
+            subjects.append(
+                {
+                    "name": base_obj["name"],
+                    "display_name": base_obj["name"] + concept.get("synonym_label", ""),
+                    "guid": guid,
+                }
             )
 
         return {
             "status_code": 200,
             "concepts": concepts,
-            "subjects": subjects,
+            "subjects": subjects[:10],
         }
 
 
