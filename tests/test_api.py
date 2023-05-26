@@ -120,6 +120,9 @@ def test_lametro_smartlogic_api_relate(client, metro_subject, mocker):
     assert response["status_code"] == 200
     assert len(response["subjects"]) == 1
 
+    # Test that the result is our existent subject
+    assert response["subjects"][0]["guid"] == b_line.guid
+
 
 @pytest.mark.django_db
 def test_fetch_object_counts(client, bill, event):
