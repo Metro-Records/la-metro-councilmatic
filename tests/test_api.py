@@ -83,11 +83,6 @@ def test_lametro_smartlogic_api_suggest(client, metro_subject, mocker):
         guid="1031d836-2d8b-4c20-b3c1-1487f0d503e6",
     )
 
-    rail_operations = metro_subject.build(
-        name="Rail Operations - Red Line (Project)",
-        guid="b53296db-4ac2-455d-9942-2bfba6f1c8bf",
-    )
-
     lametro_ses_endpoint = reverse(
         "lametro_ses_endpoint", kwargs={"term": "red line", "action": "suggest"}
     )
