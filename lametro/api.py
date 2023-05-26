@@ -86,7 +86,7 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
                     "synonym_label": synonym_label,
                 }
 
-        return self.map_to_subject(suggestions)
+        return self.map_to_subject(suggestions, filter_concepts=False)
 
     def get_relations(self, concepts):
         if int(concepts["total"]) == 1:
@@ -112,7 +112,7 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
 
         return self.map_to_subject(relations)
 
-    def map_to_subject(self, concepts):
+    def map_to_subject(self, concepts, filter_concepts=True):
         result_count = int(self.request.GET.get("maxResultCount", 10))
 
         matched_subjects = {
@@ -125,7 +125,18 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
         subjects = []
 
         for guid, concept in concepts.items():
-            base_obj = matched_subjects.get(guid, concept)
+            # If only returning concepts that we can map to a subject,
+            # continue if there is not a corresponding subject
+            if filter_concepts:
+                base_obj = matched_subjects.get(guid)
+                if not base_obj:
+                    continue
+
+            # Otherwise, fall back to the concept as it is represented
+            # in the SES API
+            else:
+                base_obj = matched_subjects.get(guid, concept)
+
             subjects.append(
                 {
                     "name": base_obj["name"],
@@ -137,7 +148,7 @@ class LAMetroSmartLogicAPI(SmartLogicAPI):
         return {
             "status_code": 200,
             "concepts": concepts,
-            "subjects": subjects[:10],
+            "subjects": subjects[:result_count],
         }
 
 
