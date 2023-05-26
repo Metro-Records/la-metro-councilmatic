@@ -4,6 +4,10 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar {
     font-family: 'ff-din-web', Arial, sans-serif;
 }
 
+body {
+    padding-top: 0;
+}
+
 h1, .h1 {
     font-size: 36px;
 }
@@ -18,6 +22,10 @@ h1, .h1 {
 
 .navbar-brand {
     min-width: 160px;
+    padding: 19.5px 15px;
+    line-height: 21px;
+    height: 60px;
+    font-size: 16px;
 }
 
 .navbar {
@@ -360,6 +368,12 @@ hr .events-line {
     }
 }
 
+@media only screen and (max-width : 767px) {
+    .navbar-collapse.collapse:not(.show) {
+        display: none !important;
+    }
+}
+
 .badge-highlight {
     background-color: #d9edf7;
     font-weight: 900;
@@ -445,4 +459,12 @@ label[for=id_type], label[for=id_description], .text-white {
 
 textarea#id_description {
     resize: vertical;
+}
+
+.dropdown-size {
+    font-size: 15px;
+}
+
+.nav-link:hover, .nav-link:active, .nav-link:focus {
+    text-decoration: none;
 }
