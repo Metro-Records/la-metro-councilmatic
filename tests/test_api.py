@@ -83,11 +83,6 @@ def test_lametro_smartlogic_api_suggest(client, metro_subject, mocker):
         guid="1031d836-2d8b-4c20-b3c1-1487f0d503e6",
     )
 
-    rail_operations = metro_subject.build(
-        name="Rail Operations - Red Line (Project)",
-        guid="b53296db-4ac2-455d-9942-2bfba6f1c8bf",
-    )
-
     lametro_ses_endpoint = reverse(
         "lametro_ses_endpoint", kwargs={"term": "red line", "action": "suggest"}
     )
@@ -95,16 +90,13 @@ def test_lametro_smartlogic_api_suggest(client, metro_subject, mocker):
     response = client.get(lametro_ses_endpoint).json()
 
     assert response["status_code"] == 200
-    assert len(response["subjects"]) == 2
+    assert len(response["subjects"]) == 10
 
     # Test that the red line is the first result
     assert response["subjects"][0]["guid"] == red_line.guid
 
     # Test that the synonym matching the search term was appended to the subject name
     assert response["subjects"][0]["display_name"] == "Metro Red Line (Red Line)"
-
-    # Test that the second result is rail operations
-    assert response["subjects"][1]["guid"] == rail_operations.guid
 
 
 def test_lametro_smartlogic_api_relate(client, metro_subject, mocker):

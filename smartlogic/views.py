@@ -15,7 +15,7 @@ from smartlogic.exceptions import (
 
 
 class SmartLogicAPI(ListView):
-    ALLOWED_PARAMETERS = {"stop_cm_after_stage", "maxResultCount", "FILTER=AT"}
+    ALLOWED_PARAMETERS = {"stop_cm_after_stage", "maxResultCount", "FILTER"}
 
     def setup(self, request, *args, **kwargs):
         """
