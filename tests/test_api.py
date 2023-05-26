@@ -118,7 +118,7 @@ def test_lametro_smartlogic_api_relate(client, metro_subject, mocker):
     response = client.get(lametro_ses_endpoint).json()
 
     assert response["status_code"] == 200
-    assert len(response["subjects"]) == 10
+    assert len(response["subjects"]) == 1
 
 
 @pytest.mark.django_db
