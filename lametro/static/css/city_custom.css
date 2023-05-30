@@ -4,10 +4,6 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar {
     font-family: 'ff-din-web', Arial, sans-serif;
 }
 
-body {
-    padding-top: 0;
-}
-
 h1, .h1 {
     font-size: 36px;
 }
@@ -28,8 +24,18 @@ h1, .h1 {
     font-size: 16px;
 }
 
+.navbar-nav {
+    float: right;
+}
+
+.show .navbar-nav, .collapsing .navbar-nav {
+    float: left;
+    margin-left: 10px !important;
+}
+
 .navbar {
     font-size: 16px;
+    height: 65px;
 }
 
 .nav>li>a {
@@ -158,6 +164,8 @@ div#google_translate_element {
     color: #777;
     box-shadow: none;
     padding: 10px;
+    border-bottom-right-radius: 0 !important;
+    border-top-right-radius: 0 !important;
 }
 
 .select2-container--default .select2-selection--multiple {
@@ -447,6 +455,40 @@ hr .events-line {
     font-size: 15px;
 }
 
+.dropdown-menu {
+    border-color: white;
+}
+
 .nav-link:hover, .nav-link:active, .nav-link:focus {
     text-decoration: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.underline{
+    text-decoration: underline;
+}
+
+.navbar-collapse.collapse.show, .navbar-collapse.collapsing {
+    background: white;
+    margin: -4px -13px 0px;
+}
+
+.nav-item:hover, .nav-item:active, .nav-item:focus {
+    background-color: #eeeeee;
+}
+
+input[type=radio][name=search-all],
+input[type=radio][name=search-reports] {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+    pointer-events: none;
+}
+
+#search-button {
+    height: 100%;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
 }
