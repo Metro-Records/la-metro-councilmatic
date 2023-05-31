@@ -18,7 +18,7 @@ h1, .h1 {
 
 .navbar-brand {
     min-width: 160px;
-    padding: 19.5px 15px;
+    padding-top: 20px;
     line-height: 21px;
     height: 60px;
     font-size: 16px;
@@ -26,11 +26,6 @@ h1, .h1 {
 
 .navbar-nav {
     float: right;
-}
-
-.show .navbar-nav, .collapsing .navbar-nav {
-    float: left;
-    margin-left: 10px !important;
 }
 
 .navbar {
@@ -477,11 +472,7 @@ textarea#id_description {
     border-color: white;
 }
 
-.nav-link:hover, .nav-link:active, .nav-link:focus {
-    text-decoration: none;
-}
-
-a {
+.nav-link:hover, .nav-link:active, .nav-link:focus, a {
     text-decoration: none;
 }
 
@@ -494,8 +485,25 @@ a {
     margin: -4px -13px 0px;
 }
 
+.show .navbar-nav, .collapsing .navbar-nav {
+    float: left;
+    width: 100%;
+}
+
+.show .navbar-nav li, .collapsing .navbar-nav li {
+    padding-left: 10px !important;
+}
+
 .nav-item:hover, .nav-item:active, .nav-item:focus {
     background-color: #eeeeee;
+}
+
+li .dropdown-menu {
+    border-radius: unset;
+}
+
+.show .navbar-nav .dropdown-menu, .collapsing .navbar-nav .dropdown-menu {
+    margin-left: -9px;
 }
 
 input[type=radio][name=search-all],
