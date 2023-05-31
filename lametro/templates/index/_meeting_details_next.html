@@ -12,7 +12,7 @@
         <div>
           {% if meeting.status == 'cancelled' %}
             <h4 class="d-inline"><del>{{  meeting.link_html | safe }}</del></h4>
-            <span class="label label-stale text-light rounded">Cancelled</span>
+            <small><span class="label label-stale text-light rounded">Cancelled</span></small>
           {% else %}
             <h4>{{  meeting.link_html | safe }}</h4>
           {% endif%}
