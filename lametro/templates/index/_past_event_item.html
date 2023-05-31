@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-4">
+  <div class="col-6 col-md-4">
     {% if event.status == 'cancelled' %}
       <del>
     {% endif %}
@@ -28,7 +28,7 @@
     {% endif %}
   </div>
 
-  <div class="col-8">
+  <div class="col-6 col-md-8">
     <p>
       {% if event.status == 'cancelled' %}
         <del>{{ event.link_html | safe }}</del>
