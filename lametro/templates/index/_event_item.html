@@ -1,37 +1,42 @@
 <div class="row">
-  <br/>
-  <div class="col-xs-4">
+  <div class="col-4">
     {% if event.status == 'cancelled' %}
-      <strike>
+      <del>
     {% endif %}
       <small>
-        <i class="fa fa-fw fa-calendar-o"></i>
-        <span class="non-mobile-only">
-          {{event.start_time | date:"D"}}
-        </span>
-        {{event.start_time | date:"m/d"}}
-        <span class="non-mobile-only">
-          <i class="fa fa-fw fa-clock-o"></i>
-        </span>
-        {{event.start_time| date:"g:ia"}}<br/>
-        <span class="desktop-only text-muted">
-          {{event.location.name}}<br />
-        </span>
+        <div class="d-inline-block">
+          <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i>
+          <span class="non-mobile-only">
+            {{event.start_time | date:"D"}}
+          </span>
+          {{event.start_time | date:"m/d"}}
+        </div>
+
+        <div class="d-inline-block">
+          <span class="non-mobile-only">
+            <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
+          </span>
+          {{event.start_time| date:"g:i a"}}
+        </div>
+
+        <div class="desktop-only text-muted d-block">
+          {{event.location.name}}
+        </div>
       </small>
     {% if event.status == 'cancelled' %}
-      </strike>
+      </del>
     {% endif %}
   </div>
 
-  <div class="col-xs-8">
+  <div class="col-8">
     <p>
       {% if event.status == 'cancelled' %}
-        <strike>{{ event.link_html | safe }}</strike>
-        <span class="label label-stale">Cancelled</span>
-        <br/>
+        <del>{{ event.link_html | safe }}</del>
+        <small><span class="label label-stale text-light rounded">Cancelled</span></small>
       {% else %}
-        {{ event.link_html | safe }}<br/>
+        {{ event.link_html | safe }}
       {% endif %}
     </p>
   </div>
 </div>
+<hr>
