@@ -526,3 +526,7 @@ input[type=radio][name=search-reports] {
 .last-hr hr:last-of-type{
     display: none;
 }
+
+.fa-info-circle {
+    color: #eb6864
+}
