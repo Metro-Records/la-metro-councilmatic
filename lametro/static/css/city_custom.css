@@ -454,7 +454,7 @@ hr .events-line {
     border-color: white;
 }
 
-.nav-link:hover, .nav-link:active, .nav-link:focus, a {
+.nav-link:hover, .nav-link:active, .nav-link:focus, a, .btn-link {
     text-decoration: none;
 }
 
@@ -499,4 +499,8 @@ input[type=radio][name=search-reports] {
     height: 100%;
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
+}
+
+.label-primary {
+    background-color: #3279B7;
 }
