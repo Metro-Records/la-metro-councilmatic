@@ -4,6 +4,14 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar {
     font-family: 'ff-din-web', Arial, sans-serif;
 }
 
+body, body .table {
+    color: #777777;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar, th {
+    color: black;
+}
+
 h1, .h1 {
     font-size: 36px;
 }
@@ -367,6 +375,19 @@ hr .events-line {
     }
 }
 
+/* A couple of larger breakpoints, similar to desktop-only/non-desktop-only */
+@media only screen and (min-width : 1050px) {
+    .non-lg-screen-only {
+        display: none
+    }
+}
+
+@media only screen and (max-width : 1049px) {
+    .lg-screen-only {
+        display: none
+    }
+}
+
 .badge-highlight {
     background-color: #d9edf7;
     font-weight: 900;
@@ -511,4 +532,18 @@ input[type=radio][name=search-reports] {
 
 .fa-info-circle {
     color: #eb6864
+}
+
+.bg-secondary {
+    background-color: #f5f5f5 !important;
+}
+
+#about-la-metro > div {
+    margin-bottom: 30px;
+}
+
+/* Add top padding for About page's table of contents targets
+    so the nav doesn't block them when scrolled into view */
+.pt-nav {
+    padding-top: 65px;
 }
