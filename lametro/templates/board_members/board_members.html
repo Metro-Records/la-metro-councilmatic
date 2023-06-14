@@ -18,137 +18,144 @@
 {% cache 86400 members_wrapper 'members' %}
 
 <div class="container-fluid">
-    {% if MAP_CONFIG %}
-    <h1 class="map-heading">Metro Board of Directors</h1>
+        <h1 class="map-heading pt-4">
+            {% if MAP_CONFIG %}
+                Metro Board of Directors
+            {% else %}
+                {{ CITY_VOCAB.COUNCIL_MEMBERS }}
+            {% endif %}
+        </h1>
 </div>
 
+{% if MAP_CONFIG %}
 <div class="container-fluid" id="search-header">
     <div class="row d-flex align-center h-100">
-        <div class="col-sm-10 col-sm-offset-1 bg-white ">
-            <h4>Look up your Metro Board Members</h4>
+        <div class="col-10 offset-1 bg-transparent-white">
+            <h4 class="mt-2">Look up your Metro Board Members</h4>
+
             <div class="input-group address-search">
                 <input name="search_address" id='search_address' type="text" class="form-control" placeholder="Enter your address">
-                <div class='input-group-btn'>
+                <div class='input-group-btn d-flex'>
                     <button id='btn_search' class="btn btn-primary" title='Search'>
-                        <i class='fa fa-fw fa-search'></i><span class="non-mobile-only"> Search</span>
+                        <i class='fa fa-fw fa-search' aria-hidden="true"></i><span class="d-none d-md-inline"> Search</span>
                     </button>
-                    <a class='btn btn-default' id='reset' title='Reset the map' href='#'>
-                        <i class='glyphicon glyphicon-repeat'></i> Reset
+                    <a class='btn btn-secondary' id='reset' title='Reset the map' href='#'>
+                        <i class="fa fa-repeat" aria-hidden="true"></i><span class="d-none d-md-inline"> Reset</span>
                     </a>
                 </div>
             </div>
+
             <p class="search-example">Search by zip (ex. 90012), city (ex. Acton, Los Angeles), or street address (ex. 200 N Spring St, Los Angeles)</p>
         </div>
     </div>
 </div>
+{% endif %}
 
-<div class="container-fluid">
-    <br/>
-    {% else %}
+<div class="container-fluid mt-4 px-5">
     <div class="row">
-        <div class="col-sm-12">
-            <br/>
-            <h1>
-                {{ CITY_VOCAB.COUNCIL_MEMBERS }}
-            </h1>
-            <hr />
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="row-fluid">
         {% if MAP_CONFIG %}
-            <div class='col-sm-6 no-pad-mobile'>
-
-                <div id="toggleControls" class="" data-toggle="buttons">
-                  <label id="districtToggle" class="btn btn-xs btn-district active">
-                    <input type="radio" name="options" autocomplete="off" checked><i class="fa fa-check" aria-hidden="true"></i> Districts
-                  </label>
-                  <label id="sectorToggle" class="btn btn-xs btn-sector">
-                    <input type="radio" name="options" autocomplete="off"> Sectors
-                  </label>
-                  <label id="cityToggle" class="btn btn-xs btn-city">
-                    <input type="radio" name="options" autocomplete="off"> City of LA
-                  </label>
-                  <label id="caltransToggle" class="btn btn-xs btn-caltrans">
-                    <input type="radio" name="options" autocomplete="off"> Caltrans
-                  </label>
-                  <a tabindex="0" class="map-info" data-container="body" data-toggle="popover" data-placement="right" title="What do these map layers represent?" data-content="<p style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px;'>The three layers of this map show areas from which members of the Metro Board of Directors are nominated:<br><br>
-                    <strong>(1) Los Angeles County Districts</strong> – The elected representative from each district from the Los Angeles County Board of Supervisors serves on the Metro Board.<br><br>
-                    <strong>(2) Sectors</strong> – As defined by the California League of Cities, all the incorporated and unincorporated areas in Los Angeles County, excluding the City of Los Angeles, are divided into four sectors. Each sector nominates one representative, which is approved and appointed by all members of the California League of Cities, to serve on the Metro Board.<br><br>
-                    <strong>(3) City of Los Angeles</strong> – Residents within the City of Los Angeles are represented by the mayor and three city appointees on the Metro Board.<br><br>
-                    <strong>(4) Caltrans District 7</strong> - The Governor of California appoints a non-voting member to the Metro Board. The California Department of Transportation (Caltrans) District 7 Director is the current appointee. Caltrans District 7 includes Los Angeles and Ventura counties.<br><br>
-                    Learn more about <a href='{% url 'about' %}#about-la-metro'>Metro Board appointments</a>.</p>"><h3 class="no-pad-top"><small> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn more</small></h3></a>
+            <div class='col-lg-6 px-0 px-lg-3'>
+                <div id="toggleControls" data-toggle="buttons">
+                    <label id="districtToggle" class="btn btn-sm btn-district active">
+                        <input type="radio" name="options" autocomplete="off" checked><i class="fa fa-check" aria-hidden="true"></i> Districts
+                    </label>
+                    <label id="sectorToggle" class="btn btn-sm btn-sector">
+                        <input type="radio" name="options" autocomplete="off"> Sectors
+                    </label>
+                    <label id="cityToggle" class="btn btn-sm btn-city">
+                        <input type="radio" name="options" autocomplete="off"> City of LA
+                    </label>
+                    <label id="caltransToggle" class="btn btn-xs btn-caltrans">
+                        <input type="radio" name="options" autocomplete="off"> Caltrans
+                    </label>
+                    <a tabindex="0" class="map-info text-secondary" data-container="body" data-bs-toggle="popover" data-bs-html="true" data-bs-placement="right" title="What do these map layers represent?"
+                        data-bs-content="<p style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px;'>The three layers of this map show areas from which members of the Metro Board of Directors are nominated:</p>
+                        <p><strong>(1) Los Angeles County Districts</strong> – The elected representative from each district from the Los Angeles County Board of Supervisors serves on the Metro Board.</p>
+                        <p><strong>(2) Sectors</strong> – As defined by the California League of Cities, all the incorporated and unincorporated areas in Los Angeles County, excluding the City of Los Angeles, are divided into four sectors. Each sector nominates one representative, which is approved and appointed by all members of the California League of Cities, to serve on the Metro Board.</p>
+                        <p><strong>(3) City of Los Angeles</strong> – Residents within the City of Los Angeles are represented by the mayor and three city appointees on the Metro Board.</p>
+                        <p><strong>(4) Caltrans District 7</strong> - The Governor of California appoints a non-voting member to the Metro Board. The California Department of Transportation (Caltrans) District 7 Director is the current appointee. Caltrans District 7 includes Los Angeles and Ventura counties.</p>
+                        <p>Learn more about <a href='{% url 'about' %}#about-la-metro'>Metro Board appointments</a>.</p>
+                        <p>Click the Learn More tooltip again to dismiss.</p>">
+                        <p><i class="fa fa-info-circle text-secondary" aria-hidden="true"></i> Learn more</p>
+                    </a>
                 </div>
 
-                <div id="searchOn" class="well small" style="display: none;">Displaying address search. Reset your results to see all areas.</div>
+                <div id="searchOn" class="card d-none">
+                    <div class="card-body">
+                        <p class="mb-0">Displaying address search. Reset your results to see all areas.</p>
+                    </div>
+                </div>
 
                 <div id="map"></div>
             </div>
-            <div class="col-sm-6 no-pad-mobile">
 
-                    {% include 'board_members/_council_member_table.html' %}
-            </div>
-        {% else %}
-            <div class="col-sm-8 no-pad-mobile">
+            <div id="council-member-scroll-area" class="col-lg-6 px-0 px-lg-3">
                 {% include 'board_members/_council_member_table.html' %}
             </div>
-            <div class='col-sm-4'>
+        {% else %}
+            <div id="council-member-scroll-area" class="col-8 px-0 px-md-3">
+                {% include 'board_members/_council_member_table.html' %}
+            </div>
+            <div class="col-4">
                 {% include 'board_members/_council_info_blurb.html' %}
             </div>
         {% endif %}
     </div>
 </div>
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="col-sm-8">
+
+<div class="container-fluid px-4 px-lg-5 mt-5 mt-lg-4">
+    <div class="row">
+        <div class="col-lg-8">
             <h4><i class='fa fa-fw fa-list-ul'></i> Recent Activity</h4>
-            <table class='table' id='committee-actions'>
+            <table class="table" id="committee-actions">
                 <thead>
                     <tr>
-                        <th>Action</th>
-                        <th></th>
+                        <th colspan="2">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for action in recent_activity|slice:":100" %}
-                        <tr class="activity-row">
-                            <td class='nowrap'>
-                                <p class="text-muted small no-pad-bottom">
-                                    {{action.date_dt|date:'n/d/Y'}}
-                                </p>
-                                <p class="small no-pad-bottom">
-                                    <span class='text-{{action.label}}'>{{action.description | remove_action_subj}}</span>
-                                </p>
-                            </td>
-                            <td>
-                                <p class="small no-pad-bottom">
-                                    <a href="/board-report/{{action.bill.slug}}/">{{action.bill.friendly_name}}</a>
-                                </p>
-                                <p class="small no-pad-bottom">
-                                    {{action.bill.title | short_blurb}}
-                                </p>
-                            </td>
-                        </tr>
-                    {% endfor %}
                     <tr>
-                        <td colspan="3" align="center">
+                        <td class="text-end text-lg-center" colspan="3">
                             <a href="" id="more-actions"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
                             <a href="" id="fewer-actions"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
                         </td>
                     </tr>
+                    {% for action in recent_activity|slice:":100" %}
+                    <tr class="activity-row">
+                        <td class="nowrap">
+                            <p class="small mb-0">
+                                {{action.date_dt|date:'n/d/Y'}}
+                            </p>
+                            <p class="small mb-0">
+                                <span class='text-{{action.label}}'>{{action.description | remove_action_subj}}</span>
+                            </p>
+                        </td>
+                        <td>
+                            <p class="small mb-0">
+                                <a href="/board-report/{{action.bill.slug}}/">{{action.bill.friendly_name}}</a>
+                            </p>
+                            <p class="small mb-0">
+                                {{action.bill.title | short_blurb}}
+                            </p>
+                        </td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
-        <div class="col-sm-4">
+        <div class="col-lg-4 mt-3 mt-lg-0">
             <h4><i class='fa fa-fw fa-calendar-o'></i> Board of Directors Meetings</h4>
-             {% for event in recent_events %}
-                <p class='event-listing'>
+            <hr class="mt-0 mb-1" aria-hidden = "true">
+            <p class="text-end text-lg-center mb-0">
+                <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
+                <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
+            </p>
+            <hr class="mt-1" aria-hidden = "true">
+            {% for event in recent_events %}
+                <p class="event-listing">
                     {{event.start_time | date:'n/d/Y' }} - {{event.link_html | safe}}
                 </p>
             {% endfor %}
-            <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
-            <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
         </div>
     </div>
 </div>
@@ -201,7 +208,7 @@
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
 
-            var rowLabel = $(this).find("span.badge").attr("class")
+            var rowLabel = $(this).find("p.badge").attr("class")
             var activeToggle
 
             if (rowLabel.includes("district")) {
@@ -216,11 +223,12 @@
 
             memberNameSlug = $(this).attr('data')
             hoverOnRow(this.id, activeToggle, memberNameSlug);
+
         } );
 
         $('tbody tr').on( "mouseout", function() {
             $('tr').css('background-color', 'inherit');
-            activeToggle = $('#toggleControls').find('.active').attr('id');
+            let activeToggle = $('#toggleControls').find('.active').attr('id');
             hoverOffRow(this.id, activeToggle);
         } )
 
@@ -346,6 +354,11 @@
         });
 
         {% endif %}
+
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
     </script>
 
 
