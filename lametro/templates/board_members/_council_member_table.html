@@ -3,23 +3,17 @@
 <div class="table-responsive">
     <table class='table' id='council-members'>
         <thead>
-            <tr>
-                <th></th>
-                <th>
-                    {{ CITY_VOCAB.COUNCIL_MEMBER }}
-                </th>
-                <th>
-                    {{CITY_VOCAB.MUNICIPAL_DISTRICT}}
-                </th>
-                <th></th>
-            </tr>
+            <th aria-hidden="true"></th>
+            <th>{{ CITY_VOCAB.COUNCIL_MEMBER }}</th>
+            <th>{{ CITY_VOCAB.MUNICIPAL_DISTRICT }}</th>
+            <th aria-hidden="true"></th>
         </thead>
         <tbody>
             {% for membership in posts %}
             <tr id="polygon-{{ membership.post.label | slugify }}" data="{{ membership.name | slugify}}">
                 <td>
                     <div class="thumbnail-square">
-                        <img src='{{ membership.person.headshot_url }}' alt='{{ membership.name }}' title='{{ membership.name }}' class='img-responsive img-thumbnail' />
+                        <img src='{{ membership.person.headshot_url }}' alt='{{ membership.name }}' title='{{ membership.name }}' class='img-thumbnail' />
                     </div>
                 </td>
 
@@ -28,27 +22,24 @@
                 </td>
 
                 <td data-order='{{ membership.index }}'>
-                    {% firstof membership.person.board_office.role membership.role %}
-                    <br/ >
+                    <p class="mb-1">{% firstof membership.person.board_office.role membership.role %}</p>
 
-                    <span class="small">
+                    <p class="small mb-1">
                         {{ membership.post.acting_label | comma_to_line_break | safe }}
-                    </span><br />
+                    </p>
 
                     {% if "District" in membership.post.label and "Caltrans District" not in membership.label %}
-                        <span class="badge district-badge">District appointee</span>
+                        <p class="badge district-badge mb-1">District appointee</p>
                     {% elif "sector" in membership.post.label  %}
-                        <span class="badge sector-badge">Sector appointee</span>
+                        <p class="badge sector-badge mb-1">Sector appointee</p>
                     {% elif "Mayor" in membership.post.label %}
-                        <span class="badge city-badge">Los Angeles</span>
+                        <p class="badge city-badge mb-1">Los Angeles</p>
                     {% endif %}
                 </td>
 
-                <td></td>
+                <td aria-hidden="true"></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-
-
