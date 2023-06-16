@@ -15,34 +15,35 @@
 {% endblock %}
 
 {% block content %}
+<div class="jumbotron mt-4" id="search-jumbotron">
+    {% include 'search/_search_header.html' %}
+    {% include 'common/search_bar.html' %}
+</div>
 
-    <br/>
-    <div class='jumbotron' id='search-jumbotron'>
-        {% include 'search/_search_header.html' %}
-        {% include 'common/search_bar.html' %}
-    </div>
-
-    <div class="row" style="margin-left:unset;">
-        <div class="col-sm-4">
-            <p id="result-type-filter">
-                Result type:
+<div class="row">
+    <div class="col-md-4">
+        <div class="d-block mt-4 mb-5" id="result-type-filter">
+            Result type:
+            <div class="d-inline-block d-sm-block d-md-inline-block">
                 <a class="btn btn-primary btn-sm{% if 'result_type' not in request.get_full_path or 'result_type=all' in request.get_full_path %} active{% endif %}" href="{% search_with_querystring request q=request.GET.q|remove_question result_type='all' %}">All</a>
                 <a class="btn btn-primary btn-sm{% if 'result_type=keyword' in request.get_full_path  %} active{% endif %}" href="{% search_with_querystring request result_type='keyword' %}">Text Search</a>
                 <a class="btn btn-primary btn-sm{% if 'result_type=topic' in request.get_full_path %} active{% endif %}" href="{% search_with_querystring request result_type='topic' %}">Tag Search</a>
+            </div>
+        </div>
+
+        {% if selected_facets %}
+            <p class="mb-0">
+                <a href="/search/" class="btn btn-sm btn-default">
+                <i class='fa fa-times'></i>
+                Clear all filters
+                </a>
             </p>
+        {% endif %}
 
-            {% if selected_facets %}
-                <p>
-                    <a href="/search/" class="btn btn-sm btn-default">
-                    <i class='fa fa-times'></i>
-                    Clear all filters
-                    </a>
-                </p>
-            {% endif %}
+        <!---------- REPORT DETAILS ------------>
+        <h5>Report Details</h5>
+        <div class="accordion mb-4" id="report-details">
 
-            <!---------- REPORT DETAILS ------------>
-            <br />
-            <h5>Report Details</h5>
             <!-- Meetings -->
             {% if facets.fields.sponsorships %}
                 {% with facet_name='sponsorships' facet_label='Meeting' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
@@ -85,10 +86,11 @@
             {% with facet_name='inferred_status' facet_label='Status' item_list=facets.fields.inferred_status selected_list=selected_facets.inferred_status %}
                 {% include 'search/_search_filter.html' %}
             {% endwith %}
+        </div>
 
-            <!---------- REPORT KEYWORDS ------------>
-            <br />
-            <h5>Report Keywords</h5>
+        <!---------- REPORT KEYWORDS ------------>
+        <h5>Report Keywords</h5>
+        <div class="accordion" id="report-keywords">
             <!-- Lines / Ways -->
             {% if facets.fields.lines_and_ways %}
                 {% with facet_name='lines_and_ways' facet_label='Lines / Ways' item_list=facets.fields.lines_and_ways selected_list=selected_facets.lines_and_ways %}
@@ -225,36 +227,7 @@
         {% endfor %}
         </div>
     </div>
-
-    {% if page.has_previous or page.has_next %}
-        <div class="row">
-            <div class="col-md-8 col-md-offset-4">
-                <nav>
-                    <ul class="pagination">
-                        {% if page.has_previous %}
-                            <li>
-                                <a href="/search/?{{ q_filters }}&amp;page={{ page.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo; Previous</span></a>
-                            </li>
-                        {% else %}
-                            <li class="disabled">
-                                <a href="#" aria-label="Previous"><span aria-hidden="true">&laquo; Previous</span></a>
-                            </li>
-                        {% endif %}
-
-                        {% if page.has_next %}
-                            <li>
-                                <a href="/search/?{{ q_filters }}&amp;page={{ page.next_page_number }}" aria-label="Next"><span aria-hidden="true">Next &raquo;</span></a>
-                            </li>
-                        {% else %}
-                            <li class="disabled">
-                                <a href="#" aria-label="Next"><span aria-hidden="true">Next &raquo;</span></a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    {% endif %}
+</div>
 
 {% endblock %}
 
@@ -395,6 +368,11 @@
         var slug = $(this).attr('id');
         $('a[href="#' + slug + '"]').text('More topics...');
     });
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 
   </script>
 {% endblock %}
