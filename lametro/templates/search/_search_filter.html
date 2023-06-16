@@ -3,77 +3,25 @@
 
 {% if facet_label != 'Controlling Body' %}
 
-    <div class="panel panel-default panel-filter">
-        <div class="panel-heading" data-toggle="collapse" data-target="#filter-{{facet_name}}">
-            <h3 class="panel-title">
-                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Filter by
-                    {% if 'Legislation' in facet_label %}
-                        Report Type
-                    {% elif 'Sponsor' in facet_label %}
-                        Meeting
-                    {% elif 'Legislative Session' in facet_label %}
-                        Fiscal Year
-                    {% else %}
-                        {{facet_label}}
-                    {% endif %}
-                    <i class="fa fa-fw {% if facet_name in selected_facets %}fa-minus {% else %} fa-plus {% endif %} pull-right"></i>
-                </a>
-            </h3>
-        </div>
-        <div class="panel-body {% if facet_name in selected_facets %}panel-show{% endif %} collapse" id="filter-{{facet_name}}">
-            <ul class="search-facet-list">
-            {% if facet_name != 'sponsorships' %}
-
-                {% include 'search/_ordered_search_filter_items.html' %}
-
-            {% else %}
-
-                {% if facets.fields.legislative_session|length > 1 %}
-
-                    {% for name, count in facets.fields.sponsorships %}
-                        {% if count %}
-                        <li class="small">
-                            <div class="skinny-list">
-                                <a href="#" class="filter-value" data="sponsorships_exact:{{name}}" title="{{ name|title }}">
-                                {% if name in selected_facets.sponsorships %}
-                                    <strong>{{ name | title }}</strong>
-                                    <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
-                                        <i class="fa fa-times"></i>
-                                    </a>
-                                {% else %}
-                                    {{ name | title }}
-                                {% endif %}
-                                </a>
-                            </div>
-                            <span class="badge badge-facet pull-right">{{ count }}</span>
-                        </li>
-                        {% endif %}
-                    {% endfor %}
-
+    <div class="accordion-item">
+        <h3 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{facet_name}}" aria-expanded="false" aria-controls="collapse_{{facet_name}}">
+                Filter by
+                {% if 'Legislation' in facet_label %}
+                    Report Type
+                {% elif 'Sponsor' in facet_label %}
+                    Meeting
+                {% elif 'Legislative Session' in facet_label %}
+                    Fiscal Year
                 {% else %}
-
-                    {% for name, count in facets.fields.sponsorships %}
-                        {% if count %}
-                            <li class="small">
-                                <a href="#" class="filter-value" data="sponsorships_exact:{{name}}" title="{{ name|title }}">
-                                    {% if name in selected_facets.sponsorships %}
-                                        <strong>{{ name | title }}</strong>
-                                        <a href ="#" class="remove-filter-value" data="{{facet_name}}_exact:{{name}}">
-                                            <i class="fa fa-times"></i>
-                                        </a>
-                                    {% else %}
-                                        {{ name | title }}
-                                    {% endif %}
-                                </a>
-                            </li>
-                        {% endif %}
-
-                    {% endfor %}
+                    {{facet_label}}
                 {% endif %}
-
-            {% endif %}
-            </ul>
+            </button>
+        </h3>
+        <div id="collapse_{{facet_name}}" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              blah blah
+            </div>
         </div>
     </div>
 

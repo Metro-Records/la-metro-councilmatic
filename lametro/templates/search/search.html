@@ -15,34 +15,35 @@
 {% endblock %}
 
 {% block content %}
+<div class="jumbotron mt-4" id="search-jumbotron">
+    {% include 'search/_search_header.html' %}
+    {% include 'common/search_bar.html' %}
+</div>
 
-    <br/>
-    <div class='jumbotron' id='search-jumbotron'>
-        {% include 'search/_search_header.html' %}
-        {% include 'common/search_bar.html' %}
-    </div>
-
-    <div class="row" style="margin-left:unset;">
-        <div class="col-sm-4">
-            <p id="result-type-filter">
-                Result type:
+<div class="row">
+    <div class="col-md-4">
+        <div class="d-block mt-4 mb-5" id="result-type-filter">
+            Result type:
+            <div class="d-inline-block d-sm-block d-md-inline-block">
                 <a class="btn btn-primary btn-sm{% if 'result_type' not in request.get_full_path or 'result_type=all' in request.get_full_path %} active{% endif %}" href="{% search_with_querystring request q=request.GET.q|remove_question result_type='all' %}">All</a>
                 <a class="btn btn-primary btn-sm{% if 'result_type=keyword' in request.get_full_path  %} active{% endif %}" href="{% search_with_querystring request result_type='keyword' %}">Text Search</a>
                 <a class="btn btn-primary btn-sm{% if 'result_type=topic' in request.get_full_path %} active{% endif %}" href="{% search_with_querystring request result_type='topic' %}">Tag Search</a>
+            </div>
+        </div>
+
+        {% if selected_facets %}
+            <p class="mb-0">
+                <a href="/search/" class="btn btn-sm btn-default">
+                <i class='fa fa-times'></i>
+                Clear all filters
+                </a>
             </p>
+        {% endif %}
 
-            {% if selected_facets %}
-                <p>
-                    <a href="/search/" class="btn btn-sm btn-default">
-                    <i class='fa fa-times'></i>
-                    Clear all filters
-                    </a>
-                </p>
-            {% endif %}
+        <!---------- REPORT DETAILS ------------>
+        <h5>Report Details</h5>
+        <div class="accordion mb-4" id="report-details">
 
-            <!---------- REPORT DETAILS ------------>
-            <br />
-            <h5>Report Details</h5>
             <!-- Meetings -->
             {% if facets.fields.sponsorships %}
                 {% with facet_name='sponsorships' facet_label='Meeting' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
@@ -85,10 +86,11 @@
             {% with facet_name='inferred_status' facet_label='Status' item_list=facets.fields.inferred_status selected_list=selected_facets.inferred_status %}
                 {% include 'search/_search_filter.html' %}
             {% endwith %}
+        </div>
 
-            <!---------- REPORT KEYWORDS ------------>
-            <br />
-            <h5>Report Keywords</h5>
+        <!---------- REPORT KEYWORDS ------------>
+        <h5>Report Keywords</h5>
+        <div class="accordion" id="report-keywords">
             <!-- Lines / Ways -->
             {% if facets.fields.lines_and_ways %}
                 {% with facet_name='lines_and_ways' facet_label='Lines / Ways' item_list=facets.fields.lines_and_ways selected_list=selected_facets.lines_and_ways %}
@@ -137,137 +139,9 @@
                     {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
-
-            <div class="divider"></div>
-
-            <div id="related-terms" class="hidden">
-                <p>Related terms:</p>
-            </div>
-        </div>
-
-        <div class="col-sm-8 order-nav">
-
-            <nav class="nav nav-inline order-nav">
-
-                Order by:
-
-                {% with sort_name='date' order_name='desc' %}
-                    {% include 'search/_order_by_filter.html' %}
-                {% endwith %}
-
-                {% with sort_name='title' order_name='asc' %}
-                    {% include 'search/_order_by_filter.html' %}
-                {% endwith %}
-
-                <!-- The templating logic is different for Relevance sort. The Relevance sort does not require a direction, and it should be bolded by default after submitting a query.-->
-                {% if 'sort_by=relevance' in request.get_full_path or 'order_by=' not in request.get_full_path and 'q=' in request.get_full_path %}
-                    <strong><a class="nav-link assort" href="{% search_with_querystring request sort_by='relevance' %}" data='sort_by=relevance'>
-                        Relevance
-                    </a></strong>
-                {% else %}
-                    <a class="sort-by nav-link" href="{% search_with_querystring request sort_by='relevance' %}" data='sort_by=relevance'>
-                        Relevance
-                    </a>
-                {% endif %}
-
-                {% if 'sort_by' in request.get_full_path %}
-                    <a href ="#" class="remove-order-value btn btn-sm btn-primary hidden-xs"
-                        {% if 'sort_by=date' in request.get_full_path %}
-                            data='sort_by=date'
-                        {% elif 'sort_by=title' in request.get_full_path%}
-                            data='sort_by=title'
-                        {% elif 'sort_by=relevance' in request.get_full_path%}
-                            data='sort_by=relevance'
-                        {% endif %}
-                        ><i class="fa fa-times"></i>
-                        Remove
-                    </a>
-
-                    <a href ="#" class="remove-order-value btn btn-sm btn-primary visible-xs"
-                        {% if 'sort_by=date' in request.get_full_path %}
-                            data='sort_by=date'
-                        {% elif 'sort_by=title' in request.get_full_path%}
-                            data='sort_by=title'
-                        {% elif 'sort_by=relevance' in request.get_full_path%}
-                            data='sort_by=relevance'
-                        {% endif %}
-                        ><i class="fa fa-times"></i>
-                    </a>
-                {% endif %}
-
-            </nav>
-
-            <hr>
-
-            {% if query or selected_facets %}
-            <h3 class="modal-links">
-
-                {% include 'search/_search_results_header.html' %}
-
-                <small>
-                    {% if query and selected_facets %}
-                        <a href="/search/rss/?q={{request.GET.q}}{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
-                    {% elif selected_facets %}
-                        <a href="/search/rss/?{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
-                    {% else %}
-                        <a href="/search/rss/?q={{request.GET.q}}" title="RSS feed">
-                    {% endif %}
-
-                    <i class="fa fa-rss-square" aria-hidden="true"></i></a>
-                </small>
-            </h3>
-            <div class='row'>
-                <div class='col-sm-8' id='search_message'></div>
-            </div>
-            {% endif %}
-
-
-
-        {% for result in page.object_list %}
-
-            <!-- Legislation result -->
-
-            {% with r=result %}
-                {% include 'search/_search_result.html' %}
-            {% endwith %}
-
-            {% include 'search/_tags.html' %}
-
-            {% empty %}
-            {% include 'search/_empty_search_message.html' %}
-        {% endfor %}
         </div>
     </div>
-
-    {% if page.has_previous or page.has_next %}
-        <div class="row">
-            <div class="col-md-8 col-md-offset-4">
-                <nav>
-                    <ul class="pagination">
-                        {% if page.has_previous %}
-                            <li>
-                                <a href="/search/?{{ q_filters }}&amp;page={{ page.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo; Previous</span></a>
-                            </li>
-                        {% else %}
-                            <li class="disabled">
-                                <a href="#" aria-label="Previous"><span aria-hidden="true">&laquo; Previous</span></a>
-                            </li>
-                        {% endif %}
-
-                        {% if page.has_next %}
-                            <li>
-                                <a href="/search/?{{ q_filters }}&amp;page={{ page.next_page_number }}" aria-label="Next"><span aria-hidden="true">Next &raquo;</span></a>
-                            </li>
-                        {% else %}
-                            <li class="disabled">
-                                <a href="#" aria-label="Next"><span aria-hidden="true">Next &raquo;</span></a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    {% endif %}
+</div>
 
 {% endblock %}
 
@@ -408,6 +282,11 @@
         var slug = $(this).attr('id');
         $('a[href="#' + slug + '"]').text('More topics...');
     });
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 
   </script>
 {% endblock %}

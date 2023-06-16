@@ -1,18 +1,16 @@
 <form class="search form-search" id="search-form">
-    <div class="input-group" style="margin-bottom: 15px;">
-        <select class="select2-multiple form-control input-group-lg" id="search-bar" multiple="multiple"></select>
-        <div class="input-group-btn">
-            <button type="submit" class="btn btn-lg btn-primary" id="search-button">
-                <i class="fa fa-fw fa-search"></i>
-            </button>
-        </div>
+    <div class="input-group mb-3">
+        <select class="select2-multiple form-control" id="search-bar" multiple="multiple" aria-label="Search" aria-describedby="search-addon"></select>
+        <button type="submit" class="btn btn-primary" id="search-button">
+            <i class="fa fa-fw fa-search"></i>
+        </button>
     </div>
 
     <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-primary btn-search-option{% if 'search-reports' not in request.GET %} active{% endif %}">
+        <label class="btn btn-primary btn-search-option {% if 'search-reports' not in request.GET %}active{% endif %}">
             <input type="radio" autocomplete="off" name="search-all"{% if 'search-reports' not in request.GET %} checked{% endif %}> Search reports and attachments
         </label>
-        <label class="btn btn-primary btn-search-option{% if 'search-reports' in request.GET %} active{% endif %}">
+        <label class="btn btn-primary btn-search-option {% if 'search-reports' in request.GET %}active{% endif %}">
             <input type="radio" autocomplete="off" name="search-reports"{% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
         </label>
     </div>
