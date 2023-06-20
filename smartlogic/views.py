@@ -3,7 +3,7 @@ import json
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.generic import ListView
-from requests.exceptions import HTTPError, ConnectTimeout
+from requests.exceptions import HTTPError, ConnectTimeout, ReadTimeout
 
 from smartlogic.client import SmartLogic
 from smartlogic.exceptions import (
@@ -37,7 +37,7 @@ class SmartLogicAPI(ListView):
             reason = e.response.reason
             status_code = e.response.status_code
 
-        except ConnectTimeout:
+        except (ConnectTimeout, ReadTimeout):
             message = "Could not reach SmartLogic"
             reason = "Read timeout"
             status_code = 504
