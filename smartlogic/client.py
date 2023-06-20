@@ -12,7 +12,7 @@ except AssertionError:
 import json
 
 import requests
-from requests.exceptions import HTTPError, ConnectTimeout
+from requests.exceptions import HTTPError, ConnectTimeout, ReadTimeout
 
 from smartlogic.exceptions import (
     RequestFailed,
@@ -47,7 +47,7 @@ class SmartLogic(object):
 
         try:
             response = getattr(requests, method)(url, timeout=5, **requests_kwargs)
-        except (HTTPError, ConnectTimeout):
+        except (HTTPError, ConnectTimeout, ReadTimeout):
             raise
 
         if response.status_code == 403:

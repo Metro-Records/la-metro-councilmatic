@@ -664,7 +664,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             running_events = requests.get(
                 "http://metro.granicus.com/running_events.php", timeout=5
             )
-        except requests.exceptions.ConnectTimeout:
+        except (requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout):
             return cls.objects.none()
 
         if running_events.status_code == 200:
