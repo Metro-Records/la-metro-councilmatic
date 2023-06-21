@@ -192,7 +192,7 @@
                     {% for category, topics in topics_list %}
                         <h4>{{ category }}</h4>
                         <ul>
-                        {% for topic in topics %}
+                        {% for topic in topics|sort_topics %}
                             {% with topic.classification|add:":"|add:topic.name as tag_facet %}
                             <li>
                                 <a href="{% search_with_querystring request selected_facets=tag_facet %}">

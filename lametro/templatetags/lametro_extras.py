@@ -309,3 +309,10 @@ def group_by_classification(queryset):
         lambda item: item.get_classification_display(),
     ):
         yield group, list(members)
+
+
+@register.filter
+def sort_topics(topics):
+    """Sorts a board report's topics alphabetically."""
+
+    return sorted(topics, key=lambda t: t.name)
