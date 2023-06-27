@@ -60,7 +60,17 @@
     }
 
     infoBox.clear = function(){
-      this._div.innerHTML = '<p><i class="fa fa-hand-pointer-o fa-fw"></i><span class="non-mobile-only">Hover</span><span class="mobile-only">Tap a ward</span> for details</p>';
+      this._div.innerHTML = (
+        '<div class="d-flex flex-row">' +
+            '<div>' +
+                '<i class="mt-2 mt-md-0 fa fa-hand-pointer-o fa-fw"></i>' +
+            '</div>' +
+            '<div>' +
+                '<span class="d-none d-md-inline">Hover for details</span>' +
+                "<span class='d-inline d-md-none'>Tap a ward to view member's page</span> "+
+            '</div>' +
+        '</div>'
+        );
     }
 
     infoBox.addTo(map);
