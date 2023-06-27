@@ -261,7 +261,7 @@ function renderRelatedTerms (subjects) {
 
         $.each(subjects, function (idx, subject) {
             var link = $('<a />').attr('href', '/search/?q=' + subject).text(subject);
-            $('#related-terms').append(link).append('<br />');
+            $('#related-terms').append(link).append('<hr class="my-1">');
         });
     }
 }
