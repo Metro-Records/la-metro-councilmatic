@@ -314,19 +314,6 @@
 
     <script>
         $(function() {
-            // TODO: consider getting rid of this
-            // filters are collapsed be default b/c they are long
-            // filters w/ class panel-show (i.e. filters that have been selected) are expanded
-            $('.panel-show').addClass('in');
-
-            $(".panel-heading").click(function () {
-                if ($(this).parent().children().eq(1).hasClass("in")){
-                    $(this).find('i').removeClass("fa-minus").addClass("fa-plus");
-                } else{
-                    $(this).find('i').removeClass("fa-plus").addClass("fa-minus");
-                }
-            });
-
             function updateQueryParameters($link, urlObject) {
                 // Function to update the query string based on data attribute
                 // of provided target. Fired on facet, topic, and sort link
