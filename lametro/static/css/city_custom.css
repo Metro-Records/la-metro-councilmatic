@@ -110,12 +110,6 @@ h1, .h1 {
     outline:none;
 }
 
-/* TODO: remove if not needed, or rename for accordion */
-.panel-body {
-    padding: 28px;
-    padding-top: 0px;
-}
-
 div#collapseURL .panel-body, div#collapsePDF .panel-body {
     padding-top: 28px;
 }
@@ -395,11 +389,21 @@ hr .events-line {
         padding-left: 15px;
         padding-right: 15px;
     }
+
 }
 
 @media only screen and (max-width : 767px) {
     .navbar-collapse.collapse:not(.show) {
         display: none !important;
+    }
+}
+
+@media only screen and (max-width : 576px) {
+    .pseudo-topic-tag {
+        /* Prevent tags with long strings from distorting the page at small screen sizes */
+        max-width: 320px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
@@ -553,13 +557,6 @@ input[type=radio][name=options] {
     pointer-events: none;
 }
 
-/* TODO: remove if not needed */
-/* #search-button {
-    height: 100%;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-} */
-
 .label-primary {
     background-color: #3279B7;
 }
@@ -625,4 +622,5 @@ small.rss {
 
 .pseudo-topic-tag {
     margin-right: 8px;
+    color: var(--bs-link-color);
 }
