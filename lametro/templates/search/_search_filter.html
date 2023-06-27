@@ -20,7 +20,51 @@
         </h3>
         <div id="collapse_{{facet_name}}" class="accordion-collapse collapse">
             <div class="accordion-body">
-              blah blah
+                <ul class="search-facet-list">
+                    {% if facet_name in 'topics,lines_and_ways,phase,bill_type,project,metro_location,geo_admin_location,significant_date,motion_by,plan_program_policy' %}
+                        {% include 'search/_ordered_search_filter_items.html' %}
+
+                    {% elif facet_name == 'sponsorships' %}
+                        {% for name, count in facets.fields.sponsorships %}
+
+                            {% if count %}
+                                <li class="small">
+
+                                    {% if facets.fields.legislative_session|length > 1 %}
+                                    <div class="skinny-list">
+                                    {% endif %}
+
+                                        <a href="#" class="filter-value" data="sponsorships_exact:{{name}}" title="{{ name|title }}">
+                                            {% if name in selected_facets.sponsorships %}
+                                            <strong>{{ name | title }}</strong>
+                                            <a href="#" class="remove-filter-value btn btn-primary btn-sm" data="{{facet_name}}_exact:{{name}}">
+                                                <i class="fa fa-times"></i>
+                                            </a>
+                                            {% else %}
+                                                {{ name | title }}
+                                            {% endif %}
+                                        </a>
+
+                                    {% if facets.fields.legislative_session|length > 1 %}
+                                    </div> {# closes .skinny-list div #}
+
+                                    <span class="badge badge-facet ms-auto">{{ count }}</span>
+                                    {% endif %}
+
+                                </li>
+                            {% endif%}
+
+                        {% endfor %}
+                    {% else %}
+
+                        {% for name, count in item_list %}
+                            {% if count %}
+                                {% include 'search/_ordered_search_filter_items.html' %}
+                            {% endif %}
+                        {% endfor %}
+
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </div>

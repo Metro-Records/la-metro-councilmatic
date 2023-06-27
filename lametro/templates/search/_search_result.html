@@ -10,7 +10,7 @@
 </p>
 
 <div class="row">
-    <div class="col-xs-11">
+    <div class="col-10 col-sm-11">
         {% if query %}
             <p class="search-result">
                 {% if r.highlighted.text.0 %}
@@ -22,15 +22,14 @@
             </p>
         {% else %}
             <p>
-              {{ r.listing_description | short_blurb }}
+                {{ r.listing_description | short_blurb }}
             </p>
         {% endif %}
     </div>
-    <div class='col-xs-1 no-pad-mobile'>
-        <div>
-            <a class='btn-bill-detail' target='_blank' href='/board-report/{{ r.slug }}/'>
-                <i class="fa fa-fw fa-chevron-right"></i>
-            </a>
-        </div>
+
+    <div class="col-2 col-sm-1">
+        <a class='btn-bill-detail' target='_blank' href='/board-report/{{ r.slug }}/'>
+            <i class="fa fa-fw fa-chevron-right"></i>
+        </a>
     </div>
 </div>

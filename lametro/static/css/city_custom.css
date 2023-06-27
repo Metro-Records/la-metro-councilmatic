@@ -4,7 +4,7 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar {
     font-family: 'ff-din-web', Arial, sans-serif;
 }
 
-body, body .table, .popover-body {
+body, body .table, .popover-body, .badge-facet, .text-body-secondary {
     color: #777777;
 }
 
@@ -188,8 +188,16 @@ strong.match-group {
 
 /* Labels for statues */
 .label {
-    padding: .25em .6em .25em;
-    display: inline-block;
+    display: inline;
+    padding: .3em .6em;
+    font-size: 75%;
+    font-weight: bold;
+    line-height: 1;
+    color: #ffffff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
 }
 
 .label-info {
@@ -217,7 +225,10 @@ strong.match-group {
 /* Styles for order by options on search page */
 .nav a.sort-by, .nav a.btn { margin-left: 1.8em; }
 
-.nav-inline { margin-top: 21px; }
+.nav-inline {
+    margin-top: 21px;
+    font-weight: normal;
+}
 
 div.order-nav { margin-top: 21px; }
 
@@ -585,4 +596,33 @@ input[type=radio][name=options] {
 
 .popover-body p {
     font-size: inherit;
+}
+
+.filter-value {
+    display: inline-block;
+    width: 80%;
+}
+
+.remove-filter-value {
+    background-color: #EB6864;
+    border-radius: 0.25rem;
+}
+
+#report-details .accordion-button, #report-keywords .accordion-button {
+    background-color: #EEEEEE;
+    padding: 8px 10px;
+    font-weight: bold;
+    color: #777777;
+}
+
+.order-nav a.nav-link {
+    margin-left: 1.2em;
+}
+
+small.rss {
+    font-size: 1em;
+}
+
+.pseudo-topic-tag {
+    margin-right: 8px;
 }
