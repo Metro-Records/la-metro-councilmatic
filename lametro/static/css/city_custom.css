@@ -315,7 +315,7 @@ div#toggleControls { margin-bottom: 1em; }
     height: 700px;
 }
 
-.skinny-list {
+.skinny-list, .small>.filter-value {
     width: 90%;
     display: inline-block;
 }
@@ -595,11 +595,6 @@ input[type=radio][name=options] {
     font-size: inherit;
 }
 
-.filter-value {
-    display: inline-block;
-    width: 80%;
-}
-
 .remove-filter-value {
     background-color: #EB6864;
     border-radius: 0.25rem;
@@ -623,4 +618,8 @@ small.rss {
 .pseudo-topic-tag {
     margin-right: 8px;
     color: var(--bs-link-color);
+}
+
+.badge-facet.ms-auto {
+    height: fit-content;
 }

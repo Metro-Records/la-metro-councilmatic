@@ -4,15 +4,16 @@
 {% for name, count in item_list %}
     {% if count %}
         {% if name in selected_list %}
-            <li class="small">
-                <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">
-                    <strong>{{ name | short_topic_name }}</strong>
-                </a>
+            <li class="small d-flex">
+                <div class="skinny-list">
+                    <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">
+                        <strong>{{ name | short_topic_name }}</strong>
+                    </a>
+                    <a href="#" class="remove-filter-value btn btn-primary btn-sm" data="{{facet_name}}_exact:{{name}}">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
                 <span class="badge badge-facet ms-auto">{{ count }}</span>
-                <a href="#" class="remove-filter-value btn btn-primary btn-sm" data="{{facet_name}}_exact:{{name}}">
-                    <i class="fa fa-times"></i>
-                </a>
-
             </li>
         {% endif %}
     {% endif %}
@@ -20,7 +21,7 @@
 {% for name, count in item_list|dictsort:0 %}
     {% if count %}
         {% if name not in selected_list %}
-            <li class="small">
+            <li class="small d-flex">
                 <a href="#" class="filter-value" data="{{facet_name}}_exact:{{name}}" title="{{ name }}">{{ name | short_topic_name }}</a>
                 <span class="badge badge-facet ms-auto">{{ count }}</span>
             </li>
