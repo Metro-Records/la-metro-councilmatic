@@ -383,11 +383,11 @@
         topicFacets.includes(facetName) ? facetTerms.push(facetValue) : $.noop();
 
         // Open the accordions for selected facets on page load
-        let accordionBtn = $("[data-bs-target=collapse_" + facetName + "]");
+        let accordionBtn = $("button[aria-controls='collapse_" + facetName + "']");
         let accordionDiv = $("#collapse_" + facetName);
 
         accordionBtn.removeClass("collapsed");
-        accordionBtn.attr("aria-expanded","true");  //TODO: this bit isn't working
+        accordionBtn.attr("aria-expanded","true");
         accordionDiv.addClass("show");
     })
 
