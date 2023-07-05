@@ -66,8 +66,11 @@ done;
 # Once the app has started, reboot the Solr container using the current app
 # docker-compose.deployment.yml. Data should be persisted between containers,
 # thanks to our volume use.
-[ -n "$(docker ps -f NAME=solr-$DEPLOYMENT_GROUP_NAME -q)" ] && \
-    (docker stop solr-$DEPLOYMENT_GROUP_NAME; docker rm solr-$DEPLOYMENT_GROUP_NAME; docker network prune -f)
+if [ -n "$(docker ps -f NAME=solr-$DEPLOYMENT_GROUP_NAME -q)" ]; then
+    docker stop solr-$DEPLOYMENT_GROUP_NAME
+    docker rm solr-$DEPLOYMENT_GROUP_NAME
+    docker network prune -f
+fi
 
 cd $PROJECT_DIR
 docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAME
