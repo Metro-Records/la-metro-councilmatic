@@ -69,7 +69,7 @@ done;
 [ -n "$(docker ps -f NAME=solr-$DEPLOYMENT_GROUP_NAME -q)" ] && \
     (docker stop solr-$DEPLOYMENT_GROUP_NAME; \
 	  docker rm solr-$DEPLOYMENT_GROUP_NAME; \
-	  docker network rm "${APP_NAME}-${DEPLOYMENT_ID}_default")
+	  docker network prune --force)
 
 cd $PROJECT_DIR
 docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAME
