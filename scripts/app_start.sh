@@ -66,10 +66,12 @@ done;
 # Once the app has started, reboot the Solr container using the current app
 # docker-compose.deployment.yml. Data should be persisted between containers,
 # thanks to our volume use.
+LOWERCASE_DEPLOYMENT_ID=$(echo "${DEPLOYMENT_ID}" | tr '[:upper:]' '[:lower:]')
+
 [ -n "$(docker ps -f NAME=solr-$DEPLOYMENT_GROUP_NAME -q)" ] && \
     (docker stop solr-$DEPLOYMENT_GROUP_NAME; \
 	  docker rm solr-$DEPLOYMENT_GROUP_NAME; \
-	  docker network rm "${APP_NAME}-${DEPLOYMENT_ID}_default")
+	  docker network rm "${APP_NAME}-${LOWERCASE_DEPLOYMENT_ID}_default")
 
 cd $PROJECT_DIR
 docker-compose -f docker-compose.deployment.yml up -d solr-$DEPLOYMENT_GROUP_NAME
