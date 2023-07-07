@@ -112,13 +112,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="text-end text-lg-center" colspan="3">
-                            <a href="" id="more-actions"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
-                            <a href="" id="fewer-actions"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
-                        </td>
-                    </tr>
-                    {% for action in recent_activity|slice:":100" %}
+                    {% for action in recent_activity|slice:":25" %}
                     <tr class="activity-row">
                         <td class="nowrap">
                             <p class="small mb-0">
@@ -138,22 +132,26 @@
                         </td>
                     </tr>
                     {% endfor %}
+                    <tr>
+                        <td class="text-end text-lg-center" colspan="3">
+                            <a href="" id="more-actions"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
+                            <a href="" id="fewer-actions"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
         <div class="col-lg-4 mt-3 mt-lg-0">
             <h4><i class='fa fa-fw fa-calendar-o'></i> Board of Directors Meetings</h4>
-            <hr class="mt-0 mb-1" aria-hidden = "true">
-            <p class="text-end text-lg-center mb-0">
-                <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
-                <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
-            </p>
-            <hr class="mt-1" aria-hidden = "true">
             {% for event in recent_events %}
                 <p class="event-listing">
                     {{event.start_time | date:'n/d/Y' }} - {{event.link_html | safe}}
                 </p>
             {% endfor %}
+            <p>
+                <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show more</a>
+                <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer</a>
+            </p>
         </div>
     </div>
 </div>
