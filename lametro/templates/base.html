@@ -119,6 +119,22 @@
                 'google_translate_element');
         }
 
+		// Make sure the Google Translate toolbar doesn't block the navbar
+		const navBar = document.querySelector("nav"),
+		  languageSelector = document.querySelector("#google_translate_element")
+
+		languageSelector.addEventListener("change", (e) => {
+			// Make room for the translate bar
+			navBar.style.top = "40px";
+
+			const translateBar = document.querySelector(".skiptranslate iframe"),
+			  translateBarDoc = translateBar.contentWindow.document,
+			  translateBarClose = translateBarDoc.querySelector("a[title='Close']")
+
+			  // Move navbar back up when translate bar is closed
+			  translateBarClose.addEventListener("click", (e) => navBar.style.top = "0px")
+		  })
+
         function listenForSearch() {
             $('form#search-form').submit(function validateFormSubmission(e) {
                 e.preventDefault();
