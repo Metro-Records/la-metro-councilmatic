@@ -70,13 +70,15 @@
                   </ul>
                 </li>
                 {% nocache %}
-                    <li>
-                        {% if user.is_authenticated %}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item pt-4">
                             <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
-                        {% else %}
+                        </li>
+                    {% else %}
+                        <li>
                             <div id="google_translate_element"></div>
-                        {% endif %}
-                    </li>
+                        </li>
+                    {% endif %}
                 {% endnocache %}
               </ul>
             </div>

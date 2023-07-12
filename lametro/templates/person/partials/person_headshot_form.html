@@ -5,12 +5,11 @@
     {% csrf_token %}
 
     {% if headshot_error %}
-        <br>
-        <p style="color: #eb6864;">*{{headshot_error}}</p>
+        <p class="text-primary">*{{headshot_error}}</p>
     {% endif %}
     {{headshot_form.headshot_form}}
-    <label for="{{headshot_form.image.id_for_label}}">Update Headshot:</label>
-    <input type="file" name="headshot">
+    <label class="mb-2" for="{{headshot_form.image.id_for_label}}">Update Headshot:</label>
+    <input class="mb-2" type="file" name="headshot">
     <button class="btn btn-primary">Submit</button>
 
 </form>
