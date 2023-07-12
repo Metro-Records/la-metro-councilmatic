@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - deploy
+      - heroku
 
 jobs:
   publish:
