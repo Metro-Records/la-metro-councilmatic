@@ -15,6 +15,9 @@ env = environ.Env(
 # Core Django Settings
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Take missing environment variables from .env.local file
+environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
+
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DEBUG")
 SHOW_TEST_EVENTS = env.bool("SHOW_TEST_EVENTS")
