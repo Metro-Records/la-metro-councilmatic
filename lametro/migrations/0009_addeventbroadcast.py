@@ -23,7 +23,6 @@ def delete_event_broadcast(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lametro", "0008_add_has_broadcast_to_extras"),
     ]

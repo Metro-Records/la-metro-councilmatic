@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("legislative", "0010_auto_20191031_1507"),
         ("councilmatic_core", "0049_auto_20191114_1142"),

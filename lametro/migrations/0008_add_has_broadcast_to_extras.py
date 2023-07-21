@@ -25,7 +25,6 @@ def flush_has_broadcast(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lametro", "0007_update_packet_links"),
         ("legislative", "0001_initial"),
