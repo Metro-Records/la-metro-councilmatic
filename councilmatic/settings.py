@@ -241,3 +241,5 @@ LOGGING = {
         },
     },
 }
+
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
