@@ -4,8 +4,8 @@
 <h4>Board Reports</h4>
 
 <p class="small text-muted">
-  Click "View" to go to the board report detail page.</br>
-  Click "Download" to download a copy of board report and its attachments.
+  <span class="d-block">Click "View" to go to the board report detail page.</span>
+  <span class="d-block">Click "Download" to download a copy of board report and its attachments.</span>
 </p>
 
 <div class="scrollable">
@@ -18,7 +18,11 @@
         <td>
           <a href='/board-report/{{ associated_bill.slug }}/' target="_blank">View</a>
         </td>
-        <td><a href={% if associated_bill.packet.is_ready %}"{{associated_bill.packet.url}}"{% else %}"{{associated_bill.board_report.url}}"{% endif %}>Download</a></td>
+        <td>
+          <a href={% if associated_bill.packet.is_ready %}"{{associated_bill.packet.url}}"{% else %}"{{associated_bill.board_report.url}}"{% endif %}>
+            Download
+          </a>
+        </td>
       </tr>
       {% endwith %}
   {% endfor %}
