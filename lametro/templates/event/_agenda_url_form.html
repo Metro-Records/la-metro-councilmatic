@@ -3,18 +3,15 @@
 
 <form role="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    
+
     {{form.agenda}}
 
     {% if form.agenda.errors %}
-        <br> 
-        <span class="error-block" style="color: #eb6864;">{{form.agenda.errors}}</span>
+        <span class="error-block text-primary d-block mt-3">{{form.agenda.errors}}</span>
     {% endif %}
 
-    <br>
-
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{name}}_modal">
+    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#{{name}}_modal">
       <i class="fa fa-arrow-right" aria-hidden="true"></i> Preview and Submit
     </button>
 
@@ -24,12 +21,13 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="agendaModalTitle">Agenda submission preview</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
               <p>You submitted the below agenda. Does it look correct?</p>
               <iframe
                   id="pdf-embed-agenda-check"
-                  class="pdf-viewer hidden-xs"
+                  class="pdf-viewer"
                   frameborder="0"
                   seamless="true"
                   width="100%"
@@ -39,7 +37,7 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> No, that's not right</button>
+            <button type="button" class="btn btn-default" data-bs-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> No, that's not right</button>
             <button type="submit" class="btn btn-teal" name="{{name}}"><i class="fa fa-check" aria-hidden="true"></i> Looks good! Submit</button>
           </div>
         </div>
@@ -47,7 +45,3 @@
     </div>
 
 </form>
-
-
-
-
