@@ -1,7 +1,7 @@
-<h5 class="text-default">
-  <i class="fa fa-fw fa-calendar-o"></i> {{date | date:"D m/d/Y"}}
-  <div class="divider"></div>
+<h5 class="text-default m-0">
+  <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{date | date:"D m/d/Y"}}
 </h5>
+<div class="divider" aria-hidden="true"></div>
 
 {% for event in event_list %}
   {% include "events/_event_time_item.html" %}

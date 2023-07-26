@@ -1,60 +1,51 @@
 {% load lametro_extras %}
 
-<h5 class="text-default">
-    <i class="fa fa-fw fa-calendar-o"></i> {{date | date:"D m/d/Y"}}
-    <div class="divider"></div>
+<h5 class="text-default m-0">
+    <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{date | date:"D m/d/Y"}}
 </h5>
+<div class="divider" aria-hidden="true"></div>
+
 {% for event in event_list %}
 
-  {% if forloop.last %}
-  <div class="row" style="margin-bottom: 30px;">
-  {% else %}
-  <div class="row">
-  {% endif %}
-
   {% if not forloop.first %}
-    <hr class="events-line" />
+    <hr class="events-line mt-0" aria-hidden="true"/>
   {% endif %}
 
-    <div class="col-xs-3 no-pad-right">
+  <div class="row">
+    <div class="col-3 pe-0">
 
-        {% if event.status == 'cancelled' %}<strike>{% endif %}
+        {% if event.status == 'cancelled' %}<del>{% endif %}
 
         <p class="small">
-            <span class="non-mobile-only">
-                <i class="fa fa-fw fa-clock-o"></i> {{event.start_time| date:"g:i a"}}<br/>
-            </span>
-            <span class="mobile-only">
-                {{event.start_time| date:"g:i a"}}<br/>
-            </span>
+            <i class="fa fa-fw fa-clock-o d-none d-sm-inline" aria-hidden="true"></i>
+            {{event.start_time| date:"g:i a"}}
         </p>
 
-        {% if event.status == 'cancelled' %}</strike>{% endif %}
+        {% if event.status == 'cancelled' %}</del>{% endif %}
 
     </div>
-    <div class="col-xs-4">
+
+    <div class="col-4">
         <p>
             {% if event.status == 'cancelled' %}
-                <strike><a href="{{event.event_page_url}}">{{event.name}}</a></strike>
+                <del><a href="{{event.event_page_url}}">{{event.name}}</a></del>
                 <span class="label label-stale">Cancelled</span>
             {% else %}
                 <a href="{{event.event_page_url}}">{{event.name}}</a>
             {% endif %}
-            <br/>
         </p>
     </div>
 
-    <div class="col-xs-3">
+    <div class="col-3">
         {% for media in event.media.all %}
           <p>
             <a href="{{ media.links.all.0.url }}" target="_blank">{% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}</a>
-            </br>
           </p>
         {% endfor %}
     </div>
 
     {% if event.start_time|compare_time %}
-    <div class="col-xs-1">
+    <div class="col-2 p-0">
         {% with minutes=event.minutes.0.links.all.0.url %}
             {% if minutes %}
             <p>
@@ -63,7 +54,6 @@
             {% elif 'board meeting' in event.name|lower or 'la safe' in event.name|lower %}
             <p>
                 <a href="http://boardarchives.metro.net/recaps/" target="_blank">Recap</a>
-                </br>
             </p>
             {% endif %}
         {% endwith %}

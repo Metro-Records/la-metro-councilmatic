@@ -270,9 +270,6 @@ div#toggleControls { margin-bottom: 1em; }
     border-top-left-radius: 6px;
 }
 
-/* Styles for calendar pop-up. */
-#date-search .form-control { width: 50%; }
-
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
     background-color: #fff;
 }
@@ -282,7 +279,7 @@ div#toggleControls { margin-bottom: 1em; }
 
 .btn-teal {
     background-color: #49A6AB;
-    border: #49A6AB;
+    border: 1px solid #49A6AB;
     color: #fff;
 }
 
