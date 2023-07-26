@@ -11,38 +11,41 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row-fluid">
-        <div class="col-sm-9 no-pad-mobile">
-            <br/><br class="non-mobile-only"/>
-            <div id="events-form" class="row">
-                <div class="col-xs-8">
+    <div class="row">
+        <div class="col-md-9 px-0 px-md-3">
+
+            <div class="row" id="events-form">
+                <h2>Select a date range</h2>
+                <div class="col-lg-8">
                     <form action='/events' method='GET'>
-
-                      <div class="input-group" id='date-search'>
-                            <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                            <input type="text" id="from" name="from" class="form-control date-filter" placeholder="Select start date..." value='{{ start_date }}'>
-                            <input type="text" id="to" name="to" class="form-control date-filter" placeholder="Select end date..." value='{{ end_date }}'>
-                            <span class="input-group-btn">
-                              <button class="btn btn-default btn-date" id="btn-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i> <span class='hidden-sm hidden-xs'>Search</span></button>
-                            </span>
-                      </div>
-
+                        <div class="input-group" id='date-search'>
+                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                            <input type="text" id="from" name="from" class="form-control date-filter" placeholder="From..." value='{{ start_date }}' autocomplete="off">
+                            <input type="text" id="to" name="to" class="form-control date-filter" placeholder="To..." value='{{ end_date }}' autocomplete="off">
+                            <button class="btn btn-secondary btn-date" id="btn-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i> <span class='d-none d-sm-inline'>Search</span></button>
+                        </div>
                     </form>
                 </div>
-                <div class="col-xs-2">
-                    <a href="{% url 'events' %}?show=all" class="btn btn-salmon d-inline-block"><i class="fa fa-list" aria-hidden="true"></i><span class="hidden-xs"> All meetings</span></a>
+                <div class="col-lg-4 my-2 my-lg-0">
+                    <a href="{% url 'events' %}?show=all" class="btn btn-primary d-inline-block px-lg-2">
+                        <i class="fa fa-list" aria-hidden="true"></i>
+                        All meetings
+                    </a>
+                    <a href="{% url 'events' %}" class="btn btn-teal d-inline-block px-lg-2">
+                        <i class="fa fa-repeat" aria-hidden="true"></i>
+                        Reset
+                    </a>
                 </div>
-                <div class="col-xs-2">
-                    <a href="{% url 'events' %}" class="btn btn-teal d-inline-block"><i class="fa fa-repeat" aria-hidden="true"></i><span class="hidden-xs"> Reset</span></a>
-                </div>
-            </div><br class="non-mobile-only"/>
+            </div>
 
             {% if request.user.is_authenticated %}
             <div class="row">
-                <div class="col-md-10">
-                    <div class="well login">
+                <div class="col-lg-10">
+                    <div class="card-body login">
                         <h4>Hello, {{ user.username }}!</h4>
-                        <p>You have the authority to add agenda links to relevant events. Please click on an event that needs an agenda, and look for the URL input box.</p>
+                        <p>You have the authority to add agenda links to relevant events.
+                            Please click on an event that needs an agenda, and look for the URL input box.
+                        </p>
                         <p><em>You only have this option for events without agendas.</em></p>
                     </div>
                 </div>
@@ -50,122 +53,163 @@
             {% endif %}
 
             {% if future_events %}
-                <h2><span>Upcoming {{ CITY_VOCAB.EVENTS }}</span>
-                <br class="non-desktop-only"/>
-                <small>
-                    <a href="rss/" title="RSS feed for Upcoming and Recent Events">
-                        <i class="fa fa-rss-square" aria-hidden="true"></i>
-                    </a>
-                    <p>
-                        Download event calendar:
-                        <a href="{% static 'pdf/fy23-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
-                            <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                            Fiscal Year 2023 (PDF)
-                        </a>
-                        <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
+                <div class="row mt-4">
+                    <div>
+                        <h2 class="d-inline">Upcoming {{ CITY_VOCAB.EVENTS }}</h2>
+                        <small class="rss">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                                <i class="fa fa-rss-square" aria-hidden="true"></i>
+                            </a>
+                        </small>
+                    </div>
+                    <p class="mt-3 mt-sm-0">
+                        <span>Download event calendar:</span>
+                        <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link pt-0 d-block d-sm-inline text-start">
                             <i class="fa fa-fw fa-download" aria-hidden="true"></i>
                             Fiscal Year 2024 (PDF)
                         </a>
                     </p>
-                </small>
-                </h2><br class="non-mobile-only"/>
-
-                <div class='row'>
-                    <div class='col-sm-8' id='events_message'></div>
                 </div>
 
+                <div class='row'>
+                    <div class='col-md-8' id='events_message'></div>
+                </div>
+
+                <div class="row mt-4">
                 {% for date, event_list in future_events %}
-                    <div class="event-upcoming-listing">
+                    <div class="event-upcoming-listing mb-4">
                         {% include "events/_event_day.html" %}
                     </div>
                 {% endfor %}
-
-                <a href="" class="btn btn-salmon" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down"></i>Show all upcoming meetings</a>
-                <a href="" class="btn btn-salmon" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer upcoming meetings</a>
-
-                <h2 style="margin-top: 40px;"><span>Past {{ CITY_VOCAB.EVENTS }}</span>
-                <br class="non-desktop-only"/>
-                <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
-                </h2><br class="non-mobile-only"/>
-
-                <div class='row'>
-                    <div class='col-sm-8' id='events_message'></div>
                 </div>
 
+                <a href="" class="btn btn-primary" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all upcoming meetings</a>
+                <a href="" class="btn btn-primary" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer upcoming meetings</a>
+
+                <div class="row mt-5">
+                    <div>
+                        <h2 class="d-inline">Past {{ CITY_VOCAB.EVENTS }}</h2>
+                        <small class="rss">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                                <i class="fa fa-rss-square" aria-hidden="true"></i>
+                            </a>
+                        </small>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='col-md-8' id='events_message'></div>
+                </div>
+
+                <div class="row mt-4">
                 {% for date, event_list in past_events %}
-                    <div class='event-listing'>
-                    {% include "events/_past_event_day.html" %}
+                    <div class='event-listing mb-4'>
+                        {% include "events/_past_event_day.html" %}
                     </div>
                 {% endfor %}
+                </div>
 
-                <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
-                <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
+                <a href="" class="btn btn-primary mb-5" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings</a>
+                <a href="" class="btn btn-primary mb-5" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings</a>
 
             {% elif past_events %}
-                <h2 style="margin-top: 40px;"><span>Past {{ CITY_VOCAB.EVENTS }}</span>
-                <br class="non-desktop-only"/>
-                <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
-                </h2><br class="non-mobile-only"/>
-
-                <div class='row'>
-                    <div class='col-sm-8' id='events_message'></div>
+                <div class="row mt-4">
+                    <div>
+                        <h2 class="d-inline">Past {{ CITY_VOCAB.EVENTS }}</h2>
+                        <small class="rss">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                                <i class="fa fa-rss-square" aria-hidden="true"></i>
+                            </a>
+                        </small>
+                    </div>
                 </div>
 
+                <div class='row'>
+                    <div class='col-md-8' id='events_message'></div>
+                </div>
+
+                <div class="row mt-4">
                 {% for date, event_list in past_events %}
-                    <div class='event-listing'>
-                    {% include "events/_past_event_day.html" %}
+                    <div class='event-listing mb-4'>
+                        {% include "events/_past_event_day.html" %}
                     </div>
                 {% endfor %}
-
-                <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
-                <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
-            {% elif select_events %}
-                <h2><span>{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</span>
-                <br class="non-desktop-only"/>
-                <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
-                </h2>
-
-                <div class='row'>
-                    <div class='col-sm-8' id='events_message'></div>
                 </div>
 
+                <a href="" class="btn btn-primary mb-5" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings</a>
+                <a href="" class="btn btn-primary mb-5" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings</a>
+
+            {% elif select_events %}
+                <div class="row mt-4">
+                    <div>
+                        <h2 class="d-inline">{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</h2>
+                        <small class="rss">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                                <i class="fa fa-rss-square" aria-hidden="true"></i>
+                            </a>
+                        </small>
+                    </div>
+                </div>
+
+                <div class='row'>
+                    <div class='col-md-8' id='events_message'></div>
+                </div>
+
+                <div class="row mt-4">
                 {% for date, event_list in select_events %}
-                    {% include "events/_past_event_day.html" %}
+                    <div class='mb-4'>
+                        {% include "events/_past_event_day.html" %}
+                    </div>
                 {% endfor %}
+                </div>
 
             {% elif all_events %}
-                <h2><span>All {{ CITY_VOCAB.EVENTS }}</span>
-                <br class="non-desktop-only"/>
-                <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
-                </h2>
-
-                <div class='row'>
-                    <div class='col-sm-8' id='events_message'></div>
-                </div>
-
-                {% for date, event_list in all_events %}
-                    {% include "events/_past_event_day.html" %}
-                {% endfor %}
-            {% else %}
-                <div class='row'>
-                    <div class="col-sm-12">
-                        <br>
-                        <p>Your search did not return any results.</p>
+                <div class="row mt-4">
+                    <div>
+                        <h2 class="d-inline">All {{ CITY_VOCAB.EVENTS }}</h2>
+                        <small class="rss">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                                <i class="fa fa-rss-square" aria-hidden="true"></i>
+                            </a>
+                        </small>
                     </div>
                 </div>
-            {% endif %}
 
+                <div class='row'>
+                    <div class='col-md-8' id='events_message'></div>
+                </div>
+
+                <div class="row mt-4">
+                {% for date, event_list in all_events %}
+                    <div class='mb-4'>
+                        {% include "events/_past_event_day.html" %}
+                    </div>
+                {% endfor %}
+                </div>
+
+            {% else %}
+                <div class='row my-4'>
+                    <h5>Your search did not return any results.</h5>
+                </div>
+            {% endif %}
         </div>
-        <div class="col-sm-3 no-pad-mobile">
-            <br/><br class="non-mobile-only"/>
+
+        <div class="col-md-3 px-0 px-md-2">
             {% include 'events/_events_info_blurb.html' %}
 
             <div>
-                <p><a href="{% url 'about' %}#rules"><i class="fa fa-gavel" aria-hidden="true"></i> Board Room Rules</a></p>
-                <p><a href="{% url 'about' %}#procedures"><i class="fa fa-book" aria-hidden="true"></i> Rules &amp; Procedures</a></p>
-                <p><a href="{% url 'about' %}#visit"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit Metro Headquarters Building</a></p>
+                <p class="my-2">
+                    <a href="{% url 'about' %}#rules"><i class="fa fa-gavel" aria-hidden="true"></i> Board Room Rules</a>
+                </p>
+                <p class="my-2">
+                    <a href="{% url 'about' %}#procedures"><i class="fa fa-book" aria-hidden="true"></i> Rules &amp; Procedures</a>
+                </p>
+                <p class="my-2">
+                    <a href="{% url 'about' %}#visit"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit Metro Headquarters Building</a>
+                </p>
             </div>
         </div>
+
     </div>
 
 {% endblock %}
