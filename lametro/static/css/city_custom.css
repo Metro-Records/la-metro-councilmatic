@@ -635,3 +635,11 @@ small.rss {
 input[name="headshot"] {
     width: 100%;
 }
+
+#committees tbody > tr:last-child > td {
+    border-bottom: 0;
+}
+
+#committees thead th {
+    border-bottom-width: 2px;
+}
