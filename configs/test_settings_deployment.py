@@ -68,9 +68,6 @@ API_KEY = "test api key"
 # Set this to allow Disqus comments to render
 DISQUS_SHORTNAME = None
 
-# analytics tracking code
-ANALYTICS_TRACKING_CODE = ""
-
 HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), ".." "/lametro/static/images/")
 
 SHOW_TEST_EVENTS = False
