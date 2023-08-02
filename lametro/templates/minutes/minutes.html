@@ -9,57 +9,53 @@
 {% endblock %}
 
 {% block content %}
-  <div class="row-fluid">
-    <div class="col-sm-9 no-pad-mobile">
-      <br/><br class="non-mobile-only"/>
-      <div id="minutes-form" class="row">
-        <div class="col-xs-8">
-          <form action='/minutes' method='GET'>
-            <div class="input-group" id='date-search'>
-              <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-              <input type="text" id="minutes-from" name="minutes-from" class="form-control date-filter" placeholder="Select start date..." value='{{ start_date }}'>
-              <input type="text" id="minutes-to" name="minutes-to" class="form-control date-filter" placeholder="Select end date..." value='{{ end_date }}'>
-              <span class="input-group-btn">
-                <button class="btn btn-default btn-date" id="minutes-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i> <span class='hidden-sm hidden-xs'>Search</span></button>
-              </span>
-            </div>
-          </form>
-        </div>
-        <div class="col-xs-2">
-          <a href="{% url 'lametro:minutes' %}" class="btn btn-teal d-inline-block"><i class="fa fa-repeat" aria-hidden="true"></i><span class="hidden-xs"> Reset</span></a>
-        </div>
-      </div>
-    </div>
+<div class="row mb-5" id="minutes-form">
+  <h2>Select a date range</h2>
+  <div class="col-md-8">
+      <form action='/minutes' method='GET'>
+          <div class="input-group" id='date-search'>
+              <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+              <input type="text" id="minutes-from" name="minutes-from" class="form-control date-filter" placeholder="From..." value='{{ start_date }}' autocomplete="off">
+              <input type="text" id="minutes-to" name="minutes-to" class="form-control date-filter" placeholder="To..." value='{{ end_date }}' autocomplete="off">
+              <button class="btn btn-secondary btn-date" id="minutes-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i> <span class='d-none d-sm-inline'>Search</span></button>
+          </div>
+      </form>
   </div>
-  <div class="row-fluid">
-    <div class="col-sm-9 no-pad-mobile">
-      <br/><br class="non-mobile-only"/>
-      <div id="minutes-list">
-        <h2><span>Minutes</span></h2>
-        {% for date, minutes_list in all_minutes %}
-        <div class="minutes-listing">
-          <h5 class="text-default">
-            <i class="fa fa-fw fa-calendar-o"></i> {{ date | date:"D m/d/Y"}}
-            <div class="divider"></div>
-          </h5>
-          {% for e in minutes_list %}
-            {% include 'minutes/_minutes_item.html' %}
-          {% endfor %}
-        </div>
-        {% endfor %}
-        <a href="" class="btn btn-salmon" id="more-minutes"><i class="fa fa-fw fa-chevron-down"></i>Show all minutes</a>
-        <a href="" class="btn btn-salmon" id="fewer-minutes"><i class="fa fa-fw fa-chevron-up"></i>Show fewer minutes</a>
-      </div>
-    </div>
+  <div class="col-md-4 my-2 my-md-0">
+      <a href="{% url 'lametro:minutes' %}" class="btn btn-teal d-inline-block">
+          <i class="fa fa-repeat" aria-hidden="true"></i>
+          Reset
+      </a>
   </div>
-{% endblock %}
+</div>
 
-{% if forloop.last %}
-<div class="row" style="margin-bottom: 30px;">
-{% else %}
 <div class="row">
-{% endif %}
-
+  <div class="col-md-9">
+    <div id="minutes-list">
+      <h2 class="mb-3">Minutes</h2>
+      {% if all_minutes %}
+        {% for date, minutes_list in all_minutes %}
+          <div class="minutes-listing mb-5">
+            <h5 class="text-default mb-0">
+              <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ date | date:"D m/d/Y"}}
+            </h5>
+            <div class="divider" aria-hidden="true"></div>
+            {% for e in minutes_list %}
+              {% include 'minutes/_minutes_item.html' %}
+            {% endfor %}
+          </div>
+        {% endfor %}
+        <a href="" class="btn btn-primary" id="more-minutes"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all minutes</a>
+        <a href="" class="btn btn-primary" id="fewer-minutes"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer minutes</a>
+      {% else %}
+        <div class="row my-4">
+          <h5>No minutes have been found.</h5>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
 
 {% block extra_js %}
   <script src="{% static 'js/lib/jquery-1.10.1.min.js' %}"></script>
