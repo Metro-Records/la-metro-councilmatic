@@ -618,6 +618,10 @@ small.rss {
     font-weight: normal;
 }
 
+.fw-bold {
+    font-weight: bold;
+}
+
 .nav-pills .nav-link.active {
     background: none;
     color: #3D8A8E;
