@@ -2,45 +2,51 @@
 
 {% load extras lametro_extras %}
 
-{% block title %}{{event.name}}{% endblock %}
+{% block title %}
+    {% if event %}
+        {{event.name}}
+    {% else %}
+        Metro Login
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 
 <div class="row">
-    <div class="well col-md-6 col-md-offset-3 login">
-        <form role="form" method="POST">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-
-            {% if form.username.errors %}
-                <div class="form-group has-error has-feedback">
-            {% else %}
-                <div class="form-group">
-            {% endif %}
-                <label for="id_username">Username:</label>
-                <input type="text" class="form-control" id="id_username" name="username" placeholder="Enter username">
-                {% if form.username.errors %}
-                    <span class="glyphicon glyphicon-remove form-control-feedback"></span>
-                    <span class="help-block">{{form.username.errors}}</span>
-                {% endif %}
-                </div>
-
-            {% if form.password.errors %}
-                <div class="form-group has-error has-feedback">
-            {% else %}
-                <div class="form-group">
-            {% endif %}
-                <label for="id_password">Password:</label>
-                <input type="password" class="form-control" id="id_password" name="password" placeholder="Password">
-                {% if form.password.errors %}
-                    <span class="glyphicon glyphicon-remove form-control-feedback"></span>
-                    <span class="help-block">{{form.password.errors}}</span>
-                {% endif %}
-                </div>
-
-                <button type="submit" class="btn btn-teal"><i class="fa fa-arrow-right" aria-hidden="true"></i> Submit</button>
-        </form>
+    <div class="col-md-6 offset-md-3">
+        <h1>Log In</h1>
     </div>
+    <div class="col-md-6 offset-md-3 login">
+        <div class="card">
+            <div class="card-body">
+                <form role="form" method="POST">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <div class="form-group mb-3 {% if form.username.errors %}has-error has-feedback{% endif %}">
+                        <label for="id_username" class="fw-bold">Username:</label>
+                        <input type="text" class="form-control" id="id_username" name="username" placeholder="Enter username">
+                        {% if form.username.errors %}
+                            <span class="form-control-feedback"><i class="fa fa-times" aria-hidden="true"></i></span>
+                            <span class="help-block">{{form.username.errors}}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group mb-3 {% if form.password.errors %}has-error has-feedback{% endif %}">
+                        <label for="id_password" class="fw-bold">Password:</label>
+                        <input type="password" class="form-control" id="id_password" name="password" placeholder="Password">
+                        {% if form.password.errors %}
+                            <span class="form-control-feedback"><i class="fa fa-times" aria-hidden="true"></i></span>
+                            <span class="help-block">{{form.password.errors}}</span>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-teal"><i class="fa fa-arrow-right" aria-hidden="true"></i> Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 {% endblock %}
