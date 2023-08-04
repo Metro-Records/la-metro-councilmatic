@@ -1,14 +1,16 @@
-{% extends "base.html" %}
+{% extends "base_with_margins.html" %}
+
+{% load extras static %}
 
 {% block title %}Internal server error{% endblock %}
 
-{% block full_content %}
+{% block content %}
 
-    <div class="row-fluid">
-        <div class="col-sm-12">
+    <div class="row">
+        <div class="col-12">
             <h1>Internal Server Error</h1>
             <p>Sorry for the temporary inconvenience! Please visit <a href="https://metro.legistar.com/calendar.aspx" target="_blank">https://metro.legistar.com/calendar.aspx</a> to access Metro Board Meetings &amp; Agendas while we repair the issue.</p>
-            <p><a href="/">&laquo; go back to the home page</a></p>
+            <p><a href="/">&laquo; Go back to the home page</a></p>
         </div>
     </div>
 
