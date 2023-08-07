@@ -410,6 +410,13 @@ hr .events-line {
     }
 }
 
+@media only screen and (min-width : 768px) {
+    .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus {
+        color: white;
+        background-color: #eb6864;
+    }
+}
+
 /* A couple of larger breakpoints, similar to desktop-only/non-desktop-only */
 @media only screen and (min-width : 1050px) {
     .non-lg-screen-only {
