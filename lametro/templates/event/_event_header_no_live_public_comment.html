@@ -9,10 +9,10 @@
         <p class="small text-muted">
             {% if event.status == 'cancelled' %}
                 <del class="d-block">
-                    <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}
+                    <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{event.start_time | date:"D n/d/Y"}}
                 </del>
                 <del class="d-block">
-                    <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}
+                    <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{event.start_time | date:"g:i a"}}
                 </del>
             {% else %}
                 <span class="d-block"><i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{event.start_time | date:"D n/d/Y"}}</span>
