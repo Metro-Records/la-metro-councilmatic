@@ -277,6 +277,11 @@ div#toggleControls { margin-bottom: 1em; }
 .datepicker table tr td span.active.active, .datepicker table tr td span.active:hover.active {background-color: #49A6AB !important;
 }
 
+.datepicker.datepicker-dropdown{
+    border: 1px solid rgba(0,0,0,0.15);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+}
+
 .btn-teal {
     background-color: #49A6AB;
     border: 1px solid #49A6AB;
