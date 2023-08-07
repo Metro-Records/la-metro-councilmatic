@@ -399,6 +399,10 @@ hr .events-line {
     .navbar-collapse.collapse:not(.show) {
         display: none !important;
     }
+
+    button.skip-main {
+        line-height: normal !important;
+    }
 }
 
 @media only screen and (max-width : 576px) {
@@ -658,4 +662,21 @@ input[name="headshot"] {
 
 #committees thead th {
     border-bottom-width: 2px;
+}
+
+button.skip-main {
+    height: 30px;
+    left: 0%;
+    padding: 8px;
+    position: absolute;
+    transform: translateY(-100%);
+    transition: transform 0.3s;
+    color: transparent;
+    line-height: 10px;
+}
+
+button.skip-main:focus {
+    color: #eb6864;
+    background-color: #fff;
+    transform: translateY(0%);
 }
