@@ -26,7 +26,9 @@
             <strong>This version of Internet Explorer may limit the functionality of this website.</strong> We recommend that you <a href="https://browsehappy.com/?locale=en">upgrade your browser. &raquo;</a>
         </div>
     <![endif]-->
-
+    <button type="button" class="btn btn-link skip-main" href="#main">
+        Skip to main content
+    </button>
     {% cache 600 nav_wrapper 'nav' %}
 
     <nav class="navbar fixed-top navbar-default navbar-expand-md navbar-light bg-light">
@@ -95,8 +97,10 @@
         {% endfor %}
     {% endif %}
 
-    {% block full_content %}
-    {% endblock %}
+    <main id="main" tabindex="-1">
+        {% block full_content %}
+        {% endblock %}
+    </main>
 
     <script src="https://use.typekit.net/foe4jis.js"></script>
     <script>try{Typekit.load({ async: true });}catch(e){}</script>
@@ -199,6 +203,10 @@
         };
 
         window.listenForSearch = listenForSearch;
+
+        $('.skip-main').click(() => {
+            document.getElementById('main').focus({preventScroll:true})
+        })
     </script>
 
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
