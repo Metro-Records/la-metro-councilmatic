@@ -8,7 +8,7 @@
         <i class="fa fa-sort-amount-{{ dir }}" aria-hidden="true"></i>
     </a></strong>
 {% else %}
-    <a class="sort-by nav-link" href="{% search_with_querystring request sort_by=sort_name order_by=order_name %}" data='sort_by={{sort_name}}'>
+    <span><a class="sort-by nav-link" href="{% search_with_querystring request sort_by=sort_name order_by=order_name %}" data='sort_by={{sort_name}}'>
         {{sort_name|title}}
-    </a>
+    </a></span>
 {% endif %}
