@@ -217,7 +217,11 @@ strong.match-group {
 }
 
 /* Styles for order by options on search page */
-.nav a.sort-by, .nav a.btn { margin-left: 1.8em; }
+.nav a.sort-by, .nav a.btn {
+    margin-left: 1.8em;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 
 .nav-inline {
     margin-top: 21px;
@@ -419,7 +423,7 @@ hr .events-line {
     }
 
     .remove-order-value {
-        height: 31px;
+        height: 38px;
     }
 }
 
