@@ -83,7 +83,7 @@
                     {% endif %}
 
                     <!-- Check that the database has an agenda to display -->
-                    {% if has_agenda %} <!-- TODO: uncomment this, it's else, and it's endif when done -->
+                    {% if has_agenda %}
 
                         <!-- An event can have both manually uploaded and auto-imported agendas, i.e., if a Metro Admin uploads an agenda and then import_data runs. Give the Admin an option to delete the manually uploaded agenda, but ONLY if an auto-imported agenda does not exist. -->
                         {% if not agenda_url and user.is_authenticated %}

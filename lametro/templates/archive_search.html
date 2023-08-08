@@ -3,25 +3,31 @@
 {% block title %}Archive Search{% endblock %}
 
 {% block full_content %}
-<div class="container-fluid">
-  <div class="col-sm-12">
-  <div class="row-fluid">
-    <br />
-    <div class="col-sm-9 no-pad-mobile">
-      <h1>Archive Search <small>Metro’s Board Records from 1993-2015</small></h1>
+<div class="container-fluid mt-5">
+  <div class="row">
+
+    <div class="col-md-9">
+      <div>
+        <h1 class="d-inline">Archive Search</h1>
+        <span class="h5 text-muted fw-normal">Metro’s Board Records from 1993-2015</span>
+      </div>
       <gcse:search></gcse:search>
     </div>
-    <div class="col-sm-3 no-pad-mobile">
-      <div class="well info-blurb">
-        <h4><i class="fa fa-fw fa-info-circle"></i> What's this?</h4>
 
-        <p>Search the LACMTA Board of Directors records from 1993 to 2015. Also includes Meeting Minutes for Metro predecessor public agencies: Los Angeles Metropolitan Transit Authority (LAMTA 1951-1964, incomplete), Southern California Rapid Transit District (SCRTD 1964-1993), Los Angeles County Transportation Commission (LACTC 1977-1993) and Rail Construction Corporation (RCC 1989-1993).</p>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body info-blurb">
+          <h5><i class="fa fa-fw fa-info-circle text-dark" aria-hidden="true"></i> What's this?</h5>
 
-        <p>Subcategories to refine your search will appear just below the search box after a search is initiated.</p>
+          <p>Search the LACMTA Board of Directors records from 1993 to 2015. Also includes Meeting Minutes for Metro predecessor public agencies: Los Angeles Metropolitan Transit Authority (LAMTA 1951-1964, incomplete), Southern California Rapid Transit District (SCRTD 1964-1993), Los Angeles County Transportation Commission (LACTC 1977-1993) and Rail Construction Corporation (RCC 1989-1993).</p>
 
-        <p>Looking for Board records from 2015 to present? <a href="{% url 'lametro:search' %}">Search current records &raquo;</a></p>
+          <p>Subcategories to refine your search will appear just below the search box after a search is initiated.</p>
+
+          <p>Looking for Board records from 2015 to present? <a href="{% url 'lametro:search' %}">Search current records &raquo;</a></p>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
 {% endblock %}
