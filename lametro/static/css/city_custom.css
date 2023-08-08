@@ -408,7 +408,7 @@ hr .events-line {
 @media only screen and (max-width : 576px) {
     .pseudo-topic-tag {
         /* Prevent tags with long strings from distorting the page at small screen sizes */
-        max-width: 320px;
+        max-width: 200px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
