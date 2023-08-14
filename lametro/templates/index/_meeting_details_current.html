@@ -12,9 +12,9 @@
                         <span class="d-block small text-muted">{{ meeting.description }}</span>
 
                         <p class="small text-muted">
-                            <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
-                            <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br>
-                            <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name }}<br>
+                            <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
+                            <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
+                            <i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ meeting.location.name }}<br>
                         </p>
                     </div>
 
@@ -22,7 +22,7 @@
                         {% if meeting.documents.all %}
                             <p>
                                 <a class="btn btn-teal" id="pdf-download-link" href="{{ meeting.documents.all|find_agenda_url }}">
-                                    <i class="fa fa-fw fa-download"></i>
+                                    <i class="fa fa-fw fa-download" aria-hidden="true"></i>
                                     Get Agenda PDF
                                 </a>
                             </p>
@@ -38,7 +38,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <hr>
+                <hr aria-hidden="true">
             {% endfor %}
 
             <p class="small">These meetings will take place in succession. The broadcast for the second meeting will begin immediately after the first concludes.</p>
@@ -74,9 +74,9 @@
 
                 <!-- Meeting info -->
                 <p class="small text-muted">
-                    <i class="fa fa-fw fa-calendar-o"></i> {{ current_meeting.first.start_time | date:"D n/d/Y"}}<br/>
-                    <i class="fa fa-fw fa-clock-o"></i> {{ current_meeting.first.start_time | date:"g:i a"}}<br/>
-                    <i class="fa fa-fw fa-map-marker"></i> {{ current_meeting.first.location.name}}<br />
+                    <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ current_meeting.first.start_time | date:"D n/d/Y"}}<br/>
+                    <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ current_meeting.first.start_time | date:"g:i a"}}<br/>
+                    <i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ current_meeting.first.location.name}}<br />
                 </p>
             </div>
         </div>

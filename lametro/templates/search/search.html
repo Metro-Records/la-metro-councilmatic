@@ -152,43 +152,44 @@
 
         <nav class="navbar nav nav-inline justify-content-start">
             <span class="text-body-secondary">Order by:</span>
+            <div class="sort-options col-12 col-md-auto d-flex">
+                {% with sort_name='date' order_name='desc' %}
+                    {% include 'search/_order_by_filter.html' %}
+                {% endwith %}
 
-            {% with sort_name='date' order_name='desc' %}
-                {% include 'search/_order_by_filter.html' %}
-            {% endwith %}
+                {% with sort_name='title' order_name='asc' %}
+                    {% include 'search/_order_by_filter.html' %}
+                {% endwith %}
 
-            {% with sort_name='title' order_name='asc' %}
-                {% include 'search/_order_by_filter.html' %}
-            {% endwith %}
+                <!-- The templating logic is different for Relevance sort. The Relevance sort does not require a direction, and it should be bolded by default after submitting a query.-->
+                {% if 'sort_by=relevance' in request.get_full_path or 'order_by=' not in request.get_full_path and 'q=' in request.get_full_path %}
+                    <strong><a class="sort-by nav-link assort" href="{% search_with_querystring request sort_by='relevance' %}" data='sort_by=relevance'>
+                        Relevance
+                    </a></strong>
+                {% else %}
+                    <a class="sort-by nav-link" href="{% search_with_querystring request sort_by='relevance' %}" data='sort_by=relevance'>
+                        Relevance
+                    </a>
+                {% endif %}
 
-            <!-- The templating logic is different for Relevance sort. The Relevance sort does not require a direction, and it should be bolded by default after submitting a query.-->
-            {% if 'sort_by=relevance' in request.get_full_path or 'order_by=' not in request.get_full_path and 'q=' in request.get_full_path %}
-                <strong><a class="nav-link assort" href="{% search_with_querystring request sort_by='relevance' %}" data='sort_by=relevance'>
-                    Relevance
-                </a></strong>
-            {% else %}
-                <a class="sort-by nav-link" href="{% search_with_querystring request sort_by='relevance' %}" data='sort_by=relevance'>
-                    Relevance
-                </a>
-            {% endif %}
+                {% if 'sort_by' in request.get_full_path and not 'sort_by=relevance' in request.get_full_path%}
+                    <a href="#" class="remove-order-value btn btn-sm btn-primary"
+                        {% if 'sort_by=date' in request.get_full_path %}
+                            data='sort_by=date'
+                        {% elif 'sort_by=title' in request.get_full_path%}
+                            data='sort_by=title'
+                        {% elif 'sort_by=relevance' in request.get_full_path%}
+                            data='sort_by=relevance'
+                        {% endif %}>
 
-            {% if 'sort_by' in request.get_full_path and not 'sort_by=relevance' in request.get_full_path%}
-                <a href="#" class="remove-order-value btn btn-sm btn-primary"
-                    {% if 'sort_by=date' in request.get_full_path %}
-                        data='sort_by=date'
-                    {% elif 'sort_by=title' in request.get_full_path%}
-                        data='sort_by=title'
-                    {% elif 'sort_by=relevance' in request.get_full_path%}
-                        data='sort_by=relevance'
-                    {% endif %}>
-
-                    <i class="fa fa-times"></i>
-                    <span class="d-none d-sm-inline">Remove</span>
-                </a>
-            {% endif %}
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline" aria-label="Remove Sort">Remove</span>
+                    </a>
+                {% endif %}
+            </div>
         </nav>
 
-        <hr>
+        <hr aria-hidden="true">
 
         {% if query or selected_facets %}
             <div class="d-block">

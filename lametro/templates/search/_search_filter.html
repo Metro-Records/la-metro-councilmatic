@@ -34,8 +34,8 @@
                                             <a href="#" class="filter-value" data="sponsorships_exact:{{name}}" title="{{ name|title }}">
                                                 <strong>{{ name | title }}</strong>
                                             </a>
-                                            <a href="#" class="remove-filter-value btn btn-primary btn-sm" data="{{facet_name}}_exact:{{name}}">
-                                                <i class="fa fa-times"></i>
+                                            <a href="#" class="remove-filter-value btn btn-primary btn-sm" data="{{facet_name}}_exact:{{name}}" aria-label="Remove {{name}} filter">
+                                                <i class="fa fa-times" aria-hidden="true"></i>
                                             </a>
                                         </div>
                                     {% else %}

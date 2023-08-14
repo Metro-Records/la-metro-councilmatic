@@ -10,8 +10,8 @@
         </small>
         <p class="small text-muted">
             <del>
-                <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
-                <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br>
+                <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
+                <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
             </del>
         </p>
     {% elif meeting.display_status == 'Concluded' %}
@@ -20,8 +20,8 @@
             <span class="label label-stale text-light rounded">{{ meeting.display_status }}</span>
         </small>
         <p class="small text-muted">
-            <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
-            <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br>
+            <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
+            <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
         </p>
     {% elif meeting.display_status == 'In progress' or meeting.display_status == 'Upcoming' %}
         <h5 class="d-inline mb-2">{{  meeting.link_html | safe }}</h5>
@@ -36,9 +36,9 @@
         </small>
 
         <p class="small text-muted">
-            <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
-            <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
-            <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name }}<br />
+            <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
+            <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
+            <i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ meeting.location.name }}<br />
         </p>
     {% endif %}
 {% endfor %}
