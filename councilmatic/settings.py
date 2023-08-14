@@ -169,9 +169,3 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 SERVICE_ACCOUNT_KEY_PATH = "configs/lametro_service_acct_key.json"
-
-# TODO: remove when done with map
-try:
-    from .settings_deployment import GOOGLE_API_KEY
-except ImportError:
-    print("no google api key found")
