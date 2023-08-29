@@ -100,6 +100,16 @@
         </div>
     </nav>
 
+    {% load extras lametro_extras static %}
+    {% get_alerts as alerts %}
+    {% if alerts %}
+        {% for alert in alerts %}
+            <div class="alert alert-{{alert.type}}" style="margin-bottom: 0px;">
+                {{alert.description}}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% endcache %}
 
     {% block full_content %}

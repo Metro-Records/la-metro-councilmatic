@@ -12,7 +12,7 @@ from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
 
-from lametro.models import LAMetroBill, LAMetroPerson
+from lametro.models import LAMetroBill, LAMetroPerson, Alert
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
@@ -176,3 +176,12 @@ class PersonBioForm(forms.ModelForm):
     class Meta:
         model = LAMetroPerson
         fields = ["councilmatic_biography"]
+
+
+class AlertForm(forms.ModelForm):
+    class Meta:
+        model = Alert
+        fields = "__all__"
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 4}),
+        }

@@ -39,6 +39,7 @@ from lametro.views import (
     MinutesView,
     pong,
     test_logging,
+    AlertDeleteView,
 )
 from lametro.feeds import LAMetroPersonDetailFeed
 
@@ -107,6 +108,7 @@ urlpatterns = [
         name="delete_submission",
     ),
     url(r"^delete-event/(?P<event_slug>[^/]+)/$", delete_event, name="delete_event"),
+    path("alerts/<int:pk>/delete/", AlertDeleteView.as_view(), name="delete_alert"),
     url(
         r"^pong/$",
         pong,

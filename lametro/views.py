@@ -24,7 +24,7 @@ from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DeleteView
 from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
@@ -33,6 +33,7 @@ from django.http import (
 from django.core import management
 from django.core.serializers import serialize
 from django.core.cache import cache
+from django.urls import reverse_lazy
 
 from councilmatic_core.views import (
     IndexView,
@@ -57,6 +58,7 @@ from lametro.models import (
     LAMetroEvent,
     LAMetroOrganization,
     LAMetroSubject,
+    Alert,
 )
 from lametro.forms import (
     AgendaUrlForm,
@@ -64,6 +66,7 @@ from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
     PersonHeadshotForm,
     PersonBioForm,
+    AlertForm,
 )
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
@@ -102,6 +105,29 @@ class LAMetroIndexView(IndexView):
         extra["form"] = LAMetroCouncilmaticSearchForm()
 
         return extra
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if "invalid_form" in kwargs:
+            context["alert_form"] = kwargs.get("invalid_form")
+        else:
+            context["alert_form"] = AlertForm()
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = AlertForm(request.POST)
+        description_content = request.POST.get("description")
+
+        if description_content.isspace():
+            error = "Please provide an alert description"
+            return self.render_to_response(
+                self.get_context_data(invalid_form=form, desc_error=error)
+            )
+        else:
+            form.save()
+            return HttpResponseRedirect(self.request.path_info)
 
 
 class LABillDetail(BillDetailView):
@@ -1034,6 +1060,17 @@ class MinutesView(EventsView):
         context["all_minutes"] = all_minutes_grouped
 
         return context
+
+
+class AlertDeleteView(DeleteView):
+    model = Alert
+    success_url = reverse_lazy("index")
+
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        self.object.delete()
+
+        return HttpResponseRedirect(success_url)
 
 
 def metro_login(request):
