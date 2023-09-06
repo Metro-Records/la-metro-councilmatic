@@ -192,5 +192,12 @@
             return false;
         });
 
+        $("#id_type").on('change', function() {
+            $(this).removeClass()
+            if (this.value != "") {
+                $(this).addClass("alert-" + this.value)
+            }
+        });
+
     </script>
 {% endblock %}
