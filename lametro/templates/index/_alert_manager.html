@@ -1,0 +1,59 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h2 style="display: inline-block;">Manage Alerts</h2>
+        <button class="btn btn-primary" id="alert-manager-toggle" style="margin-left: 10px; width: 70px;">Show</button>
+    </div>
+
+</div>
+
+<div class="row" id="alert-manager">
+    <div class="col-md-7">
+        <h3>Add New</h3>
+        <form role="form" method="POST" enctype="multipart/form-data" id="alert-form">
+            {% csrf_token %}
+            <p>
+                {{alert_form.type.label_tag}} {{alert_form.type}}
+            </p>
+
+            <p>
+                {{alert_form.description.label_tag}} {{alert_form.description}}
+                {% if desc_error %}
+                    <br>
+                    <p style="color: #eb6864;">*{{desc_error}}</p>
+                {% endif %}
+            </p>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <div class="col-md-5">
+        <h3>View Existing</h3>
+        {% if alerts %}
+            <table class="table">
+                <thead>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th aria-hidden="true"></th>
+                </thead>
+                <tbody>
+                    {% for alert in alerts %}
+                        <tr>
+                            <td>{{alert.type|title}}</td>
+                            <td>{{alert.description}}</td>
+                            <td>
+                                <form action="{% url 'delete_alert' alert.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No Alerts Added</p>
+        {% endif %}
+    </div>
+    <hr class="col-md-12" aria-hidden="true">
+</div>
