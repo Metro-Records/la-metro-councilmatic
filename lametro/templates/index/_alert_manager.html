@@ -17,10 +17,9 @@
 
             <p>
                 {{alert_form.description.label_tag}} {{alert_form.description}}
-                {% if desc_error %}
-                    <br>
-                    <p style="color: #eb6864;">*{{desc_error}}</p>
-                {% endif %}
+                {% for error in alert_form.description.errors %}
+                    <span style="color: #eb6864; display: block;">*{{error|striptags}}</span>
+                {% endfor %}
             </p>
 
             <button type="submit" class="btn btn-primary">Submit</button>

@@ -24,7 +24,7 @@ from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
-from django.views.generic import TemplateView, DeleteView
+from django.views.generic import TemplateView, DeleteView, FormView
 from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
@@ -80,10 +80,13 @@ from .utils import get_list_from_csv
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 
-class LAMetroIndexView(IndexView):
+class LAMetroIndexView(IndexView, FormView):
     template_name = "index/index.html"
 
     event_model = LAMetroEvent
+
+    form_class = AlertForm
+    success_url = reverse_lazy("index")
 
     @property
     def extra_context(self):
@@ -103,31 +106,15 @@ class LAMetroIndexView(IndexView):
             "start_date"
         )
         extra["form"] = LAMetroCouncilmaticSearchForm()
+        extra["alert_form"] = self.get_form()
 
         return extra
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        form.save()
 
-        if "invalid_form" in kwargs:
-            context["alert_form"] = kwargs.get("invalid_form")
-        else:
-            context["alert_form"] = AlertForm()
-
-        return context
-
-    def post(self, request, *args, **kwargs):
-        form = AlertForm(request.POST)
-        description_content = request.POST.get("description")
-
-        if description_content.isspace():
-            error = "Please provide an alert description"
-            return self.render_to_response(
-                self.get_context_data(invalid_form=form, desc_error=error)
-            )
-        else:
-            form.save()
-            return HttpResponseRedirect(self.request.path_info)
+        return HttpResponseRedirect(success_url)
 
 
 class LABillDetail(BillDetailView):

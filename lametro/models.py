@@ -1156,5 +1156,5 @@ class Alert(models.Model):
         ("info", "Info"),
     ]
 
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     type = models.CharField(max_length=255, choices=TYPE_CHOICES)

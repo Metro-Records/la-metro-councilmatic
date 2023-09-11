@@ -3,6 +3,7 @@ import requests
 from django import forms
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db.models import Q
+from django.core.exceptions import ValidationError
 
 from captcha.fields import ReCaptchaField
 from captcha.fields import ReCaptchaV3
@@ -179,6 +180,12 @@ class PersonBioForm(forms.ModelForm):
 
 
 class AlertForm(forms.ModelForm):
+    def clean_description(self):
+        data = self.cleaned_data.get("description", None)
+        if not data:
+            raise ValidationError("Please provide an alert description")
+        return data
+
     class Meta:
         model = Alert
         fields = "__all__"
