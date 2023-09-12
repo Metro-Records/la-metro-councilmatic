@@ -111,10 +111,9 @@ class LAMetroIndexView(IndexView, FormView):
         return extra
 
     def form_valid(self, form):
-        success_url = self.get_success_url()
         form.save()
 
-        return HttpResponseRedirect(success_url)
+        return super().form_valid(form)
 
 
 class LABillDetail(BillDetailView):
@@ -1054,10 +1053,9 @@ class AlertDeleteView(DeleteView):
     success_url = reverse_lazy("index")
 
     def form_valid(self, form):
-        success_url = self.get_success_url()
         self.object.delete()
 
-        return HttpResponseRedirect(success_url)
+        return super().form_valid(form)
 
 
 def metro_login(request):
