@@ -200,5 +200,22 @@
             }
         });
 
+
+        $("#link, #bold, #italic").on('click', function(){
+            input = document.getElementById("id_description")
+
+            switch(this.id) {
+                case "link":
+                    input.value += ("[this is a link!](https://url.com) ")
+                    break;
+                case "bold":
+                    input.value += ("**this is bolded text!** ")
+                    break;
+                case "italic":
+                    input.value += ("*this is italicized text!* ")
+                    break;
+            }
+        })
+
     </script>
 {% endblock %}

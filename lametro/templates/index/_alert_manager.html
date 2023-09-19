@@ -16,7 +16,23 @@
             </p>
 
             <p>
-                {{alert_form.description.label_tag}} {{alert_form.description}}
+                {{alert_form.description.label_tag}}
+                <div class="d-flex" style="background-color: white; flex-direction: column;">
+                    <div style="border-bottom: 1px solid rgb(118, 118, 118);">
+                        <button id="link" type="button">
+                            <i class="fa fa-link" aria-hidden="true"></i>
+                        </button>
+                        <button id="bold" type="button">
+                            <i class="fa fa-bold" aria-hidden="true"></i>
+                        </button>
+                        <button id="italic" type="button">
+                            <i class="fa fa-italic" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    {{alert_form.description}}
+                </div>
+
                 {% for error in alert_form.description.errors %}
                     <span style="color: #eb6864; display: block;">*{{error|striptags}}</span>
                 {% endfor %}

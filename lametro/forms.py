@@ -191,6 +191,10 @@ class AlertForm(forms.ModelForm):
         fields = "__all__"
         widgets = {
             "description": forms.Textarea(
-                attrs={"rows": 4, "placeholder": "Enter alert text"}
+                attrs={
+                    "rows": 4,
+                    "placeholder": "Enter alert text",
+                    "style": "border: none;",
+                }
             ),
         }
