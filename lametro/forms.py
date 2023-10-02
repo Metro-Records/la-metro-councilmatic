@@ -2,7 +2,6 @@ import requests
 
 from django import forms
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db.models import Q
 
 from captcha.fields import ReCaptchaField
 from captcha.fields import ReCaptchaV3
