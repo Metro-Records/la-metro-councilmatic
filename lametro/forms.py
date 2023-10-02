@@ -12,7 +12,7 @@ from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
 
-from lametro.models import LAMetroBill, LAMetroPerson
+from lametro.models import LAMetroPerson
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
