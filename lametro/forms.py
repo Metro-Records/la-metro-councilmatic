@@ -67,12 +67,10 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         ]
 
         topic_filter = SQ()
-        bill_type_filter = SQ()
         for term in terms:
-            topic_filter &= SQ(topics__in=[term])
-            bill_type_filter &= SQ(bill_type__icontains=term)
+            topic_filter &= SQ(topics__in=[term]) | SQ(bill_type__in=[term])
 
-        sqs = sqs.filter(topic_filter | bill_type_filter)
+        sqs = sqs.filter(topic_filter)
 
         return sqs
 
