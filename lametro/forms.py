@@ -67,10 +67,12 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         ]
 
         topic_filter = SQ()
+        bill_type_filter = SQ()
         for term in terms:
             topic_filter &= SQ(topics__in=[term])
+            bill_type_filter &= SQ(bill_type__icontains=term)
 
-        sqs = sqs.filter(topic_filter)
+        sqs = sqs.filter(topic_filter | bill_type_filter)
 
         return sqs
 
@@ -85,9 +87,11 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         if has_query:
             if self.result_type == "keyword":
                 sqs = self._full_text_search(sqs)
-
-            if self.result_type == "topic":
+            elif self.result_type == "topic":
                 sqs = self._topic_search(sqs)
+            else:
+                # Combine full text and tag search results
+                sqs = self._full_text_search(sqs) | self._topic_search(sqs)
 
         return sqs
 
