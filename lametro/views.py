@@ -412,6 +412,7 @@ class LABoardMembersView(CouncilMembersView):
             "map_geojson_districts": {"type": "FeatureCollection", "features": []},
             "map_geojson_sectors": {"type": "FeatureCollection", "features": []},
             "map_geojson_city": {"type": "FeatureCollection", "features": []},
+            "map_geojson_caltrans": {"type": "FeatureCollection", "features": []},
         }
 
         posts = LAMetroPost.objects.filter(shape__isnull=False).exclude(
@@ -453,6 +454,16 @@ class LABoardMembersView(CouncilMembersView):
 
             if post.division_id == "ocd-division/country:us/state:ca/place:los_angeles":
                 maps["map_geojson_city"]["features"].append(feature)
+
+            if "caltrans" in post.division_id:
+                maps["map_geojson_caltrans"]["features"].append(feature)
+
+        if len(maps["map_geojson_caltrans"]) > 1:
+            maps["map_geojson_caltrans"]["features"] = [
+                f
+                for f in maps["map_geojson_caltrans"]["features"]
+                if f["properties"]["council_member"] != "Vacant"
+            ]
 
         return maps
 

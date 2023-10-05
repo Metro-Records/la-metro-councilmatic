@@ -4,14 +4,9 @@
     <table class='table' id='council-members'>
         <thead>
             <tr>
+                <th>{{ CITY_VOCAB.COUNCIL_MEMBER }}</th>
                 <th></th>
-                <th>
-                    {{ CITY_VOCAB.COUNCIL_MEMBER }}
-                </th>
-                <th>
-                    {{CITY_VOCAB.MUNICIPAL_DISTRICT}}
-                </th>
-                <th></th>
+                <th>Role</th>
             </tr>
         </thead>
         <tbody>
@@ -35,16 +30,16 @@
                         {{ membership.post.acting_label | comma_to_line_break | safe }}
                     </span><br />
 
-                    {% if "District" in membership.post.label and "Caltrans District" not in membership.label %}
-                        <span class="badge district-badge">District appointee</span>
+                    {% if "Caltrans" in membership.post.label %}
+                        <span class="badge caltrans-badge">Caltrans</span>
+                    {% elif "District" in membership.post.label %}
+                        <span class="badge district-badge">Districts</span>
                     {% elif "sector" in membership.post.label  %}
-                        <span class="badge sector-badge">Sector appointee</span>
+                        <span class="badge sector-badge">Sectors</span>
                     {% elif "Mayor" in membership.post.label %}
-                        <span class="badge city-badge">Los Angeles</span>
+                        <span class="badge city-badge">City of LA</span>
                     {% endif %}
                 </td>
-
-                <td></td>
             </tr>
             {% endfor %}
         </tbody>
