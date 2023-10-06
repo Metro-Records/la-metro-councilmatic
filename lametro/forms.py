@@ -68,7 +68,18 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
 
         topic_filter = SQ()
         for term in terms:
-            topic_filter &= SQ(topics__in=[term]) | SQ(bill_type__in=[term])
+            topic_filter &= (
+                SQ(topics__in=[term])
+                | SQ(bill_type__in=[term])
+                | SQ(lines_and_ways__in=[term])
+                | SQ(phase__in=[term])
+                | SQ(project__in=[term])
+                | SQ(metro_location__in=[term])
+                | SQ(geo_admin_location__in=[term])
+                | SQ(significant_date__in=[term])
+                | SQ(motion_by__in=[term])
+                | SQ(plan_program_policy__in=[term])
+            )
 
         sqs = sqs.filter(topic_filter)
 
