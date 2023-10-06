@@ -200,12 +200,17 @@
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
 
-            if ($(this).is(':contains("District appointee")')) {
+            var rowLabel = $(this).find("span.badge").attr("class")
+            var activeToggle
+
+            if (rowLabel.includes("district")) {
                 activeToggle = activateButton('district');
-            } else if ($(this).is(':contains("Sector appointee")')) {
+            } else if (rowLabel.includes("sector")) {
                 activeToggle = activateButton('sector');
-            } else if ($(this).is(':contains("Los Angeles")')) {
+            } else if (rowLabel.includes("city")) {
                 activeToggle = activateButton('city');
+            } else if (rowLabel.includes("caltrans")) {
+                activeToggle = activateButton('caltrans');
             };
 
             memberNameSlug = $(this).attr('data')
@@ -219,7 +224,7 @@
         } )
 
         function activateButton(button) {
-            $('#districtToggle, #sectorToggle, #cityToggle').removeClass('active');
+            $('#districtToggle, #sectorToggle, #cityToggle, #caltransToggle').removeClass('active');
             $('#' + button + 'Toggle').addClass('active');
             return (button + 'Toggle')
         }
@@ -251,6 +256,14 @@
                 });
             }
 
+            if (active_id.includes('caltrans') || controlView) {
+                caltrans.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableout');
+                    }
+                });
+            }
+
         }
 
         function hoverOnRow(select_id, active_id, member_name) {
@@ -274,12 +287,19 @@
 
             if (active_id.includes('city') || controlView) {
                 los_angeles_city.eachLayer(function (layer) {
-                    if (layer.feature.properties.select_id === select_id){
+                    if (layer.feature.properties.select_id === select_id && layer.feature.properties.detail_link.includes(member_name)){
                         layer.fire('tableover');
                     }
                 });
             }
 
+            if (active_id.includes('caltrans') || controlView) {
+                caltrans.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableover');
+                    }
+                });
+            }
         }
 
         // Expandable content on for events and actions.
