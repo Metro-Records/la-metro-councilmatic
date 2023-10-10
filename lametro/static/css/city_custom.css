@@ -427,3 +427,7 @@ hr .events-line {
 label[for=id_type], label[for=id_description], .text-white {
     color: white;
 }
+
+textarea#id_description {
+    resize: vertical;
+}
