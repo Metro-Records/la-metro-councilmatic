@@ -2,7 +2,6 @@ import re
 from operator import attrgetter
 import itertools
 import urllib
-import json
 from datetime import date, datetime
 from dateutil import parser
 import requests
@@ -17,13 +16,11 @@ from django.conf import settings
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
 from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.text import slugify
 from django.views.generic import TemplateView
 from django.http import (
     HttpResponseRedirect,
