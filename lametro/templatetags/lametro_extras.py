@@ -12,7 +12,7 @@ from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Bill
 from councilmatic_core.utils import ExactHighlighter
 
-from lametro.models import app_timezone
+from lametro.models import app_timezone, Alert
 from lametro.utils import format_full_text, parse_subject
 
 
@@ -316,3 +316,8 @@ def sort_topics(topics):
     """Sorts a board report's topics alphabetically."""
 
     return sorted(topics, key=lambda t: t.name)
+
+
+@register.simple_tag
+def get_alerts():
+    return Alert.objects.all()
