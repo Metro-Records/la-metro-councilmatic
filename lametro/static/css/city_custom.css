@@ -423,3 +423,11 @@ hr .events-line {
     background-position: center center;
     height: 200px;
 }
+
+label[for=id_type], label[for=id_description], .text-white {
+    color: white;
+}
+
+textarea#id_description {
+    resize: vertical;
+}

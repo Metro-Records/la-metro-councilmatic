@@ -24,7 +24,7 @@ from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DeleteView, FormView
 from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
@@ -33,6 +33,7 @@ from django.http import (
 from django.core import management
 from django.core.serializers import serialize
 from django.core.cache import cache
+from django.urls import reverse_lazy
 
 from councilmatic_core.views import (
     IndexView,
@@ -57,6 +58,7 @@ from lametro.models import (
     LAMetroEvent,
     LAMetroOrganization,
     LAMetroSubject,
+    Alert,
 )
 from lametro.forms import (
     AgendaUrlForm,
@@ -64,6 +66,7 @@ from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
     PersonHeadshotForm,
     PersonBioForm,
+    AlertForm,
 )
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
@@ -77,10 +80,13 @@ from .utils import get_list_from_csv
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 
-class LAMetroIndexView(IndexView):
+class LAMetroIndexView(IndexView, FormView):
     template_name = "index/index.html"
 
     event_model = LAMetroEvent
+
+    form_class = AlertForm
+    success_url = reverse_lazy("index")
 
     @property
     def extra_context(self):
@@ -100,8 +106,14 @@ class LAMetroIndexView(IndexView):
             "start_date"
         )
         extra["form"] = LAMetroCouncilmaticSearchForm()
+        extra["alert_form"] = self.get_form()
 
         return extra
+
+    def form_valid(self, form):
+        form.save()
+
+        return super().form_valid(form)
 
 
 class LABillDetail(BillDetailView):
@@ -1034,6 +1046,16 @@ class MinutesView(EventsView):
         context["all_minutes"] = all_minutes_grouped
 
         return context
+
+
+class AlertDeleteView(DeleteView):
+    model = Alert
+    success_url = reverse_lazy("index")
+
+    def form_valid(self, form):
+        self.object.delete()
+
+        return super().form_valid(form)
 
 
 def metro_login(request):
