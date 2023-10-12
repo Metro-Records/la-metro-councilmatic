@@ -2,7 +2,6 @@ import re
 from operator import attrgetter
 import itertools
 import urllib
-import json
 from datetime import date, datetime
 from dateutil import parser
 import requests
@@ -17,13 +16,11 @@ from django.conf import settings
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
 from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.text import slugify
 from django.views.generic import TemplateView, DeleteView, FormView
 from django.http import (
     HttpResponseRedirect,
@@ -424,47 +421,34 @@ class LABoardMembersView(CouncilMembersView):
             "map_geojson_districts": {"type": "FeatureCollection", "features": []},
             "map_geojson_sectors": {"type": "FeatureCollection", "features": []},
             "map_geojson_city": {"type": "FeatureCollection", "features": []},
+            "map_geojson_caltrans": {"type": "FeatureCollection", "features": []},
         }
 
-        posts = LAMetroPost.objects.filter(shape__isnull=False).exclude(
-            label="Appointee of Mayor of the City of Los Angeles"
-        )
+        posts = LAMetroPost.objects.filter(shape__isnull=False)
 
         for post in posts:
-            district = post.label
+            for feature in post.geographic_features:
+                if "council_district" in post.division_id:
+                    maps["map_geojson_districts"]["features"].append(feature)
 
-            try:
-                current_membership = post.memberships.get(
-                    start_date_dt__lte=Now(), end_date_dt__gt=Now()
-                )
+                if "la_metro_sector" in post.division_id:
+                    maps["map_geojson_sectors"]["features"].append(feature)
 
-            except ObjectDoesNotExist:
-                council_member = "Vacant"
-                detail_link = ""
+                if (
+                    post.division_id
+                    == "ocd-division/country:us/state:ca/place:los_angeles"
+                ):
+                    maps["map_geojson_city"]["features"].append(feature)
 
-            else:
-                council_member = current_membership.person.name
-                detail_link = current_membership.person.slug
+                if "caltrans" in post.division_id:
+                    maps["map_geojson_caltrans"]["features"].append(feature)
 
-            feature = {
-                "type": "Feature",
-                "geometry": json.loads(post.shape.json),
-                "properties": {
-                    "district": district,
-                    "council_member": council_member,
-                    "detail_link": "/person/" + detail_link,
-                    "select_id": "polygon-{}".format(slugify(district)),
-                },
-            }
-
-            if "council_district" in post.division_id:
-                maps["map_geojson_districts"]["features"].append(feature)
-
-            if "la_metro_sector" in post.division_id:
-                maps["map_geojson_sectors"]["features"].append(feature)
-
-            if post.division_id == "ocd-division/country:us/state:ca/place:los_angeles":
-                maps["map_geojson_city"]["features"].append(feature)
+        if len(maps["map_geojson_caltrans"]) > 1:
+            maps["map_geojson_caltrans"]["features"] = [
+                f
+                for f in maps["map_geojson_caltrans"]["features"]
+                if f["properties"]["council_member"] != "Vacant"
+            ]
 
         return maps
 

@@ -12,6 +12,7 @@ DIVISION = {
     "southwest_corridor": "ocd-division/country:us/state:ca/county:los_angeles/la_metro_sector:southwest_corridor",
     "san_fernando": "ocd-division/country:us/state:ca/county:los_angeles/la_metro_sector:north_county_san_fernando_valley",
     "san_gabriel": "ocd-division/country:us/state:ca/county:los_angeles/la_metro_sector:san_gabriel_valley",
+    "caltrans-district-7": "ocd-division/country:us/state:ca/transit:caltrans/district:7",
 }
 
 geojson = json.load(sys.stdin)

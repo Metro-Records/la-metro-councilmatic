@@ -4,22 +4,17 @@
     <table class='table' id='council-members'>
         <thead>
             <tr>
+                <th>{{ CITY_VOCAB.COUNCIL_MEMBER }}</th>
                 <th></th>
-                <th>
-                    {{ CITY_VOCAB.COUNCIL_MEMBER }}
-                </th>
-                <th>
-                    {{CITY_VOCAB.MUNICIPAL_DISTRICT}}
-                </th>
-                <th></th>
+                <th>Role</th>
             </tr>
         </thead>
         <tbody>
             {% for membership in posts %}
-            <tr id="polygon-{{ membership.post.label | slugify }}" data="{{ membership.name | slugify}}">
+            <tr id="polygon-{{ membership.post.label | slugify }}" data="{{ membership.person.name | slugify}}">
                 <td>
                     <div class="thumbnail-square">
-                        <img src='{{ membership.person.headshot_url }}' alt='{{ membership.name }}' title='{{ membership.name }}' class='img-responsive img-thumbnail' />
+                        <img src='{{ membership.person.headshot_url }}' alt='{{ membership.person.name }}' title='{{ membership.person.name }}' class='img-responsive img-thumbnail' />
                     </div>
                 </td>
 
@@ -35,16 +30,16 @@
                         {{ membership.post.acting_label | comma_to_line_break | safe }}
                     </span><br />
 
-                    {% if "District" in membership.post.label and "Caltrans District" not in membership.label %}
-                        <span class="badge district-badge">District appointee</span>
+                    {% if "Caltrans" in membership.post.label %}
+                        <span class="badge caltrans-badge">Caltrans</span>
+                    {% elif "District" in membership.post.label %}
+                        <span class="badge district-badge">Districts</span>
                     {% elif "sector" in membership.post.label  %}
-                        <span class="badge sector-badge">Sector appointee</span>
+                        <span class="badge sector-badge">Sectors</span>
                     {% elif "Mayor" in membership.post.label %}
-                        <span class="badge city-badge">Los Angeles</span>
+                        <span class="badge city-badge">City of LA</span>
                     {% endif %}
                 </td>
-
-                <td></td>
             </tr>
             {% endfor %}
         </tbody>
