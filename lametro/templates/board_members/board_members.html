@@ -65,6 +65,9 @@
                     <label id="cityToggle" class="btn btn-sm btn-city">
                         <input type="radio" name="options" autocomplete="off"> City of LA
                     </label>
+                    <label id="caltransToggle" class="btn btn-sm btn-caltrans">
+                        <input type="radio" name="options" autocomplete="off"> Caltrans
+                    </label>
                     <a tabindex="0" class="map-info text-secondary" data-container="body" data-bs-toggle="popover" data-bs-html="true" data-bs-placement="right" title="What do these map layers represent?"
                         data-bs-content="<p style='font-family: &quot;Open Sans&quot;, sans-serif; font-size: 14px;'>The three layers of this map show areas from which members of the Metro Board of Directors are nominated:</p>
                         <p><strong>(1) Los Angeles County Districts</strong> – The elected representative from each district from the Los Angeles County Board of Supervisors serves on the Metro Board.</p>
@@ -86,9 +89,7 @@
             </div>
 
             <div class="col-lg-6 px-0 px-lg-3">
-                <div id="council-member-scroll-area">
-                    {% include 'board_members/_council_member_table.html' %}
-                </div>
+                {% include 'board_members/_council_member_table.html' %}
             </div>
         {% else %}
             <div id="council-member-scroll-area" class="col-8 px-0 px-md-3">
@@ -166,6 +167,7 @@
     <script src="{% static 'js/lib/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'js/lib/jquery.dataTables.sorting.js' %}"></script>
     <script src="{% static 'js/lib/dataTables.bootstrap.js' %}"></script>
+    <script src="https://cdn.datatables.net/fixedheader/2.0.0/js/FixedHeader.min.js"></script>
 
     <script>
         var council_member_table = $("#council-members").DataTable({
@@ -177,8 +179,10 @@
                 { "bSortable": false },
                 null,
                 { "sType": "num-html" },
-                { "bSortable": false },
             ],
+            "fixedHeader": true,
+            "scrollCollapse": true,
+            "scrollY": "500px",
         });
 
         $( document ).ready(function() {
@@ -201,22 +205,21 @@
             $('tr').css('background-color', 'inherit')
             $(this).css('background-color', '#eee');
 
-            const toggleLabels = ':contains("District appointee"), :contains("Sector appointee"), :contains("Los Angeles")'
+            var rowLabel = $(this).find("span.badge").attr("class")
+            var activeToggle
 
-            if ($(this).is(toggleLabels)) {
-                let activeToggle = null
+            if (rowLabel.includes("district")) {
+                activeToggle = activateButton('district');
+            } else if (rowLabel.includes("sector")) {
+                activeToggle = activateButton('sector');
+            } else if (rowLabel.includes("city")) {
+                activeToggle = activateButton('city');
+            } else if (rowLabel.includes("caltrans")) {
+                activeToggle = activateButton('caltrans');
+            };
 
-                if ($(this).is(':contains("District appointee")')) {
-                    activeToggle = activateButton('district');
-                } else if ($(this).is(':contains("Sector appointee")')) {
-                    activeToggle = activateButton('sector');
-                } else if ($(this).is(':contains("Los Angeles")')) {
-                    activeToggle = activateButton('city');
-                };
-
-                memberNameSlug = $(this).attr('data')
-                hoverOnRow(this.id, activeToggle, memberNameSlug);
-            }
+            memberNameSlug = $(this).attr('data')
+            hoverOnRow(this.id, activeToggle, memberNameSlug);
 
         } );
 
@@ -227,7 +230,7 @@
         } )
 
         function activateButton(button) {
-            $('#districtToggle, #sectorToggle, #cityToggle').removeClass('active');
+            $('#districtToggle, #sectorToggle, #cityToggle, #caltransToggle').removeClass('active');
             $('#' + button + 'Toggle').addClass('active');
             return (button + 'Toggle')
         }
@@ -259,6 +262,14 @@
                 });
             }
 
+            if (active_id.includes('caltrans') || controlView) {
+                caltrans.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableout');
+                    }
+                });
+            }
+
         }
 
         function hoverOnRow(select_id, active_id, member_name) {
@@ -282,12 +293,19 @@
 
             if (active_id.includes('city') || controlView) {
                 los_angeles_city.eachLayer(function (layer) {
-                    if (layer.feature.properties.select_id === select_id){
+                    if (layer.feature.properties.select_id === select_id && layer.feature.properties.detail_link.includes(member_name)){
                         layer.fire('tableover');
                     }
                 });
             }
 
+            if (active_id.includes('caltrans') || controlView) {
+                caltrans.eachLayer(function (layer) {
+                    if (layer.feature.properties.select_id === select_id){
+                        layer.fire('tableover');
+                    }
+                });
+            }
         }
 
         // Expandable content on for events and actions.

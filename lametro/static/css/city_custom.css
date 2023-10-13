@@ -254,6 +254,14 @@ div.order-nav { margin-top: 21px; }
 
 .btn-city:hover, .btn-city.active { background-color: #EF8481; }
 
+.btn-caltrans {
+    background-color: #E5B761;
+    color: #000;
+    padding: 4px 12px;
+}
+
+.btn-caltrans:hover, .btn-caltrans.active { background-color: #E8BF73; color: #000; }
+
 div#toggleControls { margin-bottom: 1em; }
 
 .badge.district-badge { background-color: #3D8A8E; }
@@ -261,6 +269,10 @@ div#toggleControls { margin-bottom: 1em; }
 .badge.sector-badge { background-color: #4D649E; }
 
 .badge.city-badge { background-color: #EB6864; }
+
+.badge.caltrans-badge { background-color: #E5B761; color: #000; }
+
+#searchOn.well { padding: 12px; }
 
 .card-body {
     padding: 12px;
@@ -692,4 +704,12 @@ button.skip-main:focus {
     color: #eb6864;
     background-color: #fff;
     transform: translateY(0%);
+}
+
+label[for=id_type], label[for=id_description], .text-white {
+    color: white;
+}
+
+textarea#id_description {
+    resize: vertical;
 }
