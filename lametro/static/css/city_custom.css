@@ -706,10 +706,16 @@ button.skip-main:focus {
     transform: translateY(0%);
 }
 
-label[for=id_type], label[for=id_description], .text-white {
+label[for=id_type], label[for=id_description], .text-white, .text-white>table * {
     color: white;
 }
 
 textarea#id_description {
     resize: vertical;
+}
+
+textarea.alert#id_description,  select.alert#id_type {
+    margin-bottom: unset;
+    border-radius: unset;
+    padding: 2px;
 }
