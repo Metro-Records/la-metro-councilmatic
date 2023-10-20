@@ -1,6 +1,6 @@
 var SmartLogic = {
   query: {},
-  getToken: function() {
+  getToken: async function() {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
     msInDay = 86400000
@@ -93,67 +93,70 @@ function initAutocomplete(formElement, inputElement) {
   var $input = $(inputElement)
   var currentQuery
 
-  SmartLogic.getToken()
-
-  $input
-    .select2({
-      tags: true,
-      ajax: {
-        url: SmartLogic.buildServiceUrl,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: 'Bearer ' + window.localStorage.getItem('ses_token'),
+  function configureSearchBar() {
+    $input
+      .select2({
+        tags: true,
+        ajax: {
+          url: SmartLogic.buildServiceUrl,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: 'Bearer ' + window.localStorage.getItem('ses_token'),
+          },
+          processResults: SmartLogic.transformResponse,
         },
-        processResults: SmartLogic.transformResponse,
-      },
-      templateResult: function(state) {
-        return state.loading ? state.text : SmartLogic.highlightResult(state)
-      },
-      containerCssClass: 'input-lg form-control form-lg autocomplete-search',
-      minimumInputLength: 3,
-      language: {
-        inputTooShort: function(args) {
-          return 'Enter 3 or more characters to view suggestions.'
+        templateResult: function(state) {
+          return state.loading ? state.text : SmartLogic.highlightResult(state)
         },
-      },
-      createTag: function(params) {
-        var term = $.trim(params.term)
+        containerCssClass: 'input-lg form-control form-lg autocomplete-search',
+        minimumInputLength: 3,
+        language: {
+          inputTooShort: function(args) {
+            return 'Enter 3 or more characters to view suggestions.'
+          },
+        },
+        createTag: function(params) {
+          var term = $.trim(params.term)
 
-        if (term === '') {
-          return null
-        }
+          if (term === '') {
+            return null
+          }
 
-        return {
-          id: term,
-          text: term,
-          newTag: true,
-        }
-      },
-    })
-    .on('select2:closing', function(e) {
-      /* By default, Select2 clears input when the user clicks inside the
+          return {
+            id: term,
+            text: term,
+            newTag: true,
+          }
+        },
+      })
+      .on('select2:closing', function(e) {
+        /* By default, Select2 clears input when the user clicks inside the
            search bar or the input loses focus. We want to retain that input.
            I adapted this solution from this comment:
            https://github.com/select2/select2/issues/3902#issuecomment-206658823 */
 
-      // Grab the input value before closing the menu.
-      currentQuery = $('.select2-search input').prop('value')
-    })
-    .on('select2:close', function(e) {
-      // Once the menu has closed, add back the input value.
-      $('.select2-search input').val(currentQuery).trigger('change')
-    })
-    .on('select2:open', function(e) {
-      // When the menu reopens (or regains focus), initialize a search with
-      // the input value.
-      $('.select2-search input').trigger('input')
-    })
-    .on('select2:select', function(e) {
-      // When a user selects a value, clear the existing input value. (This
-      // basically preserves normal select behavior with the above measures
-      // to preserve pending input between selections.)
-      $('.select2-search input').val('').trigger('change')
-    })
+        // Grab the input value before closing the menu.
+        currentQuery = $('.select2-search input').prop('value')
+      })
+      .on('select2:close', function(e) {
+        // Once the menu has closed, add back the input value.
+        $('.select2-search input').val(currentQuery).trigger('change')
+      })
+      .on('select2:open', function(e) {
+        // When the menu reopens (or regains focus), initialize a search with
+        // the input value.
+        $('.select2-search input').trigger('input')
+      })
+      .on('select2:select', function(e) {
+        // When a user selects a value, clear the existing input value. (This
+        // basically preserves normal select behavior with the above measures
+        // to preserve pending input between selections.)
+        $('.select2-search input').val('').trigger('change')
+      })
+  }
+
+  // Make sure our Smartlogic token is set before setting up search bar
+  SmartLogic.getToken().then(configureSearchBar)
 
   function handleSubmit(e) {
     var terms = $('#search-bar')
