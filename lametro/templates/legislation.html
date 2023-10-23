@@ -58,14 +58,14 @@
                 </p>
 
                 <p>
-                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}'>
+                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}' class="fw-bold fs-6">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Board Report
                     </a>
                 </p>
 
                 {% if legislation.packet.is_ready and attachments%}
                     <p>
-                        <a href="{{legislation.packet.url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
+                        <a href="{{legislation.packet.url}}" class="fw-bold fs-6"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
                     </p>
                 {% endif %}
 
