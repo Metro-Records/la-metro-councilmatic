@@ -109,6 +109,7 @@ class LAMetroIndexView(IndexView, FormView):
 
     def form_valid(self, form):
         form.save()
+        cache.clear()
 
         return super().form_valid(form)
 
@@ -1038,6 +1039,7 @@ class AlertDeleteView(DeleteView):
 
     def form_valid(self, form):
         self.object.delete()
+        cache.clear()
 
         return super().form_valid(form)
 
