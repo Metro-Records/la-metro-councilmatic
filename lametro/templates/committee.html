@@ -45,8 +45,8 @@
                     {% endif %}
                 </p>
             {% endfor %}
-            <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show more</a>
-            <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer</a>
+            <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show more {{ CITY_VOCAB.EVENTS|lower }}</a>
+            <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer {{ CITY_VOCAB.EVENTS|lower }}</a>
         {% endif %}
     </div>
 </div>
