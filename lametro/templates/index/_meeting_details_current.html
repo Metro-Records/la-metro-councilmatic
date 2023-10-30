@@ -31,7 +31,7 @@
                         {% if meeting.is_ongoing and USING_ECOMMENT %}
                             <p>
                                 <a class="btn btn-primary" href="{{ event.ecomment_url }}" target="_blank">
-                                    <i class='fa fa-fw fa-external-link'></i>
+                                    <i class='fa fa-fw fa-external-link' aria-label='Opens in a new tab.'></i>
                                     Go to public comment
                                 </a>
                             </p>
@@ -98,14 +98,14 @@
 
                 {% if USING_ECOMMENT %}
                     <a class="btn btn-sm btn-primary current-meeting-info" href="{{ current_meeting.first.ecomment_url }}" target="_blank">
-                        <i class='fa fa-fw fa-external-link'></i>
+                        <i class='fa fa-fw fa-external-link' aria-label='Opens in a new tab.'></i>
                         Go to public comment
                     </a>
                 {% endif %}
 
                 {% if current_meeting.first.documents.all %}
                     <a class="btn btn-sm btn-teal current-meeting-info" id="pdf-download-link" target='_blank' href='{{ current_meeting.first.documents.all|find_agenda_url }}'>
-                        <i class='fa fa-fw fa-download'></i>
+                        <i class='fa fa-fw fa-download' aria-hidden="true"></i>
                         Get Agenda PDF
                     </a>
                 {% endif %}

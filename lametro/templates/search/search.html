@@ -34,7 +34,7 @@
         {% if selected_facets %}
             <p class="mb-0">
                 <a href="/search/" class="btn btn-sm btn-secondary mb-2">
-                <i class='fa fa-times'></i>
+                <i class='fa fa-times' aria-hidden="true"></i>
                 Clear all filters
                 </a>
             </p>
@@ -199,11 +199,11 @@
 
                 <small class="rss">
                     {% if query and selected_facets %}
-                        <a href="/search/rss/?q={{request.GET.q}}{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
+                        <a href="/search/rss/?q={{request.GET.q}}{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed" aria-label="RSS feed">
                     {% elif selected_facets %}
-                        <a href="/search/rss/?{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
+                        <a href="/search/rss/?{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed" aria-label="RSS feed">
                     {% else %}
-                        <a href="/search/rss/?q={{request.GET.q}}" title="RSS feed">
+                        <a href="/search/rss/?q={{request.GET.q}}" title="RSS feed" aria-label="RSS feed">
                     {% endif %}
 
                     <i class="fa fa-rss-square" aria-hidden="true"></i></a>
