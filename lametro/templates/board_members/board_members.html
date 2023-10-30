@@ -146,7 +146,7 @@
             <h4><i class='fa fa-fw fa-calendar-o' aria-hidden="true"></i> Board of Directors Meetings</h4>
             {% for event in recent_events %}
                 <p class="event-listing">
-                    {{event.start_time | date:'n/d/Y' }} - {{event.link_html | safe}}
+                    <a href="{{event.event_page_url | safe}}" title="View Event Details">{{event.start_time | date:'n/d/Y' }} - {{event.name}}</a>
                 </p>
             {% endfor %}
             <p>

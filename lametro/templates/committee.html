@@ -38,10 +38,12 @@
             {% for event in committee.recent_events %}
                 <p class="event-listing my-2">
                     {% if event.status == 'cancelled' %}
-                        <del>{{ event.start_time | date:'n/d/Y' }} - {{ event.link_html | safe }}</del>
+                        <del>
+                            <a href="{{event.event_page_url | safe}}" title="View Event Details">{{event.start_time | date:'n/d/Y' }} - {{event.name}}</a>
+                        </del>
                         <span class="label label-stale">Cancelled</span>
                     {% else %}
-                        {{ event.start_time | date:'n/d/Y' }} - {{ event.link_html | safe}}
+                        <a href="{{event.event_page_url | safe}}" title="View Event Details">{{event.start_time | date:'n/d/Y' }} - {{event.name}}</a>
                     {% endif %}
                 </p>
             {% endfor %}
