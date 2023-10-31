@@ -97,6 +97,7 @@ function initAutocomplete(formElement, inputElement) {
     $input
       .select2({
         tags: true,
+        placeholder: 'Search for a keyword or use "double quotes" to search for a phrase',
         ajax: {
           url: SmartLogic.buildServiceUrl,
           headers: {
