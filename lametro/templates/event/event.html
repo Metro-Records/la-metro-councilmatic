@@ -52,7 +52,7 @@
         {% if user.is_authenticated %}
             {% if not event_ok %}
             <div class="card-body">
-                <p class="card-text">This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.</p>
+                <p class="card-text">This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the following button.</p>
                 <a href="{% url 'delete_event' event.slug %}" class='btn btn-teal'>
                     <i class="fa fa-times" aria-hidden="true"></i>
                     Delete Event
@@ -133,7 +133,7 @@
                         </div>
 
                         <p class="d-none d-md-block">
-                            <em>To use a link in the PDF below, hold the CTRL button on your keyboard when clicking the link.</em>
+                            <em>To use a link in the following PDF, hold the CTRL button on your keyboard when clicking the link.</em>
                         </p>
                         <iframe
                             id="pdf-embed-agenda"
