@@ -755,3 +755,8 @@ a, .btn-link, .page-link {
 .btn-secondary {
     background-color: #6C757D;
 }
+
+.search-results {
+    list-style: none;
+    padding-left: 0px;
+}

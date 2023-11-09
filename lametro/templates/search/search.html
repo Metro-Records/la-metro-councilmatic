@@ -216,20 +216,22 @@
                 </div>
             </div>
         {% endif %}
+        <ul class="search-results">
+            {% for result in page.object_list %}
+                <li>
+                    <!-- Legislation result -->
 
-        {% for result in page.object_list %}
+                    {% with r=result %}
+                        {% include 'search/_search_result.html' %}
+                    {% endwith %}
 
-            <!-- Legislation result -->
+                    {% include 'search/_tags.html' %}
 
-            {% with r=result %}
-                {% include 'search/_search_result.html' %}
-            {% endwith %}
-
-            {% include 'search/_tags.html' %}
-
-            {% empty %}
-            {% include 'search/_empty_search_message.html' %}
-        {% endfor %}
+                    {% empty %}
+                    {% include 'search/_empty_search_message.html' %}
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 
