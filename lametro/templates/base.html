@@ -235,10 +235,9 @@
         });
     </script>
 
-    <script>
-        var analyticsTrackingCode = '{{ANALYTICS_TRACKING_CODE}}';
-    </script>
-    <script src="{% static 'js/lib/analytics_lib.js' %}"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9E47Y9QH06"></script>
+    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-9E47Y9QH06'); </script>
 
 </body>
 </html>

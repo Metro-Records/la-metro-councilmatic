@@ -2,7 +2,6 @@ import requests
 
 from django import forms
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db.models import Q
 
 from captcha.fields import ReCaptchaField
 from captcha.fields import ReCaptchaV3
@@ -12,7 +11,7 @@ from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
 
-from lametro.models import LAMetroBill, LAMetroPerson
+from lametro.models import LAMetroPerson
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
@@ -49,7 +48,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         report_filter = SQ()
         attachment_filter = SQ()
 
-        for token in self.cleaned_data["q"].split(" AND "):
+        for token in self.cleaned_data["q"].split(" and "):
             report_filter &= SQ(text=Raw(token))
             attachment_filter &= SQ(attachment_text=Raw(token))
 
@@ -63,24 +62,15 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
     def _topic_search(self, sqs):
         terms = [
             term.strip().replace('"', "")
-            for term in self.cleaned_data["q"].split(" AND ")
+            for term in self.cleaned_data["q"].split(" and ")
             if term
         ]
 
-        topic_filter = Q()
-
+        topic_filter = SQ()
         for term in terms:
-            topic_filter |= Q(subject__icontains=term)
+            topic_filter &= SQ(topics__in=[term])
 
-        tagged_results = LAMetroBill.objects.filter(topic_filter).values_list(
-            "id", flat=True
-        )
-
-        if self.result_type == "keyword":
-            sqs = sqs.exclude(id__in=tagged_results)
-
-        elif self.result_type == "topic":
-            sqs = sqs.filter(id__in=tagged_results)
+        sqs = sqs.filter(topic_filter)
 
         return sqs
 
@@ -93,8 +83,11 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         has_query = hasattr(self, "cleaned_data") and self.cleaned_data["q"]
 
         if has_query:
-            sqs = self._full_text_search(sqs)
-            sqs = self._topic_search(sqs)
+            if self.result_type == "keyword":
+                sqs = self._full_text_search(sqs)
+
+            if self.result_type == "topic":
+                sqs = self._topic_search(sqs)
 
         return sqs
 
