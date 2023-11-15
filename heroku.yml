@@ -2,6 +2,7 @@
 setup:
   addons:
     - plan: heroku-postgresql
+    - plan: searchbox-elasticsearch
 # Define your application's Docker containers.
 build:
   docker:
