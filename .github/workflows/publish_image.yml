@@ -6,6 +6,7 @@ on:
       - main
       - deploy
       - heroku
+      - heroku-prod
 
 jobs:
   publish:
