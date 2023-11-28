@@ -727,3 +727,7 @@ textarea.alert#id_description,  select.alert#id_type {
     border-radius: unset;
     padding: 2px;
 }
+
+.alert {
+    border-radius: 0px;
+}
