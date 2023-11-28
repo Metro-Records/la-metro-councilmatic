@@ -703,6 +703,7 @@ button.skip-main {
     transition: transform 0.3s;
     color: transparent;
     line-height: 10px;
+    z-index: 99;
 }
 
 button.skip-main:focus {
