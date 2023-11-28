@@ -13,15 +13,14 @@
                 {% if user.is_authenticated %}
                     {% include "index/_alert_manager.html" %}
                 {% endif %}
-
-                    <h1 class="home-header">Los Angeles County Metropolitan Transportation Authority</h1>
+                <h1 class="home-header">Los Angeles County Metropolitan Transportation Authority</h1>
                 <p class="h3">
                     <span class="text-light">Search Metro Board Reports (2015 – present)</span>
                 </p>
                 <p>
                   <span class="text-light">
                     Begin typing in the search bar to add a keyword or pick a suggested topic as they appear. Press enter to perform a search for your selected terms.
-                    <i id="beta-info" class="fa fa-info-circle fa-fw" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="<strong>Suggested topics are a new feature.</strong> If you aren't seeing helpful suggestions or have any additional feedback or questions, get in touch with us at <a href='mailto:boardreport@metro.net'>boardreport@metro.net</a>."></i>
+                    <i id="beta-info" class="fa fa-info-circle fa-fw" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="<strong>Suggested topics are a new feature.</strong> If you aren't seeing helpful suggestions or have any additional feedback or questions, get in touch with us at <a href='mailto:boardreport@metro.net'>boardreport@metro.net</a>." aria-label="Suggested topics are a new feature. If you aren't seeing helpful suggestions or have any additional feedback or questions, get in touch with us at boardreport@metro.net."></i>
                   </span>
                 </p>
                 <div class="site-intro-search">
@@ -190,6 +189,11 @@
         });
 
         $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
+
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
 
         function toggleAlertManager(){
             $("#alert-manager").toggle();

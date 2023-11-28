@@ -34,7 +34,7 @@
         {% if selected_facets %}
             <p class="mb-0">
                 <a href="/search/" class="btn btn-sm btn-secondary mb-2">
-                <i class='fa fa-times'></i>
+                <i class='fa fa-times' aria-hidden="true"></i>
                 Clear all filters
                 </a>
             </p>
@@ -139,12 +139,12 @@
                     {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
+        </div>
 
-            <div class="divider"></div>
+        <div class="divider" aria-hidden="true"></div>
 
-            <div id="related-terms" class="hidden">
-                <p>Related terms:</p>
-            </div>
+        <div id="related-terms" class="hidden">
+            <p>Related terms:</p>
         </div>
     </div>
 
@@ -199,11 +199,11 @@
 
                 <small class="rss">
                     {% if query and selected_facets %}
-                        <a href="/search/rss/?q={{request.GET.q}}{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
+                        <a href="/search/rss/?q={{request.GET.q}}{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed" aria-label="RSS feed">
                     {% elif selected_facets %}
-                        <a href="/search/rss/?{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
+                        <a href="/search/rss/?{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed" aria-label="RSS feed">
                     {% else %}
-                        <a href="/search/rss/?q={{request.GET.q}}" title="RSS feed">
+                        <a href="/search/rss/?q={{request.GET.q}}" title="RSS feed" aria-label="RSS feed">
                     {% endif %}
 
                     <i class="fa fa-rss-square" aria-hidden="true"></i></a>
@@ -216,20 +216,22 @@
                 </div>
             </div>
         {% endif %}
+        <ul class="search-results">
+            {% for result in page.object_list %}
+                <li>
+                    <!-- Legislation result -->
 
-        {% for result in page.object_list %}
+                    {% with r=result %}
+                        {% include 'search/_search_result.html' %}
+                    {% endwith %}
 
-            <!-- Legislation result -->
+                    {% include 'search/_tags.html' %}
 
-            {% with r=result %}
-                {% include 'search/_search_result.html' %}
-            {% endwith %}
-
-            {% include 'search/_tags.html' %}
-
-            {% empty %}
-            {% include 'search/_empty_search_message.html' %}
-        {% endfor %}
+                    {% empty %}
+                    {% include 'search/_empty_search_message.html' %}
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 

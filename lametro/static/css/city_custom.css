@@ -5,7 +5,7 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar {
 }
 
 body, body .table, .popover-body, .badge-facet, .text-body-secondary {
-    color: #777777;
+    color: #6B6B6B;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar, th {
@@ -198,10 +198,10 @@ strong.match-group {
   background-color: #EB6864;
 }
 
-.label-teal { background-color: #49A6AB; }
+.label-teal { background-color: #0E8389; }
 
 .label-received, .label-approved, .label-adopted {
-    background-color: #1D9A43;
+    background-color: #008027;
 }
 
 .label-active {
@@ -221,6 +221,7 @@ strong.match-group {
     margin-left: 1.8em;
     padding-top: 5px;
     padding-bottom: 5px;
+    color: #B82A25;
 }
 
 .nav-inline {
@@ -264,11 +265,11 @@ div.order-nav { margin-top: 21px; }
 
 div#toggleControls { margin-bottom: 1em; }
 
-.badge.district-badge { background-color: #3D8A8E; }
+.badge.district-badge { background-color: #27777B; }
 
 .badge.sector-badge { background-color: #4D649E; }
 
-.badge.city-badge { background-color: #EB6864; }
+.badge.city-badge { background-color: #C7403B; }
 
 .badge.caltrans-badge { background-color: #E5B761; color: #000; }
 
@@ -299,8 +300,8 @@ div#toggleControls { margin-bottom: 1em; }
 }
 
 .btn-teal {
-    background-color: #49A6AB;
-    border: 1px solid #49A6AB;
+    background-color: #0E8389;
+    border: 1px solid #0E8389;
     color: #fff;
 }
 
@@ -538,14 +539,6 @@ hr .events-line {
     height: 200px;
 }
 
-label[for=id_type], label[for=id_description], .text-white {
-    color: white;
-}
-
-textarea#id_description {
-    resize: vertical;
-}
-
 .dropdown-size {
     font-size: 15px;
 }
@@ -554,7 +547,7 @@ textarea#id_description {
     border-color: white;
 }
 
-.nav-link:hover, .nav-link:active, .nav-link:focus, a, .btn-link {
+.nav-link:hover, .nav-link:active, .nav-link:focus {
     text-decoration: none;
 }
 
@@ -643,7 +636,7 @@ input[type=radio][name=options] {
     background-color: #EEEEEE;
     padding: 8px 10px;
     font-weight: bold;
-    color: #777777;
+    color: #6B6B6B;
 }
 
 .order-nav a.nav-link {
@@ -663,6 +656,10 @@ small.rss {
     height: fit-content;
 }
 
+.badge-facet {
+    background-color: #EEEEEE;
+}
+
 .fw-normal {
     font-weight: normal;
 }
@@ -673,8 +670,8 @@ small.rss {
 
 .nav-pills .nav-link.active {
     background: none;
-    color: #3D8A8E;
-    border-bottom: 8px solid #3D8A8E;
+    color: #1E7D82;
+    border-bottom: 8px solid #1E7D82;
 }
 
 .nav-pills .nav-link:focus {
@@ -730,4 +727,40 @@ textarea.alert#id_description,  select.alert#id_type {
 
 .alert {
     border-radius: 0px;
+}
+
+.btn-primary {
+    --bs-btn-bg: #C7403B;
+    --bs-btn-border-color: #C7403B;
+    --bs-btn-active-bg: #8C0F0B;
+    --bs-btn-active-border-color: #8C0F0B;
+}
+
+.text-muted {
+    color: #424242 !important;
+}
+
+.text-success {
+    color: #007D23 !important;
+}
+
+.text-secondary {
+    color: #6C757D !important;
+}
+
+a, .btn-link, .page-link {
+    color: #B82A25;
+}
+
+.page-link.disabled {
+    color: #424242;
+}
+
+.btn-secondary {
+    background-color: #6C757D;
+}
+
+.search-results {
+    list-style: none;
+    padding-left: 0px;
 }

@@ -29,7 +29,7 @@
                     Committee {{ CITY_VOCAB.EVENTS }}
                 </h4>
                 <small class="rss">
-                    <a href="events/rss/" title="RSS feed for Committe Events by {{committee.name}}">
+                    <a href="events/rss/" title="RSS feed for Committe Events by {{committee.name}}" aria-label="RSS feed for Committe Events by {{committee.name}}">
                         <i class="fa fa-rss-square" aria-hidden="true"></i>
                     </a>
                 </small>
@@ -38,15 +38,17 @@
             {% for event in committee.recent_events %}
                 <p class="event-listing my-2">
                     {% if event.status == 'cancelled' %}
-                        <del>{{ event.start_time | date:'n/d/Y' }} - {{ event.link_html | safe }}</del>
+                        <del>
+                            <a href="{{event.event_page_url | safe}}" title="View Event Details">{{event.start_time | date:'n/d/Y' }} - {{event.name}}</a>
+                        </del>
                         <span class="label label-stale">Cancelled</span>
                     {% else %}
-                        {{ event.start_time | date:'n/d/Y' }} - {{ event.link_html | safe}}
+                        <a href="{{event.event_page_url | safe}}" title="View Event Details">{{event.start_time | date:'n/d/Y' }} - {{event.name}}</a>
                     {% endif %}
                 </p>
             {% endfor %}
-            <a href="" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show more</a>
-            <a href="" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer</a>
+            <a href="#" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show more {{ CITY_VOCAB.EVENTS|lower }}</a>
+            <a href="#" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer {{ CITY_VOCAB.EVENTS|lower }}</a>
         {% endif %}
     </div>
 </div>

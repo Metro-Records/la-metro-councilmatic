@@ -23,7 +23,7 @@
                         Former {{ person.latest_council_membership.role }}
                     {% endif %}
                 </div>
-                <a href="rss/" title="RSS feed for Sponsored Board Actions by {{person.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
+                <a href="rss/" title="RSS feed for Sponsored Board Actions by {{person.name}}" aria-label="RSS feed for Sponsored Board Actions by {{person.name}}"><i class="fa fa-rss-square" aria-hidden="true"></i></a>
             </div>
         </div>
     </div>
@@ -73,9 +73,9 @@
 
             {% if map_geojson %}
                 {% if person.current_district %}
-                    <h4>{{ person.current_district | format_district }} map</h4>
+                    <h4 id="map-label">{{ person.current_district | format_district }} map</h4>
                 {% endif %}
-                <div id='map-detail'></div>
+                <div id='map-detail' aria-labelledby="map-label"></div>
             {% endif %}
 
         </div>

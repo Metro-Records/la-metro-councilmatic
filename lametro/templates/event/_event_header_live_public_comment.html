@@ -26,12 +26,12 @@
             {% if event.is_ongoing %}
                 <p>
                     <strong>You can submit your comments to the Metro Board of Directors during this meeting.</strong>
-                    Use the link below to comment on board reports on the agenda.
+                    Use the following link to comment on board reports on the agenda.
                 </p>
 
                 <p>
                     <a class="btn btn-primary" href="{{ event.ecomment_url }}" target="_blank">
-                        <i class="fa fa-fw fa-external-link"></i>
+                        <i class="fa fa-fw fa-external-link" aria-label="Opens in a new tab."></i>
                         Go to public comment
                     </a>
                 </p>
@@ -46,7 +46,7 @@
                     <span class="d-block">Not seeing an agenda? Please use this link:</span>
                 {% endif %}
                 <a href="{{event.web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank">
-                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-external-link" aria-label="Opens in a new tab."></i>
                     View on the {{CITY_VOCAB.SOURCE}} website
                 </a>
             </p>
@@ -88,7 +88,7 @@
                     <p>
                         <strong>On the web:</strong>
                         <a href="{{ event.ecomment_url }}" target="_blank">
-                            <i class="fa fa-fw fa-external-link" aria-hidden="true"></i>
+                            <i class="fa fa-fw fa-external-link" aria-label="Opens in a new tab."></i>
                             Go to public comment
                         </a>
                     </p>

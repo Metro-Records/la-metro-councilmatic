@@ -31,11 +31,12 @@
 
 <div class="row">
   <div class="col-md-9">
+    <h2 class="mb-3">Minutes</h2>
     <div id="minutes-list">
-      <h2 class="mb-3">Minutes</h2>
       {% if all_minutes %}
+        <ul class="search-results">
         {% for date, minutes_list in all_minutes %}
-          <div class="minutes-listing mb-5">
+          <li class="minutes-listing mb-5">
             <h5 class="text-default mb-0">
               <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ date | date:"D m/d/Y"}}
             </h5>
@@ -43,10 +44,11 @@
             {% for e in minutes_list %}
               {% include 'minutes/_minutes_item.html' %}
             {% endfor %}
-          </div>
+          </li>
         {% endfor %}
-        <a href="" class="btn btn-primary" id="more-minutes"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all minutes</a>
-        <a href="" class="btn btn-primary" id="fewer-minutes"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer minutes</a>
+        </ul>
+        <a href="#" class="btn btn-primary" id="more-minutes"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all minutes</a>
+        <a href="#" class="btn btn-primary" id="fewer-minutes"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer minutes</a>
       {% else %}
         <div class="row my-4">
           <h5>No minutes have been found.</h5>

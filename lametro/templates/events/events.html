@@ -57,7 +57,7 @@
                     <div>
                         <h2 class="d-inline">Upcoming {{ CITY_VOCAB.EVENTS }}</h2>
                         <small class="rss">
-                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events" aria-label="RSS feed for Upcoming and Recent Events">
                                 <i class="fa fa-rss-square" aria-hidden="true"></i>
                             </a>
                         </small>
@@ -75,22 +75,22 @@
                     <div class='col-md-8' id='events_message'></div>
                 </div>
 
-                <div class="row mt-4">
+                <ul class="row mt-4 search-results">
                 {% for date, event_list in future_events %}
-                    <div class="event-upcoming-listing mb-4">
+                    <li class="event-upcoming-listing mb-4">
                         {% include "events/_event_day.html" %}
-                    </div>
+                    </li>
                 {% endfor %}
-                </div>
+                </ul>
 
-                <a href="" class="btn btn-primary" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all upcoming meetings</a>
-                <a href="" class="btn btn-primary" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer upcoming meetings</a>
+                <a href="#" class="btn btn-primary" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all upcoming meetings</a>
+                <a href="#" class="btn btn-primary" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer upcoming meetings</a>
 
                 <div class="row mt-5">
                     <div>
                         <h2 class="d-inline">Past {{ CITY_VOCAB.EVENTS }}</h2>
                         <small class="rss">
-                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events" aria-label="RSS feed for Upcoming and Recent Events">
                                 <i class="fa fa-rss-square" aria-hidden="true"></i>
                             </a>
                         </small>
@@ -101,23 +101,23 @@
                     <div class='col-md-8' id='events_message'></div>
                 </div>
 
-                <div class="row mt-4">
+                <ul class="row mt-4 search-results">
                 {% for date, event_list in past_events %}
-                    <div class='event-listing mb-4'>
+                    <li class='event-listing mb-4'>
                         {% include "events/_past_event_day.html" %}
-                    </div>
+                    </li>
                 {% endfor %}
-                </div>
+                </ul>
 
-                <a href="" class="btn btn-primary mb-5" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings</a>
-                <a href="" class="btn btn-primary mb-5" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings</a>
+                <a href="#" class="btn btn-primary mb-5" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings</a>
+                <a href="#" class="btn btn-primary mb-5" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings</a>
 
             {% elif past_events %}
                 <div class="row mt-4">
                     <div>
                         <h2 class="d-inline">Past {{ CITY_VOCAB.EVENTS }}</h2>
                         <small class="rss">
-                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events" aria-label="RSS feed for Upcoming and Recent Events">
                                 <i class="fa fa-rss-square" aria-hidden="true"></i>
                             </a>
                         </small>
@@ -128,23 +128,23 @@
                     <div class='col-md-8' id='events_message'></div>
                 </div>
 
-                <div class="row mt-4">
+                <ul class="row mt-4 search-results">
                 {% for date, event_list in past_events %}
-                    <div class='event-listing mb-4'>
+                    <li class='event-listing mb-4'>
                         {% include "events/_past_event_day.html" %}
-                    </div>
+                    </li>
                 {% endfor %}
-                </div>
+                </ul>
 
-                <a href="" class="btn btn-primary mb-5" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings</a>
-                <a href="" class="btn btn-primary mb-5" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings</a>
+                <a href="#" class="btn btn-primary mb-5" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings</a>
+                <a href="#" class="btn btn-primary mb-5" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings</a>
 
             {% elif select_events %}
                 <div class="row mt-4">
                     <div>
                         <h2 class="d-inline">{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</h2>
                         <small class="rss">
-                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events" aria-label="RSS feed for Upcoming and Recent Events">
                                 <i class="fa fa-rss-square" aria-hidden="true"></i>
                             </a>
                         </small>
@@ -155,20 +155,20 @@
                     <div class='col-md-8' id='events_message'></div>
                 </div>
 
-                <div class="row mt-4">
+                <ul class="row mt-4 search-results">
                 {% for date, event_list in select_events %}
-                    <div class='mb-4'>
+                    <li class='mb-4'>
                         {% include "events/_past_event_day.html" %}
-                    </div>
+                    </li>
                 {% endfor %}
-                </div>
+                </ul>
 
             {% elif all_events %}
                 <div class="row mt-4">
                     <div>
                         <h2 class="d-inline">All {{ CITY_VOCAB.EVENTS }}</h2>
                         <small class="rss">
-                            <a href="rss/" title="RSS feed for Upcoming and Recent Events">
+                            <a href="rss/" title="RSS feed for Upcoming and Recent Events" aria-label="RSS feed for Upcoming and Recent Events">
                                 <i class="fa fa-rss-square" aria-hidden="true"></i>
                             </a>
                         </small>
@@ -179,13 +179,13 @@
                     <div class='col-md-8' id='events_message'></div>
                 </div>
 
-                <div class="row mt-4">
+                <ul class="row mt-4 search-results">
                 {% for date, event_list in all_events %}
-                    <div class='mb-4'>
+                    <li class='mb-4'>
                         {% include "events/_past_event_day.html" %}
-                    </div>
+                    </li>
                 {% endfor %}
-                </div>
+                </ul>
 
             {% else %}
                 <div class='row my-4'>
