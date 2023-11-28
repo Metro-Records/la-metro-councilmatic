@@ -102,14 +102,14 @@
                             <div class="col-sm-8">
                                 <h4>Agenda</h4>
                                 <p class="mb-1">
-                                    <a id="pdf-download-link" target="_blank" href={% if agenda_url %} '{{agenda_url}}' {% elif uploaded_agenda_url %} '{{uploaded_agenda_url}}' {% elif uploaded_agenda_pdf %} '{% static uploaded_agenda_pdf %}' {% endif %}>
+                                    <a id="pdf-download-link" class="fw-bold fs-6" target="_blank" href={% if agenda_url %} '{{agenda_url}}' {% elif uploaded_agenda_url %} '{{uploaded_agenda_url}}' {% elif uploaded_agenda_pdf %} '{% static uploaded_agenda_pdf %}' {% endif %}>
                                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
                                         Download Agenda
                                     </a>
                                 </p>
                                 {% if event.packet.is_ready %}
                                     <p class="mb-1">
-                                        <a href="{{event.packet.url}}"><i class="fa fa-files-o" aria-hidden="true"></i>
+                                        <a href="{{event.packet.url}}" class="fw-bold fs-6"><i class="fa fa-files-o" aria-hidden="true"></i>
                                             Download Agenda and Attachments
                                         </a>
                                     </p>
