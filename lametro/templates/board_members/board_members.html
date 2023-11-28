@@ -94,14 +94,14 @@
                 <div id="map"></div>
             </div>
 
-            <div id="council-member-scroll-area" class="col-lg-6 px-0 px-lg-3">
+            <div class="col-lg-6 px-0 px-lg-3">
                 {% include 'board_members/_council_member_table.html' %}
             </div>
         {% else %}
-            <div id="council-member-scroll-area" class="col-8 px-0 px-md-3">
+            <div class="col-lg-8 px-0 px-md-3 mb-4">
                 {% include 'board_members/_council_member_table.html' %}
             </div>
-            <div class="col-4">
+            <div class="col-lg-4">
                 {% include 'board_members/_council_info_blurb.html' %}
             </div>
         {% endif %}
