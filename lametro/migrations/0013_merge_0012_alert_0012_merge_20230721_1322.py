@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lametro", "0012_alert"),
         ("lametro", "0012_merge_20230721_1322"),
