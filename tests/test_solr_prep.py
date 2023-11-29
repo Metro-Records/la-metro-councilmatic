@@ -24,25 +24,25 @@ def test_legislative_session(bill, metro_organization, event, mocker, month):
 
     # Create test actions and agendas
     recent_action = {
-        "date": datetime(now.year, month, now.day),
+        "date": datetime(now.year, month, 1),
         "description": "org2 descripton",
         "event": event,
         "organization": org,
     }
     older_action = {
-        "date": datetime(now.year, month, now.day) - timedelta(days=365 * 2),
+        "date": datetime(now.year, month, 1) - timedelta(days=365 * 2),
         "description": "org2 descripton",
         "event": event,
         "organization": org,
     }
     recent_agenda = {
-        "date": datetime(now.year, month, now.day) - timedelta(days=365),
+        "date": datetime(now.year, month, 1) - timedelta(days=365),
         "description": "SCHEDULED",
         "event": event,
         "organization": org,
     }
     older_agenda = {
-        "date": datetime(now.year, month, now.day) - timedelta(days=365 * 3),
+        "date": datetime(now.year, month, 1) - timedelta(days=365 * 3),
         "description": "SCHEDULED",
         "event": event,
         "organization": org,

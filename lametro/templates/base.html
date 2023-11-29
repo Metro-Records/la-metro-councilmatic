@@ -1,4 +1,4 @@
-{% load adv_cache static %}
+{% load adv_cache extras lametro_extras markdownify static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -99,8 +99,16 @@
             </div><!-- /.navbar-collapse -->
         </div>
     </nav>
-
     {% endcache %}
+
+    {% get_alerts as alerts %}
+    {% if alerts %}
+        {% for alert in alerts %}
+            <div class="alert alert-{{alert.type}}" style="margin-bottom: 0px;">
+                {{alert.description|markdownify}}
+            </div>
+        {% endfor %}
+    {% endif %}
 
     {% block full_content %}
     {% endblock %}

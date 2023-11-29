@@ -201,20 +201,7 @@
 
             {% if query or selected_facets %}
             <h3 class="modal-links">
-
                 {% include 'search/_search_results_header.html' %}
-
-                <small>
-                    {% if query and selected_facets %}
-                        <a href="/search/rss/?q={{request.GET.q}}{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
-                    {% elif selected_facets %}
-                        <a href="/search/rss/?{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value}}{% endfor %}{% endfor %}" title="RSS feed">
-                    {% else %}
-                        <a href="/search/rss/?q={{request.GET.q}}" title="RSS feed">
-                    {% endif %}
-
-                    <i class="fa fa-rss-square" aria-hidden="true"></i></a>
-                </small>
             </h3>
             <div class='row'>
                 <div class='col-sm-8' id='search_message'></div>

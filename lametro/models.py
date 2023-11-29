@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+import json
 import logging
 import os
 from pathlib import Path
@@ -310,12 +311,40 @@ class LAMetroPost(Post):
     class Meta:
         proxy = True
 
+    def get_feature(self, membership=None):
+        if membership:
+            council_member = membership.person.name
+            detail_link = membership.person.slug
+
+        else:
+            council_member = "Vacant"
+            detail_link = ""
+
+        return {
+            "type": "Feature",
+            "geometry": json.loads(self.shape.json),
+            "properties": {
+                "district": self.label,
+                "council_member": council_member,
+                "detail_link": "/person/" + detail_link,
+                "select_id": "polygon-{}".format(slugify(self.label)),
+            },
+        }
+
     @property
     def acting_label(self):
         if self.extras.get("acting"):
             return "Acting " + self.label
         else:
             return self.label
+
+    @property
+    def geographic_features(self):
+        current_memberships = self.memberships.filter(
+            start_date_dt__lte=Now(), end_date_dt__gt=Now()
+        ) or [None]
+
+        yield from (self.get_feature(membership) for membership in current_memberships)
 
 
 class LAMetroPerson(Person, SourcesMixin):
@@ -1144,3 +1173,17 @@ class LAMetroSubject(models.Model):
 
         else:
             return self.name
+
+
+class Alert(models.Model):
+    TYPE_CHOICES = [
+        ("primary", "Primary"),
+        ("secondary", "Secondary"),
+        ("success", "Success"),
+        ("danger", "Danger"),
+        ("warning", "Warning"),
+        ("info", "Info"),
+    ]
+
+    description = models.TextField(null=True, blank=True)
+    type = models.CharField(max_length=255, choices=TYPE_CHOICES)

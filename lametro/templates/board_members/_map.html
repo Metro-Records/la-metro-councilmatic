@@ -15,12 +15,14 @@
     var districts        = null;
     var sectors          = null;
     var los_angeles_city = null;
+    var caltrans         = null;
     var search_result    = null;
     var search_result_sector = null;
     var geocoder         = new google.maps.Geocoder();
     var districtColor    = "#3D8A8E";
     var sectorColor      = "#4D649E";
     var cityColor        = "#EB6864";
+    var caltransColor    = "#E5B761";
 
     var map = L.map('map', {
         scrollWheelZoom: false,
@@ -60,7 +62,7 @@
     }
 
     infoBox.clear = function(){
-      this._div.innerHTML = '<p><i class="fa fa-hand-pointer-o fa-fw"></i><span class="non-mobile-only">Hover</span><span class="mobile-only">Tap a ward</span> for details</p>';
+      this._div.innerHTML = '<p><i class="fa fa-hand-pointer-o fa-fw"></i><span class="non-mobile-only">Hover</span><span class="mobile-only">Tap</span> for details</p>';
     }
 
     infoBox.addTo(map);
@@ -185,6 +187,44 @@
         }
     }
 
+    function onEachFeatureCaltrans(feature, layer) {
+        if (feature.properties) {
+            var center = layer.getBounds().getCenter();
+
+            if (map){
+
+                layer.layerPopup = L.popup(customOptions, layer)
+                                        .setLatLng(center)
+                                        .setContent(feature.properties.popupContent);
+
+                layer.on('click', function(e){
+                    window.location = feature.properties.detail_link
+                });
+
+                layer.on('mouseover', function(e){
+                    infoBox.update(e.target.feature.properties);
+                    e.target.setStyle({'fillOpacity': 0.8, 'color': caltransColor});
+                });
+
+                layer.on('mouseout', function(e){
+                    infoBox.clear();
+                    e.target.setStyle({'fillOpacity': 0.2, 'color': caltransColor});
+                });
+
+                layer.on('tableover', function(e){
+                    infoBox.update(e.target.feature.properties);
+                    e.target.setStyle({'fillOpacity': 0.8, 'color': caltransColor});
+                });
+
+                layer.on('tableout', function(e){
+                    infoBox.clear();
+                    map.closePopup(e.target.layerPopup);
+                    e.target.setStyle({'fillOpacity': 0.2, 'color': caltransColor});
+                });
+            }
+        }
+    }
+
     districts = L.geoJson({{ map_geojson_districts|safe }}, {
         style: {
                 "color": districtColor,
@@ -216,6 +256,16 @@
         onEachFeature: onEachFeatureCity
     });
 
+    caltrans = L.geoJson({{ map_geojson_caltrans|safe }}, {
+        style: {
+                "color": caltransColor,
+                "weight": 1,
+                "opacity": 1,
+                "fillOpacity": 0.3,
+            },
+        onEachFeature: onEachFeatureCaltrans
+    });
+
     function doSearch() {
         clearSearch();
         var address = $("#search_address").val();
@@ -241,15 +291,18 @@
               search_result        = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], districts);
               search_result_sector = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], sectors);
               search_result_city   = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], los_angeles_city);
+              search_result_caltrans   = leafletPip.pointInLayer([currentPinpoint[1], currentPinpoint[0]], caltrans);
 
               var districtNumber = "Nothing to search"
               var sectorName     = "Nothing to search"
               var cityName       = "Nothing to search"
+              var caltransName   = "Nothing to search"
 
               if ((search_result.length > 0) || (search_result_sector.length > 0) || search_result_city.length > 0) {
                 map.removeLayer(districts);
                 map.removeLayer(sectors);
                 map.removeLayer(los_angeles_city);
+                map.removeLayer(caltrans)
 
                 if (search_result.length > 0) {
                     search_result = search_result[0]
@@ -273,6 +326,14 @@
                     map.fitBounds(search_result.getBounds(), {padding: [50,50]});
 
                     var cityName = "Mayor of the City of Los Angeles"
+                }
+
+                if (search_result_caltrans.length > 0) {
+                    search_result = search_result_caltrans[0]
+                    search_result.addTo(searchResultsLayer);
+                    map.fitBounds(search_result.getBounds(), {padding: [50,50]});
+
+                    var cityName = "Appointee of the Governor of California"
                 }
 
                 if (council_member_table) {
@@ -370,14 +431,23 @@
                 map.addLayer(districts);
                 map.removeLayer(sectors);
                 map.removeLayer(los_angeles_city);
+                map.removeLayer(caltrans);
                 break;
             case 'sector':
                 map.addLayer(sectors);
                 map.removeLayer(districts);
                 map.removeLayer(los_angeles_city);
+                map.removeLayer(caltrans);
                 break;
             case 'city':
                 map.addLayer(los_angeles_city);
+                map.removeLayer(districts);
+                map.removeLayer(sectors);
+                map.removeLayer(caltrans);
+                break;
+            case 'caltrans':
+                map.addLayer(caltrans);
+                map.removeLayer(los_angeles_city);
                 map.removeLayer(districts);
                 map.removeLayer(sectors);
                 break;
@@ -421,13 +491,20 @@
 
         });
 
+        $('#caltransToggle').on('click', function() {
+            changeLayers('caltrans');
+
+        });
+
         $('#council-members tbody tr').on('mouseover', function() {
-            if ($(this).is(':contains("District appointee")')) {
+            if ($(this).is(':contains("Districts")')) {
                 changeLayers('district');
-            } else if ($(this).is(':contains("Sector appointee")')) {
+            } else if ($(this).is(':contains("Sectors")')) {
                 changeLayers('sector');
-            } else if ($(this).is(':contains("Los Angeles")')) {
+            } else if ($(this).is(':contains("City of LA")')) {
                 changeLayers('city');
+            } else if ($(this).is(':contains("Caltrans")')) {
+                changeLayers('caltrans');
             };
         });
 
