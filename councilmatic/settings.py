@@ -88,6 +88,7 @@ INSTALLED_APPS = (
     "adv_cache_tag",
     "debug_toolbar",
     "captcha",
+    "markdownify.apps.MarkdownifyConfig",
 )
 
 try:
