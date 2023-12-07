@@ -107,12 +107,6 @@
                             <p>
                                 <a href="{{ minutes.links.get.url }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
                             </p>
-                            {% elif 'board meeting' in event.name|lower or 'la safe' in event.name|lower %}
-                            <h4>Minutes</h4>
-                            <p>
-                                <a href="http://boardarchives.metro.net/recaps/" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i> View Recap</a>
-                                </br>
-                            </p>
                             {% endif %}
                         {% endif %}
 
