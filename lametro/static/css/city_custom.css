@@ -765,3 +765,14 @@ a, .btn-link, .page-link {
     list-style: none;
     padding-left: 0px;
 }
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 95vh;
+}
+
+footer {
+    width: 100%;
+    margin-top: auto !important;
+}

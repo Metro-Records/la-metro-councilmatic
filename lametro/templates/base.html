@@ -20,87 +20,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
+    <div class="wrapper">
 
-    <!--[if lt IE 11]>
-        <div class="alert alert-danger">
-            <strong>This version of Internet Explorer may limit the functionality of this website.</strong> We recommend that you <a href="https://browsehappy.com/?locale=en">upgrade your browser. &raquo;</a>
-        </div>
-    <![endif]-->
-    <button type="button" class="btn btn-link skip-main" href="#main">
-        Skip to main content
-    </button>
-    {% cache 600 nav_wrapper 'nav' %}
-
-    <nav class="navbar fixed-top navbar-default navbar-expand-md navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand me-auto" href="/">
-                <img alt="" id="logo" src="{% static IMAGES.logo %}"></img>
-                <span id="logo-text">Metro Board</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav ms-auto justify-content-end">
-                <li class="nav-item dropdown me-2 pt-3">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    About
-                  </a>
-                  <ul class="dropdown-menu shadow rounded-bottom">
-                    <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:council_members' %}">Board of Directors</a></li>
-                    <li><a class="dropdown-item dropdown-size" href="{% url 'committees' %}">Committees</a></li>
-                    <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:contact' %}">Contact Us</a></li>
-                    <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:about' %}">About Us</a></li>
-                  </ul>
-                </li>
-                <li class="nav-item dropdown me-2 pt-3">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Search
-                  </a>
-                  <ul class="dropdown-menu shadow rounded-bottom">
-                    <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:search' %}">Board Reports</a></li>
-                    <li><a class="dropdown-item dropdown-size" href="https://mtasearch01.metro.net:23352/apps/boardarchives/">Archive Search</a></li>
-                  </ul>
-                </li>
-                <li class="nav-item dropdown me-2 pt-3">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Meetings
-                  </a>
-                  <ul class="dropdown-menu shadow rounded-bottom">
-                    <li><a class="dropdown-item dropdown-size" href="{% url 'events' %}">{{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></li>
-                    <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:minutes' %}">Minutes</a></li>
-                  </ul>
-                </li>
-                {% nocache %}
-                    {% if user.is_authenticated %}
-                        <li class="nav-item pt-4">
-                            <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
-                        </li>
-                    {% else %}
-                        <li>
-                            <div id="google_translate_element"></div>
-                        </li>
-                    {% endif %}
-                {% endnocache %}
-              </ul>
+        <!--[if lt IE 11]>
+            <div class="alert alert-danger">
+                <strong>This version of Internet Explorer may limit the functionality of this website.</strong> We recommend that you <a href="https://browsehappy.com/?locale=en">upgrade your browser. &raquo;</a>
             </div>
-        </div>
-    </nav>
-    {% endcache %}
+        <![endif]-->
+        <button type="button" class="btn btn-link skip-main" href="#main">
+            Skip to main content
+        </button>
+        {% cache 600 nav_wrapper 'nav' %}
 
-    {% get_alerts as alerts %}
-    {% if alerts %}
-        {% for alert in alerts %}
-            <div class="alert alert-{{alert.type}}" style="margin-bottom: 0px;">
-                {{alert.description|markdownify}}
+        <nav class="navbar fixed-top navbar-default navbar-expand-md navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand me-auto" href="/">
+                    <img alt="" id="logo" src="{% static IMAGES.logo %}"></img>
+                    <span id="logo-text">Metro Board</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto justify-content-end">
+                    <li class="nav-item dropdown me-2 pt-3">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        About
+                    </a>
+                    <ul class="dropdown-menu shadow rounded-bottom">
+                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:council_members' %}">Board of Directors</a></li>
+                        <li><a class="dropdown-item dropdown-size" href="{% url 'committees' %}">Committees</a></li>
+                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:contact' %}">Contact Us</a></li>
+                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:about' %}">About Us</a></li>
+                    </ul>
+                    </li>
+                    <li class="nav-item dropdown me-2 pt-3">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Search
+                    </a>
+                    <ul class="dropdown-menu shadow rounded-bottom">
+                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:search' %}">Board Reports</a></li>
+                        <li><a class="dropdown-item dropdown-size" href="https://mtasearch01.metro.net:23352/apps/boardarchives/">Archive Search</a></li>
+                    </ul>
+                    </li>
+                    <li class="nav-item dropdown me-2 pt-3">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Meetings
+                    </a>
+                    <ul class="dropdown-menu shadow rounded-bottom">
+                        <li><a class="dropdown-item dropdown-size" href="{% url 'events' %}">{{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></li>
+                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:minutes' %}">Minutes</a></li>
+                    </ul>
+                    </li>
+                    {% nocache %}
+                        {% if user.is_authenticated %}
+                            <li class="nav-item pt-4">
+                                <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <div id="google_translate_element"></div>
+                            </li>
+                        {% endif %}
+                    {% endnocache %}
+                </ul>
+                </div>
             </div>
-        {% endfor %}
-    {% endif %}
+        </nav>
+        {% endcache %}
 
-    <main id="main" tabindex="-1">
-        {% block full_content %}
-        {% endblock %}
-    </main>
+        {% get_alerts as alerts %}
+        {% if alerts %}
+            {% for alert in alerts %}
+                <div class="alert alert-{{alert.type}}" style="margin-bottom: 0px;">
+                    {{alert.description|markdownify}}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <main id="main" tabindex="-1">
+            {% block full_content %}
+            {% endblock %}
+        </main>
+
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top" id="footer">
+            <div class="col-md-4 d-flex align-items-center">
+                <a class="navbar-brand me-auto" href="/">
+                    <img alt="" id="logo" src="{% static IMAGES.logo %}"></img>
+                    <span id="logo-text">Metro Board</span>
+                </a>
+            </div>
+            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                <li class="ms-3"><a href="{% url 'lametro:contact' %}">Contact Us</a></li>
+                <li class="ms-3"><a href="{% url 'lametro:about' %}">About Us</a></li>
+                <li class="ms-3"><a href="{% url 'metro_login' %}">Metro Login</a></li>
+            </ul>
+        </footer>
+    </div>
 
     <script src="https://use.typekit.net/foe4jis.js"></script>
     <script>try{Typekit.load({ async: true });}catch(e){}</script>
