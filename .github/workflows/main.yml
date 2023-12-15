@@ -25,6 +25,18 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+      elasticsearch:
+        image: elasticsearch:7.14.2
+        ports:
+          - 9200:9200
+        env:
+          discovery.type: single-node
+        options: >-
+          --health-cmd "curl http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
     - uses: actions/checkout@v2
     - name: Lint the code
@@ -45,22 +57,11 @@ jobs:
         python -m pip install --upgrade pip setuptools
         pip install -r requirements.txt
     - name: Test with pytest
+      env:
+        DATABASE_URL: postgis://postgres:postgres@localhost:5432/lametro
+        SEARCH_URL: http://localhost:9200
       run: |
-        mv configs/test_settings_deployment.py councilmatic/settings_deployment.py
+        flake8 .
+        black --check .
         pytest -sv
 
-  deploy:
-    needs: test
-    name: Deploy to AWS
-    runs-on: ubuntu-latest
-    steps:
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - uses: actions/checkout@v2
-      - id: deploy
-        uses: webfactory/create-aws-codedeploy-deployment@0d7a684950dae16883a140dd950257958730e0b5
-        with:
-          application: la-metro-councilmatic

@@ -51,10 +51,6 @@
             <p>
                 <a href="{{ minutes }}">Minutes</a>
             </p>
-            {% elif 'board meeting' in event.name|lower or 'la safe' in event.name|lower %}
-            <p>
-                <a href="http://boardarchives.metro.net/recaps/" target="_blank">Recap</a>
-            </p>
             {% endif %}
         {% endwith %}
     </div>

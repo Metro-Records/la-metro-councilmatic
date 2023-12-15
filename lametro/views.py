@@ -1,4 +1,3 @@
-import re
 from operator import attrgetter
 import itertools
 import urllib
@@ -7,7 +6,6 @@ from dateutil import parser
 import requests
 import os
 
-from haystack.backends.solr_backend import SolrSearchQuery
 from haystack.query import SearchQuerySet
 
 import pytz
@@ -735,34 +733,6 @@ class LAPersonDetailView(PersonDetailView):
         return context
 
 
-class IdentifierBoostSearchQuery(SolrSearchQuery):
-    def run(self, spelling_query=None, **kwargs):
-        """
-        If the search contains identifiers, boost results with matching
-        identifiers.
-
-        Reference:
-        https://medium.com/@pablocastelnovo/if-they-match-i-want-them-to-be-always-first-boosting-documents-in-apache-solr-with-the-boost-362abd36476c
-        """
-        # Remove slashes escaping the dash in an identifier
-        identifiers = set(
-            i.replace("\\", "")
-            for i in re.findall(r"\d{4}\\-\d{4}", self.build_query())
-        )
-
-        if identifiers:
-            kwargs.update(
-                {
-                    "defType": "edismax",
-                    "bq": "+".join(
-                        'identifier:"{}"^2.0'.format(i) for i in identifiers
-                    ),
-                }
-            )
-
-        return super().run(spelling_query, **kwargs)
-
-
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
     load_all = False
 
@@ -771,15 +741,15 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
 
     def extra_context(self):
-        # Raise an error if Councilmatic cannot connect to Solr.
-        # Most likely, Solr is down and needs restarting.
+        # Raise an error if Councilmatic cannot connect to the search engine.
+        # Most likely, the search engine is down and needs restarting.
         try:
-            solr_url = settings.HAYSTACK_CONNECTIONS["default"]["URL"]
-            requests.get(solr_url)
+            search_engine_url = settings.HAYSTACK_CONNECTIONS["default"]["URL"]
+            requests.get(search_engine_url)
         except requests.ConnectionError:
             raise Exception(
-                "ConnectionError: Unable to connect to Solr at {}. Is Solr running?".format(
-                    solr_url
+                "ConnectionError: Unable to connect to the searchg engine at {}. Is the search engine running?".format(
+                    search_engine_url
                 )
             )
 
@@ -836,10 +806,10 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         form_kwargs["result_type"] = self.request.GET.get("result_type", "all")
 
         sqs = (
-            SearchQuerySet(query=IdentifierBoostSearchQuery("default"))
-            .facet("bill_type", sort="index")
-            .facet("sponsorships", sort="index")
-            .facet("legislative_session", sort="index")
+            SearchQuerySet()
+            .facet("bill_type")
+            .facet("sponsorships")
+            .facet("legislative_session")
             .facet("inferred_status")
             .facet("topics")
             .facet("lines_and_ways")
@@ -850,7 +820,6 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             .facet("motion_by")
             .facet("significant_date")
             .facet("plan_program_policy")
-            .highlight(**{"hl.fl": "text,attachment_text"})
         )
 
         data = None

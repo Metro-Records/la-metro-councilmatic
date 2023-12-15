@@ -1,13 +1,13 @@
 version: '2.4'
 services:
   app:
-    image: lametro
+    env_file:
+      - .env.local
+    #image: ghcr.io/datamade/la-metro-councilmatic:hcg-upgrade
     build:
       dockerfile: Dockerfile.dev
       context: .
     container_name: lametro
-    env_file:
-      - .env
     stdin_open: true
     tty: true
     ports:
@@ -15,7 +15,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      solr:
+      elasticsearch:
         condition: service_started
     volumes:
       - .:/app
@@ -43,17 +43,19 @@ services:
     ports:
       - 32006:5432
 
-  solr:
-    image: solr:8.8
-    container_name: lametro-solr
-    volumes:
-      - ./solr_configs:/la-metro-councilmatic_configs
-      - lametro-solr-data:/var/solr/data/
-    command: sh -c 'solr-create -c lametro -d /la-metro-councilmatic_configs'
+
+  elasticsearch:
+    image: elasticsearch:7.14.2
+    container_name: lametro-councilmatic-elasticsearch
     ports:
-      - 8987:8983
+      - 9200:9200
     environment:
-      - SOLR_LOG_LEVEL=INFO
+      - discovery.type=single-node
+      - logger.org.elasticsearch.discovery=DEBUG
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    mem_limit: 1g
+    volumes:
+      - lametro-es-data:/usr/share/elasticsearch/data
 
   scrapers:
     image: ghcr.io/metro-records/scrapers-lametro:deploy
@@ -72,5 +74,5 @@ services:
       - ./data/lametro_divisions.csv:/app/lametro_divisions.csv
 
 volumes:
-  lametro-solr-data:
+  lametro-es-data:
   lametro-db-data:

@@ -31,7 +31,7 @@ class Command(BaseCommand):
         local = options["local"]
 
         csv_string = self.generate_tag_analytics()
-        date = datetime.today().strftime("%m_%d_%y")
+        date = datetime.today().strftime("%Y-%m-%d")
         output_file_name = f"{date}_tag_analytics.csv"
 
         if local:
