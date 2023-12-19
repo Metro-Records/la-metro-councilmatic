@@ -632,6 +632,10 @@ input[type=radio][name=options] {
     border-radius: 0.25rem;
 }
 
+.remove-order-value {
+    color: white !important;
+}
+
 #report-details .accordion-button, #report-keywords .accordion-button {
     background-color: #EEEEEE;
     padding: 8px 10px;

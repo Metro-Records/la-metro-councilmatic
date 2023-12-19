@@ -28,13 +28,13 @@
             </h2>
 
             <p>
-                <a href="{{ legislation.bill_type | get_bill_type_link }}" title="Learn more about this type of Board Report" target="_blank">
-                    <i class="fa fa-fw fa-external-link" aria-label="Opens in a new tab."></i> Learn more about this type of Board Report
+                <a href="{{ legislation.bill_type | get_bill_type_link }}" title="Learn more about this type of Board Report" target="_blank" aria-label="Learn more about this type of Board Report - link opens in a new tab">
+                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i> Learn more about this type of Board Report
                 </a>
             </p>
             <p>
-                <a href="{{legislation.web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank">
-                    <i class="fa fa-fw fa-external-link" aria-label="Opens in a new tab."></i> View on the {{CITY_VOCAB.SOURCE}} website
+                <a href="{{legislation.web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank" aria-label="View on the {{CITY_VOCAB.SOURCE}} website - link opens in a new tab">
+                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i> View on the {{CITY_VOCAB.SOURCE}} website
                 </a>
             </p>
         </div>
@@ -58,7 +58,7 @@
                 </p>
 
                 <p>
-                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}' class="fw-bold fs-6">
+                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}' class="fw-bold fs-6" aria-label="Download Board Report - link opens in a new tab">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Board Report
                     </a>
                 </p>
@@ -146,7 +146,7 @@
                 <ul>
                     {% for doc in attachments %}
                         <li>
-                            <a href="{{doc.links.all.0.url}}" target="blank">{{ doc.note }}</a>
+                            <a href="{{doc.links.all.0.url}}" target="blank" aria-label="{{ doc.note }} - link opens in a new tab">{{ doc.note }}</a>
                         </li>
                     {% endfor %}
                 </ul>
