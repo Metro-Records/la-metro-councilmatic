@@ -99,17 +99,6 @@ h1, .h1 {
     -webkit-margin-after: 0em;
 }
 
-.map-info:hover {
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.map-info:focus {
-    text-decoration: none;
-    border: none;
-    outline:none;
-}
-
 div#collapseURL .panel-body, div#collapsePDF .panel-body {
     padding-top: 28px;
 }
