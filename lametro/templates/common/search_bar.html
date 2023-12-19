@@ -7,10 +7,10 @@
     </div>
 
     <div class="btn-group" data-toggle="buttons">
-        <label class="btn btn-primary btn-search-option {% if 'search-reports' not in request.GET %}active{% endif %}">
+        <label class="btn btn-primary btn-search-option radio-focus {% if 'search-reports' not in request.GET %}active{% endif %}">
             <input type="radio" autocomplete="off" name="search-all"{% if 'search-reports' not in request.GET %} checked{% endif %}> Search reports and attachments
         </label>
-        <label class="btn btn-primary btn-search-option {% if 'search-reports' in request.GET %}active{% endif %}">
+        <label class="btn btn-primary btn-search-option radio-focus {% if 'search-reports' in request.GET %}active{% endif %}">
             <input type="radio" autocomplete="off" name="search-reports"{% if 'search-reports' in request.GET %} checked{% endif %}> Search reports only
         </label>
     </div>
