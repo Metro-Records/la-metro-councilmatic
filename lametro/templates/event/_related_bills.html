@@ -3,13 +3,12 @@
 
 <h2 class="h4">Board Reports</h2>
 
-<p class="small text-muted">
-  <span class="d-block">Click "View" to go to the board report detail page.</span>
-  <span class="d-block">Click "Download" to download a copy of board report and its attachments.</span>
-</p>
-
 <div class="scrollable">
   <table class="table">
+    <caption class="small text-muted">
+      <span class="d-block">Click "View" to go to the board report detail page.</span>
+      <span class="d-block">Click "Download" to download a copy of board report and its attachments.</span>
+    </caption>
   {% for report in related_board_reports %}
       {% with associated_bill=report.related_entities.all.0.bill %}
       <tr>

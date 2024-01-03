@@ -778,3 +778,7 @@ footer {
 .radio-focus:focus-within {
     box-shadow: 0 0 0 0.25rem #ee7f7b;
 }
+
+caption {
+    caption-side: top;
+}
