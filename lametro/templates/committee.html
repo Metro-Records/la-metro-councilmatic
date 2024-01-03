@@ -24,10 +24,10 @@
     <div class="col-12">
         {% if committee.recent_events %}
             <div class="mb-4">
-                <h4 class="d-inline">
+                <h2 class="d-inline h4">
                     <i class='fa fa-fw fa-calendar-o' aria-hidden="true"></i>
                     Committee {{ CITY_VOCAB.EVENTS }}
-                </h4>
+                </h2>
                 <small class="rss">
                     <a href="events/rss/" title="RSS feed for Committe Events by {{committee.name}}" aria-label="RSS feed for Committe Events by {{committee.name}}">
                         <i class="fa fa-rss-square" aria-hidden="true"></i>
@@ -61,7 +61,7 @@
 
 <div class="row">
     <div class="col-md-8">
-        <h4><i class='fa fa-fw fa-group' aria-hidden="true"></i> Committee Members</h4>
+        <h3 class="h4"><i class='fa fa-fw fa-group' aria-hidden="true"></i> Committee Members</h3>
 
         <table class="table" id="council-members">
             <thead>
@@ -101,7 +101,7 @@
         </table>
 
         {% if ceo %}
-        <h4 class="mt-5"><i class="fa fa-user" aria-hidden="true"></i> Chief Executive Officer</h4>
+        <h3 class="mt-5 h4"><i class="fa fa-user" aria-hidden="true"></i> Chief Executive Officer</h3>
         <table class="table" id="ceo-table">
             <tbody>
                 <tr>

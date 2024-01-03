@@ -11,10 +11,10 @@
         <!-- Meeting name -->
         <div>
           {% if meeting.status == 'cancelled' %}
-            <h4 class="d-inline"><del>{{  meeting.link_html | safe }}</del></h4>
+            <h3 class="d-inline h4"><del>{{  meeting.link_html | safe }}</del></h3>
             <small><span class="label label-stale text-light rounded">Cancelled</span></small>
           {% else %}
-            <h4>{{  meeting.link_html | safe }}</h4>
+            <h3 class="h4">{{  meeting.link_html | safe }}</h3>
           {% endif%}
           <span class="small text-muted">{{ meeting.description }}</span>
         </div>

@@ -8,7 +8,7 @@
             {% for meeting in current_meeting %}
                 <div class="row">
                     <div class="col-6">
-                        <h4>{{  meeting.link_html | safe }}</h4>
+                        <h3 class="h4">{{  meeting.link_html | safe }}</h3>
                         <span class="d-block small text-muted">{{ meeting.description }}</span>
 
                         <p class="small text-muted">
@@ -69,7 +69,7 @@
 
             <div class="col-lg-6">
                 <!-- Meeting name -->
-                <h4>{{ current_meeting.first.link_html | safe }}</h4>
+                <h3 class="h4">{{ current_meeting.first.link_html | safe }}</h3>
                 <span class="small text-muted">{{ current_meeting.first.description }}</span>
 
                 <!-- Meeting info -->
