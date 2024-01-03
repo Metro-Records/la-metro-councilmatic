@@ -16,7 +16,6 @@ def resave_packets(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lametro", "0006_add_plan_program_policy"),
     ]

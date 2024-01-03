@@ -1,0 +1,17 @@
+{
+  "name": "la-metro-councilmatic",
+  "scripts": {},
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "hobby"
+    }
+  },
+  "environments": {
+    "review": {
+      "addons": ["heroku-postgresql:hobby-basic"]
+    }
+  },
+  "buildpacks": [],
+  "stack": "container"
+}

@@ -36,19 +36,17 @@ else:
         },
     }
 
-if os.getenv("SOLR_URL"):
-    HAYSTACK_CONNECTIONS = {
-        "default": {
-            "ENGINE": "haystack.backends.solr_backend.SolrEngine",
-            # 'URL': 'http://127.0.0.1:8983/solr'
-            # ...or for multicore...
-            "URL": os.environ["SOLR_URL"],
-        },
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine",
+        "URL": "http://elasticsearch:9200",
+        "INDEX_NAME": "lametro",
+        "SILENTLY_FAIL": False,
+        "BATCH_SIZE": 10,
     }
-else:
-    HAYSTACK_CONNECTIONS = {
-        "default": {"ENGINE": "haystack.backends.simple_backend.SimpleEngine"},
-    }
+}
+HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
+HAYSTACK_IDENTIFIER_METHOD = "lametro.utils.get_identifier"
 
 # Remember to run python manage.py createcachetable so this will work!
 # developers, set your BACKEND to 'django.core.cache.backends.dummy.DummyCache'
