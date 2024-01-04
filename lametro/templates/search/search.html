@@ -41,7 +41,7 @@
         {% endif %}
 
         <!---------- REPORT DETAILS ------------>
-        <h5>Report Details</h5>
+        <h2 class="h5">Report Details</h2>
         <div class="accordion mb-4" id="report-details">
 
             <!-- Meetings -->
@@ -89,7 +89,7 @@
         </div>
 
         <!---------- REPORT KEYWORDS ------------>
-        <h5>Report Keywords</h5>
+        <h2 class="h5">Report Keywords</h2>
         <div class="accordion" id="report-keywords">
             <!-- Lines / Ways -->
             {% if facets.fields.lines_and_ways %}
@@ -193,9 +193,9 @@
 
         {% if query or selected_facets %}
             <div class="d-block">
-                <h3 class="modal-links d-inline-block">
+                <h2 class="modal-links d-inline-block h3">
                     {% include 'search/_search_results_header.html' %}
-                </h3>
+                </h2>
 
                 <small class="rss">
                     {% if query and selected_facets %}

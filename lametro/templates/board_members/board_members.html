@@ -31,7 +31,7 @@
 <div class="container-fluid" id="search-header">
     <div class="row d-flex align-center h-100">
         <div class="col-md-10 offset-md-1 bg-transparent-white">
-            <h4 class="mt-2">Look up your Metro Board Members</h4>
+            <h2 class="mt-2 h4">Look up your Metro Board Members</h2>
 
             <div class="input-group address-search">
                 <input name="search_address" id='search_address' type="text" class="form-control" placeholder="Enter your address">
@@ -56,16 +56,16 @@
         {% if MAP_CONFIG %}
             <div class='col-lg-6 px-0 px-lg-3'>
                 <div id="toggleControls" data-toggle="buttons">
-                    <label id="districtToggle" class="btn btn-sm btn-district active">
+                    <label id="districtToggle" class="btn btn-sm btn-district radio-focus active">
                         <input type="radio" name="options" autocomplete="off" checked><i class="fa fa-check" aria-hidden="true"></i> Districts
                     </label>
-                    <label id="sectorToggle" class="btn btn-sm btn-sector">
+                    <label id="sectorToggle" class="btn btn-sm btn-sector radio-focus">
                         <input type="radio" name="options" autocomplete="off"> Sectors
                     </label>
-                    <label id="cityToggle" class="btn btn-sm btn-city">
+                    <label id="cityToggle" class="btn btn-sm btn-city radio-focus">
                         <input type="radio" name="options" autocomplete="off"> City of LA
                     </label>
-                    <label id="caltransToggle" class="btn btn-sm btn-caltrans">
+                    <label id="caltransToggle" class="btn btn-sm btn-caltrans radio-focus">
                         <input type="radio" name="options" autocomplete="off"> Caltrans
                     </label>
                     <a href="#" tabindex="0" class="map-info text-secondary" data-container="body" data-bs-toggle="popover" data-bs-html="true" data-bs-placement="right" title="What do these map layers represent?"
@@ -111,7 +111,7 @@
 <div class="container-fluid px-4 px-lg-5 mt-5 mt-lg-4">
     <div class="row">
         <div class="col-lg-8">
-            <h4><i class='fa fa-fw fa-list-ul' aria-hidden="true"></i> Recent Activity</h4>
+            <h3 class="h4"><i class='fa fa-fw fa-list-ul' aria-hidden="true"></i> Recent Activity</h3>
             <table class="table" id="committee-actions">
                 <thead>
                     <tr>
@@ -149,7 +149,7 @@
             </table>
         </div>
         <div class="col-lg-4 mt-3 mt-lg-0">
-            <h4><i class='fa fa-fw fa-calendar-o' aria-hidden="true"></i> Board of Directors Meetings</h4>
+            <h3 class="h4"><i class='fa fa-fw fa-calendar-o' aria-hidden="true"></i> Board of Directors Meetings</h3>
             {% for event in recent_events %}
                 <p class="event-listing">
                     <a href="{{event.event_page_url | safe}}" title="View Event Details">{{event.start_time | date:'n/d/Y' }} - {{event.name}}</a>

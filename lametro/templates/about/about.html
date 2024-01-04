@@ -27,7 +27,7 @@
         <div class="col-8 col-md-4">
             <div class="card bg-secondary">
                 <div class="card-body">
-                    <h4 class="card-title">Contents</h4>
+                    <h2 class="card-title h4">Contents</h2>
                     <ul>
                         <li>
                             <a href="/about">About Us</a>
@@ -64,9 +64,10 @@
             <div>
                 <h3>What is the Metro Board of Directors, and how does it work?</h3>
                 <p>
-                    The <a href="https://www.metro.net/" target="_blank">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy,
-                    coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of
-                    the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA's paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.
+                    The <a href="https://www.metro.net/" target="_blank" aria-label="Los Angeles County Metropolitan Transportation Authority (Metro) - link opens in a new tab">Los Angeles County Metropolitan Transportation Authority (Metro)</a>
+                    was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County.
+                    Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA's paratransit provider,
+                    ASI, and its regional commuter rail service provider, Metrolink.
                 </p>
             </div>
 
@@ -102,7 +103,7 @@
                 </p>
                 <p>
                     Full documentation of this process can be found in the
-                    <a href="{% static 'pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf' %}" target="_blank">
+                    <a href="{% static 'pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf' %}" target="_blank" aria-label="Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority - link opens in a new tab">
                         Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority
                     </a>.
                 </p>
@@ -137,7 +138,6 @@
 
             <div>
                 <h4>Board Report Statuses</h4>
-                <p>Each Metro board report has one of 22 posible statuses:</p>
                 {% include 'about/_board_report_statuses.html' %}
             </div>
         </div>
@@ -172,7 +172,11 @@
         <div class="col-md-8 pt-nav" id="procedures">
             <h3>Rules &amp; Procedures</h3>
             <p>Metro Board follows specific procedures to hold meetings and organize its members.</p>
-            <p><a href="http://boardarchives.metro.net/Items/2010/03_March/20100318EMACItem34.pdf" target="_blank"><i class='fa fa-fw fa-external-link' aria-label="Opens in a new tab."></i> Read about all Metro Rules &amp; Procedures.</a></p>
+            <p>
+                <a href="http://boardarchives.metro.net/Items/2010/03_March/20100318EMACItem34.pdf" target="_blank" aria-label="Read about all Metro Rules and Procedures - link opens in a new tab">
+                    <i class='fa fa-fw fa-external-link' aria-hidden="true"></i> Read about all Metro Rules &amp; Procedures.
+                </a>
+            </p>
         </div>
     </div>
 
@@ -184,7 +188,11 @@
                 Los Angeles, CA 90012-2952
             </address>
             <p>Metro Headquarters is located on the corner of Cesar E. Chavez Ave. and Vignes St.</p>
-            <p><a href="https://www.metro.net/about/contact/#visitus" target="_blank"><i class='fa fa-fw fa-external-link' aria-label="Opens in a new tab."></i> Get directions to Metro Headquarters.</a></p>
+            <p>
+                <a href="https://www.metro.net/about/contact/#visitus" target="_blank" aria-label="Get directions to Metro Headquarters - link opens in a new tab">
+                    <i class='fa fa-fw fa-external-link' aria-hidden="true"></i> Get directions to Metro Headquarters.
+                </a>
+            </p>
         </div>
     </div>
 
@@ -192,15 +200,24 @@
         <div class="col-md-8 pt-nav" id="data">
             <h3>Data</h3>
             <p>
-                The data for this website comes from the <a href="https://metro.legistar.com/" target="_blank">{{ CITY_COUNCIL_NAME }} board reports site</a>, a system built by
-                <a href='http://www.granicus.com/' target="_blank">Granicus</a> using their <a href='http://www.granicus.com/solutions/legislative-management/' target="_blank">Legistar Legislative Management Suite</a>.
+                The data for this website comes from the
+                <a href="https://metro.legistar.com/" target="_blank" aria-label="{{ CITY_COUNCIL_NAME }} board reports site - link opens in a new tab">{{ CITY_COUNCIL_NAME }} board reports site</a>,
+                a system built by
+                <a href='http://www.granicus.com/' target="_blank" aria-label="Granicus - link opens in a new tab">Granicus</a>
+                using their
+                <a href='http://www.granicus.com/solutions/legislative-management/' target="_blank" aria-label="Legistar Legislative Management Suite - link opens in a new tab">Legistar Legislative Management Suite</a>.
             </p>
 
             <p>
-                With the help of the <a href='http://webapi.legistar.com/' target="_blank">Legistar Web API</a>, we collect data daily and store it using the <a href="http://opencivicdata.org" target="_blank">Open Civic Data</a>
+                With the help of the
+                <a href='http://webapi.legistar.com/' target="_blank" aria-label="Legistar Web API - link opens in a new tab">Legistar Web API</a>,
+                we collect data daily and store it using the
+                <a href="http://opencivicdata.org" target="_blank" aria-label="Open Civic Data - link opens in a new tab">Open Civic Data</a>
                 standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government: it was built in collaboration with
-                <a href="http://sunlightfoundation.com/" target="_blank">The Sunlight Foundation</a>, <a href="https://developers.google.com/civic-information/?hl=en" target="_blank">Google</a>,
-                <a href="http://www.granicus.com/" target="_blank">Granicus</a>, and <a href="http://www.opennorth.ca/" target="_blank">Open North</a>.
+                <a href="http://sunlightfoundation.com/" target="_blank" aria-label="The Sunlight Foundation - link opens in a new tab">The Sunlight Foundation</a>,
+                <a href="https://developers.google.com/civic-information/?hl=en" target="_blank" aria-label="Google - link opens in a new tab">Google</a>,
+                <a href="http://www.granicus.com/" target="_blank" aria-label="Granicus - link opens in a new tab">Granicus</a>,
+                and <a href="http://www.opennorth.ca/" target="_blank" aria-label="Open North - link opens in a new tab">Open North</a>.
             </p>
 
         </div>
@@ -212,9 +229,12 @@
 
             <p>This site represents a collaborative effort of Metro’s Office of the CEO, Office of Board Administration, and Research & Records, Information Management, to ensure Board activity is transparent and easily accessible for the public.</p>
 
-            <p>The site was built by <a href='http://datamade.us' target="_blank">DataMade</a>, a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.</p>
+            <p>
+                The site was built by <a href='http://datamade.us' target="_blank" aria-label="DataMade - link opens in a new tab">DataMade</a>,
+                a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.
+            </p>
 
-            <p class="mt-4"><a href='http://datamade.us' target="_blank"><img style='height:50px;' src='{% static "images/datamade-logo.png" %}' alt="DataMade Home" /></a></p>
+            <p class="mt-4"><a href='http://datamade.us' target="_blank"><img style='height:50px;' src='{% static "images/datamade-logo.png" %}' alt="DataMade Home - link opens in a new tab" /></a></p>
 
         </div>
 

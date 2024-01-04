@@ -15,7 +15,7 @@
         <div class="col-md-9 px-0 px-md-3">
 
             <div class="row" id="events-form">
-                <h2>Select a date range</h2>
+                <h1 class="h2">Select a date range</h1>
                 <div class="col-lg-8">
                     <form action='/events' method='GET'>
                         <div class="input-group" id='date-search'>
@@ -42,7 +42,7 @@
             <div class="row">
                 <div class="col-lg-10">
                     <div class="card-body login">
-                        <h4>Hello, {{ user.username }}!</h4>
+                        <h2 class="h4">Hello, {{ user.username }}!</h2>
                         <p>You have the authority to add agenda links to relevant events.
                             Please click on an event that needs an agenda, and look for the URL input box.
                         </p>
@@ -64,7 +64,7 @@
                     </div>
                     <p class="mt-3 mt-sm-0">
                         <span>Download event calendar:</span>
-                        <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link pt-0 d-block d-sm-inline text-start">
+                        <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link pt-0 d-block d-sm-inline text-start" aria-label="Fiscal Year 2024 (PDF) - link opens in a new tab">
                             <i class="fa fa-fw fa-download" aria-hidden="true"></i>
                             Fiscal Year 2024 (PDF)
                         </a>
@@ -189,7 +189,7 @@
 
             {% else %}
                 <div class='row my-4'>
-                    <h5>Your search did not return any results.</h5>
+                    <h2 class="h5">Your search did not return any results.</h2>
                 </div>
             {% endif %}
         </div>

@@ -10,7 +10,7 @@
 
 {% block content %}
 <div class="row mb-5" id="minutes-form">
-  <h2>Select a date range</h2>
+  <h1 class="h2">Select a date range</h1>
   <div class="col-md-8">
       <form action='/minutes' method='GET'>
           <div class="input-group" id='date-search'>
@@ -37,9 +37,9 @@
         <ul class="search-results">
         {% for date, minutes_list in all_minutes %}
           <li class="minutes-listing mb-5">
-            <h5 class="text-default mb-0">
+            <h3 class="text-default mb-0 h5">
               <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ date | date:"D m/d/Y"}}
-            </h5>
+            </h3>
             <div class="divider" aria-hidden="true"></div>
             {% for e in minutes_list %}
               {% include 'minutes/_minutes_item.html' %}

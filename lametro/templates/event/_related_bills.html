@@ -1,22 +1,21 @@
 {% load extras %}
 {% load lametro_extras %}
 
-<h4>Board Reports</h4>
-
-<p class="small text-muted">
-  <span class="d-block">Click "View" to go to the board report detail page.</span>
-  <span class="d-block">Click "Download" to download a copy of board report and its attachments.</span>
-</p>
+<h2 class="h4">Board Reports</h2>
 
 <div class="scrollable">
   <table class="table">
+    <caption class="small text-muted">
+      <span class="d-block">Click "View" to go to the board report detail page.</span>
+      <span class="d-block">Click "Download" to download a copy of board report and its attachments.</span>
+    </caption>
   {% for report in related_board_reports %}
       {% with associated_bill=report.related_entities.all.0.bill %}
       <tr>
         <td><strong>{{ report.notes.0 | parse_agenda_item }}</strong></td>
         <td>{{associated_bill.identifier}} {{report.description | short_blurb}} {{ associated_bill.inferred_status | inferred_status_label | safe }}</td>
         <td>
-          <a href='/board-report/{{ associated_bill.slug }}/' target="_blank">View</a>
+          <a href='/board-report/{{ associated_bill.slug }}/' target="_blank" aria-label="View - link opens in a new tab">View</a>
         </td>
         <td>
           <a href={% if associated_bill.packet.is_ready %}"{{associated_bill.packet.url}}"{% else %}"{{associated_bill.board_report.url}}"{% endif %}>

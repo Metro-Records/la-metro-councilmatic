@@ -72,19 +72,23 @@
             <hr aria-hidden="true">
 
             {% if map_geojson %}
-                {% if person.current_district %}
-                    <h4 id="map-label">{{ person.current_district | format_district }} map</h4>
-                {% endif %}
-                <div id='map-detail' aria-labelledby="map-label"></div>
+
+                <figure>
+                    {% if person.current_district %}
+                        <figcaption class="h4" id="map-label">{{ person.current_district | format_district }} map</figcaption>
+                    {% endif %}
+                    <div id='map-detail' aria-labelledby="map-label"></div>
+                </figure>
+
             {% endif %}
 
         </div>
 
         <div class="col-md-8 mt-3">
             {% if person.current_bio %}
-                <h3>
+                <h2 class="h3">
                     <i class="fa fa-user" aria-hidden="true"></i> About {{ person.name }}
-                </h3>
+                </h2>
                 <p class="bio">{{person.current_bio | safe}}</p>
             {% endif %}
 
@@ -112,10 +116,10 @@
                     <i class="fa fa-fw fa-group" aria-hidden="true"></i>
                     Committees
                 </h3>
-                <p class="mb-3">Committees to which {{person.name}} belongs</p>
 
                 <div class="table-responsive">
                     <table class="table">
+                        <caption class="mb-3">Committees to which {{person.name}} belongs</caption>
                         <thead>
                             <tr>
                                 <th scope="col">Member of</th>

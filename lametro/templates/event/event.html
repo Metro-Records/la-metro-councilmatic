@@ -26,13 +26,13 @@
 
         {% if event.is_ongoing %}
             <div class="col-7 col-sm-12">
-                <a class="btn btn-primary mb-2" href="{{ event.english_live_media_url }}"  target="_blank">
+                <a class="btn btn-primary mb-2" href="{{ event.english_live_media_url }}"  target="_blank" aria-label="Watch in English - link opens in a new tab">
                     <i class="fa fa-headphones" aria-hidden="true"></i>
                     Watch in English
                 </a>
 
                 {% if event.bilingual %}
-                    <a class="btn btn-primary mb-2" href="{{ event.spanish_live_media_url }}" target="_blank">
+                    <a class="btn btn-primary mb-2" href="{{ event.spanish_live_media_url }}" target="_blank" aria-label="Ver en Español - enlace se abre en una pestaña neuva">
                         <i class="fa fa-headphones" aria-hidden="true"></i>
                         Ver en Español
                     </a>
@@ -41,7 +41,7 @@
         {% else %}
             <div>
                 {% for media in event.media.all %}
-                    <a class="btn btn-primary mb-2" href="{{ media.links.all.0.url }}" target="_blank">
+                    <a class="btn btn-primary mb-2" href="{{ media.links.all.0.url }}" target="_blank" aria-label="{% if media.note == 'Audio (SAP)' %}Ver en Español - enlace se abre en una pestaña neuva{% else %}Watch in English - link opens in a new tab{% endif %}">
                         <i class= "fa fa-headphones" aria-hidden="true"></i>
                         {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}
                     </a>
@@ -74,7 +74,7 @@
             <div class="row">
                 <div class="col-lg-7">
                     {% if participants %}
-                    <h4>Participants</h4>
+                    <h2 class="h4">Participants</h2>
                     <p>
                         {% for participant in participants %}
                         <span class="d-block"><i class="fa fa-fw fa-users" aria-hidden="true"></i> {{participant.link_html | safe}}</span>
@@ -100,9 +100,9 @@
 
                         <div class="row">
                             <div class="col-sm-8">
-                                <h4>Agenda</h4>
+                                <h2 class="h4">Agenda</h2>
                                 <p class="mb-1">
-                                    <a id="pdf-download-link" class="fw-bold fs-6" target="_blank" href={% if agenda_url %} '{{agenda_url}}' {% elif uploaded_agenda_url %} '{{uploaded_agenda_url}}' {% elif uploaded_agenda_pdf %} '{% static uploaded_agenda_pdf %}' {% endif %}>
+                                    <a id="pdf-download-link" class="fw-bold fs-6" target="_blank" href={% if agenda_url %} '{{agenda_url}}' {% elif uploaded_agenda_url %} '{{uploaded_agenda_url}}' {% elif uploaded_agenda_pdf %} '{% static uploaded_agenda_pdf %}' {% endif %} aria-label="Download Agenda - link opens in a new tab">
                                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
                                         Download Agenda
                                     </a>
@@ -118,7 +118,7 @@
                             <div class="col-sm-4">
                                 {% if event.start_time|compare_time %}
                                         {% if minutes %}
-                                        <h4>Minutes</h4>
+                                        <h2 class="h4">Minutes</h2>
                                         <p>
                                             <a href="{{ minutes.links.get.url }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
                                         </p>
@@ -150,12 +150,12 @@
                             <div class="accordion" id="accordionUpload" role="tablist" aria-multiselectable="true">
                                 <!-- URL Upload -->
                                 <div class="accordion-item">
-                                    <h4 class="accordion-header" id="headingOne" role="tab">
+                                    <h2 class="accordion-header h4" id="headingOne" role="tab">
                                         <button class="accordion-button {% if not url_form.errors %}collapsed{% endif %}" type="button" role="button" data-bs-toggle="collapse" data-bs-target="#collapseURL" aria-expanded="{% if url_form.errors %}true{%else%}false{% endif %}" aria-controls="collapseURL">
                                             <i class="fa fa-link me-1" aria-hidden="true"></i>
                                             Upload an Agenda URL
                                         </button>
-                                    </h4>
+                                    </h2>
                                     <div id="collapseURL" class="accordion-collapse collapse {% if url_form.errors %}show{% endif %}" role="tabpanel" aria-labelledby="headingOne">
                                         <div class="accordion-body">
                                             <p>Find the corresponding agenda URL on Legistar, and paste it here.</p>
@@ -169,12 +169,12 @@
 
                                 <!-- PDF Upload -->
                                 <div class="accordion-item">
-                                    <h4 class="accordion-header" id="headingTwo" role="tab">
+                                    <h2 class="accordion-header h4" id="headingTwo" role="tab">
                                         <button class="accordion-button {% if not pdf_form.errors %}collapsed{% endif %}" type="button" role="button" data-bs-toggle="collapse" data-bs-target="#collapsePDF" aria-expanded="{% if pdf_form.errors %}true{%else%}false{% endif %}" aria-controls="collapsePDF">
                                             <i class="fa fa-file-text me-1" aria-hidden="true"></i>
                                             Upload an Agenda PDF
                                         </button>
-                                    </h4>
+                                    </h2>
                                     <div id="collapsePDF" class="accordion-collapse collapse {% if pdf_form.errors %}show{% endif %}" role="tabpanel" aria-labelledby="headingTwo">
                                         <div class="accordion-body">
                                             <div class="alert alert-info" role="alert">
@@ -197,7 +197,8 @@
                         {% else %}
                             <p>
                                 Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.
-                                If you are unable to access an Agenda within either of these time frames, please visit: <a href="http://metro.legistar.com/calendar.aspx" target="_blank">http://metro.legistar.com/calendar.aspx</a>.
+                                If you are unable to access an Agenda within either of these time frames, please visit:
+                                <a href="http://metro.legistar.com/calendar.aspx" target="_blank" aria-label="http://metro.legistar.com/calendar.aspx - link opens in a new tab">http://metro.legistar.com/calendar.aspx</a>.
                             </p>
                         {% endif %}
                     {% endif %}
