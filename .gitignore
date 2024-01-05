@@ -23,8 +23,6 @@ merged_pdfs/*
 debug.log
 
 .cache
-/configs/settings_deployment.production.py
-/configs/settings_deployment.staging.py
 
 *.csv
 !historical_events.csv
