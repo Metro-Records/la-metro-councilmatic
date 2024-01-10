@@ -782,3 +782,10 @@ footer {
 caption {
     caption-side: top;
 }
+
+#logo-footer {
+    height: 45px;
+    float: left;
+    position: relative;
+    top: -14px;
+}
