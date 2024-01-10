@@ -39,9 +39,15 @@
     <div class="col-3">
         {% for media in event.media.all %}
           <p>
-            <a href="{{ media.links.all.0.url }}" target="_blank" aria-label="{% if media.note == 'Audio (SAP)' %}Ver en Español - enlace se abre in una pestaña nueva{% else %}Watch in English - link opens in a new tab{% endif %}">
-                {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}
-            </a>
+            {% if media.note == 'Audio (SAP)' %}
+                <a lang="es" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Ver en Español - enlace se abre in una pestaña nueva">
+                    Ver en Español
+                </a>
+            {% else %}
+                <a href="{{ media.links.all.0.url }}" target="_blank" aria-label="Watch in English - link opens in a new tab">
+                    Watch in English
+                </a>
+            {% endif %}
           </p>
         {% endfor %}
     </div>
