@@ -20,8 +20,8 @@
                     <form action='/events' method='GET'>
                         <div class="input-group" id='date-search'>
                             <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                            <input type="text" id="from" name="from" class="form-control date-filter" placeholder="From..." value='{{ start_date }}' autocomplete="off">
-                            <input type="text" id="to" name="to" class="form-control date-filter" placeholder="To..." value='{{ end_date }}' autocomplete="off">
+                            <input type="text" id="from" name="from" class="form-control date-filter" placeholder="From..." value='{{ start_date }}' autocomplete="off" aria-label="Start date">
+                            <input type="text" id="to" name="to" class="form-control date-filter" placeholder="To..." value='{{ end_date }}' autocomplete="off" aria-label="End date">
                             <button class="btn btn-secondary btn-date" id="btn-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i> <span class='d-none d-sm-inline'>Search</span></button>
                         </div>
                     </form>
