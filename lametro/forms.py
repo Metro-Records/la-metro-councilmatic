@@ -34,7 +34,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             q += '"'
 
         # Escape reserved characters
-        reserved_characters = r"""|&*/\!{[]}~-+'()^:"""
+        reserved_characters = r"""|&*\/!{[]}~-+'()^:"""
 
         for char in reserved_characters:
             q = q.replace(char, r"\{}".format(char))
