@@ -34,8 +34,8 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             q += '"'
 
         # Escape reserved characters
-        reserved_characters = "|&*/\!{[]}~-+'()^:"
-        mapping = {char: f"\{char}" for char in reserved_characters}
+        reserved_characters = "|&*/\!{[]}~-+'()^:"  # noqa
+        mapping = {char: f"\{char}" for char in reserved_characters}  # noqa
         table = str.maketrans(mapping)
         q = q.translate(table)
 
