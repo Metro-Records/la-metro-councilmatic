@@ -34,10 +34,10 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             q += '"'
 
         # Escape reserved characters
-        reserved_characters = r"""|&*\/!{[]}~-+'()^:"""
-
-        for char in reserved_characters:
-            q = q.replace(char, r"\{}".format(char))
+        reserved_characters = "|&*/\!{[]}~-+'()^:"
+        mapping = {char: f"\{char}" for char in reserved_characters}
+        table = str.maketrans(mapping)
+        q = q.translate(table)
 
         # Downcase boolean operators
         for op in ("OR", "AND"):
