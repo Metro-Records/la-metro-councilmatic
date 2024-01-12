@@ -575,7 +575,7 @@ def test_delete_button_shows(
     delete_button_text = (
         "This event does not exist in Legistar. It may have "
         "been deleted from Legistar due to being a duplicate. "
-        "To delete this event, click the button below."
+        "To delete this event, click the following button."
     )
 
     with requests_mock.Mocker() as m:

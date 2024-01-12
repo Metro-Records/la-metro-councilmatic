@@ -286,7 +286,7 @@ function renderRelatedTerms(subjects) {
       var link = $('<a />')
         .attr('href', '/search/?q=' + subject)
         .text(subject)
-      $('#related-terms').append(link).append('<br />')
+      $('#related-terms').append(link).append('<hr class="my-1" aria-hidden="true">')
     })
   }
 }

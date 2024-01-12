@@ -1,24 +1,27 @@
 {% load extras %}
 {% load lametro_extras %}
 
-<div class="row-fluid">
-    <div class="col-sm-4">
+<div class="row">
+   <div class="col-md-4">
         <img src='{{person.headshot_url}}' alt='{{person.name}}' title='{{person.name}}' class='img-responsive img-thumbnail img-padded' id="person-detail-headshot" />
-        <p class="small">
-            {% if qualifying_post %}
-                <i class='fa fa-fw fa-briefcase'></i>
+
+        {% if qualifying_post %}
+            <p class="small mb-1">
+                <i class='fa fa-fw fa-briefcase' aria-hidden="true"></i>
                 {{ qualifying_post | appointment_label }}
-            {% endif %}
-        </p>
-        {% if person.headshot_source %}
-            <hr />
-            <p class='small'>
-                <i class='fa fa-fw fa-camera'></i> Credit: {{person.headshot_source}}
             </p>
         {% endif %}
-    </div>
-    <div class='col-sm-6'>
+
+        {% if person.headshot_source %}
+            <p class='small mb-1'>
+                <i class='fa fa-fw fa-camera' aria-hidden="true"></i>
+                Credit: {{person.headshot_source}}
+            </p>
+        {% endif %}
+   </div>
+
+   <div class="col-md-8 mt-3">
         <h3>About {{ ceo.name }}</h3>
         <p>{{ member_bio | safe }}</p>
-    </div>
+   </div>
 </div>

@@ -1,73 +1,72 @@
 {% load lametro_extras static %}
 
-<div>
-  <div>
-    <div class="row" style="margin-top: 1em;">
-      <div class="col-md-6">
-        <img src='{% static "images/Gateway03RT.jpg" %}' class='img-responsive img-rounded' title='Los Angeles Gateway Plaza' alt="Los Angeles Gateway Plaza" />
-      </div>
-      <div class="col-md-6">
-        <div class="row">
-          {% for meeting in upcoming_board_meetings %}
-          <div class="col-xs-12">
-            <!-- Meeting name -->
-            <h4>
-              {% if meeting.status == 'cancelled' %}
-                <strike>{{  meeting.link_html | safe }}</strike> <small><span class="label label-stale">Cancelled</span></small>
-              {% else %}
-                {{  meeting.link_html | safe }}
-              {% endif%}
-              <br/>
-              <span class="small text-muted">{{ meeting.description }}</span>
-            </h4>
-
-            <!-- Meeting info -->
-            <p class="small text-muted">
-              {% if meeting.status == 'cancelled' %}
-                <strike>
-                  <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
-                  <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
-                </strike>
-              {% else %}
-                <i class="fa fa-fw fa-calendar-o"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br/>
-                <i class="fa fa-fw fa-clock-o"></i> {{ meeting.start_time | date:"g:i a" }}<br/>
-                <i class="fa fa-fw fa-map-marker"></i> {{ meeting.location.name }}<br />
-              {% endif %}
-            </p>
-
-            <!-- Supplementary links -->
-            {% if meeting.documents.all %}
-            <div class="row">
-              <div class="col-xs-7">
-                <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{meeting.documents.all|find_agenda_url}}'><i class='fa fa-fw fa-download'></i> Get Agenda PDF</a>
-              </div>
-            </div>
-            {% endif %}
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
+<div class="row">
+  <div class="col-lg-6 mb-2 current-meeting-img">
+    <img src="{% static 'images/Gateway03RT.jpg' %}" class="img-fluid rounded" title="Los Angeles Gateway Plaza" alt="Los Angeles Gateway Plaza">
+  </div>
+  <div class="col-lg-6">
     <div class="row">
-      <div class="col-xs-12">
-        <p class="small" style="padding-top: 10px;text-decoration: underline;">
-          <strong>No meetings are in session at this time. The links to watch a meeting live, in English or Spanish, will be posted here once the meeting begins.</strong>
+      {% for meeting in upcoming_board_meetings %}
+      <div class="col-12">
+        <!-- Meeting name -->
+        <div>
+          {% if meeting.status == 'cancelled' %}
+            <h3 class="d-inline h4"><del>{{  meeting.link_html | safe }}</del></h3>
+            <small><span class="label label-stale text-light rounded">Cancelled</span></small>
+          {% else %}
+            <h3 class="h4">{{  meeting.link_html | safe }}</h3>
+          {% endif%}
+          <span class="small text-muted">{{ meeting.description }}</span>
+        </div>
+
+        <!-- Meeting info -->
+        <p class="small text-muted">
+          {% if meeting.status == 'cancelled' %}
+            <del>
+              <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
+              <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
+            </del>
+          {% else %}
+            <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
+            <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
+            <i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ meeting.location.name }}<br>
+          {% endif %}
         </p>
 
-        <!-- Links to media url and PDF download -->
-        {% if not meeting.documents.all %}
-        <p class="small">
-          <em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em>
-        </p>
-        {% endif %}
-
-        {% if not upcoming_board_meetings|all_have_extra:'ecomment' and USING_ECOMMENT %}
-        <p class="small">
-          <em>{{ upcoming_board_meetings.first.UPCOMING_ECOMMENT_MESSAGE|safe }}</em>
-        </p>
+        <!-- Supplementary links -->
+        {% if meeting.documents.all %}
+          <div class="row">
+            <div class="col-7">
+              <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='#' aria-label="Get Agenda PDF - link opens in a new tab">
+                <i class='fa fa-fw fa-download' aria-hidden="true"></i>
+                Get Agenda PDF
+              </a>
+            </div>
+          </div>
         {% endif %}
       </div>
+      {% endfor %}
     </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <p class="small pt-1 underline text-muted">
+      <strong>No meetings are in session at this time. The links to watch a meeting live, in English or Spanish, will be posted here once the meeting begins.</strong>
+    </p>
+
+    <!-- Links to media url and PDF download -->
+    {% if not meeting.documents.all %}
+    <p class="small">
+      <em>Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.</em>
+    </p>
+    {% endif %}
+
+    {% if not upcoming_board_meetings|all_have_extra:'ecomment' and USING_ECOMMENT %}
+      <p class="small">
+        <em>{{ upcoming_board_meetings.first.UPCOMING_ECOMMENT_MESSAGE|safe }}</em>
+      </p>
+    {% endif %}
   </div>
 </div>

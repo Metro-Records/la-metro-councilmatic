@@ -1,12 +1,11 @@
 {% load extras %}
 {% load lametro_extras %}
 
-<form role="form" method="POST" enctype="multipart/form-data">
+<form class="mb-4" role="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
     {% if bio_error %}
-        <br>
-        <p style="color: #eb6864;">*{{bio_error}}</p>
+        <p class="text-primary">*{{bio_error}}</p>
     {% endif %}
     {{biography_form.bio_form}}
     <label for="{{biography_form.councilmatic_biography.id_for_label}}">Update {{biography_form.councilmatic_biography.label}}:</label>
