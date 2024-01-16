@@ -174,6 +174,8 @@ API_KEY = env("API_KEY")
 # - Analytics
 ANALYTICS_TRACKING_CODE = env("ANALYTICS_TRACKING_CODE")
 SERVICE_ACCOUNT_KEY_PATH = "configs/lametro_service_acct_key.json"
+# Service account key should be a valid JSON string
+GOOGLE_SERVICE_ACCT_API_KEY = env("GOOGLE_SERVICE_ACCT_API_KEY")
 REMOTE_ANALYTICS_FOLDER = env("REMOTE_ANALYTICS_FOLDER")
 
 # - Set this to allow Disqus comments to render.
