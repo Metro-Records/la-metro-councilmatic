@@ -85,7 +85,7 @@ Once it's finished, head over to http://localhost:8001 to view your shiny new ap
 ### Optional: Populate the search index
 
 If you wish to use search in your local install, you need a SmartLogic API
-key. Initiated DataMade staff may decrypt application secrets for use:
+key and the reCAPTCHA development keys. Initiated DataMade staff may decrypt application secrets for use:
 
 ```bash
 blackbox_cat configs/settings_deployment.staging.py
@@ -111,6 +111,9 @@ docker-compose run --rm app python manage.py update_index
 
 When the command exits, your search index has been filled. (You can view the
 Solr admin panel at http://localhost:8987/solr.)
+
+The reCAPTCHA keys will be found in a Bitwarden note titled "LA Metro Councilmatic - Dev recaptcha keys".
+Similarly add both the public and private keys to your environment variables.
 
 ## Running arbitrary scrapes
 Occasionally, after a while without running an event scrape, you may find that your local app is broken. If this happens, make sure you have events in your database that are scheduled for the future, as the app queries for upcoming events in order to render the landing page.
