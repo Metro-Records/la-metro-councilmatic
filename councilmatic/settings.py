@@ -215,6 +215,9 @@ if SENTRY_DSN:
         # If you wish to associate users to errors (assuming you are using
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
+        release=f"{os.environ['HEROKU_RELEASE_VERSION']}-{os.environ['HEROKU_APP_NAME']}",
+        enable_tracing=True,
+        traces_sample_rate=0.05,
     )
 
 # Use standard logging module to catch errors in import_data (which uses a 'logger')
