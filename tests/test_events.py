@@ -20,6 +20,7 @@ from lametro.forms import AgendaPdfForm
 
 
 def mock_streaming_meetings(mocker, return_value=None):
+
     mock_response = mocker.MagicMock(spec=requests.Response)
     mock_response.json.return_value = return_value if return_value else []
     mock_response.status_code = 200
@@ -320,8 +321,7 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
         assert not any([test_event_b.is_ongoing, test_event_b.has_passed])
 
 
-def test_check_current_meeting():
-    ...
+def test_check_current_meeting(): ...
 
 
 def get_event_id():

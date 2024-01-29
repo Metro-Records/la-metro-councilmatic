@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 class SourcesMixin(object):
     @property
     def web_source(self):
+
         return self.sources.get(note="web")
 
     @property
@@ -274,9 +275,11 @@ class LAMetroBill(Bill, SourcesMixin):
             data,
             key=lambda x: (
                 x["date"],
-                x["description"].upper()
-                if x["description"] == "SCHEDULED"
-                else x["description"].lower(),
+                (
+                    x["description"].upper()
+                    if x["description"] == "SCHEDULED"
+                    else x["description"].lower()
+                ),
             ),
         )
 
