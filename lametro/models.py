@@ -47,7 +47,6 @@ logger = logging.getLogger(__name__)
 class SourcesMixin(object):
     @property
     def web_source(self):
-
         return self.sources.get(note="web")
 
     @property
