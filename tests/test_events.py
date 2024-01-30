@@ -20,7 +20,6 @@ from lametro.forms import AgendaPdfForm
 
 
 def mock_streaming_meetings(mocker, return_value=None):
-
     mock_response = mocker.MagicMock(spec=requests.Response)
     mock_response.json.return_value = return_value if return_value else []
     mock_response.status_code = 200
