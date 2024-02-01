@@ -218,6 +218,7 @@ if SENTRY_DSN:
         release=f"{os.environ['HEROKU_RELEASE_VERSION']}-{os.environ['HEROKU_APP_NAME']}",
         enable_tracing=True,
         traces_sample_rate=0.05,
+        profiles_sample_rate=0.05,
     )
 
 # Use standard logging module to catch errors in import_data (which uses a 'logger')
