@@ -5,7 +5,7 @@ psycopg2-binary>=2.8
 opencivicdata>=3.1.0
 django-debug-toolbar>=3.4,<3.5
 sentry-sdk[django]==1.39.2
-gunicorn==21.0.1
+gunicorn==21.2.0
 dj_database_url
 django-recaptcha==2.0.6
 google-api-python-client==2.42.0
