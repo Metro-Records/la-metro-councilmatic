@@ -10,10 +10,9 @@ from django.utils import timezone
 from councilmatic.settings_jurisdiction import legislation_types
 from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Bill
-from councilmatic_core.utils import ExactHighlighter
 
 from lametro.models import app_timezone, Alert
-from lametro.utils import format_full_text, parse_subject
+from lametro.utils import ExactHighlighter, format_full_text, parse_subject
 
 
 register = template.Library()
