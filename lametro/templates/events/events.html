@@ -72,7 +72,7 @@
                 </div>
 
                 <div class='row'>
-                    <div class='col-md-8' id='events_message'></div>
+                    <div class='col-md-8' id='events_message_future'></div>
                 </div>
 
                 <ul class="row mt-4 search-results">
@@ -98,7 +98,7 @@
                 </div>
 
                 <div class='row'>
-                    <div class='col-md-8' id='events_message'></div>
+                    <div class='col-md-8' id='events_message_past'></div>
                 </div>
 
                 <ul class="row mt-4 search-results">
@@ -218,8 +218,7 @@
     <script src="{% static 'js/lib/jquery-1.10.1.min.js' %}"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-    <script type="{% static 'js/lib/moment.js' %}"></script>
-    <script type="{% static 'js/lib/bootstrap-datetimepicker.js' %}"></script>
+    <script src="{% static 'js/lib/bootstrap-datetimepicker.js' %}"></script>
     <script>
     $(document).ready(function() {
 
