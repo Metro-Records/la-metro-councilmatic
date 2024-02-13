@@ -224,15 +224,15 @@
                 activeToggle = activateButton('caltrans');
             };
 
-            memberNameSlug = $(this).attr('data')
-            hoverOnRow(this.id, activeToggle, memberNameSlug);
+            memberNameSlug = $(this).attr('data-name')
+            hoverOnRow($(this).attr("data-polygon"), activeToggle, memberNameSlug);
 
         } );
 
         $('tbody tr').on( "mouseout", function() {
             $('tr').css('background-color', 'inherit');
             let activeToggle = $('#toggleControls').find('.active').attr('id');
-            hoverOffRow(this.id, activeToggle);
+            hoverOffRow($(this).attr("data-polygon"), activeToggle);
         } )
 
         function activateButton(button) {
