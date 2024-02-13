@@ -141,10 +141,7 @@
                             id="pdf-embed-agenda"
                             class="pdf-viewer d-none d-md-block"
                             name="{{document_timestamp}}"
-                            frameborder="0"
-                            seamless="true"
-                            width="100%"
-                            height="600px"
+                            height="600"
                             src={% if agenda_url %} "/pdfviewer/?{{agenda_url|full_text_doc_url}}" {% elif uploaded_agenda_url %} "/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}" {% elif uploaded_agenda_pdf %} "{% static uploaded_agenda_pdf %}" {% endif %}>
                         </iframe>
                     {% else %}

@@ -136,7 +136,11 @@ div#google_translate_element {
     min-width: 185px;
 }
 
-.pdf-viewer { max-width: 840px; }
+.pdf-viewer {
+    width:100%;
+    max-width: 840px;
+    border: 0;
+}
 
 .archive-link {
     font-weight: 700;
