@@ -3,8 +3,7 @@
     {% if event.status == 'cancelled' %}
       <del>
     {% endif %}
-      <small>
-        <div class="d-inline-block">
+        <div class="d-inline-block small">
           <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i>
           <span class="non-mobile-only">
             {{ event.start_time | date:"D" }}
@@ -12,17 +11,16 @@
           {{ event.start_time | date:"m/d" }}
         </div>
 
-        <div class="d-inline-block">
+        <div class="d-inline-block small">
           <span class="non-mobile-only">
             <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
           </span>
           {{ event.start_time| date:"g:ia" }}
         </div>
 
-        <div class="desktop-only text-muted d-block">
+        <div class="desktop-only text-muted d-block small">
           {{event.location.name}}
         </div>
-      </small>
     {% if event.status == 'cancelled' %}
       </del>
     {% endif %}
