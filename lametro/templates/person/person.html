@@ -135,7 +135,7 @@
                                     </td>
                                     <td>{{membership.role}}</td>
                                     <td>
-                                        <a href="/search/?q=&selected_facets=sponsorships_exact:{{membership.organization.name}}">View board reports &raquo;</a>
+                                        <a href="/search/?q=&selected_facets=sponsorships_exact:{{membership.organization.name | query_encode_no_plus}}">View board reports &raquo;</a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -184,7 +184,7 @@
         {% endfor %}
     </script>
     {% if map_geojson %}
-        <script src="{% static 'js/lib/leaflet.js' %}" /></script>
+        <script src="{% static 'js/lib/leaflet.js' %}"></script>
         <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&libraries=places&v=3.17&key={{GOOGLE_API_KEY}}"></script>
         <script type="text/javascript" src="{% static 'js/lib/leaflet-google.js' %}" ></script>
         <script>

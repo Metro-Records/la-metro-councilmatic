@@ -1,4 +1,4 @@
-{% load extras %}
+{% load extras lametro_extras %}
 
 <hr aria-hidden="true">
 
@@ -31,14 +31,14 @@
             <i class="fa fa-fw fa-tag" aria-hidden="true"></i>
             {% for tag in legislation.topics %}
                 <span class="badge badge-muted pseudo-topic-tag">
-                    <a href='/search/?q=&selected_facets=topics_exact:{{ tag }}'>{{ tag }}</a>
+                    <a href='/search/?q=&selected_facets=topics_exact:{{ tag | query_encode_no_plus }}'>{{ tag }}</a>
                 </span>
             {% endfor %}
         {% else %}
             <i class="fa fa-fw fa-tag" aria-hidden="true"></i>
             {% for tag in legislation.pseudo_topics %}
                 <span class="badge badge-muted pseudo-topic-tag">
-                    <a href='/search/?q={{request.GET.q}}&selected_facets=sponsorships_exact%3A{{ tag }}'>{{ tag | committee_topic_only }}</a>
+                    <a href='/search/?q={{request.GET.q}}&selected_facets=sponsorships_exact%3A{{ tag | query_encode_no_plus }}'>{{ tag | committee_topic_only }}</a>
                 </span>
             {% endfor %}
         {% endif %}
