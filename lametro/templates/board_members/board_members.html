@@ -39,7 +39,7 @@
                     <button id='btn_search' class="btn btn-primary" title='Search'>
                         <i class='fa fa-fw fa-search' aria-hidden="true"></i><span class="d-none d-md-inline"> Search</span>
                     </button>
-                    <a class='btn btn-secondary' id='reset' title='Reset the map' href='#'>
+                    <a class='btn btn-secondary' id='reset' title='Reset the map' href='#' aria-label="Reset the map">
                         <i class="fa fa-repeat" aria-hidden="true"></i><span class="d-none d-md-inline"> Reset</span>
                     </a>
                 </div>
@@ -152,7 +152,7 @@
             <h3 class="h4"><i class='fa fa-fw fa-calendar-o' aria-hidden="true"></i> Board of Directors Meetings</h3>
             {% for event in recent_events %}
                 <p class="event-listing">
-                    <a href="{{event.event_page_url | safe}}" title="View Event Details">{{event.start_time | date:'n/d/Y' }} - {{event.name}}</a>
+                    <a href="{{event.event_page_url | safe}}" title="View Event Details" aria-label="{{event.start_time | date:'n/d/Y' }} - {{event.name}}. View Event Details">{{event.start_time | date:'n/d/Y' }} - {{event.name}}</a>
                 </p>
             {% endfor %}
             <p>
