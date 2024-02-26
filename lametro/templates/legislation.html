@@ -101,16 +101,16 @@
                     <table class="table" id="committee-actions">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Action</th>
-                                <th>Meeting</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                                <th scope="col">Meeting</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for action in actions %}
                                 <tr>
                                     <td class="nowrap text-muted small">
-                                        <span datetime='{{action.date}}'>{{action.date|date:'n/d/y'}}</span>
+                                        <time datetime="{{action.date|date:'Y-m-d'}}">{{action.date|date:'n/d/y'}}</time>
                                     </td>
                                     <td class="small">
                                         <span class="text-default">{{action.description}}</span>
@@ -160,8 +160,8 @@
                     <table class="table" id="related-bills">
                         <thead>
                             <tr>
-                                <th>Board Report</th>
-                                <th class="no-wrap">Last action</th>
+                                <th scope="col">Board Report</th>
+                                <th class="no-wrap" scope="col">Last action</th>
                             </tr>
                         </thead>
                         <tbody>
