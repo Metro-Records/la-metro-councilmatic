@@ -38,6 +38,7 @@ from councilmatic_core.models import (
 
 from lametro.utils import format_full_text, parse_subject
 from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
+from councilmatic.custom_storage import MediaStorage
 
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
@@ -443,32 +444,12 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def headshot_url(self):
-        if self.headshot:
-            # Assigning this to image_url would make 'return static(image_url)'
-            # at the end of this property concatenate 'static' to the url.
-            # Returning here solves that.
-            if "headshot_placeholder.png" not in self.headshot.path:
-                return self.headshot
-
-        file_directory = os.path.dirname(__file__)
-        absolute_file_directory = os.path.abspath(file_directory)
-
-        filename = self.slug_name + ".jpg"
-
-        manual_headshot = os.path.join(
-            absolute_file_directory, "static", "images", "manual-headshots", filename
-        )
-
-        if Path(manual_headshot).exists():
-            image_url = "images/manual-headshots/" + filename
-
-        elif self.headshot:
-            image_url = self.headshot.url
-
+        media_storage = MediaStorage()
+        headshot_file = f"{self.slug_name}.jpg"
+        if media_storage.exists(headshot_file):
+            return media_storage.url(headshot_file)
         else:
-            image_url = "images/headshot_placeholder.png"
-
-        return static(image_url)
+            return static("/images/headshot_placeholder.png")
 
     @property
     def current_bio(self):
