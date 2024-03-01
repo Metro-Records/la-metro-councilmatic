@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import json
 import logging
-import os
-from pathlib import Path
 import pytz
 
 import requests
@@ -444,6 +442,12 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def headshot_url(self):
+        """
+        Board member headshots are stored in an S3 bucket (see
+        councilmatic/custom_storages.py). Each board member should
+        have a matching headshot in the bucket named <board-member-slug>.jpg.
+        """
+
         media_storage = MediaStorage()
         headshot_file = f"{self.slug_name}.jpg"
         if media_storage.exists(headshot_file):
