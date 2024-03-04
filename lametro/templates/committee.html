@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<div class="row">
+<section class="row">
     <div class="col-12">
         {% if committee.recent_events %}
             <div class="mb-4">
@@ -51,7 +51,7 @@
             <a href="#" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer {{ CITY_VOCAB.EVENTS|lower }}</a>
         {% endif %}
     </div>
-</div>
+</section>
 
 <div class="row my-3" aria-hidden="true">
     <div>
@@ -59,7 +59,7 @@
     </div>
 </div>
 
-<div class="row">
+<section class="row">
     <div class="col-md-8">
 
         <table class="table" id="council-members">
@@ -105,19 +105,19 @@
             <caption class="h4"><i class="fa fa-user" aria-hidden="true"></i> Chief Executive Officer</caption>
             <tbody>
                 <tr>
-                    <td width="12%">
+                    <td class="w-12pcnt">
                         <div class="thumbnail-square">
                             <img src="{{ ceo.headshot_url }}" alt="{{ceo.name}}" title="{{ceo.name}}" class="img-responsive img-thumbnail">
                         </div>
                     </td>
-                    <td width="22%"><a href="{% url 'lametro:person' ceo.slug %}">{{ ceo.name }}</a></td>
+                    <td class="w-22pcnt"><a href="{% url 'lametro:person' ceo.slug %}">{{ ceo.name }}</a></td>
                     <td>Chief Executive Officer</td>
                 </tr>
             </tbody>
         </table>
         {% endif %}
     </div>
-</div>
+</section>
 
 {% endblock %}
 

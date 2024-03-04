@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block full_content %}
-    <div id="section-photo" class="container-fluid pt-4">
+    <section id="section-photo" class="container-fluid pt-4">
         <div class="row">
             <div class='col-sm-10 offset-sm-1'>
                 {% if user.is_authenticated %}
@@ -31,10 +31,10 @@
                 </p>
             </div>
         </div>
-    </div>
+    </section>
 
 
-    <div class="container-fluid" id="section-intro">
+    <section class="container-fluid" id="section-intro">
         <div class="row">
             <div class='col-sm-10 offset-sm-1'>
 
@@ -65,9 +65,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="container-fluid" id="section-events">
+    <section class="container-fluid" id="section-events">
         <div class="row">
             <div class="col-sm-10 offset-sm-1" id="upcoming-meetings">
                 <div class="row">
@@ -155,7 +155,7 @@
                 </a>
             </div>
         </div>
-    </div>
+    </section>
 
 {% endblock %}
 

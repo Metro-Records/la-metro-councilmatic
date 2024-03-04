@@ -4,10 +4,10 @@
 {% block content %}
 
 {% cache 600 about_wrapper 'about' %}
-<div>
+<section>
 
     <div class="row mt-5">
-        <div class="col-md-8 mb-5">
+        <article class="col-md-8 mb-5">
             <h1 id="about">About us</h1>
             <p>
                 This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority.
@@ -23,7 +23,7 @@
                 <li>See the schedule of public events</li>
                 <li>Track and comment on issues you care about</li>
             </ul>
-        </div>
+        </article>
 
         <div class="col-8 col-md-4">
             <div class="card bg-secondary">
@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="about-la-metro">
             <div>
                 <h3>What is the Metro Board of Directors, and how does it work?</h3>
@@ -142,9 +142,9 @@
                 {% include 'about/_board_report_statuses.html' %}
             </div>
         </div>
-    </div>
+    </article>
 
-    <div class="row mb-3">
+    <article class="row mb-3">
         <div class="col-md-8 pt-nav" id="rules">
             <h3>Board Room Rules</h3>
             <ul>
@@ -167,9 +167,9 @@
                 <li>If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li>
             </ul>
         </div>
-    </div>
+    </article>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="procedures">
             <h3>Rules &amp; Procedures</h3>
             <p>Metro Board follows specific procedures to hold meetings and organize its members.</p>
@@ -179,9 +179,9 @@
                 </a>
             </p>
         </div>
-    </div>
+    </article>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="visit">
             <h3>Visit Metro Headquarters Building</h3>
             <address class="d-block">
@@ -195,9 +195,9 @@
                 </a>
             </p>
         </div>
-    </div>
+    </article>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="data">
             <h3>Data</h3>
             <p>
@@ -222,9 +222,9 @@
             </p>
 
         </div>
-    </div>
+    </article>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="credits">
             <h3>Credits</h3>
 
@@ -239,9 +239,9 @@
 
         </div>
 
-    </div>
+    </article>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="contact">
             <h3>Contact us</h3>
 
@@ -260,9 +260,9 @@
             <p>To provide live public comment during a meeting, please see page 4 of the agenda where item appears for instructions on how to call into the meeting.</p>
             <p>For questions about this website or Board records, please email <a href="mailto:boardreport@metro.net">boardreport@metro.net</a>.</p>
         </div>
-    </div>
+    </article>
 
-</div>
+</section>
 {% endcache %}
 
 {% endblock %}

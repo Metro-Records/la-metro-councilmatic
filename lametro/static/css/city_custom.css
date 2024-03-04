@@ -793,3 +793,11 @@ caption {
     position: relative;
     top: -14px;
 }
+
+.w-12pcnt{
+    width: 12%
+}
+
+.w-22pcnt {
+    width: 22%;
+}

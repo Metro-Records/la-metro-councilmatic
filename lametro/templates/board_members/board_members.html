@@ -28,7 +28,7 @@
 </div>
 
 {% if MAP_CONFIG %}
-<div class="container-fluid" id="search-header">
+<section class="container-fluid" id="search-header">
     <div class="row d-flex align-center h-100">
         <div class="col-md-10 offset-md-1 bg-transparent-white">
             <h2 class="mt-2 h4">Look up your Metro Board Members</h2>
@@ -48,10 +48,10 @@
             <p class="search-example">Search by zip (ex. 90012), city (ex. Acton, Los Angeles), or street address (ex. 200 N Spring St, Los Angeles)</p>
         </div>
     </div>
-</div>
+</section>
 {% endif %}
 
-<div class="container-fluid mt-4 px-4 px-lg-5">
+<section class="container-fluid mt-4 px-4 px-lg-5">
     <div class="row">
         {% if MAP_CONFIG %}
             <div class='col-lg-6 px-0 px-lg-3'>
@@ -106,9 +106,9 @@
             </div>
         {% endif %}
     </div>
-</div>
+</section>
 
-<div class="container-fluid px-4 px-lg-5 mt-5 mt-lg-4">
+<section class="container-fluid px-4 px-lg-5 mt-5 mt-lg-4">
     <div class="row">
         <div class="col-lg-8">
             <h3 class="h4"><i class='fa fa-fw fa-list-ul' aria-hidden="true"></i> Recent Activity</h3>
@@ -161,7 +161,7 @@
             </p>
         </div>
     </div>
-</div>
+</section>
 
 {% endcache %}
 
