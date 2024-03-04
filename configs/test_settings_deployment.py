@@ -101,3 +101,12 @@ LOGGING = {
         },
     },
 }
+
+# Allow some html tags to render in markdown. Mainly for alerts
+MARKDOWNIFY = {
+    "default": {
+        "WHITELIST_TAGS": [
+            "br",
+        ]
+    }
+}

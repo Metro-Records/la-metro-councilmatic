@@ -128,3 +128,12 @@ MERGE_HOST = 'https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/'
 
 # Assumes a locally running instance of the dashboard
 MERGE_ENDPOINT = 'http://host.docker.internal:8080/api/experimental/dags/make_packet/dag_runs'
+
+# Allow some html tags to render in markdown. Mainly for alerts
+MARKDOWNIFY = {
+    "default": {
+        "WHITELIST_TAGS": [
+            'br',
+        ]
+    }
+}

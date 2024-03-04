@@ -250,3 +250,12 @@ LOGGING = {
 }
 
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+
+# Allow some html tags to render in markdown. Mainly for alerts
+MARKDOWNIFY = {
+    "default": {
+        "WHITELIST_TAGS": [
+            "br",
+        ]
+    }
+}
