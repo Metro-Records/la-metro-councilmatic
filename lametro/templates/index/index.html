@@ -191,20 +191,33 @@
             return false;
         });
 
-        $("#id_type").on('change', function() {
+        $("#id_type, #edit_type").on('change', function() {
             $(this).removeClass()
-            $("#id_description").removeClass()
+            let description_input = null
+
+            if (this.id == "edit_type") {
+                description_input = $("#edit_description")
+            } else {
+                description_input = $("#id_description")
+            }
+
+            description_input.removeClass()
             if (this.value != "") {
                 $(this).addClass("alert-" + this.value)
-                $("#id_description").addClass("alert-" + this.value)
+                description_input.addClass("alert-" + this.value)
             }
         });
 
 
-        $("#link, #bold, #italic").on('click', function(){
-            input = document.getElementById("id_description")
+        $(".rich-text-btn").on('click', function() {
+            let input = null
+            if (this.id.includes("edit")) {
+                input = document.getElementById("edit_description")
+            } else {
+                input = document.getElementById("id_description")
+            }
 
-            switch(this.id) {
+            switch(this.id.split('-')[1]) {
                 case "link":
                     input.value += ("[this is a link!](https://url.com) ")
                     break;
@@ -214,8 +227,32 @@
                 case "italic":
                     input.value += ("*this is italicized text!* ")
                     break;
+                case "break":
+                    input.value += ("\n<br>\n")
+                    break;
             }
-        })
+        });
+
+        $("#alert-editor").hide();
+        $("#cancel-edit").on('click', function() {
+            $("#alert-editor").hide()
+        });
+
+        $(".edit-btn").on('click', function() {
+            let id = this.id.split('-')[2]
+            let description = $(this).parent().prev()
+            let type = description.prev()
+            let editor = $("#alert-editor")
+
+            // Set values on the alert edit form, specific to the selected alert
+            editor.find('form').attr('action', `alerts/${id}/update/`)
+            editor.find('select').val(type.text().toLowerCase())
+            editor.find('select').change()  // Trigger change event so the style changes
+            editor.find('textarea').val(description.text())
+
+            editor.show()
+
+        });
 
     </script>
 {% endblock %}
