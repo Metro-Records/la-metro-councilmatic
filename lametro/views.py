@@ -19,7 +19,7 @@ from django.db.models.functions import Lower, Now, Cast
 from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import TemplateView, DeleteView, FormView
+from django.views.generic import TemplateView, DeleteView, FormView, UpdateView
 from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
@@ -1009,6 +1009,12 @@ class AlertDeleteView(DeleteView):
         self.object.delete()
 
         return super().form_valid(form)
+
+
+class AlertUpdateView(UpdateView):
+    model = Alert
+    success_url = reverse_lazy("index")
+    fields = ["description", "type"]
 
 
 def metro_login(request):

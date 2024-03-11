@@ -103,7 +103,7 @@
 
     {% get_alerts as alerts %}
     {% if alerts %}
-        {% for alert in alerts %}
+        {% for alert in alerts|dictsort:"pk" %}
             <div class="alert alert-{{alert.type}}" style="margin-bottom: 0px;">
                 {{alert.description|markdownify}}
             </div>
