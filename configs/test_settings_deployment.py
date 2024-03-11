@@ -107,6 +107,9 @@ MARKDOWNIFY = {
     "default": {
         "WHITELIST_TAGS": [
             "br",
+            "strong",
+            "em",
+            "a",
         ]
     }
 }
