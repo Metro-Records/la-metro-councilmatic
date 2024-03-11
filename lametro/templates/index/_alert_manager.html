@@ -45,10 +45,10 @@
         </form>
     </div>
 
-    <div class="col-md-6 text-white">
+    <div class="col-md-6">
         <h3 class="text-white">View Existing</h3>
         {% if alerts %}
-            <table class="table">
+            <table class="table text-white">
                 <thead>
                     <th>Type</th>
                     <th>Description</th>
@@ -78,8 +78,8 @@
                 <form action="" method="POST">
                     {% csrf_token %}
                     <p>
-                        <label for="edit_type">Type:</label>
-                        <select name="type" id="edit_type"  style="color: black;">
+                        <label for="edit_type" class="text-white">Type:</label>
+                        <select name="type" id="edit_type" required>
                             <option value="" selected="">---------</option>
                             <option value="primary">Primary</option>
                             <option value="secondary">Secondary</option>
@@ -91,10 +91,10 @@
                     </p>
 
                     <p>
-                        <label for="edit_description">Description:</label>
+                        <label for="edit_description" class="text-white">Description:</label>
                     </p>
 
-                    <div class="d-flex" style="background-color: white; flex-direction: column; color: black; margin-bottom: 1rem">
+                    <div class="d-flex" style="background-color: white; flex-direction: column; margin-bottom: 1rem">
                         <div style="border-bottom: 1px solid rgb(118, 118, 118);">
                             <button id="edit-link" class="rich-text-btn" type="button" aria-label="Insert markdown for a link" title="Insert markdown for a link">
                                 <i class="fa fa-link" aria-hidden="true"></i>
@@ -110,7 +110,7 @@
                             </button>
                         </div>
 
-                        <textarea name="description" cols="40" rows="4" placeholder="Edit alert text" style="border: none; color: black;" id="edit_description"></textarea>
+                        <textarea name="description" cols="40" rows="4" placeholder="Edit alert text" style="border: none;" id="edit_description" required></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary" style="margin-right: 1rem;">Save</button>
