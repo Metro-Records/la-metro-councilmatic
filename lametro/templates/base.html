@@ -87,13 +87,21 @@
                       </ul>
                     </li>
                     {% nocache %}
-                    <li>
                         {% if user.is_authenticated %}
-                            <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{% url 'alerts' %}">Alerts</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                            </li>
                         {% else %}
-                            <div id="google_translate_element"></div>
+                            <li><div id="google_translate_element"></div></li>
                         {% endif %}
-                    </li>
                     {% endnocache %}
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -103,7 +111,7 @@
 
     {% get_alerts as alerts %}
     {% if alerts %}
-        {% for alert in alerts %}
+        {% for alert in alerts|dictsort:"pk" %}
             <div class="alert alert-{{alert.type}}" style="margin-bottom: 0px;">
                 {{alert.description|markdownify}}
             </div>

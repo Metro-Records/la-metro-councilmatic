@@ -14,12 +14,18 @@ from django.conf import settings
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
 from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import TemplateView, DeleteView, FormView
+from django.views.generic import (
+    TemplateView,
+    DeleteView,
+    UpdateView,
+    CreateView,
+)
 from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
@@ -75,13 +81,10 @@ from .utils import get_list_from_csv
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 
-class LAMetroIndexView(IndexView, FormView):
+class LAMetroIndexView(IndexView):
     template_name = "index/index.html"
 
     event_model = LAMetroEvent
-
-    form_class = AlertForm
-    success_url = reverse_lazy("index")
 
     @property
     def extra_context(self):
@@ -101,14 +104,8 @@ class LAMetroIndexView(IndexView, FormView):
             "start_date"
         )
         extra["form"] = LAMetroCouncilmaticSearchForm()
-        extra["alert_form"] = self.get_form()
 
         return extra
-
-    def form_valid(self, form):
-        form.save()
-
-        return super().form_valid(form)
 
 
 class LABillDetail(BillDetailView):
@@ -1002,14 +999,27 @@ class MinutesView(EventsView):
         return context
 
 
+class AlertCreateView(LoginRequiredMixin, CreateView):
+    template_name = "alerts/alerts.html"
+    form_class = AlertForm
+    success_url = reverse_lazy("alerts")
+
+
 class AlertDeleteView(DeleteView):
     model = Alert
-    success_url = reverse_lazy("index")
+    success_url = reverse_lazy("alerts")
 
     def form_valid(self, form):
         self.object.delete()
 
         return super().form_valid(form)
+
+
+class AlertUpdateView(UpdateView):
+    model = Alert
+    template_name = "alerts/alert_edit.html"
+    success_url = reverse_lazy("alerts")
+    fields = ["description", "type"]
 
 
 def metro_login(request):
