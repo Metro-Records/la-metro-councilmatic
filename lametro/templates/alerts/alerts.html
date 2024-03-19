@@ -7,7 +7,7 @@
 
 <div class="row" id="alert-manager">
     <div class="col-md-8">
-        <div class="row">
+        <div>
             <h2 class="h3">Existing Alerts</h2>
             {% if alerts %}
                 <table class="table">
@@ -39,41 +39,10 @@
             {% endif %}
         </div>
 
-        <div class="row">
+        <div>
             <h3>Add New</h3>
-            <form role="form" method="POST" enctype="multipart/form-data" id="new-alert-form">
-                {% csrf_token %}
-                <p>
-                    {{form.type.label_tag}} {{form.type}}
-                </p>
-
-                <p style="margin-bottom: 0px;">
-                    {{form.description.label_tag}}
-                </p>
-
-                <div class="d-flex" style="flex-direction: column;">
-                    <div style="border: 1px solid rgb(118, 118, 118);">
-                        <button id="add-link" class="rich-text-btn" type="button" aria-label="Insert markdown for a link" title="Insert markdown for a link">
-                            <i class="fa fa-link" aria-hidden="true"></i>
-                        </button>
-                        <button id="add-bold" class="rich-text-btn" type="button" aria-label="Insert markdown for bold text" title="Insert markdown for bold text">
-                            <i class="fa fa-bold" aria-hidden="true"></i>
-                        </button>
-                        <button id="add-italic" class="rich-text-btn" type="button" aria-label="Insert markdown for italic text" title="Insert markdown for italic text">
-                            <i class="fa fa-italic" aria-hidden="true"></i>
-                        </button>
-                        <button id="add-break" class="rich-text-btn" type="button" aria-label="Insert markdown for line break" title="Insert markdown for line break">
-                            <i class="fa fa-arrows-v" aria-hidden="true"></i>
-                        </button>
-                    </div>
-
-                    {{form.description}}
-                </div>
-
-                    {% for error in form.description.errors %}
-                        <span style="color: #eb6864; display: block;">*{{error|striptags}}</span>
-                    {% endfor %}
-
+            <form method="POST" enctype="multipart/form-data">
+                {% include "alerts/_alert_form_inputs.html" %}
                 <div class="d-flex" style="justify-content: end; margin-top: 1rem;">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
@@ -89,36 +58,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    $("#id_type").on('change', function() {
-        $(this).removeClass()
-        let description_input = $("#id_description")
-
-        description_input.removeClass()
-        if (this.value != "") {
-            $(this).addClass("alert-" + this.value)
-            description_input.addClass("alert-" + this.value)
-        }
-    });
-
-
-    $(".rich-text-btn").on('click', function() {
-        let input = document.getElementById("id_description")
-
-        switch(this.id.split('-')[1]) {
-            case "link":
-                input.value += ("[this is a link!](https://url.com) ")
-                break;
-            case "bold":
-                input.value += ("**this is bolded text!** ")
-                break;
-            case "italic":
-                input.value += ("*this is italicized text!* ")
-                break;
-            case "break":
-                input.value += ("\n<br>\n")
-                break;
-        }
-    });
-</script>
+<script src="{% static 'js/alert-editor.js' %}"></script>
 {% endblock %}
