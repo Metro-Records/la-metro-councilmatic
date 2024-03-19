@@ -21,8 +21,8 @@
                             <tr>
                                 <td class="alert-title">{{alert.type|title}}</td>
                                 <td class="alert-description">{{alert.description}}</td>
-                                <td>
-                                    <a class="btn btn-primary edit-btn" href="{% url 'update_alert' alert.pk %}" style="margin-bottom: 1rem; width: 100%">
+                                <td class="d-flex">
+                                    <a class="btn btn-primary edit-btn" href="{% url 'update_alert' alert.pk %}" style="margin-right: 1rem; width: 100%">
                                         Edit
                                     </a>
                                     <form action="{% url 'delete_alert' alert.pk %}" method="POST">
