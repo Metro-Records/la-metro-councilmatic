@@ -10,9 +10,6 @@
     <div id="section-photo" class="container-fluid">
         <div class="row">
             <div class='col-sm-10 col-sm-offset-1'>
-                {% if user.is_authenticated %}
-                    {% include "index/_alert_manager.html" %}
-                {% endif %}
                 <span class="hidden-xs hidden-sm"><br/><br/></span>
                     <h1 class="home-header">Los Angeles County Metropolitan Transportation Authority</h1>
                 <p class="h3">
@@ -174,85 +171,6 @@
         });
 
         $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
-
-        function toggleAlertManager(){
-            $("#alert-manager").toggle();
-        }
-
-        toggleAlertManager();
-
-        $("#alert-manager-toggle").click(function() {
-            toggleAlertManager();
-            if ($(this).text() == "Show"){
-                $(this).text("Hide")
-            } else {
-                $(this).text("Show")
-            }
-            return false;
-        });
-
-        $("#id_type, #edit_type").on('change', function() {
-            $(this).removeClass()
-            let description_input = null
-
-            if (this.id == "edit_type") {
-                description_input = $("#edit_description")
-            } else {
-                description_input = $("#id_description")
-            }
-
-            description_input.removeClass()
-            if (this.value != "") {
-                $(this).addClass("alert-" + this.value)
-                description_input.addClass("alert-" + this.value)
-            }
-        });
-
-
-        $(".rich-text-btn").on('click', function() {
-            let input = null
-            if (this.id.includes("edit")) {
-                input = document.getElementById("edit_description")
-            } else {
-                input = document.getElementById("id_description")
-            }
-
-            switch(this.id.split('-')[1]) {
-                case "link":
-                    input.value += ("[this is a link!](https://url.com) ")
-                    break;
-                case "bold":
-                    input.value += ("**this is bolded text!** ")
-                    break;
-                case "italic":
-                    input.value += ("*this is italicized text!* ")
-                    break;
-                case "break":
-                    input.value += ("\n<br>\n")
-                    break;
-            }
-        });
-
-        $("#alert-editor").hide();
-        $("#cancel-edit").on('click', function() {
-            $("#alert-editor").hide()
-        });
-
-        $(".edit-btn").on('click', function() {
-            let id = this.id.split('-')[2]
-            let description = $(this).parent().prev()
-            let type = description.prev()
-            let editor = $("#alert-editor")
-
-            // Set values on the alert edit form, specific to the selected alert
-            editor.find('form').attr('action', `alerts/${id}/update/`)
-            editor.find('select').val(type.text().toLowerCase())
-            editor.find('select').change()  // Trigger change event so the style changes
-            editor.find('textarea').val(description.text())
-
-            editor.show()
-
-        });
 
     </script>
 {% endblock %}

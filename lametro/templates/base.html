@@ -87,13 +87,16 @@
                       </ul>
                     </li>
                     {% nocache %}
-                    <li>
                         {% if user.is_authenticated %}
-                            <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                            <li>
+                                <a href="{% url 'alerts' %}">Alerts</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                            </li>
                         {% else %}
-                            <div id="google_translate_element"></div>
+                            <li><div id="google_translate_element"></div></li>
                         {% endif %}
-                    </li>
                     {% endnocache %}
                 </ul>
             </div><!-- /.navbar-collapse -->

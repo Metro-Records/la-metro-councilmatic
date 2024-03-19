@@ -1,0 +1,88 @@
+{% extends "base_with_margins.html" %}
+{% load static %}
+{% block title %}Edit Alert{% endblock %}
+
+{% block content %}
+<h1>Edit Alert</h1>
+<div id="alert-editor" class="row">
+    <form method="POST" enctype="multipart/form-data" class="col-md-8">
+        {% csrf_token %}
+
+        <p>
+            {{form.type.label_tag}} {{form.type}}
+        </p>
+
+        <p style="margin-bottom: 0px;">
+            {{form.description.label_tag}}
+        </p>
+
+        <div class="d-flex" style="flex-direction: column;">
+            <div style="border: 1px solid rgb(118, 118, 118);">
+                <button id="add-link" class="rich-text-btn" type="button" aria-label="Insert markdown for a link" title="Insert markdown for a link">
+                    <i class="fa fa-link" aria-hidden="true"></i>
+                </button>
+                <button id="add-bold" class="rich-text-btn" type="button" aria-label="Insert markdown for bold text" title="Insert markdown for bold text">
+                    <i class="fa fa-bold" aria-hidden="true"></i>
+                </button>
+                <button id="add-italic" class="rich-text-btn" type="button" aria-label="Insert markdown for italic text" title="Insert markdown for italic text">
+                    <i class="fa fa-italic" aria-hidden="true"></i>
+                </button>
+                <button id="add-break" class="rich-text-btn" type="button" aria-label="Insert markdown for line break" title="Insert markdown for line break">
+                    <i class="fa fa-arrows-v" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            {{form.description}}
+        </div>
+
+            {% for error in form.description.errors %}
+                <span style="color: #eb6864; display: block;">*{{error|striptags}}</span>
+            {% endfor %}
+
+        <div class="d-flex" style="justify-content: end; margin-top: 1rem;">
+            <a href="{% url 'alerts' %}" class="btn btn-primary" style="margin-right: 1rem;">Cancel</a>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function styleInputs(element) {
+        $(element).removeClass()
+        let description_input = $("#id_description")
+
+        description_input.removeClass()
+        if (element.value != "") {
+            $(element).addClass("alert-" + element.value)
+            description_input.addClass("alert-" + element.value)
+        }
+    }
+
+    $(document).ready(styleInputs($("#id_type")[0]));
+
+    $("#id_type").on('change', function() {
+        styleInputs(this)
+    });
+
+    $(".rich-text-btn").on('click', function() {
+        let input = document.getElementById("id_description")
+
+        switch(this.id.split('-')[1]) {
+            case "link":
+                input.value += ("[this is a link!](https://url.com) ")
+                break;
+            case "bold":
+                input.value += ("**this is bolded text!** ")
+                break;
+            case "italic":
+                input.value += ("*this is italicized text!* ")
+                break;
+            case "break":
+                input.value += ("\n<br>\n")
+                break;
+        }
+    });
+</script>
+{% endblock %}

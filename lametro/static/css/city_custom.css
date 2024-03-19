@@ -434,7 +434,7 @@ hr .events-line {
     height: 200px;
 }
 
-label[for=id_type], label[for=id_description], .text-white {
+.text-white {
     color: white;
 }
 

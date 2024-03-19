@@ -1,0 +1,124 @@
+{% extends "base_with_margins.html" %}
+{% load static %}
+{% block title %}Alert Manager{% endblock %}
+
+{% block content %}
+<h1>Alert Manager</h1>
+
+<div class="row" id="alert-manager">
+    <div class="col-md-8">
+        <div class="row">
+            <h2 class="h3">Existing Alerts</h2>
+            {% if alerts %}
+                <table class="table">
+                    <thead>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th aria-hidden="true"></th>
+                    </thead>
+                    <tbody>
+                        {% for alert in alerts|dictsort:"pk" %}
+                            <tr>
+                                <td class="alert-title">{{alert.type|title}}</td>
+                                <td class="alert-description">{{alert.description}}</td>
+                                <td>
+                                    <a class="btn btn-primary edit-btn" href="{% url 'update_alert' alert.pk %}" style="margin-bottom: 1rem; width: 100%">
+                                        Edit
+                                    </a>
+                                    <form action="{% url 'delete_alert' alert.pk %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary" style="width: 100%">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No Alerts Added</p>
+            {% endif %}
+        </div>
+
+        <div class="row">
+            <h3>Add New</h3>
+            <form role="form" method="POST" enctype="multipart/form-data" id="new-alert-form">
+                {% csrf_token %}
+                <p>
+                    {{form.type.label_tag}} {{form.type}}
+                </p>
+
+                <p style="margin-bottom: 0px;">
+                    {{form.description.label_tag}}
+                </p>
+
+                <div class="d-flex" style="flex-direction: column;">
+                    <div style="border: 1px solid rgb(118, 118, 118);">
+                        <button id="add-link" class="rich-text-btn" type="button" aria-label="Insert markdown for a link" title="Insert markdown for a link">
+                            <i class="fa fa-link" aria-hidden="true"></i>
+                        </button>
+                        <button id="add-bold" class="rich-text-btn" type="button" aria-label="Insert markdown for bold text" title="Insert markdown for bold text">
+                            <i class="fa fa-bold" aria-hidden="true"></i>
+                        </button>
+                        <button id="add-italic" class="rich-text-btn" type="button" aria-label="Insert markdown for italic text" title="Insert markdown for italic text">
+                            <i class="fa fa-italic" aria-hidden="true"></i>
+                        </button>
+                        <button id="add-break" class="rich-text-btn" type="button" aria-label="Insert markdown for line break" title="Insert markdown for line break">
+                            <i class="fa fa-arrows-v" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    {{form.description}}
+                </div>
+
+                    {% for error in form.description.errors %}
+                        <span style="color: #eb6864; display: block;">*{{error|striptags}}</span>
+                    {% endfor %}
+
+                <div class="d-flex" style="justify-content: end; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- TODO: put an informational card here or smth -->
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $("#id_type").on('change', function() {
+        $(this).removeClass()
+        let description_input = $("#id_description")
+
+        description_input.removeClass()
+        if (this.value != "") {
+            $(this).addClass("alert-" + this.value)
+            description_input.addClass("alert-" + this.value)
+        }
+    });
+
+
+    $(".rich-text-btn").on('click', function() {
+        let input = document.getElementById("id_description")
+
+        switch(this.id.split('-')[1]) {
+            case "link":
+                input.value += ("[this is a link!](https://url.com) ")
+                break;
+            case "bold":
+                input.value += ("**this is bolded text!** ")
+                break;
+            case "italic":
+                input.value += ("*this is italicized text!* ")
+                break;
+            case "break":
+                input.value += ("\n<br>\n")
+                break;
+        }
+    });
+</script>
+{% endblock %}

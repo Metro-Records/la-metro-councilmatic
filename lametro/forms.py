@@ -200,7 +200,6 @@ class AlertForm(forms.ModelForm):
                 attrs={
                     "rows": 4,
                     "placeholder": "Enter alert text",
-                    "style": "border: none;",
                 }
             ),
         }
