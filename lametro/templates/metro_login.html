@@ -21,14 +21,16 @@
             <div class="card-body">
                 <form role="form" method="POST">
                     {% csrf_token %}
-                    {{ form.non_field_errors }}
+                    {% if form.non_field_errors %}
+                        <div role="alert">{{ form.non_field_errors }}</div>
+                    {% endif %}
 
                     <div class="form-group mb-3 {% if form.username.errors %}has-error has-feedback{% endif %}">
                         <label for="id_username" class="fw-bold">Username:</label>
                         <input type="text" class="form-control" id="id_username" name="username" placeholder="Enter username">
                         {% if form.username.errors %}
                             <span class="form-control-feedback"><i class="fa fa-times" aria-hidden="true"></i></span>
-                            <span class="help-block">{{form.username.errors}}</span>
+                            <span class="help-block" role="alert">{{form.username.errors}}</span>
                         {% endif %}
                     </div>
 
@@ -37,7 +39,7 @@
                         <input type="password" class="form-control" id="id_password" name="password" placeholder="Password">
                         {% if form.password.errors %}
                             <span class="form-control-feedback"><i class="fa fa-times" aria-hidden="true"></i></span>
-                            <span class="help-block">{{form.password.errors}}</span>
+                            <span class="help-block" role="alert">{{form.password.errors}}</span>
                         {% endif %}
                     </div>
 
