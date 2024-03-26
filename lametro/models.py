@@ -274,9 +274,11 @@ class LAMetroBill(Bill, SourcesMixin):
             data,
             key=lambda x: (
                 x["date"],
-                x["description"].upper()
-                if x["description"] == "SCHEDULED"
-                else x["description"].lower(),
+                (
+                    x["description"].upper()
+                    if x["description"] == "SCHEDULED"
+                    else x["description"].lower()
+                ),
             ),
         )
 
