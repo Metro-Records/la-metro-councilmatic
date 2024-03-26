@@ -320,8 +320,7 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
         assert not any([test_event_b.is_ongoing, test_event_b.has_passed])
 
 
-def test_check_current_meeting():
-    ...
+def test_check_current_meeting(): ...
 
 
 def get_event_id():

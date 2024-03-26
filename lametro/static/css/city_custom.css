@@ -136,7 +136,11 @@ div#google_translate_element {
     min-width: 185px;
 }
 
-.pdf-viewer { max-width: 840px; }
+.pdf-viewer {
+    width:100%;
+    max-width: 840px;
+    border: 0;
+}
 
 .archive-link {
     font-weight: 700;
@@ -189,7 +193,7 @@ strong.match-group {
 }
 
 .label-info {
-  background-color: #EB6864;
+  background-color: #C7403B;
 }
 
 .label-teal { background-color: #0E8389; }
@@ -788,4 +792,12 @@ caption {
     float: left;
     position: relative;
     top: -14px;
+}
+
+.w-12pcnt{
+    width: 12%
+}
+
+.w-22pcnt {
+    width: 22%;
 }

@@ -27,7 +27,7 @@
                 <strong>This version of Internet Explorer may limit the functionality of this website.</strong> We recommend that you <a href="https://browsehappy.com/?locale=en">upgrade your browser. &raquo;</a>
             </div>
         <![endif]-->
-        <button type="button" class="btn btn-link skip-main" href="#main">
+        <button type="button" class="btn btn-link skip-main">
             Skip to main content
         </button>
         {% cache 600 nav_wrapper 'nav' %}
@@ -35,7 +35,7 @@
         <nav class="navbar fixed-top navbar-default navbar-expand-md navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand me-auto" href="/">
-                    <img alt="" id="logo" src="{% static IMAGES.logo %}"></img>
+                    <img alt="" id="logo" src="{% static IMAGES.logo %}">
                     <span id="logo-text">Metro Board</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,8 +106,8 @@
         <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 border-top" id="footer">
             <div class="col-md-4 d-flex align-items-center">
                 <a class="navbar-brand me-auto" href="/">
-                    <img alt="" id="logo-footer" src="{% static IMAGES.logo %}"></img>
-                    <span id="logo-text">Metro Board</span>
+                    <img alt="" id="logo-footer" src="{% static IMAGES.logo %}">
+                    <span id="logo-text-footer">Metro Board</span>
                 </a>
             </div>
             <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">

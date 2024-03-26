@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <div class="row">
+    <section class="row">
         <p>
             <a href='/events/'>
                 <i class="fa fa-angle-double-left" aria-hidden="true"></i>
@@ -141,10 +141,7 @@
                             id="pdf-embed-agenda"
                             class="pdf-viewer d-none d-md-block"
                             name="{{document_timestamp}}"
-                            frameborder="0"
-                            seamless="true"
-                            width="100%"
-                            height="600px"
+                            height="600"
                             src={% if agenda_url %} "/pdfviewer/?{{agenda_url|full_text_doc_url}}" {% elif uploaded_agenda_url %} "/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}" {% elif uploaded_agenda_pdf %} "{% static uploaded_agenda_pdf %}" {% endif %}>
                         </iframe>
                     {% else %}
@@ -217,7 +214,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
 
     <script type="application/ld+json">
