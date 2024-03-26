@@ -1,8 +1,8 @@
-<div class="row">
+<section class="row">
     {% if has_agenda and not event.has_passed %}
-    <div class="col-md-7">
+    <section class="col-md-7">
     {% else %}
-    <div class="col-12">
+    <section class="col-12">
     {% endif %}
 
         <p>{{event.description}}</p>
@@ -33,10 +33,10 @@
                 </a>
             </p>
         {% endif %}
-    </div>
+    </section>
 
     {% if has_agenda and not event.has_passed %}
-        <div class="col-md-5">
+        <aside class="col-md-5">
             <h2 class="h4">Submit public comment remotely</h2>
 
             <p>
@@ -60,6 +60,6 @@
                     <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong>
                 </em>
             </p>
-        </div>
+        </aside>
     {% endif %}
-</div>
+</section>

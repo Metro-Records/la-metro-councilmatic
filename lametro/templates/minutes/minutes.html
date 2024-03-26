@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="row mb-5" id="minutes-form">
+<article class="row mb-5" id="minutes-form">
   <h1 class="h2">Select a date range</h1>
   <div class="col-md-8">
       <form action='/minutes' method='GET'>
@@ -27,9 +27,9 @@
           Reset
       </a>
   </div>
-</div>
+</article>
 
-<div class="row">
+<section class="row">
   <div class="col-md-9">
     <h2 class="mb-3">Minutes</h2>
     <div id="minutes-list">
@@ -50,13 +50,13 @@
         <a href="#" class="btn btn-primary" id="more-minutes"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all minutes</a>
         <a href="#" class="btn btn-primary" id="fewer-minutes"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer minutes</a>
       {% else %}
-        <div class="row my-4">
+        <article class="row my-4">
           <h5>No minutes have been found.</h5>
-        </div>
+        </article>
       {% endif %}
     </div>
   </div>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_js %}

@@ -11,10 +11,10 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
+    <section class="row">
         <div class="col-md-9 px-0 px-md-3">
 
-            <div class="row" id="events-form">
+            <section class="row" id="events-form">
                 <h1 class="h2">Select a date range</h1>
                 <div class="col-lg-8">
                     <form action='/events' method='GET'>
@@ -36,10 +36,10 @@
                         Reset
                     </a>
                 </div>
-            </div>
+            </section>
 
             {% if request.user.is_authenticated %}
-            <div class="row">
+            <article class="row">
                 <div class="col-lg-10">
                     <div class="card-body login">
                         <h2 class="h4">Hello, {{ user.username }}!</h2>
@@ -49,7 +49,7 @@
                         <p><em>You only have this option for events without agendas.</em></p>
                     </div>
                 </div>
-            </div>
+            </article>
             {% endif %}
 
             {% if future_events %}
@@ -194,7 +194,7 @@
             {% endif %}
         </div>
 
-        <div class="col-md-3 px-0 px-md-2">
+        <aside class="col-md-3 px-0 px-md-2">
             {% include 'events/_events_info_blurb.html' %}
 
             <div>
@@ -208,9 +208,9 @@
                     <a href="{% url 'about' %}#visit"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit Metro Headquarters Building</a>
                 </p>
             </div>
-        </div>
+        </aside>
 
-    </div>
+    </section>
 
 {% endblock %}
 

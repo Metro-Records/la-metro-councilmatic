@@ -7,7 +7,7 @@
 {% block content %}
 
 {% if legislation %}
-    <div class="row mb-3">
+    <section class="row mb-3">
         <div class="col-12">
             <h1 class="bill-page-title">
                 {% if legislation.extras.plain_text|prepare_title %}
@@ -42,10 +42,10 @@
         <div class="col-md-8" aria-hidden="true">
             <hr aria-hidden="true">
         </div>
-    </div>
+    </section>
 
-    <div class="row">
-        <div class="col-md-8">
+    <section class="row">
+        <article class="col-md-8">
             {% if legislation.board_report %}
                 {% with board_report=legislation.board_report %}
                 <h3>
@@ -130,10 +130,10 @@
                 </div>
                 <div class="divider" aria-hidden="true"></div>
             {% endif %}
-        </div>
+        </article>
 
         <!-- New col added, here. -->
-        <div class="col-md-4">
+        <aside class="col-md-4">
             {% if attachments %}
                 <h3>
                     <i class="fa fa-fw fa-paperclip" aria-hidden="true"></i>
@@ -207,11 +207,11 @@
                     {% endfor %}
                     {% endwith %}
             {% endif %}
-        </div>
-    </div>
+        </aside>
+    </section>
 
     {% if DISQUS_SHORTNAME %}
-        <div class="row">
+        <section class="row">
             <div class="col-12">
                 <h3>Comments</h3>
 
@@ -238,10 +238,10 @@
                 </script>
                 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
             </div>
-        </div>
+        </section>
     {% endif %}
 {% else %}
-    <h3>Legislation not found</h3>
+    <h1 class="h3">Legislation not found</h1>
 {% endif %}
 
     <script type="application/ld+json">

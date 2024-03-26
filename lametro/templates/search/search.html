@@ -15,12 +15,12 @@
 {% endblock %}
 
 {% block content %}
-<div class="jumbotron mt-4" id="search-jumbotron">
+<section class="jumbotron mt-4" id="search-jumbotron">
     {% include 'search/_search_header.html' %}
     {% include 'common/search_bar.html' %}
-</div>
+</section>
 
-<div class="row">
+<section class="row">
     <div class="col-md-4">
         <div class="d-block mt-4 mb-5" id="result-type-filter">
             Result type:
@@ -233,10 +233,10 @@
             {% endfor %}
         </ul>
     </div>
-</div>
+</section>
 
 {% if page.has_previous or page.has_next %}
-<div class="row">
+<section class="row">
     <div class="col-md-8 offset-md-4">
         <nav>
             <ul class="pagination">
@@ -270,7 +270,7 @@
             </ul>
         </nav>
     </div>
-</div>
+</section>
 {% endif %}
 
 {% endblock %}

@@ -4,17 +4,17 @@
 
 {% block full_content %}
 <div class="container-fluid mt-5">
-  <div class="row">
+  <section class="row">
 
-    <div class="col-md-9">
+    <article class="col-md-9">
       <div>
         <h1 class="d-inline">Archive Search</h1>
         <span class="h5 text-muted fw-normal">Metro’s Board Records from 1993-2015</span>
       </div>
       <gcse:search></gcse:search>
-    </div>
+    </article>
 
-    <div class="col-md-3">
+    <aside class="col-md-3">
       <div class="card">
         <div class="card-body info-blurb">
           <h2 class="h5"><i class="fa fa-fw fa-info-circle text-dark" aria-hidden="true"></i> What's this?</h2>
@@ -26,9 +26,9 @@
           <p>Looking for Board records from 2015 to present? <a href="{% url 'lametro:search' %}">Search current records &raquo;</a></p>
         </div>
       </div>
-    </div>
+    </aside>
 
-  </div>
+  </section>
 </div>
 {% endblock %}
 
