@@ -4,6 +4,8 @@ import json
 import logging
 import pytz
 
+from botocore.exceptions import BotoCoreError
+
 import requests
 from django.conf import settings
 from django.db import models
@@ -448,11 +450,12 @@ class LAMetroPerson(Person, SourcesMixin):
         have a matching headshot in the bucket named <board-member-slug>.jpg.
         """
 
-        media_storage = MediaStorage()
-        headshot_file = f"{self.slug_name}.jpg"
-        if media_storage.exists(headshot_file):
+        try:
+            media_storage = MediaStorage()
+            headshot_file = f"{self.slug_name}.jpg"
             return media_storage.url(headshot_file)
-        else:
+        except BotoCoreError as e:
+            logging.error(e)
             return static("/images/headshot_placeholder.png")
 
     @property
