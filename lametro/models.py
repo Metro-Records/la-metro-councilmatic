@@ -854,6 +854,14 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             return self.UPCOMING_ECOMMENT_MESSAGE
 
     @property
+    def accepts_public_comment(self):
+        meetings_without_public_comment = {
+            "Special Board Budget Workshop",
+        }
+
+        return self.name not in meetings_without_public_comment
+
+    @property
     def accepts_live_comment(self):
         meetings_without_live_comment = {
             "Measure R Independent Taxpayer Oversight Committee",

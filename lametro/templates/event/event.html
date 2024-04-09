@@ -52,7 +52,9 @@
 
             </h1>
 
-            {% if event.accepts_live_comment %}
+            {% if not event.accepts_public_comment %}
+                {% include 'event/_event_header_no_public_comment.html' %}
+            {% elif event.accepts_live_comment %}
                 {% include 'event/_event_header_live_public_comment.html' %}
             {% else %}
                 {% include 'event/_event_header_no_live_public_comment.html' %}
