@@ -1,8 +1,8 @@
-<div class="row">
+<section class="row">
     {% if has_agenda and not event.has_passed %}
-    <div class="col-md-7">
+    <section class="col-md-7">
     {% else %}
-    <div class="col-12">
+    <section class="col-12">
     {% endif %}
 
         <p>{{event.description}}</p>
@@ -51,10 +51,10 @@
                 </a>
             </p>
         {% endif %}
-    </div>
+    </section>
 
     {% if has_agenda and not event.has_passed %}
-        <div class="col-md-5">
+        <article class="col-md-5">
             <h2 class="h4">Submit public comment remotely</h2>
 
             <p>
@@ -106,17 +106,17 @@
 
                 <p>
                     <strong class="d-block mb-2">Before the meeting</strong>
-
-                    <div>
-                        <strong>Via email:</strong>
-                        <a href="mailto:boardclerk@metro.net">boardclerk@metro.net</a>
-                    </div>
-
-                    <div>
-                        <strong>By postal mail: </strong>
-                        <address class="d-inline">Office of Board Administration, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012</address>
-                    </div>
                 </p>
+
+                <div>
+                    <strong>Via email:</strong>
+                    <a href="mailto:boardclerk@metro.net">boardclerk@metro.net</a>
+                </div>
+
+                <div class="mb-3">
+                    <strong>By postal mail: </strong>
+                    <address class="d-inline">Office of Board Administration, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012</address>
+                </div>
 
                 <p>
                     <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
@@ -126,6 +126,6 @@
                     </em>
                 </p>
             {% endif %}
-        </div>
+        </article>
     {% endif %}
-</div>
+</section>
