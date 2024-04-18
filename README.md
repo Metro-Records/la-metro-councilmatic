@@ -325,6 +325,9 @@ docker-compose -f docker-compose.yml -f docker-compose.locust.yml run --service-
 This will start the Locust web server on http://localhost:8089. For more details,
 see the [Locust documentation](https://docs.locust.io/en/stable/).
 
+## Review Apps
+This repo is set up to deploy review apps on Heroku, and those pull from the staging database to match the experience of deploying as closely as possible! However, note that in order to prevent unapproved model changes from effecting the staging database, migrations are prevented from running on review apps. So those will still have to be reviewed locally.
+
 ## Errors / Bugs
 
 If something is not behaving intuitively, it is a bug, and should be reported.
