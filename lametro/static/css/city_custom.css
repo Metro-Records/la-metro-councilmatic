@@ -441,3 +441,7 @@ hr .events-line {
 textarea#id_description {
     resize: vertical;
 }
+
+.scroll-anchor {
+    scroll-margin-top: 80px;
+}

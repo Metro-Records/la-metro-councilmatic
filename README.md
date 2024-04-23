@@ -58,7 +58,7 @@ docker-compose up -d
 
 Note that you can omit the `-d` flag to follow the application and service logs. If you prefer a quieter environment, you can view one log stream at a time with `docker-compose logs -f SERVICE_NAME`, where `SERVICE_NAME` is the name of one of the services defined in `docker-compose.yml`, e.g., `app`, `postgres`, etc.
 
-When the command exits (`-d`) or your logs indicate that your app is up and running, visit http://localhost:8000 to visit your shiny, new local application!
+When the command exits (`-d`) or your logs indicate that your app is up and running, visit http://localhost:8001 to visit your shiny, new local application!
 
 ### Load in the data
 
