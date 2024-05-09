@@ -71,15 +71,23 @@
                     </span>
                     Upcoming Meetings
                 </h2>
-                <div class="pull-right" style="display: inline-block; margin-top: 20px;">
+                <small class="pull-right" style="display: inline-block;">
                     <p>
                         Download event calendar:
                         <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
                             <i class="fa fa-fw fa-download" aria-hidden="true"></i>
                             Fiscal Year 2024 (PDF)
                         </a>
+										</p>
+								</small><br>
+                <small class="pull-right" style="display: inline-block;">
+										<p>
+                        <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
+                            <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+                            Fiscal Year 2025 (PDF)
+                        </a>
                     </p>
-                </div>
+                </small>
                 {% if upcoming_committee_meetings %}
                     {% if upcoming_committee_meetings %}
                         {% for event in upcoming_committee_meetings %}
@@ -116,6 +124,14 @@
                         <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
                             <i class="fa fa-fw fa-download" aria-hidden="true"></i>
                             Fiscal Year 2024 (PDF)
+                        </a>
+										</p>
+								</small><br>
+                <small class="pull-right" style="display: inline-block;">
+										<p>
+                        <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
+                            <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+                            Fiscal Year 2025 (PDF)
                         </a>
                     </p>
                 </small>
