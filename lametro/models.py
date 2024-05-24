@@ -13,6 +13,7 @@ from django.db.models.expressions import RawSQL
 from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.core.cache import cache
 
 from django.db.models import Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
@@ -689,12 +690,20 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         queryset.
         """
 
-        try:
-            running_events = requests.get(
-                "http://metro.granicus.com/running_events.php", timeout=5
-            )
-        except (requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout):
-            return cls.objects.none()
+        running_events = cache.get("running_events")
+        if not running_events:
+            try:
+                running_events = requests.get(
+                    "http://metro.granicus.com/running_events.php", timeout=5
+                )
+            except (
+                requests.exceptions.ConnectTimeout,
+                requests.exceptions.ReadTimeout,
+            ):
+                return cls.objects.none()
+
+            # Cache running events for one minute
+            cache.set("running_events", running_events, 60)
 
         if running_events.status_code == 200:
             for guid in running_events.json():
