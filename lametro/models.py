@@ -607,6 +607,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         meetings_in_past_two_weeks = (
             cls.objects.with_media()
+            .prefetch_related("broadcast")
             .filter(start_time__gte=two_weeks_ago)
             .order_by("-start_time")
         )
@@ -626,9 +627,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         homepage by returning all upcoming board meetings scheduled for the
         month of the next upcoming meeting.
         """
-        board_meetings = cls.objects.filter(
-            name__icontains="Board Meeting", start_time__gt=timezone.now()
-        ).order_by("start_time")
+        board_meetings = (
+            cls.objects.select_related("location")
+            .filter(name__icontains="Board Meeting", start_time__gt=timezone.now())
+            .order_by("start_time")
+        )
 
         if board_meetings.exists():
             next_meeting = board_meetings.first()
@@ -674,9 +677,13 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             pk__in=cls._streaming_meeting().values_list("pk")
         )
 
-        return cls.objects.filter(
-            start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
-        ).exclude(was_cancelled | has_passed)
+        return (
+            cls.objects.prefetch_related("broadcast")
+            .filter(
+                start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
+            )
+            .exclude(was_cancelled | has_passed)
+        )
 
     @classmethod
     def _streaming_meeting(cls):
@@ -787,6 +794,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         # board meeting. Show the board meeting last.
         meetings = (
             cls.objects.filter(start_time__gt=timezone.now())
+            .select_related("location")
             .annotate(
                 is_board_meeting=RawSQL(
                     "opencivicdata_event.name like %s", ("%Board Meeting%",)
