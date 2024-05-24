@@ -87,7 +87,7 @@ class LAMetroIndexView(IndexView):
     event_model = LAMetroEvent
 
     def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context["upcoming_board_meetings"] = self.event_model.upcoming_board_meetings()[
             :2
