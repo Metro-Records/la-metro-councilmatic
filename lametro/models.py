@@ -629,8 +629,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             name__icontains="Board Meeting", start_time__gt=timezone.now()
         ).order_by("start_time")
 
-        next_meeting = board_meetings.first()
-
         if board_meetings.exists():
             next_meeting = board_meetings.first()
 
