@@ -86,26 +86,27 @@ class LAMetroIndexView(IndexView):
 
     event_model = LAMetroEvent
 
-    @property
-    def extra_context(self):
-        extra = {}
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-        extra["upcoming_board_meetings"] = self.event_model.upcoming_board_meetings()[
+        context["upcoming_board_meetings"] = self.event_model.upcoming_board_meetings()[
             :2
         ]
-        extra["most_recent_past_meetings"] = (
+        context["most_recent_past_meetings"] = (
             self.event_model.most_recent_past_meetings()
         )
-        extra["current_meeting"] = self.event_model.current_meeting()
-        extra["bilingual"] = bool([e for e in extra["current_meeting"] if e.bilingual])
-        extra["USING_ECOMMENT"] = settings.USING_ECOMMENT
+        context["current_meeting"] = self.event_model.current_meeting()
+        context["bilingual"] = bool(
+            [e for e in context["current_meeting"] if e.bilingual]
+        )
+        context["USING_ECOMMENT"] = settings.USING_ECOMMENT
 
-        extra["todays_meetings"] = self.event_model.todays_meetings().order_by(
+        context["todays_meetings"] = self.event_model.todays_meetings().order_by(
             "start_date"
         )
-        extra["form"] = LAMetroCouncilmaticSearchForm()
+        context["form"] = LAMetroCouncilmaticSearchForm()
 
-        return extra
+        return context
 
 
 class LABillDetail(BillDetailView):
