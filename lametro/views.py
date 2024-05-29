@@ -11,6 +11,7 @@ from haystack.query import SearchQuerySet
 import pytz
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -60,6 +61,7 @@ from lametro.models import (
     LAMetroOrganization,
     LAMetroSubject,
     Alert,
+    EventBroadcast,
 )
 from lametro.forms import (
     AgendaUrlForm,
@@ -304,6 +306,27 @@ def delete_event(request, event_slug):
     event = LAMetroEvent.objects.get(slug=event_slug)
     event.delete()
     return HttpResponseRedirect("/events/")
+
+
+@login_required
+def manual_event_live_link(request, event_slug):
+    """
+    Toggle a manually live event broadcast link
+    """
+    event = LAMetroEvent.objects.get(slug=event_slug)
+    broadcasts = event.broadcast.filter(is_manually_live=True)
+
+    if broadcasts.count() == 0:
+        # Create a manual broadcast
+        EventBroadcast.objects.create(event=event, is_manually_live=True)
+        messages.success(request, f"Link for {event.name} has been manually published.")
+    else:
+        # Delete that broadcast
+        for b in broadcasts:
+            b.delete()
+        messages.success(request, f"Link for {event.name} has been unpublished.")
+
+    return HttpResponseRedirect(f"/event/{event_slug}")
 
 
 class LAMetroEventsView(EventsView):
