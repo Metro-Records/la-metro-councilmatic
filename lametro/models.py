@@ -607,9 +607,9 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         meetings_in_past_two_weeks = (
             cls.objects.with_media()
-            .prefetch_related("broadcast")
             .filter(start_time__gte=two_weeks_ago)
             .order_by("-start_time")
+            .prefetch_related("broadcast")
         )
 
         # since has_passed is a property of LAMetroEvent rather than
@@ -840,14 +840,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def has_passed(self):
-        try:
-            event_broadcast = self.broadcast.get()
+        if self.broadcast.exists():
+            return self.broadcast.get().observed and not self.is_ongoing
 
-        except EventBroadcast.DoesNotExist:
-            return False
-
-        else:
-            return event_broadcast.observed and not self.is_ongoing
+        return False
 
     @property
     def ecomment_url(self):
