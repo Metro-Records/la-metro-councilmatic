@@ -203,6 +203,16 @@ if SENTRY_DSN:
 
     from councilmatic.logging import before_send
 
+    def custom_sampler(ctx):
+        if "wsgi_environ" in ctx:
+            path = ctx["wsgi_environ"].get("PATH_INFO", "")
+            # Don't trace performance of static assets
+            if path.startswith("/static/"):
+                return 0
+
+        # Sample other pages at 5% rate
+        return 0.05
+
     sentry_logging = LoggingIntegration(
         level=logging.INFO,  # Capture info and above as breadcrumbs
         event_level=logging.WARNING,  # Send warnings and above as events
@@ -217,7 +227,7 @@ if SENTRY_DSN:
         send_default_pii=True,
         release=f"{os.environ['HEROKU_RELEASE_VERSION']}-{os.environ['HEROKU_APP_NAME']}",
         enable_tracing=True,
-        traces_sample_rate=0.05,
+        traces_sampler=custom_sampler,
         profiles_sample_rate=0.05,
     )
 
