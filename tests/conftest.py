@@ -136,6 +136,7 @@ def event(db, jurisdiction):
                 "start_date": "2017-05-18 12:15",
                 "slug": uuid4(),
                 "jurisdiction": jurisdiction,
+                "extras": {"guid": "17fdaaa3-0aba-4df0-9893-2c2e8e94d18d"},
             }
 
             event_info.update(kwargs)
