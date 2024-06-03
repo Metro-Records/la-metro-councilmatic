@@ -13,6 +13,7 @@ from django.db.models.expressions import RawSQL
 from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.core.cache import cache
 
 from django.db.models import Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
@@ -608,6 +609,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             cls.objects.with_media()
             .filter(start_time__gte=two_weeks_ago)
             .order_by("-start_time")
+            .prefetch_related("broadcast")
         )
 
         # since has_passed is a property of LAMetroEvent rather than
@@ -625,11 +627,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         homepage by returning all upcoming board meetings scheduled for the
         month of the next upcoming meeting.
         """
-        board_meetings = cls.objects.filter(
-            name__icontains="Board Meeting", start_time__gt=timezone.now()
-        ).order_by("start_time")
-
-        next_meeting = board_meetings.first()
+        board_meetings = (
+            cls.objects.select_related("location")
+            .filter(name__icontains="Board Meeting", start_time__gt=timezone.now())
+            .order_by("start_time")
+        )
 
         if board_meetings.exists():
             next_meeting = board_meetings.first()
@@ -675,9 +677,13 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             pk__in=cls._streaming_meeting().values_list("pk")
         )
 
-        return cls.objects.filter(
-            start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
-        ).exclude(was_cancelled | has_passed)
+        return (
+            cls.objects.prefetch_related("broadcast")
+            .filter(
+                start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
+            )
+            .exclude(was_cancelled | has_passed)
+        )
 
     @classmethod
     def _streaming_meeting(cls):
@@ -691,12 +697,20 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         queryset.
         """
 
-        try:
-            running_events = requests.get(
-                "http://metro.granicus.com/running_events.php", timeout=5
-            )
-        except (requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout):
-            return cls.objects.none()
+        running_events = cache.get("running_events")
+        if not running_events:
+            try:
+                running_events = requests.get(
+                    "http://metro.granicus.com/running_events.php", timeout=5
+                )
+            except (
+                requests.exceptions.ConnectTimeout,
+                requests.exceptions.ReadTimeout,
+            ):
+                return cls.objects.none()
+
+            # Cache running events for one minute
+            cache.set("running_events", running_events, 60)
 
         if running_events.status_code == 200:
             for guid in running_events.json():
@@ -786,6 +800,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         # board meeting. Show the board meeting last.
         meetings = (
             cls.objects.filter(start_time__gt=timezone.now())
+            .select_related("location")
             .annotate(
                 is_board_meeting=RawSQL(
                     "opencivicdata_event.name like %s", ("%Board Meeting%",)
@@ -831,21 +846,16 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def has_passed(self):
-        try:
-            event_broadcast = self.broadcast.get()
+        if self.broadcast.exists():
+            try:
+                return self.broadcast.get().observed and not self.is_ongoing
+            except EventBroadcast.MultipleObjectsReturned:
+                # Account for there being a regular broadcast and a manual broadcast at once
+                broadcasts = self.broadcast.filter(is_manually_live=False).count()
+                if broadcasts == 1:
+                    return self.broadcasts.first().observed and not self.is_ongoing
 
-        except EventBroadcast.DoesNotExist:
-            return False
-        except EventBroadcast.MultipleObjectsReturned:
-            # Account for there being a regular broadcast and a manual broadcast at once
-            broadcasts = self.broadcast.filter(is_manually_live=False)
-            if broadcasts.count() == 1:
-                event_broadcast = broadcasts[0]
-            else:
-                return False
-
-        else:
-            return event_broadcast.observed and not self.is_ongoing
+        return False
 
     @property
     def ecomment_url(self):

@@ -71,18 +71,26 @@
                     </span>
                     Upcoming Meetings
                 </h2>
-                <div class="pull-right" style="display: inline-block; margin-top: 20px;">
+                <div class="pull-right" style="display: inline-block; margin-top: 20px; margin-bottom: 20px;">
                     <p>
                         Download event calendar:
                         <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
                             <i class="fa fa-fw fa-download" aria-hidden="true"></i>
                             Fiscal Year 2024 (PDF)
                         </a>
+												<br>
+												<span class="pull-right">
+														<a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
+															<i class="fa fa-fw fa-download" aria-hidden="true"></i>
+															Fiscal Year 2025 (PDF)
+														</a>
+												</span>
                     </p>
                 </div>
                 {% if upcoming_committee_meetings %}
                     {% if upcoming_committee_meetings %}
                         {% for event in upcoming_committee_meetings %}
+														<div style="margin-top: 20px;"></div>
                             {% include "index/_event_item.html" %}
                         {% endfor %}
                     {% endif %}
@@ -110,18 +118,25 @@
                     </span>
                     Recent Meetings
                 </h2>
-                <small class="pull-right" style="display: inline-block;">
+								<div class="pull-right" style="display: inline-block; margin-top: 20px;">
                     <p>
                         Download event calendar:
                         <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
                             <i class="fa fa-fw fa-download" aria-hidden="true"></i>
                             Fiscal Year 2024 (PDF)
                         </a>
+												<br>
+												<span class="pull-right">
+														<a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link">
+															<i class="fa fa-fw fa-download" aria-hidden="true"></i>
+															Fiscal Year 2025 (PDF)
+														</a>
+												</span>
                     </p>
-                </small>
-
+                </div>
                 {% if most_recent_past_meetings %}
                     {% for event in most_recent_past_meetings %}
+												<div style="margin-top: 20px;"></div>
                         {% include "index/_past_event_item.html" %}
                     {% endfor %}
                 {% else %}
