@@ -312,6 +312,7 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
     # is still upcoming, since it has not yet broadcast.
     with freeze_time(LAMetroEvent._time_from_now(hours=1)):
         mock_response.json.return_value = []
+        del test_event_a.has_passed
 
         assert test_event_a.has_passed
         assert not any([test_event_a.is_upcoming, test_event_a.is_ongoing])
@@ -457,6 +458,7 @@ def test_event_is_upcoming(event, mocker):
     test_event.save()
 
     with freeze_time(tomorrow_morning):
+        del test_event.has_passed
         assert not test_event.is_upcoming
 
 
