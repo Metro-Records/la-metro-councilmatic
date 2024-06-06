@@ -853,7 +853,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
                 # Account for there being a regular broadcast and a manual broadcast at once
                 broadcasts = self.broadcast.filter(is_manually_live=False).count()
                 if broadcasts == 1:
-                    return self.broadcasts.first().observed and not self.is_ongoing
+                    return self.broadcast.first().observed and not self.is_ongoing
 
         return False
 
