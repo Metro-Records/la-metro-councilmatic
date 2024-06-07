@@ -701,8 +701,9 @@ class LAPersonDetailView(PersonDetailView):
         except AttributeError:
             context["map_geojson"] = None
 
-        if person.committee_sponsorships:
-            context["sponsored_legislation"] = person.committee_sponsorships
+        sponsored_legislation = list(person.committee_sponsorships.iterator())
+        if sponsored_legislation:
+            context["sponsored_legislation"] = sponsored_legislation
         else:
             context["sponsored_legislation"] = []
 
