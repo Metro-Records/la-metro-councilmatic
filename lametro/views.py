@@ -707,7 +707,8 @@ class LAPersonDetailView(PersonDetailView):
             context["sponsored_legislation"] = []
 
         context["memberships_list"] = (
-            person.current_memberships.exclude(organization__name="Board of Directors")
+            person.current_memberships.prefetch_related("organization")
+            .exclude(organization__name="Board of Directors")
             .annotate(
                 index=Case(
                     When(role="Chair", then=Value(0)),
@@ -729,6 +730,8 @@ class LAPersonDetailView(PersonDetailView):
             context["website_url"] = person.links.get(note="web_site").url
         except PersonLink.DoesNotExist:
             pass
+
+        context["headshot_source"] = person.headshot_source
 
         return context
 

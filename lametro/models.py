@@ -358,7 +358,7 @@ class LAMetroPerson(Person, SourcesMixin):
     def slug_name(self):
         return slugify(self.name)
 
-    @property
+    @cached_property
     def latest_council_membership(self):
         filter_kwarg = {
             "organization__name": settings.OCD_CITY_COUNCIL_NAME,
