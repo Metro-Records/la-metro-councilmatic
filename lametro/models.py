@@ -409,7 +409,7 @@ class LAMetroPerson(Person, SourcesMixin):
 
         return office_membership
 
-    @cached_property
+    @property
     def committee_sponsorships(self):
         """
         This property returns a list of five bills, which have recent actions
