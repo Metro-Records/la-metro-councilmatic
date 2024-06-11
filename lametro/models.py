@@ -5,6 +5,8 @@ import logging
 import os
 from pathlib import Path
 import pytz
+import sys
+import time
 
 import requests
 from django.conf import settings
@@ -697,17 +699,32 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         queryset.
         """
 
+        def trace_function(frame, event, arg):
+            """
+            Makes sure we cap the request for running events.
+            See https://stackoverflow.com/a/71453648
+            """
+            if time.time() - start > TOTAL_TIMEOUT:
+                raise Exception("Request timed out.")
+
+            return trace_function
+
+        TOTAL_TIMEOUT = 5
+
         running_events = cache.get("running_events")
         if not running_events:
+            start = time.time()
+            sys.settrace(trace_function)
+
             try:
                 running_events = requests.get(
-                    "http://metro.granicus.com/running_events.php", timeout=5
+                    "http://metro.granicus.com/running_events.php", timeout=3
                 )
-            except (
-                requests.exceptions.ConnectTimeout,
-                requests.exceptions.ReadTimeout,
-            ):
+            except Exception as e:
+                logger.error(e)
                 return cls.objects.none()
+            finally:
+                sys.settrace(None)
 
             # Cache running events for one minute
             cache.set("running_events", running_events, 60)
