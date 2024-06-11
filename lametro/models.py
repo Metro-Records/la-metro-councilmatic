@@ -424,7 +424,8 @@ class LAMetroPerson(Person, SourcesMixin):
                 actions__organization__memberships__in=self.current_memberships,
             )
             .order_by("-actions__date")
-            .distinct()[:5]
+            .distinct()
+            .prefetch_related("topics", "pseudo_topics")[:5]
         )
 
         return qs
