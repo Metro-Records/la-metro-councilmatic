@@ -5,8 +5,6 @@ import logging
 import os
 from pathlib import Path
 import pytz
-import sys
-import time
 
 import requests
 from django.conf import settings
@@ -39,7 +37,12 @@ from councilmatic_core.models import (
     Membership as CoreMembership,
 )
 
-from lametro.utils import format_full_text, parse_subject
+from lametro.utils import (
+    format_full_text,
+    parse_subject,
+    get_url,
+    LAMetroRequestTimeoutException,
+)
 from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
 
 
@@ -58,17 +61,21 @@ class SourcesMixin(object):
 
     @property
     def api_representation(self):
-        response = requests.get(self.api_source.url)
+        try:
+            response = get_url(self.api_source.url)
+            response.raise_for_status()
 
-        if response.status_code != 200:
-            msg = "Request to {0} resulted in non-200 status code: {1}".format(
-                self.api_source.url, response.status_code
-            )
-            logger.warning(msg)
+        except (LAMetroRequestTimeoutException, requests.Timeout):
+            logger.warning(f"Request to {self.api_source.url} timed out.")
             return None
 
-        else:
-            return response.json()
+        except requests.HTTPError:
+            logger.warning(
+                f"Request to {self.api_source.url} resulted in non-200 status code: {response.status_code}"
+            )
+            return None
+
+        return response.json()
 
 
 class LAMetroBillManager(models.Manager):
@@ -544,7 +551,10 @@ class LiveMediaMixin(object):
         return bool(self.extras.get("sap_guid"))
 
     def _valid(self, media_url):
-        response = requests.get(media_url)
+        try:
+            response = get_url(media_url)
+        except (LAMetroRequestTimeoutException, requests.Timeout):
+            return False
 
         if (
             response.ok
@@ -699,35 +709,19 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         queryset.
         """
 
-        def trace_function(frame, event, arg):
-            """
-            Makes sure we cap the request for running events.
-            See https://stackoverflow.com/a/71453648
-            """
-            if time.time() - start > TOTAL_TIMEOUT:
-                raise Exception("Request timed out.")
-
-            return trace_function
-
-        TOTAL_TIMEOUT = 5
-
         running_events = cache.get("running_events")
         if not running_events:
-            start = time.time()
-            sys.settrace(trace_function)
-
             try:
-                running_events = requests.get(
-                    "http://metro.granicus.com/running_events.php", timeout=3
-                )
-            except Exception as e:
-                logger.error(e)
-                return cls.objects.none()
-            finally:
-                sys.settrace(None)
+                running_events = get_url("http://metro.granicus.com/running_events.php")
 
-            # Cache running events for one minute
-            cache.set("running_events", running_events, 60)
+            except (LAMetroRequestTimeoutException, requests.RequestException) as e:
+                logger.warning(e)
+                running_events = cls.objects.none()
+                return running_events
+
+            finally:
+                # Cache running events for one minute
+                cache.set("running_events", running_events, 60)
 
         if running_events.status_code == 200:
             for guid in running_events.json():

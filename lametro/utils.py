@@ -2,6 +2,9 @@ import csv
 import os
 import re
 import pytz
+import requests
+import sys
+import time
 
 from django.conf import settings
 
@@ -106,3 +109,38 @@ def get_list_from_csv(filename):
         my_list = [row for row in reader]
 
     return my_list
+
+
+class LAMetroRequestTimeoutException(Exception):
+    pass
+
+
+def get_url(url, params=None, **kwargs):
+    """
+    Convenience function to ensure GET requests that time out raise an exception.
+
+    See https://stackoverflow.com/a/71453648
+    """
+
+    TOTAL_TIMEOUT = kwargs.get("timeout", 5)
+
+    def trace_function(frame, event, arg):
+        """
+        Makes sure our request raises an exception if the total time from
+        start to finish exceeds TOTAL_TIMEOUT.
+        """
+        if time.time() - start > TOTAL_TIMEOUT:
+            raise LAMetroRequestTimeoutException("Request timed out.")
+
+        return trace_function
+
+    start = time.time()
+    sys.settrace(trace_function)
+    try:
+        resp = requests.get(url, params, **kwargs)
+    except Exception as e:
+        raise e
+    finally:
+        sys.settrace(None)
+
+    return resp
