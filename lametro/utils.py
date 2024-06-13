@@ -115,14 +115,14 @@ class LAMetroRequestTimeoutException(Exception):
     pass
 
 
-def get_url(url, params=None, **kwargs):
+def timed_get(url, params=None, **kwargs):
     """
     Convenience function to ensure GET requests that time out raise an exception.
 
     See https://stackoverflow.com/a/71453648
     """
 
-    TOTAL_TIMEOUT = kwargs.get("timeout", 5)
+    TOTAL_TIMEOUT = kwargs.get("timeout", getattr(settings, "REQUEST_TIMEOUT"))
 
     def trace_function(frame, event, arg):
         """

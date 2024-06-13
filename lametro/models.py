@@ -40,7 +40,7 @@ from councilmatic_core.models import (
 from lametro.utils import (
     format_full_text,
     parse_subject,
-    get_url,
+    timed_get,
     LAMetroRequestTimeoutException,
 )
 from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
@@ -62,7 +62,7 @@ class SourcesMixin(object):
     @property
     def api_representation(self):
         try:
-            response = get_url(self.api_source.url)
+            response = timed_get(self.api_source.url)
             response.raise_for_status()
 
         except (LAMetroRequestTimeoutException, requests.Timeout):
@@ -552,7 +552,7 @@ class LiveMediaMixin(object):
 
     def _valid(self, media_url):
         try:
-            response = get_url(media_url)
+            response = timed_get(media_url)
         except (LAMetroRequestTimeoutException, requests.Timeout):
             return False
 
@@ -712,7 +712,9 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         running_events = cache.get("running_events")
         if not running_events:
             try:
-                running_events = get_url("http://metro.granicus.com/running_events.php")
+                running_events = timed_get(
+                    "http://metro.granicus.com/running_events.php"
+                )
 
             except (LAMetroRequestTimeoutException, requests.RequestException) as e:
                 logger.warning(e)
