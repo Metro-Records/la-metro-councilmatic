@@ -112,7 +112,8 @@ def get_list_from_csv(filename):
 
 
 class LAMetroRequestTimeoutException(Exception):
-    pass
+    def __init__(self, url, timeout):
+        super().__init__(f"Request to {url} took longer than {timeout} seconds.")
 
 
 def timed_get(url, params=None, **kwargs):
@@ -122,7 +123,7 @@ def timed_get(url, params=None, **kwargs):
     See https://stackoverflow.com/a/71453648
     """
 
-    TOTAL_TIMEOUT = kwargs.get("timeout", getattr(settings, "REQUEST_TIMEOUT"))
+    TOTAL_TIMEOUT = kwargs.get("timeout", settings.REQUEST_TIMEOUT)
 
     def trace_function(frame, event, arg):
         """
@@ -130,7 +131,7 @@ def timed_get(url, params=None, **kwargs):
         start to finish exceeds TOTAL_TIMEOUT.
         """
         if time.time() - start > TOTAL_TIMEOUT:
-            raise LAMetroRequestTimeoutException("Request timed out.")
+            raise LAMetroRequestTimeoutException(url, TOTAL_TIMEOUT)
 
         return trace_function
 
