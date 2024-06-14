@@ -3,6 +3,9 @@ import pytest
 from uuid import uuid4
 from random import randrange
 
+from unittest.mock import PropertyMock
+from django.templatetags.static import static
+
 from opencivicdata.legislative.models import (
     LegislativeSession,
     EventAgendaItem,
@@ -370,3 +373,12 @@ def mocked_streaming_meeting(mocker):
     mocker.patch("lametro.models.requests.get", return_value=mock_response)
 
     return mock_response
+
+
+@pytest.fixture(autouse=True)
+def mocked_headshot_url(mocker):
+    mocker.patch(
+        "lametro.models.LAMetroPerson.headshot_url",
+        new_callable=PropertyMock,
+        return_value=static("/images/headshot_placeholder.png"),
+    )
