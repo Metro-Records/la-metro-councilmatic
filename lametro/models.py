@@ -418,20 +418,17 @@ class LAMetroPerson(Person, SourcesMixin):
 
         Organizations do not include the Board of Directors.
         """
-        actions = (
-            BillAction.objects.select_related("organization")
-            .filter(
-                organization__classification="committee",
-                organization__memberships__in=Subquery(
-                    self.current_memberships.values("pk")
-                ),
-            )
-            .order_by("-date")
+        actions = BillAction.objects.select_related("organization").filter(
+            organization__classification="committee",
+            organization__memberships__in=Subquery(
+                self.current_memberships.values("pk")
+            ),
         )
 
         qs = (
             LAMetroBill.objects.defer("extras")
             .filter(actions__in=Subquery(actions.values("pk")))
+            .order_by("-actions__date")
             .distinct()[:5]
         )
 
