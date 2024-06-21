@@ -38,11 +38,11 @@
         {% endif %}
 
         <p class="small">
-            {% if event.web_source.url %}
+            {% if web_source_url %}
                 {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
                     Not seeing an agenda? Please use this link:<br>
                 {% endif %}
-                <a href='{{event.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
+                <a href='{{web_source_url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
                     <i class='fa fa-fw fa-external-link'></i>
                     View on the {{CITY_VOCAB.SOURCE}} website
                 </a>

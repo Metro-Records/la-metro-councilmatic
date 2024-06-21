@@ -218,8 +218,9 @@ class LAMetroEventDetail(EventDetailView):
         )
 
         # Find agenda link.
-        if event.documents.all():
-            for document in event.documents.all():
+        documents = event.documents.prefetch_related("links").all()
+        if documents:
+            for document in documents:
                 if "Agenda" in document.note:
                     context["agenda_url"] = document.links.first().url
                     context["document_timestamp"] = document.date

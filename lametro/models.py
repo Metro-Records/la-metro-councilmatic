@@ -844,7 +844,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     def is_ongoing(self):
         return self in type(self)._streaming_meeting() or self.has_manual_broadcast
 
-    @property
+    @cached_property
     def has_passed(self):
         if self.broadcast.exists():
             try:
@@ -905,7 +905,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return cls.objects.filter(
             start_time__gte=today_utc, start_time__lt=tomorrow_utc
-        )
+        ).prefetch_related("broadcast", "location")
 
     @property
     def display_status(self):
