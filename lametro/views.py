@@ -243,6 +243,7 @@ class LAMetroEventDetail(EventDetailView):
                     preventing the browser from retrieving a cached
                     iframe, when the timestamp changes.
                     """
+        context["documents"] = documents
 
         context["related_board_reports"] = agenda_with_board_reports
         context["base_url"] = PIC_BASE_URL  # Give JS access to this variable
