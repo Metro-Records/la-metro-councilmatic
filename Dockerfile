@@ -22,7 +22,8 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip setuptools && \
+RUN pip install pip==24.0 \
+RUN pip install --upgrade setuptools && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
@@ -35,4 +36,3 @@ COPY --from=builder /usr/local/bin/_stack_lib.sh /usr/local/bin/
 RUN DJANGO_SETTINGS_MODULE=councilmatic.minimal_settings python manage.py collectstatic
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
-
