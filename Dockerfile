@@ -22,8 +22,8 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
-RUN pip install pip==24.0 \
-RUN pip install --upgrade setuptools && \
+RUN pip install pip==24.0 && \
+    pip install --upgrade setuptools && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
