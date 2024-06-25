@@ -272,3 +272,6 @@ MARKDOWNIFY = {
         ]
     }
 }
+
+# Hard time limit on HTTP requests
+REQUEST_TIMEOUT = 5

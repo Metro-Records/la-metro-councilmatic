@@ -37,7 +37,12 @@ from councilmatic_core.models import (
     Membership as CoreMembership,
 )
 
-from lametro.utils import format_full_text, parse_subject
+from lametro.utils import (
+    format_full_text,
+    parse_subject,
+    timed_get,
+    LAMetroRequestTimeoutException,
+)
 from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
 
 
@@ -56,17 +61,21 @@ class SourcesMixin(object):
 
     @property
     def api_representation(self):
-        response = requests.get(self.api_source.url)
+        try:
+            response = timed_get(self.api_source.url)
+            response.raise_for_status()
 
-        if response.status_code != 200:
-            msg = "Request to {0} resulted in non-200 status code: {1}".format(
-                self.api_source.url, response.status_code
-            )
-            logger.warning(msg)
+        except (LAMetroRequestTimeoutException, requests.Timeout):
+            logger.warning(f"Request to {self.api_source.url} timed out.")
             return None
 
-        else:
-            return response.json()
+        except requests.HTTPError:
+            logger.warning(
+                f"Request to {self.api_source.url} resulted in non-200 status code: {response.status_code}"
+            )
+            return None
+
+        return response.json()
 
 
 class LAMetroBillManager(models.Manager):
@@ -542,7 +551,10 @@ class LiveMediaMixin(object):
         return bool(self.extras.get("sap_guid"))
 
     def _valid(self, media_url):
-        response = requests.get(media_url)
+        try:
+            response = timed_get(media_url)
+        except (LAMetroRequestTimeoutException, requests.Timeout):
+            return False
 
         if (
             response.ok
@@ -700,17 +712,18 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         running_events = cache.get("running_events")
         if not running_events:
             try:
-                running_events = requests.get(
-                    "http://metro.granicus.com/running_events.php", timeout=5
+                running_events = timed_get(
+                    "http://metro.granicus.com/running_events.php"
                 )
-            except (
-                requests.exceptions.ConnectTimeout,
-                requests.exceptions.ReadTimeout,
-            ):
-                return cls.objects.none()
 
-            # Cache running events for one minute
-            cache.set("running_events", running_events, 60)
+            except (LAMetroRequestTimeoutException, requests.RequestException) as e:
+                logger.warning(e)
+                running_events = cls.objects.none()
+                return running_events
+
+            finally:
+                # Cache running events for one minute
+                cache.set("running_events", running_events, 60)
 
         if running_events.status_code == 200:
             for guid in running_events.json():
