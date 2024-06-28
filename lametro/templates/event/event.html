@@ -42,6 +42,8 @@
                     {% endfor %}
                 {% endif %}
                 {% if user.is_authenticated %}
+                    {% get_events_with_manual_broadcasts as manual_events %}
+
                     {% if not event_ok %}
                         <div class="well" style="margin-top: 20px">
                             <p>This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.</p>
