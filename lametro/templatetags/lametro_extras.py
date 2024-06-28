@@ -11,7 +11,7 @@ from councilmatic.settings_jurisdiction import legislation_types
 from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Bill
 
-from lametro.models import app_timezone, Alert
+from lametro.models import app_timezone, Alert, EventBroadcast
 from lametro.utils import ExactHighlighter, format_full_text, parse_subject
 
 
@@ -320,3 +320,10 @@ def sort_topics(topics):
 @register.simple_tag
 def get_alerts():
     return Alert.objects.all()
+
+
+@register.simple_tag
+def get_events_with_manual_broadcasts():
+    broadcasts = EventBroadcast.objects.filter(is_manually_live=True)
+    events = [b.event for b in broadcasts]
+    return events

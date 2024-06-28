@@ -792,6 +792,12 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         else:
             current_meetings = cls.objects.none()
+            manually_live = LAMetroEvent.objects.filter(
+                broadcast__is_manually_live=True
+            )
+
+            if manually_live.count() != 0:
+                current_meetings = manually_live
 
         return current_meetings
 
@@ -849,12 +855,18 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def is_ongoing(self):
-        return self in type(self)._streaming_meeting()
+        return self in type(self)._streaming_meeting() or self.has_manual_broadcast
 
     @cached_property
     def has_passed(self):
         if self.broadcast.exists():
-            return self.broadcast.get().observed and not self.is_ongoing
+            try:
+                return self.broadcast.get().observed and not self.is_ongoing
+            except EventBroadcast.MultipleObjectsReturned:
+                # Account for there being a regular broadcast and a manual broadcast at once
+                broadcasts = self.broadcast.filter(is_manually_live=False).count()
+                if broadcasts == 1:
+                    return self.broadcast.first().observed and not self.is_ongoing
 
         return False
 
@@ -935,6 +947,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return self.name
 
+    @property
+    def has_manual_broadcast(self):
+        return self.broadcast.filter(is_manually_live=True).exists()
+
 
 class EventBroadcast(models.Model):
     """
@@ -946,6 +962,7 @@ class EventBroadcast(models.Model):
     )
 
     observed = models.BooleanField(default=True)
+    is_manually_live = models.BooleanField(default=False)
 
 
 class EventAgendaItem(EventAgendaItem):
