@@ -148,10 +148,7 @@ Now you should be able to start uploading some files!
 ## Adding a new board member
 
 Hooray! A new member has been elected or appointed to the Board of Directors.
-Metro will provide a headshot and bio for the new member. There are a few
-changes you need to make so they appear correctly on the site.
-
-**N.b., these changes can be made in any order.**
+There are a few changes you need to make so they appear correctly on the site.
 
 ### Update the scraper
 
@@ -165,14 +162,6 @@ new member that were created without a post.
     Person.objects.get(family_name='<MEMBER LAST NAME>').memberships.filter(organization__name='Board of Directors', post__isnull=True).delete()
     ```
 
-### Update the Metro app
-
-- Add the new member's headshot to the `lametro/static/images/manual-headshots`
-directory. **Be sure to follow the naming convention `${given_name}-${family_name}.jpg`, all lowercase with punctuation stripped.**
-- Add the new member's bio to the `MEMBER_BIOS` object in `councilmatic/settings_jurisdiction.py`, again **following the `${given_name}-${family_name}.jpg` naming convention.**
-    - Example: https://github.com/datamade/la-metro-councilmatic/pull/686
-    - Tip: Replace newlines in the provided bio with `<br /><br />`.
-
 ### Check your work
 
 To confirm your changes worked, run the app locally and confirm the following:
@@ -185,10 +174,6 @@ listing and confirm the new member is listed with the correct post, e.g.,
     scraper (e.g., does the member's name as it appears in the API match the
     key you added?), that your changes to the scraper have been deployed, and
     that a person scrape has been run since the deployment.
-- View the new member's detail page and confirm that their headshot and bio
-appear as expected, and without any formatting issues.
-
-If everything looks good, you can deploy to staging, check again, then push the changes to the live site.
 
 ## A note on tests
 
