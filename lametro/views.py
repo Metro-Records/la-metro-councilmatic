@@ -74,7 +74,6 @@ from lametro.forms import (
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic.custom_storage import MediaStorage
 
 from opencivicdata.legislative.models import EventDocument
 
