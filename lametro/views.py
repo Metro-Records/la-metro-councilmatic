@@ -668,7 +668,7 @@ class LAPersonDetailView(PersonDetailView):
                     self.get_context_data(form=form, headshot_error=error)
                 )
 
-            person.headshot = self.get_file_url(request, file_obj)
+            person.headshot = file_obj
             person.save()
 
             cache.clear()
@@ -684,22 +684,6 @@ class LAPersonDetailView(PersonDetailView):
         if is_image and file.size <= max_file_size:
             return True
         return False
-
-    def get_file_url(self, request, file):
-        # Save file in bucket and return the resulting url
-
-        file_dir_within_bucket = "user_upload_files/{username}".format(
-            username=request.user
-        )
-
-        # create full file path
-        file_path_within_bucket = os.path.join(file_dir_within_bucket, file.name)
-
-        media_storage = MediaStorage()
-
-        media_storage.save(file_path_within_bucket, file)
-        file_url = media_storage.url(file_path_within_bucket)
-        return file_url
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

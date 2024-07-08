@@ -160,7 +160,7 @@ class PersonHeadshotForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PersonHeadshotForm, self).__init__(*args, **kwargs)
-        self.fields["image"].widget.attrs.update(
+        self.fields["headshot"].widget.attrs.update(
             {
                 "required": "True",
             }
@@ -168,7 +168,7 @@ class PersonHeadshotForm(forms.ModelForm):
 
     class Meta:
         model = LAMetroPerson
-        fields = ["image"]
+        fields = ["headshot"]
 
 
 class PersonBioForm(forms.ModelForm):
