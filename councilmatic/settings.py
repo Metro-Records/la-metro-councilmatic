@@ -185,8 +185,9 @@ DISQUS_SHORTNAME = None
 GOOGLE_API_KEY = env("GOOGLE_API_KEY")
 
 # - AWS
-AWS_KEY = env("AWS_KEY")
-AWS_SECRET = env("AWS_SECRET")
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 
 # SITE CONFIG
 HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), ".." "/lametro/static/images/")
@@ -259,7 +260,6 @@ LOGGING = {
     },
 }
 
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 
 # Allow some html tags to render in markdown. Mainly for alerts
 MARKDOWNIFY = {

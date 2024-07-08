@@ -3,7 +3,6 @@ services:
   app:
     env_file:
       - .env.local
-    #image: ghcr.io/datamade/la-metro-councilmatic:hcg-upgrade
     build:
       dockerfile: Dockerfile.dev
       context: .
@@ -42,7 +41,6 @@ services:
       - lametro-db-data:/var/lib/postgresql/data
     ports:
       - 32006:5432
-
 
   elasticsearch:
     image: elasticsearch:7.14.2
