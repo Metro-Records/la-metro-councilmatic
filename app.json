@@ -10,13 +10,13 @@
   "env": {
     "DJANGO_SECRET_KEY": {
       "description": "A key for Django operations requiring a crytographic signature.",
-      "required": true,
+      "required": true
     },
     "DJANGO_DEBUG": {
-      "required": true,
+      "required": true
     },
     "DJANGO_ALLOWED_HOSTS": {
-      "required": true,
+      "required": true
     },
     "DATABASE_URL": {
       "description": "URI for PostGIS database. Provisioned in deployment by Heroku.",
@@ -97,11 +97,13 @@
     "GOOGLE_API_KEY": {
       "description": "Provide Google API key to enable map rendering.",
       "required": true
-    },
+    }
   },
   "environments": {
     "review": {
-      "addons": ["heroku-postgresql:mini"],
+      "addons": [
+        "heroku-postgresql:mini"
+      ],
       "env": {
         "DJANGO_SECRET_KEY": {
           "value": "hecatomb kaput rustle roisterer division literacy"
