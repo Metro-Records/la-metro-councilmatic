@@ -14,7 +14,7 @@ env = environ.Env(
     DJANGO_ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1", "0.0.0.0"]),
     DATABASE_URL=(str, "postgis://postgres:postgres@postgres:5432/lametro"),
     SEARCH_URL=(str, "http://elasticsearch:9200"),
-    SHOW_TEST_EVENTS=(bool, True),
+    SHOW_TEST_EVENTS=(bool, False),
     MERGE_HOST=(str, "https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/"),
     MERGE_ENDPOINT=(
         str,
