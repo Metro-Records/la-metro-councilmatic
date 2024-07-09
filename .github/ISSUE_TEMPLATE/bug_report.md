@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: A descriptive title e.g. "Update the icon for..." or "Fix the behavior of..."
+title: An actionable title e.g. "Update the icon for..." or "Fix the behavior of..."
 labels: ''
 assignees: ''
 
