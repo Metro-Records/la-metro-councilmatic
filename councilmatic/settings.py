@@ -8,8 +8,33 @@ from .settings_jurisdiction import *  # noqa
 
 env = environ.Env(
     # Set default values
-    DJANGO_DEBUG=(bool, False),
-    LOCAL_DOCKER=(bool, False),
+    LOCAL_DOCKER=(bool, True),
+    DJANGO_SECRET_KEY=(str, "replacethiswithsomethingsecret"),
+    DJANGO_DEBUG=(bool, True),
+    DJANGO_ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1", "0.0.0.0"]),
+    DATABASE_URL=(str, "postgis://postgres:postgres@postgres:5432/lametro"),
+    SEARCH_URL=(str, "http://elasticsearch:9200"),
+    SHOW_TEST_EVENTS=(bool, True),
+    MERGE_HOST=(str, "https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/"),
+    MERGE_ENDPOINT=(
+        str,
+        "http://host.docker.internal:8080/api/experimental/dags/make_packet/dag_runs",
+    ),
+    FLUSH_KEY=(str, "super secret junk"),
+    REFRESH_KEY=(str, "something very secret"),
+    API_KEY=(str, "test api key"),
+    SMART_LOGIC_ENVIRONMENT=(str, "d3807554-347e-4091-90ea-f107a906aaff"),
+    SMART_LOGIC_KEY=(str, ""),
+    ANALYTICS_TRACKING_CODE=(str, ""),
+    SENTRY_DSN=(str, ""),
+    AWS_S3_ACCESS_KEY_ID=(str, ""),
+    AWS_S3_SECRET_ACCESS_KEY=(str, ""),
+    AWS_STORAGE_BUCKET_NAME=(str, ""),
+    RECAPTCHA_PUBLIC_KEY=(str, ""),
+    RECAPTCHA_PRIVATE_KEY=(str, ""),
+    REMOTE_ANALYTICS_FOLDER=(str, ""),
+    GOOGLE_SERVICE_ACCT_API_KEY=(str, ""),
+    GOOGLE_API_KEY=(str, ""),
 )
 
 # Core Django Settings

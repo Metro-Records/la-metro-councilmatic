@@ -60,43 +60,43 @@
     },
     "ANALYTICS_TRACKING_CODE": {
       "description": "Provide ID to enable Google Analytics.",
-      "required": true
+      "required": false
     },
     "SENTRY_DSN": {
       "description": "Provide DSN to enable Sentry logging.",
-      "required": true
+      "required": false
     },
     "AWS_S3_ACCESS_KEY_ID": {
-      "description": "Provide access key ID and secret access key to enable headshot uploads to S3.",
-      "required": true
+      "description": "Provide AWS IAM access key ID and secret access key to enable headshot uploads to S3.",
+      "required": false
     },
     "AWS_S3_SECRET_ACCESS_KEY": {
-      "description": "Provide access key ID and secret access key to enable headshot uploads to S3.",
-      "required": true
+      "description": "Provide AWS IAM access key ID and secret access key to enable headshot uploads to S3.",
+      "required": false
     },
     "AWS_STORAGE_BUCKET_NAME": {
       "description": "Bucket to upload headshots.",
-      "required": true
+      "required": false
     },
     "RECAPTCHA_PUBLIC_KEY": {
       "description": "Provide public and private keys to enable ReCAPTCHA.",
-      "required": true
+      "required": false
     },
     "RECAPTCHA_PRIVATE_KEY": {
       "description": "Provide public and private keys to enable ReCAPTCHA.",
-      "required": true
+      "required": false
     },
     "REMOTE_ANALYTICS_FOLDER": {
       "description": "Google Drive location to upload monthly tag analytics reports.",
-      "required": true
+      "required": false
     },
     "GOOGLE_SERVICE_ACCT_API_KEY": {
       "description": "Provider Google service account API key to enable tag analytics reporting.",
-      "required": true
+      "required": false
     },
     "GOOGLE_API_KEY": {
       "description": "Provide Google API key to enable map rendering.",
-      "required": true
+      "required": false
     }
   },
   "environments": {
