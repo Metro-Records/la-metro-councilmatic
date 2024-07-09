@@ -8,7 +8,7 @@ from .settings_jurisdiction import *  # noqa
 
 env = environ.Env(
     # Set default values
-    DEBUG=(bool, False),
+    DJANGO_DEBUG=(bool, False),
     LOCAL_DOCKER=(bool, False),
 )
 
@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
-DEBUG = env.bool("DEBUG")
+DEBUG = env.bool("DJANGO_DEBUG")
 SHOW_TEST_EVENTS = env.bool("SHOW_TEST_EVENTS")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 
@@ -185,11 +185,11 @@ DISQUS_SHORTNAME = None
 GOOGLE_API_KEY = env("GOOGLE_API_KEY")
 
 # - AWS
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_S3_ACCESS_KEY_ID = env("AWS_S3_ACCESS_KEY_ID")
+AWS_S3_SECRET_ACCESS_KEY = env("AWS_S3_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 
-if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
     print(
         f"AWS configured. Uploading and retrieving headshots from {AWS_STORAGE_BUCKET_NAME}..."
     )
