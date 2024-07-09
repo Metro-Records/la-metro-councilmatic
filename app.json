@@ -101,9 +101,6 @@
   },
   "environments": {
     "review": {
-      "addons": [
-        "heroku-postgresql:mini"
-      ],
       "env": {
         "DJANGO_SECRET_KEY": {
           "value": "hecatomb kaput rustle roisterer division literacy"
