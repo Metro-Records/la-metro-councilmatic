@@ -14,7 +14,7 @@ Metro Board Reports is a member of the [Councilmatic family](https://www.council
 
 ## Setup
 
-These days, we run apps in containers for local development. More on that [here](https://github.com/datamade/how-to/docker/local-development.md). Prefer to run the app locally? See the [legacy setup instructions](https://github.com/datamade/la-metro-councilmatic/blob/b8bc14f6d90f1b05e24b5076b1bfcd5e0d37527a/README.md).
+These days, we run apps in containers for local development. More on that [here](https://github.com/datamade/how-to/docker/local-development.md).
 
 ### Set-up pre-commit
 
@@ -50,11 +50,12 @@ There should be an entry in the DataMade LastPass account called 'LA Metro - sec
 
 The Metro app ingests updated data from the Legistar API several times an hour.
 
-To import data into your local instance, first decrypt the bundled `secrets.py` file, so you can
-retrieve information about private bills.
+To import data into your local instance, copy DataMade's Legistar API token from
+Bitwarden (search `LA Metro Legistar API Token`). Next, create a copy of the secrets
+file and paste in the token:
 
-```
-blackbox_decrypt_file lametro/secrets.py.gpg
+```bash
+cp lametro/secrets.py.example lametro/secrets.py
 ```
 
 Then, simply run:
