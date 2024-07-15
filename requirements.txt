@@ -1,5 +1,4 @@
-# django-councilmatic[convert_docs]>=3.0
-git+https://github.com/datamade/django-councilmatic.git@hcg/configurable-headshot-backend#egg=django-councilmatic
+django-councilmatic[convert_docs]>=3.3
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
 Django>=3.2,<3.3
 psycopg2-binary>=2.8
