@@ -1,4 +1,4 @@
-django-councilmatic[convert_docs]>=3.0
+django-councilmatic[convert_docs]>=3.3
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
 Django>=3.2,<3.3
 psycopg2-binary>=2.8

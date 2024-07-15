@@ -8,8 +8,33 @@ from .settings_jurisdiction import *  # noqa
 
 env = environ.Env(
     # Set default values
-    DEBUG=(bool, False),
-    LOCAL_DOCKER=(bool, False),
+    LOCAL_DOCKER=(bool, True),
+    DJANGO_SECRET_KEY=(str, "replacethiswithsomethingsecret"),
+    DJANGO_DEBUG=(bool, True),
+    DJANGO_ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1", "0.0.0.0"]),
+    DATABASE_URL=(str, "postgis://postgres:postgres@postgres:5432/lametro"),
+    SEARCH_URL=(str, "http://elasticsearch:9200"),
+    SHOW_TEST_EVENTS=(bool, False),
+    MERGE_HOST=(str, "https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/"),
+    MERGE_ENDPOINT=(
+        str,
+        "http://host.docker.internal:8080/api/experimental/dags/make_packet/dag_runs",
+    ),
+    FLUSH_KEY=(str, "super secret junk"),
+    REFRESH_KEY=(str, "something very secret"),
+    API_KEY=(str, "test api key"),
+    SMART_LOGIC_ENVIRONMENT=(str, "d3807554-347e-4091-90ea-f107a906aaff"),
+    SMART_LOGIC_KEY=(str, ""),
+    ANALYTICS_TRACKING_CODE=(str, ""),
+    SENTRY_DSN=(str, ""),
+    AWS_S3_ACCESS_KEY_ID=(str, ""),
+    AWS_S3_SECRET_ACCESS_KEY=(str, ""),
+    AWS_STORAGE_BUCKET_NAME=(str, ""),
+    RECAPTCHA_PUBLIC_KEY=(str, ""),
+    RECAPTCHA_PRIVATE_KEY=(str, ""),
+    REMOTE_ANALYTICS_FOLDER=(str, ""),
+    GOOGLE_SERVICE_ACCT_API_KEY=(str, ""),
+    GOOGLE_API_KEY=(str, ""),
 )
 
 # Core Django Settings
@@ -19,7 +44,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
-DEBUG = env.bool("DEBUG")
+DEBUG = env.bool("DJANGO_DEBUG")
 SHOW_TEST_EVENTS = env.bool("SHOW_TEST_EVENTS")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 
@@ -185,11 +210,23 @@ DISQUS_SHORTNAME = None
 GOOGLE_API_KEY = env("GOOGLE_API_KEY")
 
 # - AWS
-AWS_KEY = env("AWS_KEY")
-AWS_SECRET = env("AWS_SECRET")
+AWS_S3_ACCESS_KEY_ID = env("AWS_S3_ACCESS_KEY_ID")
+AWS_S3_SECRET_ACCESS_KEY = env("AWS_S3_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 
-# SITE CONFIG
-HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), ".." "/lametro/static/images/")
+if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
+    print(
+        f"AWS configured. Uploading and retrieving headshots from {AWS_STORAGE_BUCKET_NAME}..."
+    )
+    from django.core.files.storage import get_storage_class
+
+    S3Storage = get_storage_class("storages.backends.s3boto3.S3Boto3Storage")
+
+    AWS_QUERYSTRING_AUTH = False
+    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = S3Storage()
+
+else:
+    print("AWS not configured. Defaulting to local storage...")
 
 # LOGGING
 SENTRY_DSN = env("SENTRY_DSN")
@@ -259,7 +296,6 @@ LOGGING = {
     },
 }
 
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 
 # Allow some html tags to render in markdown. Mainly for alerts
 MARKDOWNIFY = {

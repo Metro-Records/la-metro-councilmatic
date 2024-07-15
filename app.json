@@ -7,9 +7,135 @@
       "size": "basic"
     }
   },
+  "env": {
+    "DJANGO_SECRET_KEY": {
+      "description": "A key for Django operations requiring a crytographic signature.",
+      "required": true
+    },
+    "DJANGO_DEBUG": {
+      "required": true
+    },
+    "DJANGO_ALLOWED_HOSTS": {
+      "required": true
+    },
+    "DATABASE_URL": {
+      "description": "URI for PostGIS database. Provisioned in deployment by Heroku.",
+      "required": true
+    },
+    "SEARCH_URL": {
+      "description": "URI for ElasticSearch instance. Provisioned in deployment by Heroku.",
+      "required": true
+    },
+    "SHOW_TEST_EVENTS": {
+      "description": "Whether to show test events on the website.",
+      "required": true
+    },
+    "MERGE_HOST": {
+      "description": "URL for S3 Bucket containing merged document packets.",
+      "required": true
+    },
+    "MERGE_ENDPOINT": {
+      "description": "Airflow API endpoint to trigger packet merge.",
+      "required": true
+    },
+    "FLUSH_KEY": {
+      "description": "Key to clear cache.",
+      "required": true
+    },
+    "REFRESH_KEY": {
+      "description": "Key to trigger refresh_guid management command.",
+      "required": true
+    },
+    "API_KEY": {
+      "description": "Key to access API endpoints.",
+      "required": true
+    },
+    "SMART_LOGIC_ENVIRONMENT": {
+      "description": "Provide GUID and API key for SmartLogic instance to enable tag classification and search autocomplete.",
+      "required": true
+    },
+    "SMART_LOGIC_KEY": {
+      "description": "Provide GUID and API key for SmartLogic instance to enable tag classification and search autocomplete.",
+      "required": true
+    },
+    "ANALYTICS_TRACKING_CODE": {
+      "description": "Provide ID to enable Google Analytics.",
+      "required": false
+    },
+    "SENTRY_DSN": {
+      "description": "Provide DSN to enable Sentry logging.",
+      "required": false
+    },
+    "AWS_S3_ACCESS_KEY_ID": {
+      "description": "Provide AWS IAM access key ID and secret access key to enable headshot uploads to S3.",
+      "required": false
+    },
+    "AWS_S3_SECRET_ACCESS_KEY": {
+      "description": "Provide AWS IAM access key ID and secret access key to enable headshot uploads to S3.",
+      "required": false
+    },
+    "AWS_STORAGE_BUCKET_NAME": {
+      "description": "Bucket to upload headshots.",
+      "required": false
+    },
+    "RECAPTCHA_PUBLIC_KEY": {
+      "description": "Provide public and private keys to enable ReCAPTCHA.",
+      "required": false
+    },
+    "RECAPTCHA_PRIVATE_KEY": {
+      "description": "Provide public and private keys to enable ReCAPTCHA.",
+      "required": false
+    },
+    "REMOTE_ANALYTICS_FOLDER": {
+      "description": "Google Drive location to upload monthly tag analytics reports.",
+      "required": false
+    },
+    "GOOGLE_SERVICE_ACCT_API_KEY": {
+      "description": "Provider Google service account API key to enable tag analytics reporting.",
+      "required": false
+    },
+    "GOOGLE_API_KEY": {
+      "description": "Provide Google API key to enable map rendering.",
+      "required": false
+    }
+  },
   "environments": {
     "review": {
-      "addons": ["heroku-postgresql:mini"]
+      "env": {
+        "DJANGO_SECRET_KEY": {
+          "value": "hecatomb kaput rustle roisterer division literacy"
+        },
+        "DJANGO_DEBUG": {
+          "value": "True"
+        },
+        "DJANGO_ALLOWED_HOSTS": {
+          "value": ".herokuapp.com"
+        },
+        "FLUSH_KEY": {
+          "value": "flushitallaway"
+        },
+        "REFRESH_KEY": {
+          "value": "hittherefreshbutton"
+        },
+        "API_KEY": {
+          "value": "testapikey"
+        },
+        "SHOW_TEST_EVENTS": {
+          "value": "True"
+        },
+        "SMART_LOGIC_ENVIRONMENT": {
+          "value": "d3807554-347e-4091-90ea-f107a906aaff"
+        },
+        "MERGE_HOST": {
+          "value": "https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/"
+        },
+        "AWS_STORAGE_BUCKET_NAME": {
+          "value": "la-metro-headshots-staging"
+        },
+        "LOCAL_DOCKER": {
+          "value": "False"
+        }
+      }
     }
   },
   "buildpacks": [],

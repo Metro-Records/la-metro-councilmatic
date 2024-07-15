@@ -64,4 +64,5 @@ jobs:
       run: |
         flake8 .
         black --check .
+        cp .env.local.example .env.local
         pytest -sv
