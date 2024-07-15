@@ -51,7 +51,13 @@
                         </div>
                     {% elif event.status != 'cancelled' %}
                         <div class="well" style="margin-top: 20px">
-                            {% if event.media.all.exists %}
+                            {% if event.has_manual_broadcast and event.media.all.exists %}
+                                <p>
+                                    This event now has a proper broadcast link, and the previous manual broadcast can now be unpublished.
+                                    Please unpublish the manual link.
+                                </p>
+                                <a href="{% url 'manual_event_live_link' event.slug %}" class="btn btn-teal"><i class= "fa fa-headphones" aria-hidden="true"></i> Unpublish Watch Live Link</a>
+                            {% elif event.media.all.exists %}
                                 <p>This event has a proper broadcast link, and cannot have a manual broadcast published.</p>
                             {% elif not event.has_manual_broadcast and manual_events|length >= 1 %}
                                 <p>
