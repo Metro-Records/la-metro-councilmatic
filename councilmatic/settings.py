@@ -27,6 +27,8 @@ env = environ.Env(
     SMART_LOGIC_KEY=(str, ""),
     ANALYTICS_TRACKING_CODE=(str, ""),
     SENTRY_DSN=(str, ""),
+    AWS_KEY=(str, ""),
+    AWS_SECRET=(str, ""),
     AWS_S3_ACCESS_KEY_ID=(str, ""),
     AWS_S3_SECRET_ACCESS_KEY=(str, ""),
     AWS_STORAGE_BUCKET_NAME=(str, ""),
@@ -227,6 +229,10 @@ if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
 
 else:
     print("AWS not configured. Defaulting to local storage...")
+
+# - Used by refresh_pic management command
+AWS_KEY = env("AWS_KEY")
+AWS_SECRET = env("AWS_SECRET")
 
 # LOGGING
 SENTRY_DSN = env("SENTRY_DSN")
