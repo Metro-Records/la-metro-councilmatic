@@ -327,7 +327,7 @@ def manual_event_live_link(request, event_slug):
         messages.info(
             request,
             f"The event {event.name} already has a proper broadcast. "
-            + f"A manual broadcast cannot be created.",
+            + "A manual broadcast cannot be created.",
         )
     else:
         # Delete that broadcast
