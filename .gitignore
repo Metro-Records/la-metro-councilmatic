@@ -24,3 +24,5 @@ debug.log
 
 lametro/secrets.py
 .env.local
+
+.venv
