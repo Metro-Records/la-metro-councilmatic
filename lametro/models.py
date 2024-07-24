@@ -75,6 +75,10 @@ class SourcesMixin(object):
             )
             return None
 
+        except requests.ConnectionError:
+            logger.warning(f"Request to {self.api_source.url} disconnected.")
+            return None
+
         return response.json()
 
 
