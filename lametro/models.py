@@ -563,6 +563,9 @@ class LiveMediaMixin(object):
 
     @property
     def english_live_media_url(self):
+        if self.slug in settings.COUNCILMATIC_SUPPRESS_LIVE_MEDIA:
+            return None
+
         guid = self.extras["guid"]
         english_url = self.BASE_MEDIA_URL + "event_id={guid}".format(guid=guid)
 
@@ -573,6 +576,9 @@ class LiveMediaMixin(object):
 
     @property
     def spanish_live_media_url(self):
+        if self.slug in settings.COUNCILMATIC_SUPPRESS_LIVE_MEDIA:
+            return None
+
         """
         If there is not an associated Spanish event, there will not be
         Spanish audio for the event, e.g., return None.
@@ -704,7 +710,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         Hit the endpoint, and return the corresponding meeting, or an empty
         queryset.
         """
-
         running_events = cache.get("running_events")
         if not running_events:
             try:
