@@ -72,7 +72,7 @@ DATABASES["default"] = dj_database_url.parse(
 
 HAYSTACK_CONNECTIONS = {
     "default": {
-        "ENGINE": "haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine",
+        "ENGINE": "lametro.custom_search.CustomElasticEngine",
         "URL": env("SEARCH_URL"),
         "INDEX_NAME": "lametro",
         "SILENTLY_FAIL": False,
