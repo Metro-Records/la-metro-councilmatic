@@ -58,7 +58,7 @@ def prepare_title(full_text):
 
 @register.filter
 def full_text_doc_url(url):
-    query = {"document_url": url, "filename": "agenda"}
+    query = {"filename": "agenda", "document_url": url}
     pic_query = {"file": PIC_BASE_URL + "?" + urllib.parse.urlencode(query)}
 
     return urllib.parse.urlencode(pic_query)
