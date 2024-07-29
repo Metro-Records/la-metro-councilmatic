@@ -12,6 +12,7 @@ env = environ.Env(
     DJANGO_SECRET_KEY=(str, "replacethiswithsomethingsecret"),
     DJANGO_DEBUG=(bool, True),
     DJANGO_ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1", "0.0.0.0"]),
+    COUNCILMATIC_SUPPRESS_LIVE_MEDIA=(list, []),
     DATABASE_URL=(str, "postgis://postgres:postgres@postgres:5432/lametro"),
     SEARCH_URL=(str, "http://elasticsearch:9200"),
     SHOW_TEST_EVENTS=(bool, False),
@@ -51,6 +52,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG")
 SHOW_TEST_EVENTS = env.bool("SHOW_TEST_EVENTS")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+COUNCILMATIC_SUPPRESS_LIVE_MEDIA = env.list("COUNCILMATIC_SUPPRESS_LIVE_MEDIA")
 
 if env("LOCAL_DOCKER"):
     import socket

@@ -24,7 +24,7 @@
                     {{event.name}}
                 {% endif %}
 
-                {% if event.is_ongoing %}
+                {% if event.is_ongoing and event.english_live_media_url %}
                     <a class="btn btn-salmon" href="{{ event.english_live_media_url }}" target="_blank">
                         <i class="fa fa-headphones" aria-hidden="true"></i>
                         Watch in English

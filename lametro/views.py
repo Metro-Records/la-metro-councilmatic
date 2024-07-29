@@ -793,7 +793,11 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
         for val in self.request.GET.getlist("selected_facets"):
             if val:
-                [k, v] = val.split("_exact:", 1)
+                try:
+                    [k, v] = val.split("_exact:", 1)
+                except ValueError:
+                    continue
+
                 try:
                     selected_facets[k].append(v)
                 except KeyError:

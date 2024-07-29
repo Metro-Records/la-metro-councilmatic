@@ -13,6 +13,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     viewable = indexes.BooleanField()
     identifier = indexes.CharField(model_attr="identifier", boost=3.0)
     sort_name = indexes.CharField(indexed=False, stored=True)
+    full_text = indexes.CharField(stored=False, model_attr="full_text", default="")
 
     # Custom Metro facets
     bill_type = indexes.MultiValueField(faceted=True)
