@@ -763,7 +763,7 @@ def test_manual_broadcast_permissions(event, client, admin_client, mocker):
     """
     Check that only authenticated users can make/delete manual broadcasts
     """
-    test_event = event.build()
+    test_event = event.build(has_broadcast=False)
     mock_api_representation = mocker.patch(
         "lametro.models.SourcesMixin.api_representation",
         new_callable=mocker.PropertyMock,
@@ -803,7 +803,7 @@ def test_manually_broadcasted_events(event, admin_client, mocker):
     """
     Check that events marked as having a manual broadcast are counted as being current/live.
     """
-    test_event = event.build()
+    test_event = event.build(has_broadcast=False)
     mock_api_representation = mocker.patch(
         "lametro.models.SourcesMixin.api_representation",
         new_callable=mocker.PropertyMock,

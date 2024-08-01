@@ -316,15 +316,22 @@ def manual_event_live_link(request, event_slug):
     Toggle a manually live event broadcast link
     """
     event = LAMetroEvent.objects.get(slug=event_slug)
-    broadcasts = event.broadcast.filter(is_manually_live=True)
+    has_regular_broadcasts = event.broadcast.filter(is_manually_live=False).exists()
+    manual_broadcasts = event.broadcast.filter(is_manually_live=True)
 
-    if broadcasts.count() == 0:
+    if manual_broadcasts.count() == 0 and not has_regular_broadcasts:
         # Create a manual broadcast
         EventBroadcast.objects.create(event=event, is_manually_live=True)
         messages.success(request, f"Link for {event.name} has been manually published.")
+    elif has_regular_broadcasts:
+        messages.info(
+            request,
+            f"The event {event.name} already has a proper broadcast. "
+            + "A manual broadcast cannot be created.",
+        )
     else:
         # Delete that broadcast
-        for b in broadcasts:
+        for b in manual_broadcasts:
             b.delete()
         messages.success(request, f"Link for {event.name} has been unpublished.")
 
@@ -786,7 +793,11 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
         for val in self.request.GET.getlist("selected_facets"):
             if val:
-                [k, v] = val.split("_exact:", 1)
+                try:
+                    [k, v] = val.split("_exact:", 1)
+                except ValueError:
+                    continue
+
                 try:
                     selected_facets[k].append(v)
                 except KeyError:
