@@ -2,55 +2,13 @@ from haystack.backends import log_query
 from haystack.backends.elasticsearch7_backend import (
     Elasticsearch7SearchBackend,
 )
-from haystack.backends.elasticsearch_backend import ElasticsearchSearchEngine
+from haystack.backends.elasticsearch7_backend import Elasticsearch7SearchEngine
 from haystack.models import SearchResult
 
 import elasticsearch
 
 
 class CustomElasticBackend(Elasticsearch7SearchBackend):
-    def build_search_kwargs(
-        self,
-        query_string,
-        sort_by=None,
-        start_offset=0,
-        end_offset=None,
-        fields="",
-        highlight=False,
-        facets=None,
-        date_facets=None,
-        query_facets=None,
-        narrow_queries=None,
-        spelling_query=None,
-        within=None,
-        dwithin=None,
-        distance_point=None,
-        models=None,
-        limit_to_registered_models=None,
-        result_class=None,
-        **extra_kwargs
-    ):
-        return super().build_search_kwargs(
-            query_string,
-            sort_by=None,
-            start_offset=0,
-            end_offset=None,
-            fields="",
-            highlight=False,
-            facets=None,
-            date_facets=None,
-            query_facets=None,
-            narrow_queries=None,
-            spelling_query=None,
-            within=None,
-            dwithin=None,
-            distance_point=None,
-            models=None,
-            limit_to_registered_models=None,
-            result_class=None,
-            **extra_kwargs,
-        )
-
     @log_query
     def search(self, query_string, **kwargs):
         if len(query_string) == 0:
@@ -101,5 +59,5 @@ class CustomElasticBackend(Elasticsearch7SearchBackend):
         )
 
 
-class CustomElasticEngine(ElasticsearchSearchEngine):
+class CustomElasticEngine(Elasticsearch7SearchEngine):
     backend = CustomElasticBackend
