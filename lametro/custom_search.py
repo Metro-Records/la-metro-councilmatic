@@ -37,7 +37,12 @@ class CustomElasticBackend(Elasticsearch7SearchBackend):
                 body=search_kwargs,
                 index=self.index_name,
                 _source=True,
-                _source_excludes=["full_text", "text"],
+                _source_excludes=[
+                    "full_text",
+                    "text",
+                    "ocr_full_text",
+                    "attachment_text",
+                ],
                 **self._get_doc_type_option(),
             )
         except elasticsearch.TransportError:
