@@ -145,10 +145,15 @@
 
                         {% if event.start_time|compare_time %}
                             {% if minutes %}
-                            <h4>Minutes</h4>
-                            <p>
-                                <a href="{{ minutes.links.get.url }}"><i class="fa fa-calendar" aria-hidden="true"></i> View Minutes</a>
-                            </p>
+                                <h4>Minutes</h4>
+
+                                {% for m in minutes %}
+                                    <p>
+                                        <a href="{{ m.links.get.url }}"><i class="fa fa-calendar" aria-hidden="true"></i>
+                                            View Minutes {% if minutes.count > 1 %}#{{ forloop.counter}}{% endif %}
+                                        </a>
+                                    </p>
+                                {% endfor %}
                             {% endif %}
                         {% endif %}
 
