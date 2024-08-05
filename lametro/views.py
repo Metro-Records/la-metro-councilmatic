@@ -206,7 +206,7 @@ class LAMetroEventDetail(EventDetailView):
                 context["event_ok"] = False
 
         try:
-            context["minutes"] = event.documents.get(note__icontains="minutes")
+            context["minutes"] = event.documents.filter(note__icontains="minutes")
         except EventDocument.DoesNotExist:
             pass
 
