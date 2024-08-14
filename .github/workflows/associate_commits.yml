@@ -27,5 +27,5 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           sentry-cli releases new -p la-metro-councilmatic $HEROKU_RELEASE
-          sentry-cli releases set-commits $HEROKU_RELEASE
+          sentry-cli releases set-commits $HEROKU_RELEASE --ignore-missing
           sentry-cli releases finalize $HEROKU_RELEASE
