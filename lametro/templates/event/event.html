@@ -164,8 +164,7 @@
                         frameborder="0"
                         seamless="true"
                         width="100%"
-                        height="600px"
-                        src={% if agenda_url %}"/pdfviewer/?{{agenda_url|full_text_doc_url}}"{% elif uploaded_agenda_url %}"/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}"{% elif uploaded_agenda_pdf %}"{% static uploaded_agenda_pdf %}"{% endif %}>
+                        height="600px">
                     </iframe>
 
                     {% else %}
@@ -276,6 +275,23 @@
             $('#pdf-form-message, #pdf-check-viewer-test, #pdf-form-cancel, #pdf-form-submit').addClass('hidden');
         });
     });
+
+     if (window.innerWidth > 768){
+        {% if agenda_url %}
+            const agendaUrl = "/pdfviewer/?{{agenda_url|full_text_doc_url}}"
+        {% elif uploaded_agenda_url %}
+            const agendaUrl = "/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}"
+        {% elif uploaded_agenda_pdf %}
+            const agendaUrl = "{% static uploaded_agenda_pdf %}"
+        {% endif %}
+
+        $("#pdf-embed-agenda").attr("src", agendaUrl);
+    }
+    else{
+        $('#pdf-embed-agenda').hide()
+        $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link'></i> View PDF")
+    }
+
     {% for source in event.sources.all %}
         console.log('source: {{source}}');
     {% endfor %}
