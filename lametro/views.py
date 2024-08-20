@@ -344,16 +344,12 @@ class LAMetroEventsView(EventsView):
     def get_context_data(self, **kwargs):
         context = {}
 
-        # Did the user set date boundaries?
-        start_date_str = self.request.GET.get("from")
-        end_date_str = self.request.GET.get("to")
-
         def day_grouper(x):
-            return (
+            return datetime(
                 x.local_start_time.year,
                 x.local_start_time.month,
                 x.local_start_time.day,
-            )
+            ).date()
 
         # We only want to display approved minutes
         minutes_queryset = EventDocument.objects.filter(
@@ -362,6 +358,10 @@ class LAMetroEventsView(EventsView):
 
         # A base queryset for non-test objects with media
         media_events = LAMetroEvent.objects.with_media().exclude(name__icontains="test")
+
+        # Did the user set date boundaries?
+        start_date_str = self.request.GET.get("from")
+        end_date_str = self.request.GET.get("to")
 
         # If yes...
         if start_date_str and end_date_str:
@@ -379,54 +379,52 @@ class LAMetroEventsView(EventsView):
                 Prefetch("documents", minutes_queryset, to_attr="minutes")
             ).prefetch_related("minutes__links")
 
-            org_select_events = []
+            org_select_events = itertools.groupby(select_events, key=day_grouper)
+            context["select_events"] = [
+                (d, list(events)) for d, events in org_select_events
+            ]
 
-            for event_date, events in itertools.groupby(select_events, key=day_grouper):
-                events = sorted(events, key=attrgetter("start_time"))
-                org_select_events.append([date(*event_date), events])
-
-            context["select_events"] = org_select_events
-
-        # If all meetings
-        elif self.request.GET.get("show"):
+        # Did user request all events?
+        elif self.request.GET.get("show") == "all":
             all_events = media_events.order_by("-start_time")
-            org_all_events = []
+            org_all_events = itertools.groupby(all_events, key=day_grouper)
 
-            for event_date, events in itertools.groupby(all_events, key=day_grouper):
-                events = sorted(events, key=attrgetter("start_time"))
-                org_all_events.append([date(*event_date), events])
+            context["all_events"] = [(d, list(events)) for d, events in org_all_events]
 
-            context["all_events"] = org_all_events
-        # If no...
         else:
             # Upcoming events
             future_events = media_events.filter(start_time__gt=timezone.now()).order_by(
                 "start_time"
             )
-            org_future_events = []
-
-            for event_date, events in itertools.groupby(future_events, key=day_grouper):
-                events = sorted(events, key=attrgetter("start_time"))
-                org_future_events.append([date(*event_date), events])
-
-            context["future_events"] = org_future_events
+            org_future_events = itertools.groupby(future_events, key=day_grouper)
 
             # Past events
-            past_events = media_events.filter(start_time__lt=timezone.now()).order_by(
-                "-start_time"
+            past_events = (
+                media_events.filter(start_time__lt=timezone.now())
+                .order_by("-start_time")
+                .prefetch_related(
+                    Prefetch("documents", minutes_queryset, to_attr="minutes")
+                )
+                .prefetch_related("minutes__links")
             )
+            org_past_events = itertools.groupby(past_events, key=day_grouper)
 
-            past_events = past_events.prefetch_related(
-                Prefetch("documents", minutes_queryset, to_attr="minutes")
-            ).prefetch_related("minutes__links")
+            # Only show three days of events by default
+            past_events = itertools.islice(org_past_events, 3)
+            future_events = itertools.islice(org_future_events, 3)
 
-            org_past_events = []
+            # Did user request all past or future events?
+            show_all_past_events = self.request.GET.get("show") == "past"
+            show_all_future_events = self.request.GET.get("show") == "future"
+            if show_all_past_events:
+                past_events = org_past_events
+            elif show_all_future_events:
+                future_events = org_future_events
 
-            for event_date, events in itertools.groupby(past_events, key=day_grouper):
-                events = sorted(events, key=attrgetter("start_time"))
-                org_past_events.append([date(*event_date), events])
-
-            context["past_events"] = org_past_events
+            context["future_events"] = [
+                (d, list(events)) for d, events in future_events
+            ]
+            context["past_events"] = [(d, list(events)) for d, events in past_events]
 
         context["user_subscribed"] = False
         if self.request.user.is_authenticated:
