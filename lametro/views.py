@@ -1,7 +1,5 @@
-from operator import attrgetter
 import itertools
 import urllib
-from datetime import date, datetime
 from dateutil import parser
 import requests
 import os
