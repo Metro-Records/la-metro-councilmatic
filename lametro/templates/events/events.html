@@ -79,7 +79,7 @@
 								{% if 'show' in request.GET and request.GET.show == 'future' %}
 									<a href="{% url 'events' %}" class="btn btn-salmon" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer upcoming meetings</a>
 								{% else %}
-									<a href="{% url 'events' %}?show=future#future-meetings" class="btn btn-salmon" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down"></i>Show all upcoming meetings</a>
+									<a href="{% url 'events' %}?show=future#upcoming-meetings" class="btn btn-salmon" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down"></i>Show all upcoming meetings</a>
 								{% endif %}
 
                 <h2 id="past-meetings" style="margin-top: 40px;"><span>Past {{ CITY_VOCAB.EVENTS }}</span>
