@@ -102,6 +102,7 @@ ADV_CACHE_INCLUDE_PK = True
 DEBUG_TOOLBAR_PANELS = [
     "debug_toolbar.panels.sql.SQLPanel",
     "debug_toolbar.panels.cache.CachePanel",
+    "template_profiler_panel.panels.template.TemplateProfilerPanel",
 ]
 
 
@@ -121,6 +122,7 @@ INSTALLED_APPS = (
     "councilmatic_core",
     "adv_cache_tag",
     "debug_toolbar",
+    "template_profiler_panel",
     "captcha",
     "markdownify.apps.MarkdownifyConfig",
 )
