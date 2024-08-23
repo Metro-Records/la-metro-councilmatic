@@ -24,6 +24,7 @@ from opencivicdata.legislative.models import (
     EventRelatedEntity,
     RelatedBill,
     BillVersion,
+    BillAction,
 )
 from proxy_overrides.related import ProxyForeignKey
 
@@ -440,11 +441,19 @@ class LAMetroPerson(Person, SourcesMixin):
         """
         qs = (
             LAMetroBill.objects.defer("extras")
+            .prefetch_related(
+                Prefetch(
+                    "actions__organization__memberships",
+                    queryset=BillAction.objects.select_related("organization")
+                    .filter(organization__classification="committee")
+                    .order_by("-date"),
+                )
+            )
             .filter(
-                actions__organization__classification="committee",
+                # actions__organization__classification="committee",
                 actions__organization__memberships__in=self.current_memberships,
             )
-            .order_by("-actions__date")
+            # .order_by("-actions__date")
             .distinct()[:5]
         )
 
