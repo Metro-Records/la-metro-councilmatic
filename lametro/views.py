@@ -10,6 +10,8 @@ from haystack.query import SearchQuerySet
 
 import pytz
 
+from django.views.generic import DetailView
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -610,9 +612,10 @@ class LACommitteeDetailView(CommitteeDetailView):
         return context
 
 
-class LAPersonDetailView(PersonDetailView):
+class LAPersonDetailView(DetailView):
     template_name = "person/person.html"
     model = LAMetroPerson
+    context_object_name = "person"
 
     def dispatch(self, request, *args, **kwargs):
         slug = self.kwargs["slug"]
@@ -715,13 +718,12 @@ class LAPersonDetailView(PersonDetailView):
         except AttributeError:
             context["map_geojson"] = None
 
-        if person.committee_sponsorships:
+        if self.request.GET.get("view") == "board-reports":
             context["sponsored_legislation"] = person.committee_sponsorships
-        else:
-            context["sponsored_legislation"] = []
 
         context["memberships_list"] = (
             person.current_memberships.exclude(organization__name="Board of Directors")
+            .prefetch_related("organization")
             .annotate(
                 index=Case(
                     When(role="Chair", then=Value(0)),
