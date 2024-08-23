@@ -719,7 +719,7 @@ class LAPersonDetailView(DetailView):
             context["map_geojson"] = None
 
         if self.request.GET.get("view") == "board-reports":
-            context["sponsored_legislation"] = person.committee_sponsorships
+            context["sponsored_legislation"] = person.committee_sponsorships.iterator()
 
         context["memberships_list"] = (
             person.current_memberships.exclude(organization__name="Board of Directors")
