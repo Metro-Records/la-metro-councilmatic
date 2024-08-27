@@ -158,19 +158,21 @@ class LAMetroBill(Bill, SourcesMixin):
     # LA METRO CUSTOMIZATION
     @property
     def friendly_name(self):
-        full_text = self.extras.get("plain_text")
+        # full_text = self.extras.get("plain_text")
+        #
+        # results = None
+        #
+        # if full_text:
+        #     results = format_full_text(full_text)
+        #
+        # if results:
+        #     title = parse_subject(results)
+        # else:
+        #     title = self.bill_type
+        #
+        # return "{0} - {1}".format(self.identifier, title.upper())
 
-        results = None
-
-        if full_text:
-            results = format_full_text(full_text)
-
-        if results:
-            title = parse_subject(results)
-        else:
-            title = self.bill_type
-
-        return "{0} - {1}".format(self.identifier, title.upper())
+        return "FRIENDLY NAME"
 
     # LA METRO CUSTOMIZATION
     @property
