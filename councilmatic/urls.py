@@ -34,12 +34,15 @@ from lametro.views import (
     metro_logout,
     delete_submission,
     delete_event,
+    manual_event_live_link,
     LAMetroArchiveSearch,
     LAMetroContactView,
     MinutesView,
     pong,
     test_logging,
+    AlertCreateView,
     AlertDeleteView,
+    AlertUpdateView,
 )
 from lametro.feeds import LAMetroPersonDetailFeed
 
@@ -108,7 +111,14 @@ urlpatterns = [
         name="delete_submission",
     ),
     url(r"^delete-event/(?P<event_slug>[^/]+)/$", delete_event, name="delete_event"),
+    url(
+        r"^manual_event_link/(?P<event_slug>[^/]+)/$",
+        manual_event_live_link,
+        name="manual_event_live_link",
+    ),
+    path("alerts/", AlertCreateView.as_view(), name="alerts"),
     path("alerts/<int:pk>/delete/", AlertDeleteView.as_view(), name="delete_alert"),
+    path("alerts/<int:pk>/update/", AlertUpdateView.as_view(), name="update_alert"),
     url(
         r"^pong/$",
         pong,

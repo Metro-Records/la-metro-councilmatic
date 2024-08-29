@@ -34,10 +34,10 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             q += '"'
 
         # Escape reserved characters
-        reserved_characters = r"""|&*/\!{[]}~-+'()^:"""
-
-        for char in reserved_characters:
-            q = q.replace(char, r"\{}".format(char))
+        reserved_characters = "|&*/\!{[]}~-+'()^:"  # noqa
+        mapping = {char: f"\{char}" for char in reserved_characters}  # noqa
+        table = str.maketrans(mapping)
+        q = q.translate(table)
 
         # Downcase boolean operators
         for op in ("OR", "AND"):
@@ -160,7 +160,7 @@ class PersonHeadshotForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PersonHeadshotForm, self).__init__(*args, **kwargs)
-        self.fields["image"].widget.attrs.update(
+        self.fields["headshot"].widget.attrs.update(
             {
                 "required": "True",
             }
@@ -168,7 +168,7 @@ class PersonHeadshotForm(forms.ModelForm):
 
     class Meta:
         model = LAMetroPerson
-        fields = ["image"]
+        fields = ["headshot"]
 
 
 class PersonBioForm(forms.ModelForm):
@@ -200,7 +200,6 @@ class AlertForm(forms.ModelForm):
                 attrs={
                     "rows": 4,
                     "placeholder": "Enter alert text",
-                    "style": "border: none;",
                 }
             ),
         }

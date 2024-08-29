@@ -1,0 +1,62 @@
+{% extends "base_with_margins.html" %}
+{% load static %}
+{% block title %}Alert Manager{% endblock %}
+
+{% block content %}
+<h1>Alert Manager</h1>
+
+<div class="row" id="alert-manager">
+    <div class="col-md-8">
+        <div>
+            <h2 class="h3">Existing Alerts</h2>
+            {% if alerts %}
+                <table class="table">
+                    <thead>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th aria-hidden="true"></th>
+                    </thead>
+                    <tbody>
+                        {% for alert in alerts|dictsort:"pk" %}
+                            <tr>
+                                <td class="alert-title">{{alert.type|title}}</td>
+                                <td class="alert-description">{{alert.description}}</td>
+                                <td class="d-flex">
+                                    <a class="btn btn-primary edit-btn" href="{% url 'update_alert' alert.pk %}" style="margin-right: 1rem; width: 100%">
+                                        Edit
+                                    </a>
+                                    <form action="{% url 'delete_alert' alert.pk %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary" style="width: 100%">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No Alerts Added</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h3>Add New</h3>
+            <form method="POST" enctype="multipart/form-data">
+                {% include "alerts/_alert_form_inputs.html" %}
+                <div class="d-flex" style="justify-content: end; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- TODO: put an informational card here or smth -->
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/alert-editor.js' %}"></script>
+{% endblock %}

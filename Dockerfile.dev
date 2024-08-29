@@ -1,5 +1,8 @@
 FROM ghcr.io/metro-records/la-metro-councilmatic:main
 
+RUN apt-get update && \
+    apt-get install -y git
+
 COPY ./requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip && \
+RUN pip install pip==24.0 && \
     pip install --no-cache-dir -r requirements.txt

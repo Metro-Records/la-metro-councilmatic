@@ -13,6 +13,7 @@ from django.db.models.expressions import RawSQL
 from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.core.cache import cache
 
 from django.db.models import Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
@@ -36,7 +37,12 @@ from councilmatic_core.models import (
     Membership as CoreMembership,
 )
 
-from lametro.utils import format_full_text, parse_subject
+from lametro.utils import (
+    format_full_text,
+    parse_subject,
+    timed_get,
+    LAMetroRequestTimeoutException,
+)
 from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
 
 
@@ -55,17 +61,25 @@ class SourcesMixin(object):
 
     @property
     def api_representation(self):
-        response = requests.get(self.api_source.url)
+        try:
+            response = timed_get(self.api_source.url)
+            response.raise_for_status()
 
-        if response.status_code != 200:
-            msg = "Request to {0} resulted in non-200 status code: {1}".format(
-                self.api_source.url, response.status_code
-            )
-            logger.warning(msg)
+        except (LAMetroRequestTimeoutException, requests.Timeout):
+            logger.warning(f"Request to {self.api_source.url} timed out.")
             return None
 
-        else:
-            return response.json()
+        except requests.HTTPError:
+            logger.warning(
+                f"Request to {self.api_source.url} resulted in non-200 status code: {response.status_code}"
+            )
+            return None
+
+        except requests.ConnectionError:
+            logger.warning(f"Request to {self.api_source.url} disconnected.")
+            return None
+
+        return response.json()
 
 
 class LAMetroBillManager(models.Manager):
@@ -444,11 +458,7 @@ class LAMetroPerson(Person, SourcesMixin):
     @property
     def headshot_url(self):
         if self.headshot:
-            # Assigning this to image_url would make 'return static(image_url)'
-            # at the end of this property concatenate 'static' to the url.
-            # Returning here solves that.
-            if "headshot_placeholder.png" not in self.headshot.path:
-                return self.headshot
+            return self.headshot.url
 
         file_directory = os.path.dirname(__file__)
         absolute_file_directory = os.path.abspath(file_directory)
@@ -460,11 +470,7 @@ class LAMetroPerson(Person, SourcesMixin):
         )
 
         if Path(manual_headshot).exists():
-            image_url = "images/manual-headshots/" + filename
-
-        elif self.headshot:
-            image_url = self.headshot.url
-
+            image_url = f"images/manual-headshots/{filename}"
         else:
             image_url = "images/headshot_placeholder.png"
 
@@ -541,7 +547,10 @@ class LiveMediaMixin(object):
         return bool(self.extras.get("sap_guid"))
 
     def _valid(self, media_url):
-        response = requests.get(media_url)
+        try:
+            response = timed_get(media_url)
+        except (LAMetroRequestTimeoutException, requests.Timeout):
+            return False
 
         if (
             response.ok
@@ -554,6 +563,9 @@ class LiveMediaMixin(object):
 
     @property
     def english_live_media_url(self):
+        if self.slug in settings.COUNCILMATIC_SUPPRESS_LIVE_MEDIA:
+            return None
+
         guid = self.extras["guid"]
         english_url = self.BASE_MEDIA_URL + "event_id={guid}".format(guid=guid)
 
@@ -564,6 +576,9 @@ class LiveMediaMixin(object):
 
     @property
     def spanish_live_media_url(self):
+        if self.slug in settings.COUNCILMATIC_SUPPRESS_LIVE_MEDIA:
+            return None
+
         """
         If there is not an associated Spanish event, there will not be
         Spanish audio for the event, e.g., return None.
@@ -608,6 +623,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             cls.objects.with_media()
             .filter(start_time__gte=two_weeks_ago)
             .order_by("-start_time")
+            .prefetch_related("broadcast")
         )
 
         # since has_passed is a property of LAMetroEvent rather than
@@ -625,11 +641,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         homepage by returning all upcoming board meetings scheduled for the
         month of the next upcoming meeting.
         """
-        board_meetings = cls.objects.filter(
-            name__icontains="Board Meeting", start_time__gt=timezone.now()
-        ).order_by("start_time")
-
-        next_meeting = board_meetings.first()
+        board_meetings = (
+            cls.objects.select_related("location")
+            .filter(name__icontains="Board Meeting", start_time__gt=timezone.now())
+            .order_by("start_time")
+        )
 
         if board_meetings.exists():
             next_meeting = board_meetings.first()
@@ -675,9 +691,13 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             pk__in=cls._streaming_meeting().values_list("pk")
         )
 
-        return cls.objects.filter(
-            start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
-        ).exclude(was_cancelled | has_passed)
+        return (
+            cls.objects.prefetch_related("broadcast")
+            .filter(
+                start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
+            )
+            .exclude(was_cancelled | has_passed)
+        )
 
     @classmethod
     def _streaming_meeting(cls):
@@ -690,13 +710,21 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         Hit the endpoint, and return the corresponding meeting, or an empty
         queryset.
         """
+        running_events = cache.get("running_events")
+        if not running_events:
+            try:
+                running_events = timed_get(
+                    "http://metro.granicus.com/running_events.php"
+                )
 
-        try:
-            running_events = requests.get(
-                "http://metro.granicus.com/running_events.php", timeout=5
-            )
-        except (requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout):
-            return cls.objects.none()
+            except (LAMetroRequestTimeoutException, requests.RequestException) as e:
+                logger.warning(e)
+                running_events = cls.objects.none()
+                return running_events
+
+            finally:
+                # Cache running events for one minute
+                cache.set("running_events", running_events, 60)
 
         if running_events.status_code == 200:
             for guid in running_events.json():
@@ -765,6 +793,12 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         else:
             current_meetings = cls.objects.none()
+            manually_live = LAMetroEvent.objects.filter(
+                broadcast__is_manually_live=True
+            )
+
+            if manually_live.count() != 0:
+                current_meetings = manually_live
 
         return current_meetings
 
@@ -780,6 +814,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         # board meeting. Show the board meeting last.
         meetings = (
             cls.objects.filter(start_time__gt=timezone.now())
+            .select_related("location")
             .annotate(
                 is_board_meeting=RawSQL(
                     "opencivicdata_event.name like %s", ("%Board Meeting%",)
@@ -821,18 +856,20 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def is_ongoing(self):
-        return self in type(self)._streaming_meeting()
+        return self in type(self)._streaming_meeting() or self.has_manual_broadcast
 
-    @property
+    @cached_property
     def has_passed(self):
-        try:
-            event_broadcast = self.broadcast.get()
+        if self.broadcast.exists():
+            try:
+                return self.broadcast.get().observed and not self.is_ongoing
+            except EventBroadcast.MultipleObjectsReturned:
+                # Account for there being a regular broadcast and a manual broadcast at once
+                broadcasts = self.broadcast.filter(is_manually_live=False).count()
+                if broadcasts == 1:
+                    return self.broadcast.first().observed and not self.is_ongoing
 
-        except EventBroadcast.DoesNotExist:
-            return False
-
-        else:
-            return event_broadcast.observed and not self.is_ongoing
+        return False
 
     @property
     def ecomment_url(self):
@@ -852,6 +889,14 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         else:
             return self.UPCOMING_ECOMMENT_MESSAGE
+
+    @property
+    def accepts_public_comment(self):
+        meetings_without_public_comment = {
+            "Special Board Budget Workshop",
+        }
+
+        return self.name not in meetings_without_public_comment
 
     @property
     def accepts_live_comment(self):
@@ -874,7 +919,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return cls.objects.filter(
             start_time__gte=today_utc, start_time__lt=tomorrow_utc
-        )
+        ).prefetch_related("broadcast", "location")
 
     @property
     def display_status(self):
@@ -903,6 +948,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         return self.name
 
+    @property
+    def has_manual_broadcast(self):
+        return self.broadcast.filter(is_manually_live=True).exists()
+
 
 class EventBroadcast(models.Model):
     """
@@ -914,6 +963,7 @@ class EventBroadcast(models.Model):
     )
 
     observed = models.BooleanField(default=True)
+    is_manually_live = models.BooleanField(default=False)
 
 
 class EventAgendaItem(EventAgendaItem):

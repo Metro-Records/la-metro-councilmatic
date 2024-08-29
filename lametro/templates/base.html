@@ -30,8 +30,8 @@
         <button type="button" class="btn btn-link skip-main">
             Skip to main content
         </button>
-        {% cache 600 nav_wrapper 'nav' %}
 
+        {% cache 600 nav_wrapper 'nav' %}
         <nav class="navbar fixed-top navbar-default navbar-expand-md navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand me-auto" href="/">
@@ -42,61 +42,69 @@
                 <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto justify-content-end">
-                    <li class="nav-item dropdown me-2 pt-3">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        About
-                    </a>
-                    <ul class="dropdown-menu shadow rounded-bottom">
-                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:council_members' %}">Board of Directors</a></li>
-                        <li><a class="dropdown-item dropdown-size" href="{% url 'committees' %}">Committees</a></li>
-                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:contact' %}">Contact Us</a></li>
-                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:about' %}">About Us</a></li>
+                    <ul class="navbar-nav ms-auto justify-content-end">
+                        <li class="nav-item dropdown me-2 pt-3">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                About
+                            </a>
+                            <ul class="dropdown-menu shadow rounded-bottom">
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:council_members' %}">Board of Directors</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'committees' %}">Committees</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:contact' %}">Contact Us</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:about' %}">About Us</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown me-2 pt-3">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Search
+                            </a>
+                            <ul class="dropdown-menu shadow rounded-bottom">
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:search' %}">Board Reports</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="https://mtasearch01.metro.net:23352/apps/boardarchives/">Archive Search</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown me-2 pt-3">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Meetings
+                            </a>
+                            <ul class="dropdown-menu shadow rounded-bottom">
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'events' %}">{{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:minutes' %}">Minutes</a></li>
+                            </ul>
+                        </li>
+                        {% nocache %}
+                            {% if user.is_authenticated %}
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="{% url 'alerts' %}">Alerts</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                                </li>
+                            {% else %}
+                                <li><div id="google_translate_element"></div></li>
+                            {% endif %}
+                        {% endnocache %}
                     </ul>
-                    </li>
-                    <li class="nav-item dropdown me-2 pt-3">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Search
-                    </a>
-                    <ul class="dropdown-menu shadow rounded-bottom">
-                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:search' %}">Board Reports</a></li>
-                        <li><a class="dropdown-item dropdown-size" href="https://mtasearch01.metro.net:23352/apps/boardarchives/">Archive Search</a></li>
-                    </ul>
-                    </li>
-                    <li class="nav-item dropdown me-2 pt-3">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Meetings
-                    </a>
-                    <ul class="dropdown-menu shadow rounded-bottom">
-                        <li><a class="dropdown-item dropdown-size" href="{% url 'events' %}">{{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></li>
-                        <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:minutes' %}">Minutes</a></li>
-                    </ul>
-                    </li>
-                    {% nocache %}
-                        {% if user.is_authenticated %}
-                            <li class="nav-item pt-4">
-                                <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
-                            </li>
-                        {% else %}
-                            <li>
-                                <div id="google_translate_element"></div>
-                            </li>
-                        {% endif %}
-                    {% endnocache %}
-                </ul>
-                </div>
+                </div><!-- /.navbar-collapse -->
             </div>
         </nav>
         {% endcache %}
 
         {% get_alerts as alerts %}
         {% if alerts %}
-            {% for alert in alerts %}
+            {% for alert in alerts|dictsort:"pk" %}
                 <div class="alert alert-{{alert.type}}" style="margin-bottom: 0px;">
                     {{alert.description|markdownify}}
                 </div>
             {% endfor %}
         {% endif %}
+
+        {% include '_messages.html' %}
 
         <main id="main" tabindex="-1">
             {% block full_content %}

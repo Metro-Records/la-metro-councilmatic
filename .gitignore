@@ -1,44 +1,28 @@
 # Byte-compiled / optimized / DLL files
 .DS_Store
 
-# Settings
-settings_deployment.py
-
 # Collected Static Files
 static/**
 **/static/images/ocd-person/*.jpg
 **/static/pdf/agenda-*.pdf
 
-solr-4.10.4/**
-
 **/__pycache__
 .pytest_cache/
 
 downloads
-/keyrings/live/pubring.gpg~
-/keyrings/live/pubring.kbx~
-/keyrings/live/secring.gpg
 
 merged_pdfs/*
 debug.log
 
 .cache
-/configs/settings_deployment.production.py
-/configs/settings_deployment.staging.py
-/configs/lametro_service_acct_key.json
 
 *.csv
 !historical_events.csv
 !lametro_divisions.csv
-.gnupg/
 
 *_bk/
 
 lametro/secrets.py
-/configs/settings_deployment.upgrade.py
+.env.local
 
-/configs/upgrade-config.conf
-/configs/upgrade.conf.nginx
-/configs/upgrade.conf.supervisor
-.env
 .venv

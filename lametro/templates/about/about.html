@@ -37,10 +37,7 @@
                             <a href="#about-la-metro">What is the Metro Board of Directors, and how does it work?</a>
                         </li>
                         <li>
-                            <a href="#rules">Board Room Rules</a>
-                        </li>
-                        <li>
-                            <a href="#procedures">Rules &amp; Procedures</a>
+                            <a href="#procedures">Board Room Rules and Procedures</a>
                         </li>
                         <li>
                             <a href="#visit">Visit Metro Headquarters Building</a>
@@ -113,7 +110,7 @@
             <div>
                 <h4>Board Chair</h4>
                 <p>
-                    Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chairmanship rotates annually between the Mayor of Los Angeles, a member of the Los
+                    Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair’s term rotates annually between the Mayor of Los Angeles, a member of the Los
                     Angeles County Board of Supervisors, and one of the City Selection Committee Members.
                 </p>
             </div>
@@ -121,7 +118,7 @@
             <div>
                 <h4>Board Committees</h4>
                 <p>
-                    The Metro Board of Directors is composed of 8 committees. Learn more <a href="{% url 'committees' %}">here</a>.
+                    Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href="{% url 'committees' %}">here</a>.
                 </p>
             </div>
 
@@ -131,26 +128,23 @@
                     Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href="{% url 'events' %}">here</a>.
                 </p>
             </div>
-
-            <div class="mb-5">
-                <h4>Types of Board Reports</h4>
-                {% include 'about/_component_bill_type_table.html' %}
-            </div>
-
-            <div>
-                <h4>Board Report Statuses</h4>
-                {% include 'about/_board_report_statuses.html' %}
-            </div>
         </div>
     </article>
 
     <article class="row mb-3">
-        <div class="col-md-8 pt-nav" id="rules">
-            <h3>Board Room Rules</h3>
-            <ul>
-                <li>If you wish to address the Board, please fill out the salmon-colored request to speak form available in the lobby and give it to the security guard <strong>before 9:45 a.m.</strong></li>
+        <div class="col-md-8 pt-nav" id="procedures" class="scroll-anchor">
+            <h4>Board Room Rules and Procedures</h4>
+            <p>Metro Board follows specific procedures to hold meetings and organize its members.</p>
+            <p>
+                <a href="{% static 'pdf/Board-Rules-Procedures.pdf' %}" target="_blank" aria-label="Read about all Metro Rules and Procedures. - pdf opens in a new tab">
+                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i> Read about all Metro Rules &amp; Procedures.
+                </a>
+            </p>
 
-                <li>General comment on items within the Board’s jurisdiction will be <strong>taken prior to establishment of a quorum and completed at the end of the meeting.</strong></li>
+            <ul>
+                <li>If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <strong>before 9:45 a.m.</strong></li>
+
+                <li>General public comment is only to be used for topics within the Board’s jurisdiction and items not listed on the agenda.</strong></li>
 
                 <li>Public comment on agenda items will be taken as each item is considered.</li>
 
@@ -166,18 +160,22 @@
 
                 <li>If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li>
             </ul>
-        </div>
-    </article>
 
-    <article class="row">
-        <div class="col-md-8 pt-nav" id="procedures">
-            <h3>Rules &amp; Procedures</h3>
-            <p>Metro Board follows specific procedures to hold meetings and organize its members.</p>
-            <p>
-                <a href="http://boardarchives.metro.net/Items/2010/03_March/20100318EMACItem34.pdf" target="_blank" aria-label="Read about all Metro Rules and Procedures - link opens in a new tab">
-                    <i class='fa fa-fw fa-external-link' aria-hidden="true"></i> Read about all Metro Rules &amp; Procedures.
-                </a>
-            </p>
+            <a href="{% static 'pdf/Board-of-Directors-Code-of-Conduct.pdf' %}" target="_blank" aria-label="Code of Conduct - pdf opens in a new tab">
+                <i class="fa fa-fw fa-external-link" aria-hidden="true"></i> Code of Conduct
+            </a>
+        </div>
+
+        <div class="mb-5">
+            <h4>Types of Board Reports</h4>
+            {% include 'about/_component_bill_type_table.html' %}
+        </div>
+
+        <div>
+            <h4>Board Report Statuses</h4>
+            <p>Each Metro board report has one of 22 posible statuses:</p>
+
+            {% include 'about/_board_report_statuses.html' %}
         </div>
     </article>
 
@@ -257,7 +255,6 @@
                 If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message.
                 Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.
             </p>
-            <p>To provide live public comment during a meeting, please see page 4 of the agenda where item appears for instructions on how to call into the meeting.</p>
             <p>For questions about this website or Board records, please email <a href="mailto:boardreport@metro.net">boardreport@metro.net</a>.</p>
         </div>
     </article>

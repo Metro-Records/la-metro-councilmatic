@@ -72,8 +72,7 @@
                 <iframe
                     id="pdf-embed-agenda"
                     class="pdf-viewer d-none d-sm-block"
-                    height="600"
-                    src="/pdfviewer/?{{board_report.url|full_text_doc_url}}">
+                    height="600">
                 </iframe>
                 {% endwith %}
             {% elif legislation.extras.plain_text != "" %}
@@ -289,11 +288,11 @@
             }
         });
 
-        if (window.screen.width > 768){
-            $("#pdf-embed").attr("src", "/pdfviewer/?{{legislation.url|full_text_doc_url}}");
+        if (window.innerWidth > 768){
+            $("#pdf-embed-agenda").attr("src", "/pdfviewer/?{{legislation.board_report.url|full_text_doc_url}}");
         }
         else{
-            $('#pdf-embed').hide()
+            $('#pdf-embed-agenda').hide()
             $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link' aria-label='Opens in a new tab.'></i> View PDF")
         }
 

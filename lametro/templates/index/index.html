@@ -10,9 +10,6 @@
     <section id="section-photo" class="container-fluid pt-4">
         <div class="row">
             <div class='col-sm-10 offset-sm-1'>
-                {% if user.is_authenticated %}
-                    {% include "index/_alert_manager.html" %}
-                {% endif %}
                 <h1 class="home-header">Los Angeles County Metropolitan Transportation Authority</h1>
                 <p class="h3">
                     <span class="text-light">Search Metro Board Reports (2015 – present)</span>
@@ -27,7 +24,7 @@
                     {% include 'common/search_bar.html' %}
                 </div>
                 <p class="archive-link">
-                    <a class=" d-inline-block bg-transparent-white p-2" href="{% url 'lametro:archive-search' %}">Search the Metro Board Archive from 1952-2015 (Board Boxes 1994-Present)</a>
+                    <a class=" d-inline-block bg-transparent-white p-2" href="https://mtasearch01.metro.net:23352/apps/boardarchives/">Search the Metro Board Archive from 1952-2015 (Board Boxes 1994-Present)</a>
                 </p>
             </div>
         </div>
@@ -84,19 +81,20 @@
                         <div class="ms-md-auto d-inline-block mt-2">
                             <p class="mb-0">
                                 Download event calendar:
-                                <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2024 (PDF) - link opens in a new tab">
+                                <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2024 (PDF) - link opens in a new tab">
                                     <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                    Fiscal Year 2024 (PDF)
+                                    Fiscal Year 2025 (PDF)
                                 </a>
                             </p>
                         </div>
                     </div>
-
                 </div>
+
                 <div class="last-hr mb-3">
                     {% if upcoming_committee_meetings %}
                         {% if upcoming_committee_meetings %}
                             {% for event in upcoming_committee_meetings %}
+                                <div style="margin-top: 20px;"></div>
                                 {% include "index/_event_item.html" %}
                             {% endfor %}
                         {% endif %}
@@ -130,9 +128,9 @@
                         <div class="ms-md-auto d-inline-block mt-2">
                             <p class="mb-0">
                                 Download event calendar:
-                                <a href="{% static 'pdf/fy24-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2024 (PDF) - link opens in a new tab">
+                                <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2025 (PDF) - link opens in a new tab">
                                     <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                    Fiscal Year 2024 (PDF)
+                                    Fiscal Year 2025 (PDF)
                                 </a>
                             </p>
                         </div>
@@ -142,13 +140,13 @@
                 <div class="last-hr">
                     {% if most_recent_past_meetings %}
                         {% for event in most_recent_past_meetings %}
+                            <div style="margin-top: 20px;"></div>
                             {% include "index/_past_event_item.html" %}
                         {% endfor %}
                     {% else %}
                         <p><em>No meetings in the past two weeks.</em></p>
                     {% endif %}
                 </div>
-
                 <a href="/events/" class="btn btn-sm btn-primary">
                     View Upcoming and Past {{ CITY_VOCAB.EVENTS }}
                     <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
@@ -191,53 +189,6 @@
         });
 
         $('#beta-info').tooltip({html: true, trigger: 'focus click', placement: 'right'});
-
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-
-        function toggleAlertManager(){
-            $("#alert-manager").toggle();
-        }
-
-        toggleAlertManager();
-
-        $("#alert-manager-toggle").click(function() {
-            toggleAlertManager();
-            if ($(this).text() == "Show"){
-                $(this).text("Hide")
-            } else {
-                $(this).text("Show")
-            }
-            return false;
-        });
-
-        $("#id_type").on('change', function() {
-            $(this).removeClass()
-            $("#id_description").removeClass()
-            if (this.value != "") {
-                $(this).addClass("alert alert-" + this.value)
-                $("#id_description").addClass("alert alert-" + this.value)
-            }
-        });
-
-
-        $("#link, #bold, #italic").on('click', function(){
-            input = document.getElementById("id_description")
-
-            switch(this.id) {
-                case "link":
-                    input.value += ("[this is a link!](https://url.com) ")
-                    break;
-                case "bold":
-                    input.value += ("**this is bolded text!** ")
-                    break;
-                case "italic":
-                    input.value += ("*this is italicized text!* ")
-                    break;
-            }
-        })
 
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

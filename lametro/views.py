@@ -11,15 +11,22 @@ from haystack.query import SearchQuerySet
 import pytz
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
 from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import TemplateView, DeleteView, FormView
+from django.views.generic import (
+    TemplateView,
+    DeleteView,
+    UpdateView,
+    CreateView,
+)
 from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
@@ -54,6 +61,7 @@ from lametro.models import (
     LAMetroOrganization,
     LAMetroSubject,
     Alert,
+    EventBroadcast,
 )
 from lametro.forms import (
     AgendaUrlForm,
@@ -66,7 +74,6 @@ from lametro.forms import (
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic.custom_storage import MediaStorage
 
 from opencivicdata.legislative.models import EventDocument
 
@@ -75,40 +82,32 @@ from .utils import get_list_from_csv
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 
-class LAMetroIndexView(IndexView, FormView):
+class LAMetroIndexView(IndexView):
     template_name = "index/index.html"
 
     event_model = LAMetroEvent
 
-    form_class = AlertForm
-    success_url = reverse_lazy("index")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-    @property
-    def extra_context(self):
-        extra = {}
-
-        extra["upcoming_board_meetings"] = self.event_model.upcoming_board_meetings()[
+        context["upcoming_board_meetings"] = self.event_model.upcoming_board_meetings()[
             :2
         ]
-        extra["most_recent_past_meetings"] = (
+        context["most_recent_past_meetings"] = (
             self.event_model.most_recent_past_meetings()
         )
-        extra["current_meeting"] = self.event_model.current_meeting()
-        extra["bilingual"] = bool([e for e in extra["current_meeting"] if e.bilingual])
-        extra["USING_ECOMMENT"] = settings.USING_ECOMMENT
+        context["current_meeting"] = self.event_model.current_meeting()
+        context["bilingual"] = bool(
+            [e for e in context["current_meeting"] if e.bilingual]
+        )
+        context["USING_ECOMMENT"] = settings.USING_ECOMMENT
 
-        extra["todays_meetings"] = self.event_model.todays_meetings().order_by(
+        context["todays_meetings"] = self.event_model.todays_meetings().order_by(
             "start_date"
         )
-        extra["form"] = LAMetroCouncilmaticSearchForm()
-        extra["alert_form"] = self.get_form()
+        context["form"] = LAMetroCouncilmaticSearchForm()
 
-        return extra
-
-    def form_valid(self, form):
-        form.save()
-
-        return super().form_valid(form)
+        return context
 
 
 class LABillDetail(BillDetailView):
@@ -218,8 +217,9 @@ class LAMetroEventDetail(EventDetailView):
         )
 
         # Find agenda link.
-        if event.documents.all():
-            for document in event.documents.all():
+        documents = event.documents.prefetch_related("links").all()
+        if documents:
+            for document in documents:
                 if "Agenda" in document.note:
                     context["agenda_url"] = document.links.first().url
                     context["document_timestamp"] = document.date
@@ -244,6 +244,7 @@ class LAMetroEventDetail(EventDetailView):
                     preventing the browser from retrieving a cached
                     iframe, when the timestamp changes.
                     """
+        context["documents"] = documents
 
         context["related_board_reports"] = agenda_with_board_reports
         context["base_url"] = PIC_BASE_URL  # Give JS access to this variable
@@ -307,6 +308,34 @@ def delete_event(request, event_slug):
     event = LAMetroEvent.objects.get(slug=event_slug)
     event.delete()
     return HttpResponseRedirect("/events/")
+
+
+@login_required
+def manual_event_live_link(request, event_slug):
+    """
+    Toggle a manually live event broadcast link
+    """
+    event = LAMetroEvent.objects.get(slug=event_slug)
+    has_regular_broadcasts = event.broadcast.filter(is_manually_live=False).exists()
+    manual_broadcasts = event.broadcast.filter(is_manually_live=True)
+
+    if manual_broadcasts.count() == 0 and not has_regular_broadcasts:
+        # Create a manual broadcast
+        EventBroadcast.objects.create(event=event, is_manually_live=True)
+        messages.success(request, f"Link for {event.name} has been manually published.")
+    elif has_regular_broadcasts:
+        messages.info(
+            request,
+            f"The event {event.name} already has a proper broadcast. "
+            + "A manual broadcast cannot be created.",
+        )
+    else:
+        # Delete that broadcast
+        for b in manual_broadcasts:
+            b.delete()
+        messages.success(request, f"Link for {event.name} has been unpublished.")
+
+    return HttpResponseRedirect(f"/event/{event_slug}")
 
 
 class LAMetroEventsView(EventsView):
@@ -533,6 +562,7 @@ class LACommitteesView(CommitteesView):
             LAMetroOrganization.objects.filter(classification="committee")
             .filter(memberships__in=memberships)
             .distinct()
+            .exclude(name__icontains="Measure M ")
         )
 
         qs = qs.prefetch_related(
@@ -644,7 +674,7 @@ class LAPersonDetailView(PersonDetailView):
                     self.get_context_data(form=form, headshot_error=error)
                 )
 
-            person.headshot = self.get_file_url(request, file_obj)
+            person.headshot = file_obj
             person.save()
 
             cache.clear()
@@ -660,22 +690,6 @@ class LAPersonDetailView(PersonDetailView):
         if is_image and file.size <= max_file_size:
             return True
         return False
-
-    def get_file_url(self, request, file):
-        # Save file in bucket and return the resulting url
-
-        file_dir_within_bucket = "user_upload_files/{username}".format(
-            username=request.user
-        )
-
-        # create full file path
-        file_path_within_bucket = os.path.join(file_dir_within_bucket, file.name)
-
-        media_storage = MediaStorage()
-
-        media_storage.save(file_path_within_bucket, file)
-        file_url = media_storage.url(file_path_within_bucket)
-        return file_url
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -779,7 +793,11 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
         for val in self.request.GET.getlist("selected_facets"):
             if val:
-                [k, v] = val.split("_exact:", 1)
+                try:
+                    [k, v] = val.split("_exact:", 1)
+                except ValueError:
+                    continue
+
                 try:
                     selected_facets[k].append(v)
                 except KeyError:
@@ -1001,14 +1019,27 @@ class MinutesView(EventsView):
         return context
 
 
+class AlertCreateView(LoginRequiredMixin, CreateView):
+    template_name = "alerts/alerts.html"
+    form_class = AlertForm
+    success_url = reverse_lazy("alerts")
+
+
 class AlertDeleteView(DeleteView):
     model = Alert
-    success_url = reverse_lazy("index")
+    success_url = reverse_lazy("alerts")
 
     def form_valid(self, form):
         self.object.delete()
 
         return super().form_valid(form)
+
+
+class AlertUpdateView(UpdateView):
+    model = Alert
+    template_name = "alerts/alert_edit.html"
+    success_url = reverse_lazy("alerts")
+    fields = ["description", "type"]
 
 
 def metro_login(request):

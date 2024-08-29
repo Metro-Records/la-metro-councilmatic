@@ -312,6 +312,7 @@ def test_streamed_meeting_is_marked_as_broadcast(concurrent_current_meetings, mo
     # is still upcoming, since it has not yet broadcast.
     with freeze_time(LAMetroEvent._time_from_now(hours=1)):
         mock_response.json.return_value = []
+        del test_event_a.has_passed
 
         assert test_event_a.has_passed
         assert not any([test_event_a.is_upcoming, test_event_a.is_ongoing])
@@ -457,6 +458,7 @@ def test_event_is_upcoming(event, mocker):
     test_event.save()
 
     with freeze_time(tomorrow_morning):
+        del test_event.has_passed
         assert not test_event.is_upcoming
 
 
@@ -754,3 +756,74 @@ def test_exclude_short_broadcasted_events(event):
 
     potentially_current = LAMetroEvent._potentially_current_meetings()
     assert test_event not in potentially_current
+
+
+@pytest.mark.django_db
+def test_manual_broadcast_permissions(event, client, admin_client, mocker):
+    """
+    Check that only authenticated users can make/delete manual broadcasts
+    """
+    test_event = event.build(has_broadcast=False)
+    mock_api_representation = mocker.patch(
+        "lametro.models.SourcesMixin.api_representation",
+        new_callable=mocker.PropertyMock,
+    )
+    mock_api_representation.return_value = {
+        "status_code": 200,
+        "EventBodyName": test_event.name,
+    }
+
+    detail_url = reverse("lametro:events", args=[test_event.slug])
+    make_manual_url = reverse(
+        "manual_event_live_link", kwargs={"event_slug": test_event.slug}
+    )
+    publish_text = "Publish Watch Live Link"
+    watch_text = "Watch in English"
+
+    # Check that logged out users cannot manage broadcasts
+    response = client.get(detail_url)
+    assert publish_text not in response.content.decode("utf-8")
+    response = client.get(make_manual_url, follow=True)
+    assert response.status_code == 404
+
+    # Check that logged in users can publish broadcasts
+    response = admin_client.get(detail_url)
+    assert publish_text in response.content.decode("utf-8")
+    response = admin_client.get(make_manual_url, follow=True)
+    assert response.status_code == 200
+    assert watch_text in response.content.decode("utf-8")
+
+    # Check that logged in users can delete the broadcasts
+    response = admin_client.get(make_manual_url, follow=True)
+    assert watch_text not in response.content.decode("utf-8")
+
+
+@pytest.mark.django_db
+def test_manually_broadcasted_events(event, admin_client, mocker):
+    """
+    Check that events marked as having a manual broadcast are counted as being current/live.
+    """
+    test_event = event.build(has_broadcast=False)
+    mock_api_representation = mocker.patch(
+        "lametro.models.SourcesMixin.api_representation",
+        new_callable=mocker.PropertyMock,
+    )
+    mock_api_representation.return_value = {
+        "status_code": 200,
+        "EventBodyName": test_event.name,
+    }
+
+    make_manual_url = reverse(
+        "manual_event_live_link", kwargs={"event_slug": test_event.slug}
+    )
+    detail_url = reverse("lametro:events", args=[test_event.slug])
+
+    # Create the broadcast
+    admin_client.get(make_manual_url)
+
+    response = admin_client.get(reverse("index"))
+    assert "Current Meeting" in response.content.decode("utf-8")
+
+    current_meeting_str = 'meeting currently has a manually published "Watch Live" link'
+    response = admin_client.get(detail_url)
+    assert current_meeting_str in response.content.decode("utf-8")
