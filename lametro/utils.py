@@ -2,10 +2,45 @@ import csv
 import os
 import re
 import pytz
+import requests
+import sys
+import time
 
 from django.conf import settings
 
+from haystack.utils.highlighting import Highlighter
+
 app_timezone = pytz.timezone(settings.TIME_ZONE)
+
+
+class ExactHighlighter(Highlighter):
+    """
+    This class customizes the Haystack Highlighter to allow for
+    highlighting multi-word strings.
+    https://django-haystack.readthedocs.io/en/master/highlighting.html#highlighter
+    https://github.com/django-haystack/django-haystack/blob/master/haystack/utils/highlighting.py
+
+    Use this class to build custom filters in `search_result.html`.
+    """
+
+    def __init__(self, query, **kwargs):
+        super(Highlighter, self).__init__()
+        self.query_words = self.make_query_words(query)
+
+    def make_query_words(self, query):
+        query_words = set()
+        if query.startswith('"') and query.endswith('"'):
+            query_words.add(query.strip('"'))
+        else:
+            query_words = set(
+                [
+                    word.lower()
+                    for word in query.split()
+                    if not word.startswith("-") and len(word) > 3
+                ]
+            )
+
+        return query_words
 
 
 def format_full_text(full_text):
@@ -74,3 +109,39 @@ def get_list_from_csv(filename):
         my_list = [row for row in reader]
 
     return my_list
+
+
+class LAMetroRequestTimeoutException(Exception):
+    def __init__(self, url, timeout):
+        super().__init__(f"Request to {url} took longer than {timeout} seconds.")
+
+
+def timed_get(url, params=None, **kwargs):
+    """
+    Convenience function to ensure GET requests that time out raise an exception.
+
+    See https://stackoverflow.com/a/71453648
+    """
+
+    TOTAL_TIMEOUT = kwargs.get("timeout", settings.REQUEST_TIMEOUT)
+
+    def trace_function(frame, event, arg):
+        """
+        Makes sure our request raises an exception if the total time from
+        start to finish exceeds TOTAL_TIMEOUT.
+        """
+        if time.time() - start > TOTAL_TIMEOUT:
+            raise LAMetroRequestTimeoutException(url, TOTAL_TIMEOUT)
+
+        return trace_function
+
+    start = time.time()
+    sys.settrace(trace_function)
+    try:
+        resp = requests.get(url, params, **kwargs)
+    except Exception as e:
+        raise e
+    finally:
+        sys.settrace(None)
+
+    return resp

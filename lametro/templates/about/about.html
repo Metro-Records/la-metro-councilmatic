@@ -4,10 +4,10 @@
 {% block content %}
 
 {% cache 600 about_wrapper 'about' %}
-<div>
+<section>
 
     <div class="row mt-5">
-        <div class="col-md-8 mb-5">
+        <article class="col-md-8 mb-5">
             <h1 id="about">About us</h1>
             <p>
                 This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority.
@@ -16,13 +16,14 @@
 
             <p>
                 With this site, you can:
-                <ul>
-                    <li>Stay up-to-date with your local representatives</li>
-                    <li>See the schedule of public events</li>
-                    <li>Track and comment on issues you care about</li>
-                </ul>
             </p>
-        </div>
+
+            <ul>
+                <li>Stay up-to-date with your local representatives</li>
+                <li>See the schedule of public events</li>
+                <li>Track and comment on issues you care about</li>
+            </ul>
+        </article>
 
         <div class="col-8 col-md-4">
             <div class="card bg-secondary">
@@ -36,10 +37,7 @@
                             <a href="#about-la-metro">What is the Metro Board of Directors, and how does it work?</a>
                         </li>
                         <li>
-                            <a href="#rules">Board Room Rules</a>
-                        </li>
-                        <li>
-                            <a href="#procedures">Rules &amp; Procedures</a>
+                            <a href="#procedures">Board Room Rules and Procedures</a>
                         </li>
                         <li>
                             <a href="#visit">Visit Metro Headquarters Building</a>
@@ -59,7 +57,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="about-la-metro">
             <div>
                 <h3>What is the Metro Board of Directors, and how does it work?</h3>
@@ -89,13 +87,13 @@
                 <p>
                     The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee,
                     there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:
-                    <ul>
-                        <li>North County/San Fernando Valley</li>
-                        <li>San Gabriel Valley</li>
-                        <li>Southeast/Long Beach</li>
-                        <li>Southwest Corridor</li>
-                    </ul>
                 </p>
+                <ul>
+                    <li>North County/San Fernando Valley</li>
+                    <li>San Gabriel Valley</li>
+                    <li>Southeast/Long Beach</li>
+                    <li>Southwest Corridor</li>
+                </ul>
                 <p>
                     Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made,
                     seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee,
@@ -112,7 +110,7 @@
             <div>
                 <h4>Board Chair</h4>
                 <p>
-                    Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chairmanship rotates annually between the Mayor of Los Angeles, a member of the Los
+                    Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair’s term rotates annually between the Mayor of Los Angeles, a member of the Los
                     Angeles County Board of Supervisors, and one of the City Selection Committee Members.
                 </p>
             </div>
@@ -120,7 +118,7 @@
             <div>
                 <h4>Board Committees</h4>
                 <p>
-                    The Metro Board of Directors is composed of 8 committees. Learn more <a href="{% url 'committees' %}">here</a>.
+                    Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href="{% url 'committees' %}">here</a>.
                 </p>
             </div>
 
@@ -130,26 +128,23 @@
                     Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href="{% url 'events' %}">here</a>.
                 </p>
             </div>
-
-            <div class="mb-5">
-                <h4>Types of Board Reports</h4>
-                {% include 'about/_component_bill_type_table.html' %}
-            </div>
-
-            <div>
-                <h4>Board Report Statuses</h4>
-                {% include 'about/_board_report_statuses.html' %}
-            </div>
         </div>
-    </div>
+    </article>
 
-    <div class="row mb-3">
-        <div class="col-md-8 pt-nav" id="rules">
-            <h3>Board Room Rules</h3>
+    <article class="row mb-3">
+        <div class="col-md-8 pt-nav" id="procedures" class="scroll-anchor">
+            <h4>Board Room Rules and Procedures</h4>
+            <p>Metro Board follows specific procedures to hold meetings and organize its members.</p>
+            <p>
+                <a href="{% static 'pdf/Board-Rules-Procedures.pdf' %}" target="_blank" aria-label="Read about all Metro Rules and Procedures. - pdf opens in a new tab">
+                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i> Read about all Metro Rules &amp; Procedures.
+                </a>
+            </p>
+
             <ul>
-                <li>If you wish to address the Board, please fill out the salmon-colored request to speak form available in the lobby and give it to the security guard <strong>before 9:45 a.m.</strong></li>
+                <li>If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <strong>before 9:45 a.m.</strong></li>
 
-                <li>General comment on items within the Board’s jurisdiction will be <strong>taken prior to establishment of a quorum and completed at the end of the meeting.</strong></li>
+                <li>General public comment is only to be used for topics within the Board’s jurisdiction and items not listed on the agenda.</strong></li>
 
                 <li>Public comment on agenda items will be taken as each item is considered.</li>
 
@@ -165,22 +160,26 @@
 
                 <li>If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li>
             </ul>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-8 pt-nav" id="procedures">
-            <h3>Rules &amp; Procedures</h3>
-            <p>Metro Board follows specific procedures to hold meetings and organize its members.</p>
-            <p>
-                <a href="http://boardarchives.metro.net/Items/2010/03_March/20100318EMACItem34.pdf" target="_blank" aria-label="Read about all Metro Rules and Procedures - link opens in a new tab">
-                    <i class='fa fa-fw fa-external-link' aria-hidden="true"></i> Read about all Metro Rules &amp; Procedures.
-                </a>
-            </p>
+            <a href="{% static 'pdf/Board-of-Directors-Code-of-Conduct.pdf' %}" target="_blank" aria-label="Code of Conduct - pdf opens in a new tab">
+                <i class="fa fa-fw fa-external-link" aria-hidden="true"></i> Code of Conduct
+            </a>
         </div>
-    </div>
 
-    <div class="row">
+        <div class="mb-5">
+            <h4>Types of Board Reports</h4>
+            {% include 'about/_component_bill_type_table.html' %}
+        </div>
+
+        <div>
+            <h4>Board Report Statuses</h4>
+            <p>Each Metro board report has one of 22 posible statuses:</p>
+
+            {% include 'about/_board_report_statuses.html' %}
+        </div>
+    </article>
+
+    <article class="row">
         <div class="col-md-8 pt-nav" id="visit">
             <h3>Visit Metro Headquarters Building</h3>
             <address class="d-block">
@@ -194,9 +193,9 @@
                 </a>
             </p>
         </div>
-    </div>
+    </article>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="data">
             <h3>Data</h3>
             <p>
@@ -221,9 +220,9 @@
             </p>
 
         </div>
-    </div>
+    </article>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="credits">
             <h3>Credits</h3>
 
@@ -238,30 +237,29 @@
 
         </div>
 
-    </div>
+    </article>
 
-    <div class="row">
+    <article class="row">
         <div class="col-md-8 pt-nav" id="contact">
             <h3>Contact us</h3>
 
             <p>
                 For questions about or comments for the Metro Board, please contact <a href="mailto:boardclerk@metro.net">boardclerk@metro.net</a>. Written public comment can be mailed to:
-                <address class="d-block">
-                    Office of Board Administration<br/>
-                    1 Gateway Plaza, Mail Stop 99-3-1<br/>
-                    Los Angeles, CA 90012
-                </address>
             </p>
+            <address class="d-block">
+                Office of Board Administration<br/>
+                1 Gateway Plaza, Mail Stop 99-3-1<br/>
+                Los Angeles, CA 90012
+            </address>
             <p>
                 If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message.
                 Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.
             </p>
-            <p>To provide live public comment during a meeting, please see page 4 of the agenda where item appears for instructions on how to call into the meeting.</p>
             <p>For questions about this website or Board records, please email <a href="mailto:boardreport@metro.net">boardreport@metro.net</a>.</p>
         </div>
-    </div>
+    </article>
 
-</div>
+</section>
 {% endcache %}
 
 {% endblock %}

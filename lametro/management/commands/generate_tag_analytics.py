@@ -1,4 +1,5 @@
 import csv
+import json
 from io import StringIO, BytesIO
 from datetime import datetime
 from tqdm import tqdm
@@ -116,8 +117,9 @@ class Command(BaseCommand):
             "https://www.googleapis.com/auth/drive",
         ]
 
-        credentials = service_account.Credentials.from_service_account_file(
-            settings.SERVICE_ACCOUNT_KEY_PATH
+        api_key = json.loads(settings.GOOGLE_SERVICE_ACCT_API_KEY)
+        credentials = service_account.Credentials.from_service_account_info(
+            api_key
         ).with_scopes(SCOPES)
 
         return build("drive", "v3", credentials=credentials)

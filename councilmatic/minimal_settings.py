@@ -19,3 +19,13 @@ INSTALLED_APPS = (
     "debug_toolbar",
     "captcha",
 )
+
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine",
+        "URL": "http://elasticsearch:9200",
+        "INDEX_NAME": "lametro",
+        "SILENTLY_FAIL": False,
+        "BATCH_SIZE": 10,
+    }
+}

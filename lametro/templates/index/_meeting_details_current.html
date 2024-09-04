@@ -84,16 +84,18 @@
         <!-- Buttons -->
         <div class="row">
             <div class="col-12">
-                <a class="btn btn-sm btn-primary current-meeting-info" href="{{ current_meeting.first.english_live_media_url }}" target="_blank" aria-label="Watch in English - link opens in a new tab">
-                    <i class="fa fa-headphones" aria-hidden="true"></i>
-                    Watch in English
-                </a>
-
-                {% if bilingual %}
-                    <a lang="es" class="btn btn-sm btn-primary current-meeting-info" href="{{ current_meeting.first.spanish_live_media_url }}" target="_blank" aria-label="Ver en Español - enlace se abre en una pestaña nueva">
+                {% if current_meeting.first.english_live_media_url %}
+                    <a class="btn btn-sm btn-primary current-meeting-info" href="{{ current_meeting.first.english_live_media_url }}" target="_blank" aria-label="Watch in English - link opens in a new tab">
                         <i class="fa fa-headphones" aria-hidden="true"></i>
-                        Ver en Español
+                        Watch in English
                     </a>
+
+                    {% if bilingual %}
+                        <a lang="es" class="btn btn-sm btn-primary current-meeting-info" href="{{ current_meeting.first.spanish_live_media_url }}" target="_blank" aria-label="Ver en Español - enlace se abre en una pestaña nueva">
+                            <i class="fa fa-headphones" aria-hidden="true"></i>
+                            Ver en Español
+                        </a>
+                    {% endif %}
                 {% endif %}
 
                 {% if USING_ECOMMENT %}
@@ -110,7 +112,6 @@
                     </a>
                 {% endif %}
             </div>
-
         </div>
     {% endif %}
 </div>

@@ -8,8 +8,38 @@ from .settings_jurisdiction import *  # noqa
 
 env = environ.Env(
     # Set default values
-    DEBUG=(bool, False),
-    LOCAL_DOCKER=(bool, False),
+    LOCAL_DOCKER=(bool, True),
+    DJANGO_SECRET_KEY=(str, "replacethiswithsomethingsecret"),
+    DJANGO_DEBUG=(bool, True),
+    DJANGO_ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1", "0.0.0.0"]),
+    COUNCILMATIC_SUPPRESS_LIVE_MEDIA=(list, []),
+    DATABASE_URL=(str, "postgis://postgres:postgres@postgres:5432/lametro"),
+    SEARCH_URL=(str, "http://elasticsearch:9200"),
+    SHOW_TEST_EVENTS=(bool, False),
+    MERGE_HOST=(str, "https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/"),
+    MERGE_ENDPOINT=(
+        str,
+        "http://host.docker.internal:8080/api/experimental/dags/make_packet/dag_runs",
+    ),
+    FLUSH_KEY=(str, "super secret junk"),
+    REFRESH_KEY=(str, "something very secret"),
+    API_KEY=(str, "test api key"),
+    SMART_LOGIC_ENVIRONMENT=(str, "d3807554-347e-4091-90ea-f107a906aaff"),
+    SMART_LOGIC_KEY=(str, ""),
+    ANALYTICS_TRACKING_CODE=(str, ""),
+    SENTRY_DSN=(str, ""),
+    AWS_KEY=(str, ""),
+    AWS_SECRET=(str, ""),
+    AWS_S3_ACCESS_KEY_ID=(str, ""),
+    AWS_S3_SECRET_ACCESS_KEY=(str, ""),
+    AWS_STORAGE_BUCKET_NAME=(str, ""),
+    # Test keys from:
+    # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do
+    RECAPTCHA_PUBLIC_KEY=(str, "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"),
+    RECAPTCHA_PRIVATE_KEY=(str, "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"),
+    REMOTE_ANALYTICS_FOLDER=(str, ""),
+    GOOGLE_SERVICE_ACCT_API_KEY=(str, ""),
+    GOOGLE_API_KEY=(str, ""),
 )
 
 # Core Django Settings
@@ -19,9 +49,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
-DEBUG = env.bool("DEBUG")
+DEBUG = env.bool("DJANGO_DEBUG")
 SHOW_TEST_EVENTS = env.bool("SHOW_TEST_EVENTS")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+COUNCILMATIC_SUPPRESS_LIVE_MEDIA = env.list("COUNCILMATIC_SUPPRESS_LIVE_MEDIA")
 
 if env("LOCAL_DOCKER"):
     import socket
@@ -30,6 +61,9 @@ if env("LOCAL_DOCKER"):
     # Don't do this in production!
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[:-1] + "1" for ip in ips] + ["127.0.0.1"]
+
+if DEBUG:
+    SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -174,6 +208,8 @@ API_KEY = env("API_KEY")
 # - Analytics
 ANALYTICS_TRACKING_CODE = env("ANALYTICS_TRACKING_CODE")
 SERVICE_ACCOUNT_KEY_PATH = "configs/lametro_service_acct_key.json"
+# Service account key should be a valid JSON string
+GOOGLE_SERVICE_ACCT_API_KEY = env("GOOGLE_SERVICE_ACCT_API_KEY")
 REMOTE_ANALYTICS_FOLDER = env("REMOTE_ANALYTICS_FOLDER")
 
 # - Set this to allow Disqus comments to render.
@@ -183,11 +219,27 @@ DISQUS_SHORTNAME = None
 GOOGLE_API_KEY = env("GOOGLE_API_KEY")
 
 # - AWS
+AWS_S3_ACCESS_KEY_ID = env("AWS_S3_ACCESS_KEY_ID")
+AWS_S3_SECRET_ACCESS_KEY = env("AWS_S3_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+
+if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
+    print(
+        f"AWS configured. Uploading and retrieving headshots from {AWS_STORAGE_BUCKET_NAME}..."
+    )
+    from django.core.files.storage import get_storage_class
+
+    S3Storage = get_storage_class("storages.backends.s3boto3.S3Boto3Storage")
+
+    AWS_QUERYSTRING_AUTH = False
+    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = S3Storage()
+
+else:
+    print("AWS not configured. Defaulting to local storage...")
+
+# - Used by refresh_pic management command
 AWS_KEY = env("AWS_KEY")
 AWS_SECRET = env("AWS_SECRET")
-
-# SITE CONFIG
-HEADSHOT_PATH = os.path.join(os.path.dirname(__file__), ".." "/lametro/static/images/")
 
 # LOGGING
 SENTRY_DSN = env("SENTRY_DSN")
@@ -201,6 +253,16 @@ if SENTRY_DSN:
 
     from councilmatic.logging import before_send
 
+    def custom_sampler(ctx):
+        if "wsgi_environ" in ctx:
+            path = ctx["wsgi_environ"].get("PATH_INFO", "")
+            # Don't trace performance of static assets
+            if path.startswith("/static/"):
+                return 0
+
+        # Sample other pages at 5% rate
+        return 0.05
+
     sentry_logging = LoggingIntegration(
         level=logging.INFO,  # Capture info and above as breadcrumbs
         event_level=logging.WARNING,  # Send warnings and above as events
@@ -213,6 +275,10 @@ if SENTRY_DSN:
         # If you wish to associate users to errors (assuming you are using
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
+        release=f"{os.environ['HEROKU_RELEASE_VERSION']}-{os.environ['HEROKU_APP_NAME']}",
+        enable_tracing=True,
+        traces_sampler=custom_sampler,
+        profiles_sample_rate=0.05,
     )
 
 # Use standard logging module to catch errors in import_data (which uses a 'logger')
@@ -243,4 +309,18 @@ LOGGING = {
     },
 }
 
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+
+# Allow some html tags to render in markdown. Mainly for alerts
+MARKDOWNIFY = {
+    "default": {
+        "WHITELIST_TAGS": [
+            "br",
+            "strong",
+            "em",
+            "a",
+        ]
+    }
+}
+
+# Hard time limit on HTTP requests
+REQUEST_TIMEOUT = 5

@@ -13,7 +13,7 @@ Optional. Screenshots, `curl` examples, etc.
 Optional. Ancillary topics, caveats, alternative strategies that didn't work out, anything else.
 
 ## Testing Instructions
-
+** Note: if this PR requires a database migration, the review app may not work and this may have to be tested locally.
  * How to test this PR
  * Prefer bulleted description
  * Start after checking out this branch

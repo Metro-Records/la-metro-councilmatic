@@ -136,7 +136,11 @@ div#google_translate_element {
     min-width: 185px;
 }
 
-.pdf-viewer { max-width: 840px; }
+.pdf-viewer {
+    width:100%;
+    max-width: 840px;
+    border: 0;
+}
 
 .archive-link {
     font-weight: 700;
@@ -189,7 +193,7 @@ strong.match-group {
 }
 
 .label-info {
-  background-color: #EB6864;
+  background-color: #C7403B;
 }
 
 .label-teal { background-color: #0E8389; }
@@ -711,7 +715,7 @@ button.skip-main:focus {
 }
 
 label[for=id_type], label[for=id_description], .text-white, .text-white>table * {
-    color: white;
+    font-weight: bold;
 }
 
 textarea#id_description {
@@ -773,6 +777,15 @@ a, .btn-link, .page-link {
 footer {
     width: 100%;
     margin-top: auto !important;
+    margin-bottom: 1.5rem;
+    padding-bottom: 3rem;
+    padding-top: 1rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+footer .navbar-brand {
+    width: fit-content;
 }
 
 .radio-focus:focus-within {
@@ -788,4 +801,16 @@ caption {
     float: left;
     position: relative;
     top: -14px;
+}
+
+.w-12pcnt{
+    width: 12%
+}
+
+.w-22pcnt {
+    width: 22%;
+}
+
+.scroll-anchor {
+    scroll-margin-top: 80px;
 }
