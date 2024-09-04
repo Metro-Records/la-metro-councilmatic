@@ -715,7 +715,7 @@ button.skip-main:focus {
 }
 
 label[for=id_type], label[for=id_description], .text-white, .text-white>table * {
-    color: white;
+    font-weight: bold;
 }
 
 textarea#id_description {
