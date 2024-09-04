@@ -391,13 +391,8 @@ class LAMetroEventsView(EventsView):
             context["all_events"] = [(d, list(events)) for d, events in org_all_events]
 
         else:
-            past_events = (
-                media_events.filter(start_time__lt=timezone.now())
-                .prefetch_related(
-                    Prefetch("documents", minutes_queryset, to_attr="minutes")
-                )
-                .prefetch_related("minutes__links")
-                .order_by("-start_time")
+            past_events = media_events.filter(start_time__lt=timezone.now()).order_by(
+                "-start_time"
             )
             future_events = media_events.filter(start_time__gt=timezone.now()).order_by(
                 "start_time"
@@ -428,6 +423,11 @@ class LAMetroEventsView(EventsView):
                 future_events = media_events.filter(
                     start_time__date__in=next_three_meeting_days
                 ).order_by("start_time")
+
+            # Prefetch documents for past events
+            past_events = past_events.prefetch_related(
+                Prefetch("documents", minutes_queryset, to_attr="minutes")
+            ).prefetch_related("minutes__links")
 
             # Group meetings by day
             org_future_events = itertools.groupby(future_events, key=day_grouper)
