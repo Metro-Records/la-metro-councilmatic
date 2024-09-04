@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
-from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q
+from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q, F
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
@@ -391,39 +391,54 @@ class LAMetroEventsView(EventsView):
             context["all_events"] = [(d, list(events)) for d, events in org_all_events]
 
         else:
-            # Upcoming events
-            future_events = media_events.filter(start_time__gt=timezone.now()).order_by(
-                "start_time"
-            )
-            org_future_events = itertools.groupby(future_events, key=day_grouper)
-
-            # Past events
             past_events = (
                 media_events.filter(start_time__lt=timezone.now())
-                .order_by("-start_time")
                 .prefetch_related(
                     Prefetch("documents", minutes_queryset, to_attr="minutes")
                 )
                 .prefetch_related("minutes__links")
+                .order_by("-start_time")
             )
+            future_events = media_events.filter(start_time__gt=timezone.now()).order_by(
+                "start_time"
+            )
+
+            # Limit past events shown unless user requested all
+            if not self.request.GET.get("show") == "past":
+                last_three_meeting_days = (
+                    past_events.annotate(date=F("start_time__date"))
+                    .order_by("-date")
+                    .values_list("date", flat=True)
+                    .distinct()[:3]
+                )
+
+                past_events = past_events.filter(
+                    start_time__date__in=last_three_meeting_days
+                ).order_by("-start_time")
+
+            # Limit future events shown unless user requested all
+            if not self.request.GET.get("show") == "future":
+                next_three_meeting_days = (
+                    future_events.annotate(date=F("start_time__date"))
+                    .order_by("date")
+                    .values_list("date", flat=True)
+                    .distinct()[:3]
+                )
+
+                future_events = media_events.filter(
+                    start_time__date__in=next_three_meeting_days
+                ).order_by("start_time")
+
+            # Group meetings by day
+            org_future_events = itertools.groupby(future_events, key=day_grouper)
             org_past_events = itertools.groupby(past_events, key=day_grouper)
 
-            # Only show three days of events by default
-            past_events = itertools.islice(org_past_events, 3)
-            future_events = itertools.islice(org_future_events, 3)
-
-            # Did user request all past or future events?
-            show_all_past_events = self.request.GET.get("show") == "past"
-            show_all_future_events = self.request.GET.get("show") == "future"
-            if show_all_past_events:
-                past_events = org_past_events
-            elif show_all_future_events:
-                future_events = org_future_events
-
             context["future_events"] = [
-                (d, list(events)) for d, events in future_events
+                (d, list(events)) for d, events in org_future_events
             ]
-            context["past_events"] = [(d, list(events)) for d, events in past_events]
+            context["past_events"] = [
+                (d, list(events)) for d, events in org_past_events
+            ]
 
         context["user_subscribed"] = False
         if self.request.user.is_authenticated:
