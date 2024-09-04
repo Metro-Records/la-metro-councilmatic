@@ -74,16 +74,20 @@
                         </li>
                         {% nocache %}
                             {% if user.is_authenticated %}
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
-                                    <ul class="dropdown-menu">
+                                <li class="nav-item dropdown me-2 pt-3">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Admin
+                                    </a>
+                                    <ul class="dropdown-menu shadow rounded-bottom">
                                         <li>
-                                            <a href="{% url 'alerts' %}">Alerts</a>
+                                            <a class="dropdown-item dropdown-size" href="{% url 'alerts' %}">Alerts</a>
                                         </li>
                                     </ul>
                                 </li>
-                                <li>
-                                    <a href="{% url 'metro_logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                                <li class="nav-item pt-3">
+                                    <a class="nav-link" href="{% url 'metro_logout' %}">
+                                        <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                                    </a>
                                 </li>
                             {% else %}
                                 <li><div id="google_translate_element"></div></li>
