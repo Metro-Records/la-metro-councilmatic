@@ -777,6 +777,15 @@ a, .btn-link, .page-link {
 footer {
     width: 100%;
     margin-top: auto !important;
+    margin-bottom: 1.5rem;
+    padding-bottom: 3rem;
+    padding-top: 1rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+footer .navbar-brand {
+    width: fit-content;
 }
 
 .radio-focus:focus-within {
