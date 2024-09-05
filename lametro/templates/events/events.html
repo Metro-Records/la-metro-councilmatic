@@ -50,7 +50,7 @@
             {% endif %}
 
             {% if future_events %}
-                <h2><span>Upcoming {{ CITY_VOCAB.EVENTS }}</span>
+                <h2 id="upcoming-meetings"><span>Upcoming {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
                 <small>
                     <a href="rss/" title="RSS feed for Upcoming and Recent Events">
@@ -76,10 +76,13 @@
                     </div>
                 {% endfor %}
 
-                <a href="" class="btn btn-salmon" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down"></i>Show all upcoming meetings</a>
-                <a href="" class="btn btn-salmon" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer upcoming meetings</a>
+								{% if 'show' in request.GET and request.GET.show == 'future' %}
+									<a href="{% url 'events' %}" class="btn btn-salmon" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer upcoming meetings</a>
+								{% else %}
+									<a href="{% url 'events' %}?show=future#upcoming-meetings" class="btn btn-salmon" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down"></i>Show all upcoming meetings</a>
+								{% endif %}
 
-                <h2 style="margin-top: 40px;"><span>Past {{ CITY_VOCAB.EVENTS }}</span>
+                <h2 id="past-meetings" style="margin-top: 40px;"><span>Past {{ CITY_VOCAB.EVENTS }}</span>
                 <br class="non-desktop-only"/>
                 <small><a href="rss/" title="RSS feed for Upcoming and Recent Events"><i class="fa fa-rss-square" aria-hidden="true"></i></a></small>
                 </h2><br class="non-mobile-only"/>
@@ -94,8 +97,11 @@
                     </div>
                 {% endfor %}
 
-                <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
-                <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
+								{% if 'show' in request.GET and request.GET.show == 'past' %}
+									<a href="{% url 'events' %}" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
+								{% else %}
+									<a href="{% url 'events' %}?show=past#past-meetings" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
+								{% endif %}
 
             {% elif past_events %}
                 <h2 style="margin-top: 40px;"><span>Past {{ CITY_VOCAB.EVENTS }}</span>
@@ -115,6 +121,7 @@
 
                 <a href="" class="btn btn-salmon" id="more-events"><i class="fa fa-fw fa-chevron-down"></i>Show all past meetings</a>
                 <a href="" class="btn btn-salmon" id="fewer-events"><i class="fa fa-fw fa-chevron-up"></i>Show fewer past meetings</a>
+
             {% elif select_events %}
                 <h2><span>{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</span>
                 <br class="non-desktop-only"/>
@@ -174,53 +181,8 @@
     <script type="{% static 'js/lib/bootstrap-datetimepicker.js' %}"></script>
     <script>
     $(document).ready(function() {
-
         $('#from').datepicker();
         $('#to').datepicker();
-
-        function collapseUpcomingEvents(){
-            $(".event-upcoming-listing:gt(2)").hide();
-            $("#more-upcoming-events").show();
-            $("#fewer-upcoming-events").hide();
-        }
-        function expandUpcomingEvents(){
-            $(".event-upcoming-listing:gt(2)").show();
-            $("#more-upcoming-events").hide();
-            $("#fewer-upcoming-events").show();
-        }
-        function collapseEvents(){
-            $(".event-listing:gt(4)").hide();
-            $("#more-events").show();
-            $("#fewer-events").hide();
-        }
-        function expandEvents(){
-            $(".event-listing:gt(4)").show();
-            $("#more-events").hide();
-            $("#fewer-events").show();
-        }
-
-        collapseEvents();
-        collapseUpcomingEvents();
-
-        $("#more-upcoming-events").click(function() {
-            expandUpcomingEvents();
-            return false;
-        });
-
-        $("#fewer-upcoming-events").click(function() {
-            collapseUpcomingEvents();
-            return false;
-        });
-
-        $("#more-events").click(function() {
-            expandEvents();
-            return false;
-        });
-
-        $("#fewer-events").click(function() {
-            collapseEvents();
-            return false;
-        });
     });
     </script>
 {% endblock %}

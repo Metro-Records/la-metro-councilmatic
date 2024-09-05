@@ -24,6 +24,7 @@ django-markdownify==0.9.3
 
 # Development
 django-debug-toolbar
+django-debug-toolbar-template-profiler
 pytest
 pytest-django
 pytest-mock==1.6.3
