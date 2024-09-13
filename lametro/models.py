@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.core.cache import cache
 
-from django.db.models import Prefetch, Case, When, Value, Q, F
+from django.db.models import Prefetch, Case, When, Value, Q, F, Subquery
 from django.db.models.functions import Now, Cast
 from django.templatetags.static import static
 from opencivicdata.legislative.models import (
@@ -24,6 +24,7 @@ from opencivicdata.legislative.models import (
     EventRelatedEntity,
     RelatedBill,
     BillVersion,
+    BillAction,
 )
 from proxy_overrides.related import ProxyForeignKey
 
@@ -371,7 +372,7 @@ class LAMetroPerson(Person, SourcesMixin):
     def slug_name(self):
         return slugify(self.name)
 
-    @property
+    @cached_property
     def latest_council_membership(self):
         filter_kwarg = {
             "organization__name": settings.OCD_CITY_COUNCIL_NAME,
@@ -430,12 +431,16 @@ class LAMetroPerson(Person, SourcesMixin):
 
         Organizations do not include the Board of Directors.
         """
+        actions = BillAction.objects.select_related("organization").filter(
+            organization__classification="committee",
+            organization__memberships__in=Subquery(
+                self.current_memberships.values("pk")
+            ),
+        )
+
         qs = (
             LAMetroBill.objects.defer("extras")
-            .filter(
-                actions__organization__classification="committee",
-                actions__organization__memberships__in=self.current_memberships,
-            )
+            .filter(actions__in=Subquery(actions.values("pk")))
             .order_by("-actions__date")
             .distinct()[:5]
         )
