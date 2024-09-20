@@ -26,8 +26,6 @@ from django.db.models import (
     IntegerField,
     Q,
     F,
-    OuterRef,
-    Subquery,
 )
 from django.urls import reverse
 from django.utils import timezone
@@ -63,8 +61,6 @@ from councilmatic_core.models import Organization, Membership
 
 from opencivicdata.core.models import PersonLink
 from opencivicdata.legislative.models import (
-    Bill,
-    BillVersion,
     BillAction,
     EventRelatedEntity,
 )
