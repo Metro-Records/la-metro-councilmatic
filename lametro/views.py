@@ -17,7 +17,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
-from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q, F
+from django.db.models import (
+    Max,
+    Prefetch,
+    Case,
+    When,
+    Value,
+    IntegerField,
+    Q,
+    F,
+    OuterRef,
+    Subquery,
+)
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
@@ -51,6 +62,12 @@ from councilmatic_core.views import (
 from councilmatic_core.models import Organization, Membership
 
 from opencivicdata.core.models import PersonLink
+from opencivicdata.legislative.models import (
+    Bill,
+    BillVersion,
+    BillAction,
+    EventRelatedEntity,
+)
 
 from lametro.models import (
     LAMetroBill,
@@ -209,8 +226,33 @@ class LAMetroEventDetail(EventDetailView):
         except EventDocument.DoesNotExist:
             pass
 
+        most_recent_actions = (
+            BillAction.objects.filter(
+                bill__eventrelatedentity__agenda_item__event=event
+            )
+            .order_by("-date")
+            .values("id")[:1]
+        )
+        related_entities = (
+            EventRelatedEntity.objects.all()
+            .filter(agenda_item__event=event)
+            .select_related("bill")
+            .defer("bill__extras")
+            .prefetch_related(
+                "bill__versions",
+                "bill__versions__links",
+                Prefetch(
+                    "bill__actions",
+                    queryset=BillAction.objects.filter(id__in=most_recent_actions),
+                ),
+            )
+        )
+
         agenda_with_board_reports = (
-            event.agenda.filter(related_entities__bill__versions__isnull=False)
+            event.agenda.prefetch_related(
+                Prefetch("related_entities", queryset=related_entities),
+            )
+            .filter(related_entities__bill__versions__isnull=False)
             .annotate(int_order=Cast("order", IntegerField()))
             .order_by("int_order")
         )
