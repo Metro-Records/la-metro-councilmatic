@@ -26,6 +26,8 @@ from django.db.models import (
     IntegerField,
     Q,
     F,
+    OuterRef,
+    Subquery,
 )
 from django.urls import reverse
 from django.utils import timezone
@@ -60,10 +62,7 @@ from councilmatic_core.views import (
 from councilmatic_core.models import Organization, Membership
 
 from opencivicdata.core.models import PersonLink
-from opencivicdata.legislative.models import (
-    BillAction,
-    EventRelatedEntity,
-)
+from opencivicdata.legislative.models import BillVersion, BillAction
 
 from lametro.models import (
     LAMetroBill,
@@ -222,35 +221,37 @@ class LAMetroEventDetail(EventDetailView):
         except EventDocument.DoesNotExist:
             pass
 
-        most_recent_actions = (
-            BillAction.objects.filter(
-                bill__eventrelatedentity__agenda_item__event=event
-            )
-            .order_by("-date")
-            .values("id")[:1]
+        latest_action = BillAction.objects.filter(bill=OuterRef("pk")).order_by(
+            "-order"
         )
-        related_entities = (
-            EventRelatedEntity.objects.all()
-            .filter(agenda_item__event=event)
-            .select_related("bill")
-            .defer("bill__extras")
+
+        related_bills = (
+            LAMetroBill.objects.filter(eventrelatedentity__agenda_item__event=event)
+            .defer("extras")
             .prefetch_related(
-                "bill__versions",
-                "bill__versions__links",
                 Prefetch(
-                    "bill__actions",
-                    queryset=BillAction.objects.filter(id__in=most_recent_actions),
+                    "versions",
+                    queryset=BillVersion.objects.filter(
+                        note="Board Report"
+                    ).prefetch_related("links"),
+                    to_attr="br",
                 ),
+                "packet",
+            )
+            .annotate(
+                last_action_description=Subquery(
+                    latest_action.values("description")[:1]
+                )
             )
         )
 
         agenda_with_board_reports = (
-            event.agenda.prefetch_related(
-                Prefetch("related_entities", queryset=related_entities),
-            )
-            .filter(related_entities__bill__versions__isnull=False)
+            event.agenda.filter(related_entities__bill__versions__isnull=False)
             .annotate(int_order=Cast("order", IntegerField()))
             .order_by("int_order")
+            .prefetch_related(
+                Prefetch("related_entities__bill", queryset=related_bills)
+            )
         )
 
         # Find agenda link.
