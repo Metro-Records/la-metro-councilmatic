@@ -221,13 +221,10 @@ class LAMetroEventDetail(EventDetailView):
         except EventDocument.DoesNotExist:
             pass
 
-        latest_action = BillAction.objects.filter(bill=OuterRef("pk")).order_by(
-            "-order"
-        )
-
         related_bills = (
-            LAMetroBill.objects.filter(eventrelatedentity__agenda_item__event=event)
+            LAMetroBill.objects.with_latest_actions()
             .defer("extras")
+            .filter(eventrelatedentity__agenda_item__event=event)
             .prefetch_related(
                 Prefetch(
                     "versions",
@@ -237,11 +234,6 @@ class LAMetroEventDetail(EventDetailView):
                     to_attr="br",
                 ),
                 "packet",
-            )
-            .annotate(
-                last_action_description=Subquery(
-                    latest_action.values("description")[:1]
-                )
             )
         )
 

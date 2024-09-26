@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.core.cache import cache
 
-from django.db.models import Prefetch, Case, When, Value, Q, F
+from django.db.models import Prefetch, Case, When, Value, Q, F, Subquery, OuterRef
 from django.db.models.functions import Now, Cast
 from django.templatetags.static import static
 from opencivicdata.legislative.models import (
@@ -24,6 +24,7 @@ from opencivicdata.legislative.models import (
     EventRelatedEntity,
     RelatedBill,
     BillVersion,
+    BillAction,
 )
 from proxy_overrides.related import ProxyForeignKey
 
@@ -144,6 +145,17 @@ class LAMetroBillManager(models.Manager):
             )
             .filter(on_published_agenda | is_board_box | has_minutes_history)
             .distinct()
+        )
+
+        return qs
+
+    def with_latest_actions(self):
+        latest_action = BillAction.objects.filter(bill=OuterRef("pk")).order_by(
+            "-order"
+        )
+
+        qs = self.annotate(
+            last_action_description=Subquery(latest_action.values("description")[:1])
         )
 
         return qs
@@ -529,6 +541,31 @@ class LAMetroEventManager(EventManager):
         return self.prefetch_related(
             Prefetch("media", queryset=mediaqueryset)
         ).prefetch_related("media__links")
+
+    def with_related_bills(self):
+        latest_action = BillAction.objects.filter(bill=OuterRef("pk")).order_by(
+            "-order"
+        )
+
+        related_bills = (
+            LAMetroBill.objects.filter(eventrelatedentity__agenda_item__event=event)
+            .defer("extras")
+            .prefetch_related(
+                Prefetch(
+                    "versions",
+                    queryset=BillVersion.objects.filter(
+                        note="Board Report"
+                    ).prefetch_related("links"),
+                    to_attr="br",
+                ),
+                "packet",
+            )
+            .annotate(
+                last_action_description=Subquery(
+                    latest_action.values("description")[:1]
+                )
+            )
+        )
 
 
 class LiveMediaMixin(object):
