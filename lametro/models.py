@@ -542,31 +542,6 @@ class LAMetroEventManager(EventManager):
             Prefetch("media", queryset=mediaqueryset)
         ).prefetch_related("media__links")
 
-    def with_related_bills(self):
-        latest_action = BillAction.objects.filter(bill=OuterRef("pk")).order_by(
-            "-order"
-        )
-
-        related_bills = (
-            LAMetroBill.objects.filter(eventrelatedentity__agenda_item__event=event)
-            .defer("extras")
-            .prefetch_related(
-                Prefetch(
-                    "versions",
-                    queryset=BillVersion.objects.filter(
-                        note="Board Report"
-                    ).prefetch_related("links"),
-                    to_attr="br",
-                ),
-                "packet",
-            )
-            .annotate(
-                last_action_description=Subquery(
-                    latest_action.values("description")[:1]
-                )
-            )
-        )
-
 
 class LiveMediaMixin(object):
     BASE_MEDIA_URL = "http://metro.granicus.com/mediaplayer.php?"
