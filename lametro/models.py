@@ -13,7 +13,6 @@ from django.db.models.expressions import RawSQL
 from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.core.cache import cache
 
 from django.db.models import Prefetch, Case, When, Value, Q, F
 from django.db.models.functions import Now, Cast
@@ -532,7 +531,7 @@ class LAMetroEventManager(EventManager):
 
 
 class LiveMediaMixin(object):
-    BASE_MEDIA_URL = "http://metro.granicus.com/mediaplayer.php?"
+    BASE_MEDIA_URL = "https://metro.granicus.com/mediaplayer.php?"
     GENERIC_ENGLISH_MEDIA_URL = BASE_MEDIA_URL + "camera_id=3"
     GENERIC_SPANISH_MEDIA_URL = BASE_MEDIA_URL + "camera_id=2"
 
@@ -710,21 +709,15 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         Hit the endpoint, and return the corresponding meeting, or an empty
         queryset.
         """
-        running_events = cache.get("running_events")
-        if not running_events:
-            try:
-                running_events = timed_get(
-                    "http://metro.granicus.com/running_events.php"
-                )
 
-            except (LAMetroRequestTimeoutException, requests.RequestException) as e:
-                logger.warning(e)
-                running_events = cls.objects.none()
-                return running_events
-
-            finally:
-                # Cache running events for one minute
-                cache.set("running_events", running_events, 60)
+        try:
+            running_events = timed_get(
+                "https://metro.granicus.com/running_events.php", cache_for=60
+            )
+        except (LAMetroRequestTimeoutException, requests.RequestException) as e:
+            logger.warning(e)
+            running_events = cls.objects.none()
+            return running_events
 
         if running_events.status_code == 200:
             for guid in running_events.json():
