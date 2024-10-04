@@ -131,15 +131,13 @@ def timed_get(
     if cached_resp:
         return cached_resp
 
-    TOTAL_TIMEOUT = kwargs.get("timeout", settings.REQUEST_TIMEOUT)
-
     def trace_function(frame, event, arg):
         """
         Makes sure our request raises an exception if the total time from
         start to finish exceeds TOTAL_TIMEOUT.
         """
-        if time.time() - start > TOTAL_TIMEOUT:
-            raise LAMetroRequestTimeoutException(url, TOTAL_TIMEOUT)
+        if time.time() - start > timeout:
+            raise LAMetroRequestTimeoutException(url, timeout)
 
         return trace_function
 
