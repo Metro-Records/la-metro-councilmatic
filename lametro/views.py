@@ -17,7 +17,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
-from django.db.models import Max, Prefetch, Case, When, Value, IntegerField, Q, F
+from django.db.models import (
+    Max,
+    Prefetch,
+    Case,
+    When,
+    Value,
+    IntegerField,
+    Q,
+    F,
+)
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
@@ -51,6 +60,7 @@ from councilmatic_core.views import (
 from councilmatic_core.models import Organization, Membership
 
 from opencivicdata.core.models import PersonLink
+from opencivicdata.legislative.models import BillVersion
 
 from lametro.models import (
     LAMetroBill,
@@ -209,10 +219,29 @@ class LAMetroEventDetail(EventDetailView):
         except EventDocument.DoesNotExist:
             pass
 
+        related_bills = (
+            LAMetroBill.objects.with_latest_actions()
+            .defer("extras")
+            .filter(eventrelatedentity__agenda_item__event=event)
+            .prefetch_related(
+                Prefetch(
+                    "versions",
+                    queryset=BillVersion.objects.filter(
+                        note="Board Report"
+                    ).prefetch_related("links"),
+                    to_attr="br",
+                ),
+                "packet",
+            )
+        )
+
         agenda_with_board_reports = (
             event.agenda.filter(related_entities__bill__versions__isnull=False)
             .annotate(int_order=Cast("order", IntegerField()))
             .order_by("int_order")
+            .prefetch_related(
+                Prefetch("related_entities__bill", queryset=related_bills)
+            )
         )
 
         # Find agenda link.

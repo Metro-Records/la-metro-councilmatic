@@ -7,7 +7,10 @@ import urllib
 from django import template
 from django.utils import timezone
 
-from councilmatic.settings_jurisdiction import legislation_types
+from councilmatic.settings_jurisdiction import (
+    legislation_types,
+    BILL_STATUS_DESCRIPTIONS,
+)
 from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Bill
 
@@ -327,3 +330,10 @@ def get_events_with_manual_broadcasts():
     broadcasts = EventBroadcast.objects.filter(is_manually_live=True)
     events = [b.event for b in broadcasts]
     return events
+
+
+@register.filter
+def bill_status_from_last_action(description):
+    if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
+        return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
+    return None
