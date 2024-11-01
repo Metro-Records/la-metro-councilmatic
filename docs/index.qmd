@@ -1,0 +1,30 @@
+---
+title: "A Developer's Guide to the Metro Galaxy"
+format:
+  html:
+    code-fold: true
+---
+
+Welcome to the documentation for LA Metro Councilmatic!
+Here, you’ll find information about the Metro data pipeline, debugging, and other best practices for DataMade developers.
+
+## Contents
+- [Debugging Data Issues](debugging.qmd)
+- [Commands to Know](commands.qmd)
+- [Deployment Practices and Patterns](deployment.qmd)
+- [Thesaurus](thesaurus.qmd)
+
+## What does this do?
+The Metro Board Reports site monitors all things related to the Metro Board of Directors:
+
+- the board reports introduced and passed
+- its various committees and the meetings they hold
+- the board members themselves
+
+This site ultimately encourages greater public dialogue and increased awareness about transportation issues in LA County.
+
+### Authors
+Regina Compton and Hannah Cushman Garland developed this wiki.
+Some of its content originated in a dated
+[Data Flow and Debugging guide](https://github.com/datamade/la-metro-councilmatic/blob/ff3cbabae403a77ed53947f80a303ac64d4c2775/data_flow_and_debugging.md)
+and a short [after-hours-support manual](https://docs.google.com/document/d/1X34EU06gErdZ1psg8niSqDMk0nH-M1vsP-RNPLNUsF4/edit?usp=sharing).

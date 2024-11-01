@@ -1,0 +1,144 @@
+---
+title: "Debugging"
+order: 1
+---
+
+## Don't Panic!
+
+Many issues can arise in the Metro galaxy, from the shallowest part of the frontend to the deepest depths of the backend.
+However, these issues are generally due to either a metadata error or a scraper error.
+
+This documentation will focus on metadata errors. If you suspect you're experiencing a scraper issue, please refer to the
+[debug documentation for the scrapers](https://metro-records.github.io/scrapers-lametro/debugging.html).
+
+### Metadata Error
+Metro performs a series of ETL tasks against its database. You can view the full pipeline
+[here](https://github.com/datamade/la-metro-dashboard/blob/master/dags/hourly_processing.py).
+
+Failures in the ETL pipeline might have a corresponding issue
+[in the `la-metro-councilmatic` Sentry project](https://sentry.io/organizations/datamade/issues/?project=2131912),
+however sometimes steps run without failing but don't generate the desired result.
+Read on for more on each step of the pipeline, plus past failures and their resolutions.
+
+#### `refresh_pic`
+
+**Where it lives:** [Django Councilmatic](https://github.com/datamade/django-councilmatic/blob/2.5/councilmatic_core/management/commands/refresh_pic.py)<br />
+**What is does:** Deletes [cached documents](https://github.com/datamade/property-image-cache) for recently updated bills and events
+
+**Past issues:**
+
+- [Cached event agenda was out of sync with Legistar](https://github.com/datamade/la-metro-councilmatic/issues/443).
+We have since updated the logic for which documents to remove from the cache, so this error should be resolved,
+but the linked issue contains instructions for resolving this error manually, in case we see a regression.
+
+#### `compile_pdfs`
+
+**Where it lives:** [LA Metro Councilmatic](https://github.com/datamade/la-metro-councilmatic/blob/master/lametro/management/commands/compile_pdfs.py)<br />
+**What it does:** Notifies the [`metro-pdf-merger`](https://github.com/datamade/metro-pdf-merger) of new documents that need to be merged into a bill or event packet
+
+**Past issues:**
+
+- [Sometimes the worker fails to merge documents, resulting in missing packets](https://github.com/datamade/la-metro-councilmatic/issues/476).
+There should be a corresponding error for this [in the `metro-pdf-merger` Sentry project](https://sentry.io/organizations/datamade/issues/?project=155211),
+however the project is pretty noisy, so you can shell into the server (`metro-pdf-merger.datamade.us`) and tail or grep the worker logs to double check.
+- [The worker PDF merger has died mysteriously](https://github.com/datamade/metro-pdf-merger/issues/19).
+
+#### `convert_attachment_text`
+
+**Where it lives:** [Django Councilmatic](https://github.com/datamade/django-councilmatic/blob/2.5/councilmatic_core/management/commands/convert_attachment_text.py)<br />
+**What it does:** Extracts text from bill attachments for indexing
+
+**Past issues:**
+
+N/A
+
+#### `update_index`
+
+**Where it lives:** [Haystack](https://django-haystack.readthedocs.io/en/master/management_commands.html#update-index)<br />
+**What it does:** Updates the search index
+
+**Past issues:**
+<!--- Todo: figure out what i should do with this solr bit --->
+- [Failures to update the index fail silently](https://github.com/datamade/la-metro-councilmatic/issues/535).
+We have updated the Haystack config to raise Solr errors immediately, and we've also increased the heap space allowed to the production Solr instance,
+so this should be taken care of. If Solr errors recur, and you see log messages about heap space,
+shell into the Councilmatic server and restart the production Solr instance: `sudo docker restart lametro-production-solr`.
+Then, switch over to the application directory, and rebuild the index!
+
+#### `data_integrity`
+
+**Where it lives:** [Django Councilmatic](https://github.com/datamade/django-councilmatic/blob/2.5/councilmatic_core/management/commands/data_integrity.py)<br />
+**What it does:** Verifies that the search index and Councilmatic database contain the same number of board reports
+
+**Past issues:**
+
+- Removing data from the database, without removing it from the search index, will cause this command to fail.
+Likewise, if board reports are indexed, but are then toggled to private, they won't be removed from the search index,
+also causing this command to fail. If you are seeing this error, see [our documentation on Commands to Know](./commands-to-know.qmd)
+for the command on how to rebuild the index. This should take around five minutes.
+- Scrapes and indexing happen independently of each other, so sometimes new bills are added while indexing happens, causing an exception to be raised. In general, it's good practice to wait for this exception to be raised twice before taking action.
+
+
+## Inspecting Data
+
+### View an entity in the Councilmatic database
+#### Use the slug of the problematic Bill, Event, Person, or Committee
+Every detail page is accessed in the browser using a slug. Let's walk through an example.
+Visit the page for the [October 2024 Executive Management Committee meeting](https://la-metro-councilmatic-staging.herokuapp.com/event/executive-management-committee-8a0e5d3ba5e2/),
+and check the address bar for the slug (the portion after the entity type, "event" in this case).
+
+#### Retrieve the entity in the Django shell
+<!--- Todo: write about how to shell in and get an object with this slug --->
+Shell into a running instance of LA Metro Councilmatic using either the Heroku CLI:
+
+```bash
+heroku login
+heroku ps:exec --app=lametro-councilmatic-staging
+```
+
+or Heroku's web-based console:
+
+![_The Run Console link as shown in Heroku_](images/heroku-console.png)
+with `python manage.py shell`.
+
+Retrieve the problematic entity using its slug
+
+```python
+# In the Django shell
+>>> from lametro.models import *
+>>> entity = LAMetroEvent.objects.get(slug='executive-management-committee-8a0e5d3ba5e2')
+```
+
+You can use the same ORM query to retrieve any entity. Simply swap out `LAMetroEvent` for the correct model and, of course, update the slug.
+
+| Entity | Model |
+| -- | -- |
+| Person | LAMetroPerson |
+| Committee | LAMetroOrganization |
+| Bill | LAMetroBill |
+| Event | LAMetroEvent |
+
+#### View useful information
+Assuming you have retrieved the entity as illustrated in the previous step, you can view its last updated date like this:
+
+```python
+>>> entity.updated_at
+datetime.datetime(2020, 3, 25, 0, 47, 3, 471572, tzinfo=<UTC>)
+```
+
+You can also view its sources like this:
+
+```python
+>>> import pprint
+>>> pprint.pprint([(source.note, source.url) for source in entity.sources.all()])
+[('api', 'http://webapi.legistar.com/v1/metro/events/1384'),
+ ('api (sap)', 'http://webapi.legistar.com/v1/metro/events/1493'),
+ ('web',
+  'https://metro.legistar.com/MeetingDetail.aspx?LEGID=1384&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94'),
+ ('web (sap)',
+  'https://metro.legistar.com/MeetingDetail.aspx?LEGID=1493&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94')]
+```
+
+Events have Spanish language sources (e.g., "api (sap)"), as well. In initial debugging, focus on the "api" and "web" sources – by visiting these links and checking that the data in Legistar appears as expected.
+
+**Pro-tip:** If you are using iTerm2 on a Mac, hold down the command key to convert URLs into hyperlinks. Saved you a copy/paste!
