@@ -65,19 +65,6 @@ so this should be taken care of. If Solr errors recur, and you see log messages 
 shell into the Councilmatic server and restart the production Solr instance: `sudo docker restart lametro-production-solr`.
 Then, switch over to the application directory, and rebuild the index!
 
-#### `data_integrity`
-
-**Where it lives:** [Django Councilmatic](https://github.com/datamade/django-councilmatic/blob/2.5/councilmatic_core/management/commands/data_integrity.py)<br />
-**What it does:** Verifies that the search index and Councilmatic database contain the same number of board reports
-
-**Past issues:**
-
-- Removing data from the database, without removing it from the search index, will cause this command to fail.
-Likewise, if board reports are indexed, but are then toggled to private, they won't be removed from the search index,
-also causing this command to fail. If you are seeing this error, see [our documentation on Commands to Know](./commands.qmd)
-for the command on how to rebuild the index. This should take around five minutes.
-- Scrapes and indexing happen independently of each other, so sometimes new bills are added while indexing happens, causing an exception to be raised. In general, it's good practice to wait for this exception to be raised twice before taking action.
-
 
 ## Inspecting Data
 
