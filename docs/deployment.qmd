@@ -2,3 +2,18 @@
 title: "Deployment"
 order: 3
 ---
+
+DataMade hosts a [staging version](https://la-metro-councilmatic-staging.herokuapp.com/) and [production version](https://boardagendas.metro.net/) of Metro Councilmatic.
+
+Both sites - as well as review apps for active PRs - can be found in the [corresponding Heroku pipeline](https://dashboard.heroku.com/pipelines/d77360c3-dcda-43d4-990e-b898b51ba37d/). Metro developers should be able to shell into these servers, (e.g., [for executing management commands](./commands.qmd)). If you cannot, then talk to your friendly DataMade devops team.
+
+### Patterns and practices
+
+Triggering a Metro deployment follows the typical DataMade pattern: merging or pushing to `main` deploys to the staging site, and pushing changes from `main` to `deploy` deploys to the production site.
+
+The Metro deployment script runs a few steps for the production and staging environments - but not the review apps.
+It will apply any new migrations, create any missing cache tables, load in shapes of districts, and clear the site-wide cache.
+
+These steps are not run for review apps because those use the staging environment's database. This is a deviation from most of DataMade's other Heroku pipelines.
+This gives us access to review apps without having to run lengthy scrapes each time we'd like to test a change of any size!
+However, this does also mean that any PRs that include a modification to the database will need to be tested locally instead of on those apps.

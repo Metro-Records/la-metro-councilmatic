@@ -12,7 +12,7 @@ Here, you’ll find information about the Metro data pipeline, debugging, and ot
 - [Debugging Data Issues](debugging.qmd)
 - [Commands to Know](commands.qmd)
 - [Deployment Practices and Patterns](deployment.qmd)
-- [Thesaurus](thesaurus.qmd)
+- [Glossary](glossary.qmd)
 
 ## What does this do?
 The Metro Board Reports site monitors all things related to the Metro Board of Directors:

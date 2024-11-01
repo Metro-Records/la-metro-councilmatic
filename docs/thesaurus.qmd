@@ -1,6 +1,0 @@
----
-title: "Thesaurus"
-order: 4
----
-
-Many of the entities Metro deals with can be called multiple things. Here is a cheatsheet to reference:
