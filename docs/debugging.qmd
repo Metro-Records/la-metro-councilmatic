@@ -50,7 +50,7 @@ however the project is pretty noisy, so you can shell into the server (`metro-pd
 
 **Past issues:**
 
-N/A
+- N/A
 
 #### `update_index`
 
@@ -59,11 +59,7 @@ N/A
 
 **Past issues:**
 
-- [Failures to update the index fail silently](https://github.com/datamade/la-metro-councilmatic/issues/535).
-We have updated the Haystack config to raise Solr errors immediately, and we've also increased the heap space allowed to the production Solr instance,
-so this should be taken care of. If Solr errors recur, and you see log messages about heap space,
-shell into the Councilmatic server and restart the production Solr instance: `sudo docker restart lametro-production-solr`.
-Then, switch over to the application directory, and rebuild the index!
+- N/A
 
 
 ## Inspecting Data
