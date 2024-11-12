@@ -17,3 +17,40 @@ It will apply any new migrations, create any missing cache tables, load in shape
 These steps are not run for review apps because those use the staging environment's database. This is a deviation from most of DataMade's other Heroku pipelines.
 This gives us access to review apps without having to run lengthy scrapes each time we'd like to test a change of any size!
 However, this does also mean that any PRs that include a modification to the database will need to be tested locally instead of on those apps.
+
+### Working in Heroku
+
+At times, we'll need to shell directly into these deployed environments to investigate or manipulate the data within.
+Luckily, heroku provides us with a couple options for how to interact with them - the console on the site and the CLI.
+
+#### Using the Site Console
+To shell into the environment using the site console, click the Run Console link:
+![_The Run Console link as shown in Heroku_](images/heroku-console.png)
+
+And then enter your command as normal. In this case, we're running `python manage.py shell`:
+![_A python command in the Heroku console_](images/heroku-console-cmd.jpg)
+
+
+#### Using the CLI
+To shell in using your terminal, first make sure the [Heroku CLI is installed](https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli)
+then run the following commands, replacing `<ENVIRONMENT_NAME>` with your chosen environment
+(`la-metro-councilmatic-staging` for staging, and `la-metro-councilmatic-prod` for production).
+
+```bash
+>>> heroku login
+heroku: Press any key to open up the browser to login or q to exit:
+Opening browser to https://cli-auth.heroku.com/...
+Logging in... done
+Logged in as <your_email>
+
+>>> heroku run -a <ENVIRONMENT_NAME> python manage.py shell
+Running python manage.py shell on ⬢ <ENVIRONMENT_NAME>... up, run.####
+...
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> |
+```
+
+
+#### Common Commands (working title)
+<!-- TODO: remember to document createsuperuser -->
