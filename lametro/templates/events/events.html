@@ -55,7 +55,9 @@
             {% if future_events %}
                 <div class="row mt-4">
                     <div>
-                        <h2 class="d-inline">Upcoming {{ CITY_VOCAB.EVENTS }}</h2>
+                        <h2 class="d-inline" id="upcoming-meetings">
+                            <span>Upcoming {{ CITY_VOCAB.EVENTS }}</span>
+                        </h2>
                         <small class="rss">
                             <a href="rss/" title="RSS feed for Upcoming and Recent Events" aria-label="RSS feed for Upcoming and Recent Events">
                                 <i class="fa fa-rss-square" aria-hidden="true"></i>
@@ -72,7 +74,7 @@
                 </div>
 
                 <div class='row'>
-                    <div class='col-md-8' id='events_message_future'></div>
+                    <div class='col-md-8' id='events_message'></div>
                 </div>
 
                 <ul class="row mt-4 search-results">
@@ -83,12 +85,19 @@
                 {% endfor %}
                 </ul>
 
-                <a href="#" class="btn btn-primary" id="more-upcoming-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all upcoming meetings</a>
-                <a href="#" class="btn btn-primary" id="fewer-upcoming-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer upcoming meetings</a>
+                {% if 'show' in request.GET and request.GET.show == 'future' %}
+                    <a href="{% url 'events' %}" class="btn btn-primary" id="fewer-upcoming-events">
+                        <i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i>Show fewer upcoming meetings
+                    </a>
+                {% else %}
+                    <a href="{% url 'events' %}?show=future#upcoming-meetings" class="btn btn-primary" id="more-upcoming-events">
+                        <i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i>Show all upcoming meetings
+                    </a>
+                {% endif %}
 
                 <div class="row mt-5">
                     <div>
-                        <h2 class="d-inline">Past {{ CITY_VOCAB.EVENTS }}</h2>
+                        <h2 class="d-inline" id="past-meetings"><span>Past {{ CITY_VOCAB.EVENTS }}</span></h2>
                         <small class="rss">
                             <a href="rss/" title="RSS feed for Upcoming and Recent Events" aria-label="RSS feed for Upcoming and Recent Events">
                                 <i class="fa fa-rss-square" aria-hidden="true"></i>
@@ -98,7 +107,7 @@
                 </div>
 
                 <div class='row'>
-                    <div class='col-md-8' id='events_message_past'></div>
+                    <div class='col-md-8' id='events_message'></div>
                 </div>
 
                 <ul class="row mt-4 search-results">
@@ -109,8 +118,15 @@
                 {% endfor %}
                 </ul>
 
-                <a href="#" class="btn btn-primary mb-5" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings</a>
-                <a href="#" class="btn btn-primary mb-5" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings</a>
+                {% if 'show' in request.GET and request.GET.show == 'past' %}
+                    <a href="{% url 'events' %}" class="btn btn-primary mb-5" id="fewer-events">
+                        <i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings
+                    </a>
+                {% else %}
+                    <a href="{% url 'events' %}?show=past#past-meetings" class="btn btn-primary mb-5" id="more-events">
+                        <i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings
+                    </a>
+                {% endif %}
 
             {% elif past_events %}
                 <div class="row mt-4">
@@ -142,7 +158,7 @@
             {% elif select_events %}
                 <div class="row mt-4">
                     <div>
-                        <h2 class="d-inline">{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</h2>
+                        <h2 class="d-inline"><span>{{ CITY_VOCAB.EVENTS }} from {{ start_date }} to {{ end_date }}</span></h2>
                         <small class="rss">
                             <a href="rss/" title="RSS feed for Upcoming and Recent Events" aria-label="RSS feed for Upcoming and Recent Events">
                                 <i class="fa fa-rss-square" aria-hidden="true"></i>
@@ -221,53 +237,8 @@
     <script src="{% static 'js/lib/bootstrap-datetimepicker.js' %}"></script>
     <script>
     $(document).ready(function() {
-
         $('#from').datepicker();
         $('#to').datepicker();
-
-        function collapseUpcomingEvents(){
-            $(".event-upcoming-listing:gt(2)").hide();
-            $("#more-upcoming-events").show();
-            $("#fewer-upcoming-events").hide();
-        }
-        function expandUpcomingEvents(){
-            $(".event-upcoming-listing:gt(2)").show();
-            $("#more-upcoming-events").hide();
-            $("#fewer-upcoming-events").show();
-        }
-        function collapseEvents(){
-            $(".event-listing:gt(4)").hide();
-            $("#more-events").show();
-            $("#fewer-events").hide();
-        }
-        function expandEvents(){
-            $(".event-listing:gt(4)").show();
-            $("#more-events").hide();
-            $("#fewer-events").show();
-        }
-
-        collapseEvents();
-        collapseUpcomingEvents();
-
-        $("#more-upcoming-events").click(function() {
-            expandUpcomingEvents();
-            return false;
-        });
-
-        $("#fewer-upcoming-events").click(function() {
-            collapseUpcomingEvents();
-            return false;
-        });
-
-        $("#more-events").click(function() {
-            expandEvents();
-            return false;
-        });
-
-        $("#fewer-events").click(function() {
-            collapseEvents();
-            return false;
-        });
     });
     </script>
 {% endblock %}

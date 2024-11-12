@@ -13,12 +13,12 @@
       {% with associated_bill=report.related_entities.all.0.bill %}
       <tr>
         <td><strong>{{ report.notes.0 | parse_agenda_item }}</strong></td>
-        <td>{{associated_bill.identifier}} {{report.description | short_blurb}} {{ associated_bill.inferred_status | inferred_status_label | safe }}</td>
+        <td>{{associated_bill.identifier}} {{report.description | short_blurb}} {{ associated_bill.last_action_description | bill_status_from_last_action | inferred_status_label | safe }}</td>
         <td>
           <a href='/board-report/{{ associated_bill.slug }}/' target="_blank" aria-label="View - link opens in a new tab">View</a>
         </td>
         <td>
-          <a href={% if associated_bill.packet.is_ready %}"{{associated_bill.packet.url}}"{% else %}"{{associated_bill.board_report.url}}"{% endif %}>
+          <a href={% if associated_bill.packet.is_ready %}"{{associated_bill.packet.url}}"{% else %}"{{associated_bill.br.0.links.all.0.url}}"{% endif %}>
             Download
           </a>
         </td>
