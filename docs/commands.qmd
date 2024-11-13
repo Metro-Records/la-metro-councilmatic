@@ -1,0 +1,58 @@
+---
+title: "Commands to Know"
+order: 2
+---
+
+The LA Metro galaxy comes with several CLI commands and their various options.
+This section identifies some of the most significant commands for councilmatic, how to use them and where to execute them.
+
+Metro Councilmatic runs additional processes on the data, after it gets imported to the database.
+If you do need to run a particular management command, read on for more information about the commands that comprise `hourly_processing` in the Metro dashboard.
+
+### Refresh the Property Image Cache
+Metro caches PDFs of board reports and event agendas. [This can raise issues.](https://github.com/datamade/la-metro-councilmatic/issues/347)
+The [`refresh_pic` management command](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/refresh_pic.py) refreshes the document cache ([an S3 bucket connected to Metro Councilmatic via `property-image-cache`](https://github.com/datamade/property-image-cache)) by deleting potentially out-of-date versions of board reports and agendas.
+
+```bash
+# run the command and log the results (if on the server)
+python manage.py refresh_pic >> /var/log/councilmatic/lametro-refreshpic.log 2>&1
+```
+
+### Create PDF packets
+Metro Councilmatic has composite versions of the Event agendas (the event and all related board reports) and board reports (the report and its attachments). [A separate app assists in creating these PDF packets](https://github.com/datamade/metro-pdf-merger), and the [`compile_pdfs` command](https://github.com/datamade/la-metro-councilmatic/blob/master/lametro/management/commands/compile_pdfs.py) communicates with this app by telling it which packets to create.
+
+```bash
+# run the command and log the results (if on the server)
+# documented in the `metro-pdf-merger` README: https://github.com/datamade/metro-pdf-merger#get-started
+python manage.py compile_pdfs >> /var/log/councilmatic/lametro-compilepdfs.log 2>&1
+
+python manage.py compile_pdfs --all_documents
+```
+
+### Convert report attachments into plain text
+Metro Councilmatic allows users to query board reports via attachment text. The attachments must appear as plain text in the database: [`convert_attachment_text`](https://github.com/datamade/django-councilmatic/blob/master/councilmatic_core/management/commands/convert_attachment_text.py) helps accomplish this.
+
+```bash
+# run the command and log the results (if on the server)
+python manage.py convert_attachment_text >> /var/log/councilmatic/lametro-convertattachments.log 2>&1
+
+# update all documents
+python manage.py convert_attachment_text --update_all
+```
+
+### Rebuild or update the search index
+Haystack comes with a utility command for rebuilding and updating the search index. [Learn more in the Haystack docs.](https://django-haystack.readthedocs.io/en/master/management_commands.html)
+
+```bash
+# ideally, rebuild should be run with a small batch-size to avoid memory consumption issues
+# https://github.com/datamade/devops/issues/42
+# run the command and log the results (if on the server)
+python manage.py rebuild_index --batch-size=200 >> /var/log/councilmatic/lametro-updateindex.log 2>&1
+
+# update can be run with an age argument, which instructs SmartLogic to consider bills updated so many hours ago
+python manage.py update_index --age=2
+
+# update should be run in non-interactive mode, when logging the results
+# `noinput` tells Haystack to skips the prompts
+python manage.py update_index --noinput
+```
