@@ -1,54 +1,65 @@
-<div class="row">
+<section class="row">
     {% if has_agenda and not event.has_passed %}
-    <div class="col-sm-7">
+    <section class="col-md-7">
     {% else %}
-    <div class="col-sm-12">
+    <section class="col-12">
     {% endif %}
 
         <p>{{event.description}}</p>
         <p class="small text-muted">
             {% if event.status == 'cancelled' %}
-                <strike>
-                <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
-                <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
-                </strike>
+                <del class="d-block">
+                    <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{event.start_time | date:"D n/d/Y"}}
+                </del>
+                <del class="d-block">
+                    <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{event.start_time | date:"g:i a"}}
+                </del>
             {% else %}
-                <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
-                <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
-                <i class="fa fa-fw fa-map-marker"></i> {{event.location.name}}
+                <span class="d-block"><i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{event.start_time | date:"D n/d/Y"}}</span>
+                <span class="d-block"><i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{event.start_time | date:"g:i a"}}</span>
+                <span class="d-block"><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{event.location.name}}</span>
             {% endif %}
         </p>
 
-        <p class="small">
-            {% if event.web_source.url %}
+
+        {% if event.web_source.url %}
+            <p class="small">
                 {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
-                    Not seeing an agenda? Please use this link:<br>
+                    <span class="d-block">Not seeing an agenda? Please use this link:</span>
                 {% endif %}
-                <a href='{{event.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
-                    <i class='fa fa-fw fa-external-link'></i>
+                <a href="{{event.web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank" aria-label="View on the {{CITY_VOCAB.SOURCE}} website - link opens in a new tab">
+                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i>
                     View on the {{CITY_VOCAB.SOURCE}} website
                 </a>
-            {% endif %}
-        </p>
-    </div>
+            </p>
+        {% endif %}
+    </section>
 
     {% if has_agenda and not event.has_passed %}
-        <div class="col-sm-5">
-            <h4>Submit public comment remotely</h4>
+        <aside class="col-md-5">
+            <h2 class="h4">Submit public comment remotely</h2>
 
             <p>
-                <strong>Before the meeting</strong><br />
-
-                <p>
-                    <strong>Via email:</strong> <a href="mailto:boardclerk@metro.net">boardclerk@metro.net</a><br />
-                    <strong>By postal mail:</strong> Office of Board Administration, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012
-                </p>
+                <strong class="d-block mb-2">Before the meeting</strong>
             </p>
+
+            <div>
+                <strong>Via email:</strong>
+                <a href="mailto:boardclerk@metro.net">boardclerk@metro.net</a>
+            </div>
+
+            <div class="mb-3">
+                <strong>By postal mail: </strong>
+                <address class="d-inline">Office of Board Administration, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012</address>
+            </div>
 
             <p>
                 <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
-                <em>Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail. <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong></em>
+                <em>
+                    Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail.
+                    <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong>
+                </em>
             </p>
-        </div>
+        </aside>
     {% endif %}
-</div>
+</section>

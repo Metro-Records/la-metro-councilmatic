@@ -23,6 +23,7 @@ debug.log
 *_bk/
 
 lametro/secrets.py
+.env
 .env.local
 
 .venv

@@ -4,8 +4,8 @@ function styleInputs(element) {
 
     description_input.removeClass()
     if (element.value != "") {
-        $(element).addClass("alert-" + element.value)
-        description_input.addClass("alert-" + element.value)
+        $(element).addClass("alert alert-" + element.value)
+        description_input.addClass("alert alert-" + element.value)
     }
 }
 

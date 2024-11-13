@@ -1,46 +1,59 @@
-<div class="row">
-  <br/>
-  <div class="col-xs-4">
+<div class="row mt-4">
+  <div class="col-6 col-md-4">
     {% if event.status == 'cancelled' %}
-      <strike>
+      <del>
     {% endif %}
-      <small>
-        <i class="fa fa-fw fa-calendar-o"></i>
-        <span class="non-mobile-only">
-          {{ event.start_time | date:"D" }}
-        </span>
-        {{ event.start_time | date:"m/d" }}
-        <span class="non-mobile-only">
-          <i class="fa fa-fw fa-clock-o"></i>
-        </span>
-        {{ event.start_time| date:"g:ia" }}<br/>
-      </small>
+        <div class="d-inline-block small">
+          <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i>
+          <span class="non-mobile-only">
+            {{ event.start_time | date:"D" }}
+          </span>
+          {{ event.start_time | date:"m/d" }}
+        </div>
+
+        <div class="d-inline-block small">
+          <span class="non-mobile-only">
+            <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
+          </span>
+          {{ event.start_time| date:"g:ia" }}
+        </div>
+
+        <div class="desktop-only text-muted d-block small">
+          {{event.location.name}}
+        </div>
     {% if event.status == 'cancelled' %}
-      </strike>
+      </del>
     {% endif %}
   </div>
 
-  <div class="col-xs-8">
+  <div class="col-6 col-md-8">
     <p>
       {% if event.status == 'cancelled' %}
-        <strike>{{ event.link_html | safe }}</strike>
-        <span class="label label-stale">Cancelled</span>
-        <br/>
+        <del>{{ event.link_html | safe }}</del>
+        <small><span class="label label-stale text-light rounded">Cancelled</span></small>
       {% else %}
-        {{ event.link_html | safe }}<br/>
+        {{ event.link_html | safe }}
 
         {% if event.media %}
           {% for media in event.media.all %}
             <p>
-            <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank">
-              <i class="fa fa-headphones" aria-hidden="true"></i>
-              {% if media.note == 'Audio (SAP)' %}Ver en Español{% else %}Watch in English{% endif %}
-            </a>
+              {% if media.note == 'Audio (SAP)' %}
+                <a lang="es" class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Ver en Español - enlace se abre en una pestaña nueva">
+                  <i class="fa fa-headphones" aria-hidden="true"></i>
+                  Ver en Español
+                </a>
+              {% else %}
+                <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Watch in English - link opens in a new tab">
+                  <i class="fa fa-headphones" aria-hidden="true"></i>
+                  Watch in English
+                </a>
+              {% endif %}
+            </p>
           {% endfor %}
-          </br>
         {% endif %}
 
       {% endif %}
     </p>
   </div>
 </div>
+<hr aria-hidden="true">

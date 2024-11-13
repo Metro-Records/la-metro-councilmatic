@@ -86,8 +86,8 @@ When your logs indicate that your app is up and running, visit http://localhost:
 ### Optional: Populate the search index
 
 If you wish to use search in your local install, you need a SmartLogic API
-key. Initiated DataMade staff may retrieve values for the `SMART_LOGIC_ENVIRONMENT`
-and `SMART_LOGIC_KEY` environment variables from Heroku:
+key and the reCAPTCHA development keys. Initiated DataMade staff may retrieve values for
+the `SMART_LOGIC_ENVIRONMENT` and `SMART_LOGIC_KEY` environment variables from Heroku:
 
 ```bash
 heroku config:get SMART_LOGIC_ENVIRONMENT SMART_LOGIC_KEY -a la-metro-councilmatic-staging
@@ -111,6 +111,9 @@ docker-compose run --rm app python manage.py update_index
 ```
 
 When the command exits, your search index has been filled.
+
+The reCAPTCHA keys will be found in a Bitwarden note titled "LA Metro Councilmatic - Dev recaptcha keys".
+Similarly add both the public and private keys to your environment variables.
 
 ## Running arbitrary scrapes
 Occasionally, after a while without running an event scrape, you may find that your local app is broken. If this happens, make sure you have events in your database that are scheduled for the future, as the app queries for upcoming events in order to render the landing page.
