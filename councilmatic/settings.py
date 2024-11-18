@@ -40,6 +40,7 @@ env = environ.Env(
     REMOTE_ANALYTICS_FOLDER=(str, ""),
     GOOGLE_SERVICE_ACCT_API_KEY=(str, ""),
     GOOGLE_API_KEY=(str, ""),
+    WAGTAILADMIN_BASE_URL=(str, "https://boardagendas.metro.net"),
 )
 
 # Core Django Settings
@@ -125,6 +126,19 @@ INSTALLED_APPS = (
     "template_profiler_panel",
     "captcha",
     "markdownify.apps.MarkdownifyConfig",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "modelcluster",
+    "taggit",
 )
 
 try:
@@ -142,6 +156,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 )
 
 ROOT_URLCONF = "councilmatic.urls"
@@ -186,6 +201,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
 
 # Third Party Keys
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
@@ -326,3 +344,6 @@ MARKDOWNIFY = {
 
 # Hard time limit on HTTP requests
 REQUEST_TIMEOUT = 5
+
+WAGTAIL_SITE_NAME = "boardagendas.metro.net"
+WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL")
