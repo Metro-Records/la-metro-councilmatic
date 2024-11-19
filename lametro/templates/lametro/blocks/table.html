@@ -1,0 +1,23 @@
+{% load wagtailcore_tags %}
+
+<!-- TODO: Consider flex utilities for custom wrapping. -->
+<table class="table table-responsive">
+    <thead>
+        <tr>
+            {% for column in block.value.columns %}
+                <th scope="col">{{ column.heading }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in block.value.rows %}
+        <tr>
+            {% for cell in row %}
+                <td>
+                    {% include_block cell %}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

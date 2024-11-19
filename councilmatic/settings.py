@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     "markdownify.apps.MarkdownifyConfig",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
+    "wagtail.contrib.typed_table_block",
     "wagtail.embeds",
     "wagtail.sites",
     "wagtail.users",

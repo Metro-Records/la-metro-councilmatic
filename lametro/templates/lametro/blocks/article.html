@@ -1,0 +1,7 @@
+{% load wagtailcore_tags %}
+<article class="mb-5 scroll-anchor"{% if block.value.anchor %} id="{{ block.value.anchor }}"{% endif %}>
+    {% if block.value.heading %}
+        <h2>{{ block.value.heading }}</h2>
+    {% endif %}
+    {% include_block block.value.content %}
+</article>
