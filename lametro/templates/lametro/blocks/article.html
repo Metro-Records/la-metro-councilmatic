@@ -3,5 +3,17 @@
     {% if block.value.heading %}
         <h2>{{ block.value.heading }}</h2>
     {% endif %}
-    {% include_block block.value.content %}
+    {% for content_block in block.value.content %}
+        {% if content_block.block_type == "table" %}
+            {% with block=content_block %}
+                {% include "lametro/blocks/table.html" %}
+            {% endwith %}
+        {% elif content_block.block_type == "responsive_element" %}
+            {% with block=content_block.value.content.0  breakpoints=content_block.value.breakpoints %}
+                {% include "lametro/blocks/table.html" %}
+            {% endwith %}
+        {% else %}
+            {% include_block content_block %}
+        {% endif %}
+    {% endfor %}
 </article>
