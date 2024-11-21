@@ -80,7 +80,7 @@ from lametro.forms import (
     AlertForm,
 )
 
-from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
+from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument

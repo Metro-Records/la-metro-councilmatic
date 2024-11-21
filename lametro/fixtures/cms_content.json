@@ -339,8 +339,8 @@
         "locked": false,
         "locked_at": null,
         "locked_by": null,
-        "title": "Welcome to your new Wagtail site!",
-        "draft_title": "Welcome to your new Wagtail site!",
+        "title": "LA Metro Board Agendas",
+        "draft_title": "LA Metro Board Agendas",
         "slug": "home",
         "content_type": [
             "wagtailcore",

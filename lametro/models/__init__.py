@@ -1,2 +1,2 @@
-from .councilmatic import *
-from .wagtail import *
+from .councilmatic import *  # noqa
+from .wagtail import *  # noqa

@@ -1,6 +1,6 @@
 {% extends 'base_with_margins.html' %}
 
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags wagtailuserbar %}
 
 {% block title %}{{ page.title }}{% endblock %}
 
@@ -13,4 +13,5 @@
         {% endfor %}
     </div>
 </div>
+{% wagtailuserbar 'bottom-left' %}
 {% endblock %}
