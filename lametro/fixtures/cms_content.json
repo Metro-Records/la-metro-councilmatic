@@ -156,7 +156,7 @@
     "fields": {
         "collection": 1,
         "title": "datamade_logo_sm",
-        "file": "original_images/datamade_logo_sm_fDWMRNo.png",
+        "file": "original_images/datamade_logo_sm.png",
         "width": 192,
         "height": 40,
         "created_at": "2024-11-20T16:19:04.189Z",
@@ -176,7 +176,7 @@
     "pk": 1,
     "fields": {
         "filter_spec": "max-800x600",
-        "file": "images/datamade_logo_sm_fDWMRNo.max-800x600.png",
+        "file": "images/datamade_logo_sm.max-800x600.png",
         "width": 192,
         "height": 40,
         "focal_point_key": "",
@@ -188,7 +188,7 @@
     "pk": 2,
     "fields": {
         "filter_spec": "width-500",
-        "file": "images/datamade_logo_sm_fDWMRNo.width-500.png",
+        "file": "images/datamade_logo_sm.width-500.png",
         "width": 192,
         "height": 40,
         "focal_point_key": "",
@@ -200,7 +200,7 @@
     "pk": 3,
     "fields": {
         "filter_spec": "max-165x165",
-        "file": "images/datamade_logo_sm_fDWMRNo.max-165x165.png",
+        "file": "images/datamade_logo_sm.max-165x165.png",
         "width": 165,
         "height": 34,
         "focal_point_key": "",
