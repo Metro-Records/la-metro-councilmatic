@@ -7,6 +7,7 @@ import sys
 import time
 
 from django.conf import settings
+from django.core.cache import cache
 
 from haystack.utils.highlighting import Highlighter
 
@@ -116,22 +117,27 @@ class LAMetroRequestTimeoutException(Exception):
         super().__init__(f"Request to {url} took longer than {timeout} seconds.")
 
 
-def timed_get(url, params=None, **kwargs):
+def timed_get(
+    url, params=None, timeout=settings.REQUEST_TIMEOUT, cache_for=60, **kwargs
+):
     """
     Convenience function to ensure GET requests that time out raise an exception.
 
     See https://stackoverflow.com/a/71453648
     """
 
-    TOTAL_TIMEOUT = kwargs.get("timeout", settings.REQUEST_TIMEOUT)
+    # Check the Django cache
+    cached_resp = cache.get(url)
+    if cached_resp:
+        return cached_resp
 
     def trace_function(frame, event, arg):
         """
         Makes sure our request raises an exception if the total time from
         start to finish exceeds TOTAL_TIMEOUT.
         """
-        if time.time() - start > TOTAL_TIMEOUT:
-            raise LAMetroRequestTimeoutException(url, TOTAL_TIMEOUT)
+        if time.time() - start > timeout:
+            raise LAMetroRequestTimeoutException(url, timeout)
 
         return trace_function
 
@@ -143,5 +149,9 @@ def timed_get(url, params=None, **kwargs):
         raise e
     finally:
         sys.settrace(None)
+
+    # Cache the response
+    if cache_for and cache_for > 0:
+        cache.set(url, resp, cache_for)
 
     return resp
