@@ -250,10 +250,9 @@ if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
     )
     from django.core.files.storage import get_storage_class
 
-    S3Storage = get_storage_class("storages.backends.s3boto3.S3Boto3Storage")
-
     AWS_QUERYSTRING_AUTH = False
-    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = S3Storage()
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = get_storage_class(DEFAULT_FILE_STORAGE)
 
 else:
     print("AWS not configured. Defaulting to local storage...")

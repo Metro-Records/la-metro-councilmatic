@@ -33,6 +33,7 @@ class Command(BaseCommand):
                 "auth.permission",
                 "wagtailcore.groupcollectionpermission",
                 "wagtailcore.grouppagepermission",
+                "wagtailsearch.indexentry",
                 "sessions",
             ]
             + excluded_app_models,

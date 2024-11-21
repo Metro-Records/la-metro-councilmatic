@@ -133,6 +133,24 @@
     }
 },
 {
+    "model": "wagtailusers.userprofile",
+    "pk": 1,
+    "fields": {
+        "user": [
+            "hannah"
+        ],
+        "submitted_notifications": true,
+        "approved_notifications": true,
+        "rejected_notifications": true,
+        "updated_comments_notifications": true,
+        "preferred_language": "",
+        "current_time_zone": "",
+        "avatar": "",
+        "dismissibles": {},
+        "theme": "system"
+    }
+},
+{
     "model": "wagtailimages.image",
     "pk": 1,
     "fields": {
@@ -178,33 +196,15 @@
     }
 },
 {
-    "model": "wagtailsearch.indexentry",
-    "pk": 1,
+    "model": "wagtailimages.rendition",
+    "pk": 3,
     "fields": {
-        "content_type": [
-            "lametro",
-            "aboutpage"
-        ],
-        "object_id": "3",
-        "title_norm": 2.0,
-        "autocomplete": "'about':1 'us':2",
-        "title": "'us':2B",
-        "body": ""
-    }
-},
-{
-    "model": "wagtailsearch.indexentry",
-    "pk": 6,
-    "fields": {
-        "content_type": [
-            "wagtailimages",
-            "image"
-        ],
-        "object_id": "1",
-        "title_norm": 0.6666666666666666,
-        "autocomplete": "'datamade':1 'logo':2 'sm':3",
-        "title": "'datamad':1A 'logo':2A 'sm':3A",
-        "body": ""
+        "filter_spec": "max-165x165",
+        "file": "images/datamade_logo_sm_fDWMRNo.max-165x165.png",
+        "width": 165,
+        "height": 34,
+        "focal_point_key": "",
+        "image": 1
     }
 },
 {
@@ -282,6 +282,29 @@
     }
 },
 {
+    "model": "wagtailcore.referenceindex",
+    "pk": 3,
+    "fields": {
+        "content_type": [
+            "wagtailimages",
+            "image"
+        ],
+        "base_content_type": [
+            "wagtailimages",
+            "image"
+        ],
+        "object_id": "2",
+        "to_content_type": [
+            "wagtailcore",
+            "collection"
+        ],
+        "to_object_id": "1",
+        "model_path": "collection",
+        "content_path": "collection",
+        "content_path_hash": "b40b1263-e929-57f2-a7f8-9dbce56b887b"
+    }
+},
+{
     "model": "wagtailcore.page",
     "pk": 1,
     "fields": {
@@ -327,12 +350,12 @@
         "numchild": 1,
         "translation_key": "3163da97-7779-470f-8f98-cc72d0d86064",
         "locale": 1,
-        "latest_revision": null,
+        "latest_revision": 10,
         "live": true,
         "has_unpublished_changes": false,
-        "first_published_at": null,
-        "last_published_at": null,
-        "live_revision": null,
+        "first_published_at": "2024-11-21T14:49:22.762Z",
+        "last_published_at": "2024-11-21T14:49:22.762Z",
+        "live_revision": 10,
         "go_live_at": null,
         "expire_at": null,
         "expired": false,
@@ -351,7 +374,7 @@
         "seo_title": "",
         "show_in_menus": false,
         "search_description": "",
-        "latest_revision_created_at": null,
+        "latest_revision_created_at": "2024-11-21T14:49:22.714Z",
         "alias_of": null
     }
 },
@@ -890,6 +913,60 @@
     }
 },
 {
+    "model": "wagtailcore.revision",
+    "pk": 10,
+    "fields": {
+        "content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "2",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-21T14:49:22.714Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "LA Metro Board Agendas",
+        "content": {
+            "pk": 2,
+            "live": true,
+            "path": "00010001",
+            "slug": "home",
+            "depth": 2,
+            "owner": null,
+            "title": "LA Metro Board Agendas",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 1,
+            "url_path": "/home/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "LA Metro Board Agendas",
+            "content_type": 1,
+            "live_revision": null,
+            "show_in_menus": false,
+            "latest_revision": null,
+            "translation_key": "3163da97-7779-470f-8f98-cc72d0d86064",
+            "last_published_at": null,
+            "first_published_at": null,
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": false,
+            "latest_revision_created_at": null
+        },
+        "approved_go_live_at": null
+    }
+},
+{
     "model": "wagtailcore.workflowpage",
     "pk": 1,
     "fields": {
@@ -1223,6 +1300,50 @@
     }
 },
 {
+    "model": "wagtailcore.pagelogentry",
+    "pk": 14,
+    "fields": {
+        "content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "label": "LA Metro Board Agendas",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-21T14:49:22.754Z",
+        "uuid": "9359ac7a-3017-4f27-95b4-72f80dc02ce3",
+        "user": [
+            "hannah"
+        ],
+        "revision": 10,
+        "content_changed": true,
+        "deleted": false,
+        "page": 2
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 15,
+    "fields": {
+        "content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "label": "LA Metro Board Agendas",
+        "action": "wagtail.publish",
+        "data": {},
+        "timestamp": "2024-11-21T14:49:22.781Z",
+        "uuid": "9359ac7a-3017-4f27-95b4-72f80dc02ce3",
+        "user": [
+            "hannah"
+        ],
+        "revision": 10,
+        "content_changed": true,
+        "deleted": false,
+        "page": 2
+    }
+},
+{
     "model": "wagtailcore.pagesubscription",
     "pk": 1,
     "fields": {
@@ -1231,6 +1352,17 @@
         ],
         "page": 3,
         "comment_notifications": true
+    }
+},
+{
+    "model": "wagtailcore.pagesubscription",
+    "pk": 2,
+    "fields": {
+        "user": [
+            "hannah"
+        ],
+        "page": 2,
+        "comment_notifications": false
     }
 },
 {
