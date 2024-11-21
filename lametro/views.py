@@ -49,7 +49,6 @@ from councilmatic_core.views import (
     IndexView,
     BillDetailView,
     CouncilMembersView,
-    AboutView,
     CommitteeDetailView,
     CommitteesView,
     PersonDetailView,
@@ -565,19 +564,6 @@ class LABoardMembersView(CouncilMembersView):
 
         if settings.MAP_CONFIG:
             context.update(self.map())
-
-        return context
-
-
-class LAMetroAboutView(AboutView):
-    template_name = "about/about.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["timestamp"] = datetime.now(app_timezone).strftime("%m%d%Y%s")
-
-        context["BILL_STATUS_DESCRIPTIONS"] = BILL_STATUS_DESCRIPTIONS
 
         return context
 

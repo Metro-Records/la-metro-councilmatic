@@ -1,0 +1,1253 @@
+[
+{
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+        "name": "Moderators",
+        "permissions": [
+            [
+                "access_admin",
+                "wagtailadmin",
+                "admin"
+            ],
+            [
+                "add_document",
+                "wagtaildocs",
+                "document"
+            ],
+            [
+                "change_document",
+                "wagtaildocs",
+                "document"
+            ],
+            [
+                "choose_document",
+                "wagtaildocs",
+                "document"
+            ],
+            [
+                "delete_document",
+                "wagtaildocs",
+                "document"
+            ],
+            [
+                "add_image",
+                "wagtailimages",
+                "image"
+            ],
+            [
+                "change_image",
+                "wagtailimages",
+                "image"
+            ],
+            [
+                "choose_image",
+                "wagtailimages",
+                "image"
+            ],
+            [
+                "delete_image",
+                "wagtailimages",
+                "image"
+            ]
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "Editors",
+        "permissions": [
+            [
+                "access_admin",
+                "wagtailadmin",
+                "admin"
+            ],
+            [
+                "add_document",
+                "wagtaildocs",
+                "document"
+            ],
+            [
+                "change_document",
+                "wagtaildocs",
+                "document"
+            ],
+            [
+                "choose_document",
+                "wagtaildocs",
+                "document"
+            ],
+            [
+                "delete_document",
+                "wagtaildocs",
+                "document"
+            ],
+            [
+                "add_image",
+                "wagtailimages",
+                "image"
+            ],
+            [
+                "change_image",
+                "wagtailimages",
+                "image"
+            ],
+            [
+                "choose_image",
+                "wagtailimages",
+                "image"
+            ],
+            [
+                "delete_image",
+                "wagtailimages",
+                "image"
+            ]
+        ]
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$B9ENOePr7fGI3Pa5LU7l1h$ekAXX9iQL7ygx/1ug0AI5GLbltK6rT7aFiPw/gU18Ag=",
+        "last_login": "2024-11-21T14:09:55.136Z",
+        "is_superuser": true,
+        "username": "hannah",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2024-11-20T16:12:03.607Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "lametro.aboutpage",
+    "pk": 3,
+    "fields": {
+        "body": "[{\"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\", \"type\": \"section\", \"value\": {\"anchor\": \"\", \"content\": [{\"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\", \"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\"}], \"heading\": \"\"}}, {\"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\", \"type\": \"section\", \"value\": {\"anchor\": \"\", \"content\": [{\"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\", \"type\": \"navigation\", \"value\": null}], \"heading\": \"\"}}, {\"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\", \"type\": \"section\", \"value\": {\"anchor\": \"about-la-metro\", \"content\": [{\"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\", \"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><p data-block-key=\\\"1drrg\\\"></p>\"}], \"heading\": \"What is the Metro Board of Directors, and how does it work?\"}}, {\"id\": \"30d5c8c4-29b8-4dcd-8ca3-ce4d7c3a6957\", \"type\": \"section\", \"value\": {\"anchor\": \"procedures\", \"content\": [{\"id\": \"be011f8d-c089-4b2e-9ba4-e82476944f89\", \"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"16enk\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"6a28c\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2a6ui\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"2vdtm\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"em347\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"4r81j\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"29inm\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"1b7pv\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"2kj90\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"dubuh\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"5r60d\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"f0cls\\\"></p>\"}], \"heading\": \"Board Room Rules and Procedures\"}}, {\"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\", \"type\": \"section\", \"value\": {\"anchor\": \"\", \"content\": [{\"id\": \"8c4c61e5-2313-4f7c-96ee-ebad34958766\", \"type\": \"responsive_element\", \"value\": {\"content\": [{\"id\": \"db5ecbfe-bb13-48f8-b814-d29cdf48ba18\", \"type\": \"table\", \"value\": {\"rows\": [{\"values\": [\"<p data-block-key=\\\"kjhhq\\\">Agreement</p>\", \"<p data-block-key=\\\"kjhhq\\\">A negotiated arrangement between parties.</p>\"]}], \"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}]}}], \"breakpoints\": {\"lg\": 4, \"md\": 2, \"sm\": 1}}}], \"heading\": \"Types of Board Reports\"}}, {\"id\": \"df0eabeb-b23a-4747-8d95-9057204a910b\", \"type\": \"section\", \"value\": {\"anchor\": \"\", \"content\": [{\"id\": \"52c0a408-c3a2-4ca6-aca7-7b855322c399\", \"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Each Metro board report has one of 22 posible statuses:</p>\"}, {\"id\": \"8f171ff2-5370-4f49-88b0-51463d6b68f0\", \"type\": \"responsive_element\", \"value\": {\"content\": [{\"id\": \"20ff5c56-3d82-49fd-8c3f-77aaefce1212\", \"type\": \"table\", \"value\": {\"rows\": [{\"values\": [\"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\">Item was adopted by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted As Amended</a></p>\", \"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\">Item was adopted by a majority vote of the Board.</p>\"]}], \"columns\": [{\"type\": \"rich_text\", \"heading\": \"Status\"}, {\"type\": \"rich_text\", \"heading\": \"Displayed Status\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}]}}], \"breakpoints\": {\"lg\": 4, \"md\": 2, \"sm\": 2}}}], \"heading\": \"Board Report Statuses\"}}, {\"id\": \"8655a141-976d-46ac-940c-b132f64d7381\", \"type\": \"section\", \"value\": {\"anchor\": \"visit\", \"content\": [{\"id\": \"780fe99f-4159-44f3-9ac7-99f89f585700\", \"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">One Gateway Plaza<br/>Los Angeles, CA 90012-2952</p><p data-block-key=\\\"1nsov\\\">Metro Headquarters is located on the corner of Cesar E. Chavez Ave. and Vignes St.</p><p data-block-key=\\\"5bk78\\\"><a href=\\\"https://www.metro.net/about/contact/#visitus\\\">Get directions to Metro Headquarters.</a></p>\"}], \"heading\": \"Visit Metro Headquarters Building\"}}, {\"id\": \"e8e5d832-9607-405e-921d-bcdcb18ee160\", \"type\": \"section\", \"value\": {\"anchor\": \"data\", \"content\": [{\"id\": \"afdae4a4-3865-4a7e-b2aa-abb766d93c7d\", \"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">The data for this website comes from the <a href=\\\"https://metro.legistar.com/\\\">Metro board reports site</a>, a system built by <a href=\\\"http://www.granicus.com/\\\">Granicus</a> using their <a href=\\\"http://www.granicus.com/solutions/legislative-management/\\\">Legistar Legislative Management Suite</a>.</p><p data-block-key=\\\"ajrfl\\\">With the help of the <a href=\\\"http://webapi.legistar.com/\\\">Legistar Web API</a>, we collect data daily and store it using the <a href=\\\"http://opencivicdata.org/\\\">Open Civic Data</a> standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government: it was built in collaboration with <a href=\\\"http://sunlightfoundation.com/\\\">The Sunlight Foundation</a>, <a href=\\\"https://developers.google.com/civic-information/?hl=en\\\">Google</a>, <a href=\\\"http://www.granicus.com/\\\">Granicus</a>, and <a href=\\\"http://www.opennorth.ca/\\\">Open North</a>.</p>\"}], \"heading\": \"Data\"}}, {\"id\": \"4d81311a-e4a8-47a7-85fa-e3c984389e42\", \"type\": \"section\", \"value\": {\"anchor\": \"credits\", \"content\": [{\"id\": \"faef24a9-ef94-4206-8913-37e1330061ea\", \"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">This site represents a collaborative effort of Metro\\u2019s Office of the CEO, Office of Board Administration, and Research &amp; Records, Information Management, to ensure Board activity is transparent and easily accessible for the public.</p><p data-block-key=\\\"9u1aq\\\">The site was built by <a href=\\\"http://datamade.us/\\\">DataMade</a>, a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.</p><p data-block-key=\\\"3s5hn\\\"></p><embed alt=\\\"\\\" embedtype=\\\"image\\\" format=\\\"left\\\" id=\\\"1\\\"/><p data-block-key=\\\"94jfg\\\"></p>\"}], \"heading\": \"Credits\"}}, {\"id\": \"7feeebc5-aad8-4175-bd4e-81027284f76b\", \"type\": \"section\", \"value\": {\"anchor\": \"contact\", \"content\": [{\"id\": \"c376852b-d5e6-43d6-9fca-e6fe682ab51f\", \"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">For questions about or comments for the Metro Board, please contact boardclerk@metro.net. Written public comment can be mailed to:</p><p data-block-key=\\\"4dck\\\">Office of Board Administration<br/>1 Gateway Plaza, Mail Stop 99-3-1<br/>Los Angeles, CA 90012</p><p data-block-key=\\\"enmrs\\\">If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message. Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.</p><p data-block-key=\\\"2e0h3\\\">For questions about this website or Board records, please email boardreport@metro.net.</p>\"}], \"heading\": \"Contact us\"}}]"
+    }
+},
+{
+    "model": "wagtailimages.image",
+    "pk": 1,
+    "fields": {
+        "collection": 1,
+        "title": "datamade_logo_sm",
+        "file": "original_images/datamade_logo_sm_fDWMRNo.png",
+        "width": 192,
+        "height": 40,
+        "created_at": "2024-11-20T16:19:04.189Z",
+        "uploaded_by_user": [
+            "hannah"
+        ],
+        "focal_point_x": null,
+        "focal_point_y": null,
+        "focal_point_width": null,
+        "focal_point_height": null,
+        "file_size": 11601,
+        "file_hash": "c734010a4df828c8526e454895dd427619e36281"
+    }
+},
+{
+    "model": "wagtailimages.rendition",
+    "pk": 1,
+    "fields": {
+        "filter_spec": "max-800x600",
+        "file": "images/datamade_logo_sm_fDWMRNo.max-800x600.png",
+        "width": 192,
+        "height": 40,
+        "focal_point_key": "",
+        "image": 1
+    }
+},
+{
+    "model": "wagtailimages.rendition",
+    "pk": 2,
+    "fields": {
+        "filter_spec": "width-500",
+        "file": "images/datamade_logo_sm_fDWMRNo.width-500.png",
+        "width": 192,
+        "height": 40,
+        "focal_point_key": "",
+        "image": 1
+    }
+},
+{
+    "model": "wagtailsearch.indexentry",
+    "pk": 1,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "object_id": "3",
+        "title_norm": 2.0,
+        "autocomplete": "'about':1 'us':2",
+        "title": "'us':2B",
+        "body": ""
+    }
+},
+{
+    "model": "wagtailsearch.indexentry",
+    "pk": 6,
+    "fields": {
+        "content_type": [
+            "wagtailimages",
+            "image"
+        ],
+        "object_id": "1",
+        "title_norm": 0.6666666666666666,
+        "autocomplete": "'datamade':1 'logo':2 'sm':3",
+        "title": "'datamad':1A 'logo':2A 'sm':3A",
+        "body": ""
+    }
+},
+{
+    "model": "wagtailcore.locale",
+    "pk": 1,
+    "fields": {
+        "language_code": "en"
+    }
+},
+{
+    "model": "wagtailcore.site",
+    "pk": 1,
+    "fields": {
+        "hostname": "localhost",
+        "port": 80,
+        "site_name": "",
+        "root_page": 2,
+        "is_default_site": true
+    }
+},
+{
+    "model": "wagtailcore.collection",
+    "pk": 1,
+    "fields": {
+        "path": "0001",
+        "depth": 1,
+        "numchild": 0,
+        "name": "Root"
+    }
+},
+{
+    "model": "wagtailcore.referenceindex",
+    "pk": 1,
+    "fields": {
+        "content_type": [
+            "wagtailimages",
+            "image"
+        ],
+        "base_content_type": [
+            "wagtailimages",
+            "image"
+        ],
+        "object_id": "1",
+        "to_content_type": [
+            "wagtailcore",
+            "collection"
+        ],
+        "to_object_id": "1",
+        "model_path": "collection",
+        "content_path": "collection",
+        "content_path_hash": "b40b1263-e929-57f2-a7f8-9dbce56b887b"
+    }
+},
+{
+    "model": "wagtailcore.referenceindex",
+    "pk": 2,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "to_content_type": [
+            "wagtailimages",
+            "image"
+        ],
+        "to_object_id": "1",
+        "model_path": "body.section.content.text",
+        "content_path": "body.4d81311a-e4a8-47a7-85fa-e3c984389e42.content.faef24a9-ef94-4206-8913-37e1330061ea",
+        "content_path_hash": "3338c073-7d90-511e-8368-43e4475f071b"
+    }
+},
+{
+    "model": "wagtailcore.page",
+    "pk": 1,
+    "fields": {
+        "path": "0001",
+        "depth": 1,
+        "numchild": 1,
+        "translation_key": "73103789-679f-4802-bf61-e760a9f500db",
+        "locale": 1,
+        "latest_revision": null,
+        "live": true,
+        "has_unpublished_changes": false,
+        "first_published_at": null,
+        "last_published_at": null,
+        "live_revision": null,
+        "go_live_at": null,
+        "expire_at": null,
+        "expired": false,
+        "locked": false,
+        "locked_at": null,
+        "locked_by": null,
+        "title": "Root",
+        "draft_title": "Root",
+        "slug": "root",
+        "content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "url_path": "/",
+        "owner": null,
+        "seo_title": "",
+        "show_in_menus": false,
+        "search_description": "",
+        "latest_revision_created_at": null,
+        "alias_of": null
+    }
+},
+{
+    "model": "wagtailcore.page",
+    "pk": 2,
+    "fields": {
+        "path": "00010001",
+        "depth": 2,
+        "numchild": 1,
+        "translation_key": "3163da97-7779-470f-8f98-cc72d0d86064",
+        "locale": 1,
+        "latest_revision": null,
+        "live": true,
+        "has_unpublished_changes": false,
+        "first_published_at": null,
+        "last_published_at": null,
+        "live_revision": null,
+        "go_live_at": null,
+        "expire_at": null,
+        "expired": false,
+        "locked": false,
+        "locked_at": null,
+        "locked_by": null,
+        "title": "Welcome to your new Wagtail site!",
+        "draft_title": "Welcome to your new Wagtail site!",
+        "slug": "home",
+        "content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "url_path": "/home/",
+        "owner": null,
+        "seo_title": "",
+        "show_in_menus": false,
+        "search_description": "",
+        "latest_revision_created_at": null,
+        "alias_of": null
+    }
+},
+{
+    "model": "wagtailcore.page",
+    "pk": 3,
+    "fields": {
+        "path": "000100010001",
+        "depth": 3,
+        "numchild": 0,
+        "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+        "locale": 1,
+        "latest_revision": 9,
+        "live": true,
+        "has_unpublished_changes": false,
+        "first_published_at": "2024-11-20T16:14:42.213Z",
+        "last_published_at": "2024-11-21T14:10:05.826Z",
+        "live_revision": 9,
+        "go_live_at": null,
+        "expire_at": null,
+        "expired": false,
+        "locked": false,
+        "locked_at": null,
+        "locked_by": null,
+        "title": "About us",
+        "draft_title": "About us",
+        "slug": "about",
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "url_path": "/home/about/",
+        "owner": [
+            "hannah"
+        ],
+        "seo_title": "",
+        "show_in_menus": false,
+        "search_description": "",
+        "latest_revision_created_at": "2024-11-21T14:10:05.780Z",
+        "alias_of": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 1,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-20T16:14:38.047Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority </a>.</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><h4 data-block-key=\\\"1drrg\\\"><b>Board Room Rules and Procedures</b></h4><p data-block-key=\\\"2i023\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"2j5ro\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"d92v3\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2o6ob\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"1b7mh\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"1jjgo\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"7fi3q\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"e8nmr\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"eipcc\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"9i4cr\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"d9thl\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"8suru\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"23mnm\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"ozp61\\\">Agreement</p>\", \"<p data-block-key=\\\"ozp61\\\">A negotiated arrangement between parties.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"ozp61\\\">Application</p>\", \"<p data-block-key=\\\"ozp61\\\">A formal request, usually for state and federal funding programs.</p>\"]}]}, \"id\": \"8de5339a-e596-422a-96e9-1d348ac977c4\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}]",
+            "live": false,
+            "path": "000100010001",
+            "slug": "about-us",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": null,
+            "show_in_menus": false,
+            "latest_revision": null,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": null,
+            "first_published_at": null,
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": false,
+            "latest_revision_created_at": null
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 2,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-20T16:14:42.192Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><h4 data-block-key=\\\"1drrg\\\"><b>Board Room Rules and Procedures</b></h4><p data-block-key=\\\"2i023\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"2j5ro\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"d92v3\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2o6ob\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"1b7mh\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"1jjgo\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"7fi3q\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"e8nmr\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"eipcc\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"9i4cr\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"d9thl\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"8suru\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"23mnm\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"ozp61\\\">Agreement</p>\", \"<p data-block-key=\\\"ozp61\\\">A negotiated arrangement between parties.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"ozp61\\\">Application</p>\", \"<p data-block-key=\\\"ozp61\\\">A formal request, usually for state and federal funding programs.</p>\"]}]}, \"id\": \"8de5339a-e596-422a-96e9-1d348ac977c4\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}]",
+            "live": false,
+            "path": "000100010001",
+            "slug": "about-us",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": null,
+            "show_in_menus": false,
+            "latest_revision": 1,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": null,
+            "first_published_at": null,
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": true,
+            "latest_revision_created_at": "2024-11-20T16:14:38.047Z"
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 3,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-20T16:17:55.798Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><p data-block-key=\\\"1drrg\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Room Rules and Procedures\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"16enk\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"6a28c\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2a6ui\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"2vdtm\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"em347\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"4r81j\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"29inm\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"1b7pv\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"2kj90\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"dubuh\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"5r60d\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"f0cls\\\"></p>\", \"id\": \"be011f8d-c089-4b2e-9ba4-e82476944f89\"}], \"anchor\": \"procedures\"}, \"id\": \"30d5c8c4-29b8-4dcd-8ca3-ce4d7c3a6957\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"ozp61\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AAgreement\\\">Agreement</a></p>\", \"<p data-block-key=\\\"ozp61\\\">A negotiated arrangement between parties.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"ozp61\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AApplication\\\">Application</a></p>\", \"<p data-block-key=\\\"ozp61\\\">A formal request, usually for state and federal funding programs.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AAppointment\\\">Appointment</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">The Board of Directors makes appointments to various committees created for the purpose of collecting and reviewing public input such as the Citizens Advisory Council and the Metro Service Councils, and also to external organizations that include representation from Metro such as Metrolink.</p>\"]}]}, \"id\": \"8de5339a-e596-422a-96e9-1d348ac977c4\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Report Statuses\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Each Metro board report has one of 22 posible statuses:</p>\", \"id\": \"52c0a408-c3a2-4ca6-aca7-7b855322c399\"}, {\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Status\"}, {\"type\": \"rich_text\", \"heading\": \"Displayed Status\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted As Amended</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted as amended by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was approved by a majority vote of the Board.</p>\"]}]}, \"id\": \"c0885150-64d7-4181-8ddb-af704e697c35\"}], \"anchor\": \"\"}, \"id\": \"df0eabeb-b23a-4747-8d95-9057204a910b\"}]",
+            "live": true,
+            "path": "000100010001",
+            "slug": "about-us",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": 2,
+            "show_in_menus": false,
+            "latest_revision": 2,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": "2024-11-20T16:14:42.213Z",
+            "first_published_at": "2024-11-20T16:14:42.213Z",
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": false,
+            "latest_revision_created_at": "2024-11-20T16:14:42.192Z"
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 4,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-20T16:21:02.185Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><p data-block-key=\\\"1drrg\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Room Rules and Procedures\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"16enk\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"6a28c\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2a6ui\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"2vdtm\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"em347\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"4r81j\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"29inm\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"1b7pv\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"2kj90\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"dubuh\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"5r60d\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"f0cls\\\"></p>\", \"id\": \"be011f8d-c089-4b2e-9ba4-e82476944f89\"}], \"anchor\": \"procedures\"}, \"id\": \"30d5c8c4-29b8-4dcd-8ca3-ce4d7c3a6957\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"ozp61\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AAgreement\\\">Agreement</a></p>\", \"<p data-block-key=\\\"ozp61\\\">A negotiated arrangement between parties.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"ozp61\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AApplication\\\">Application</a></p>\", \"<p data-block-key=\\\"ozp61\\\">A formal request, usually for state and federal funding programs.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AAppointment\\\">Appointment</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">The Board of Directors makes appointments to various committees created for the purpose of collecting and reviewing public input such as the Citizens Advisory Council and the Metro Service Councils, and also to external organizations that include representation from Metro such as Metrolink.</p>\"]}]}, \"id\": \"8de5339a-e596-422a-96e9-1d348ac977c4\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Report Statuses\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Each Metro board report has one of 22 posible statuses:</p>\", \"id\": \"52c0a408-c3a2-4ca6-aca7-7b855322c399\"}, {\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Status\"}, {\"type\": \"rich_text\", \"heading\": \"Displayed Status\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted As Amended</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted as amended by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was approved by a majority vote of the Board.</p>\"]}]}, \"id\": \"c0885150-64d7-4181-8ddb-af704e697c35\"}], \"anchor\": \"\"}, \"id\": \"df0eabeb-b23a-4747-8d95-9057204a910b\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Visit Metro Headquarters Building\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">One Gateway Plaza<br/>Los Angeles, CA 90012-2952</p><p data-block-key=\\\"1nsov\\\">Metro Headquarters is located on the corner of Cesar E. Chavez Ave. and Vignes St.</p><p data-block-key=\\\"5bk78\\\"><a href=\\\"https://www.metro.net/about/contact/#visitus\\\">Get directions to Metro Headquarters.</a></p>\", \"id\": \"780fe99f-4159-44f3-9ac7-99f89f585700\"}], \"anchor\": \"visit\"}, \"id\": \"8655a141-976d-46ac-940c-b132f64d7381\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Data\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">The data for this website comes from the <a href=\\\"https://metro.legistar.com/\\\">Metro board reports site</a>, a system built by <a href=\\\"http://www.granicus.com/\\\">Granicus</a> using their <a href=\\\"http://www.granicus.com/solutions/legislative-management/\\\">Legistar Legislative Management Suite</a>.</p><p data-block-key=\\\"ajrfl\\\">With the help of the <a href=\\\"http://webapi.legistar.com/\\\">Legistar Web API</a>, we collect data daily and store it using the <a href=\\\"http://opencivicdata.org/\\\">Open Civic Data</a> standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government: it was built in collaboration with <a href=\\\"http://sunlightfoundation.com/\\\">The Sunlight Foundation</a>, <a href=\\\"https://developers.google.com/civic-information/?hl=en\\\">Google</a>, <a href=\\\"http://www.granicus.com/\\\">Granicus</a>, and <a href=\\\"http://www.opennorth.ca/\\\">Open North</a>.</p>\", \"id\": \"afdae4a4-3865-4a7e-b2aa-abb766d93c7d\"}], \"anchor\": \"data\"}, \"id\": \"e8e5d832-9607-405e-921d-bcdcb18ee160\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Credits\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">This site represents a collaborative effort of Metro\\u2019s Office of the CEO, Office of Board Administration, and Research &amp; Records, Information Management, to ensure Board activity is transparent and easily accessible for the public.</p><p data-block-key=\\\"9u1aq\\\">The site was built by <a href=\\\"http://datamade.us/\\\">DataMade</a>, a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.</p><p data-block-key=\\\"3s5hn\\\"></p><embed alt=\\\"\\\" embedtype=\\\"image\\\" format=\\\"left\\\" id=\\\"1\\\"/><p data-block-key=\\\"94jfg\\\"></p>\", \"id\": \"faef24a9-ef94-4206-8913-37e1330061ea\"}], \"anchor\": \"credits\"}, \"id\": \"4d81311a-e4a8-47a7-85fa-e3c984389e42\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Contact us\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">For questions about or comments for the Metro Board, please contact boardclerk@metro.net. Written public comment can be mailed to:</p><p data-block-key=\\\"4dck\\\">Office of Board Administration<br/>1 Gateway Plaza, Mail Stop 99-3-1<br/>Los Angeles, CA 90012</p><p data-block-key=\\\"enmrs\\\">If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message. Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.</p><p data-block-key=\\\"2e0h3\\\">For questions about this website or Board records, please email boardreport@metro.net.</p>\", \"id\": \"c376852b-d5e6-43d6-9fca-e6fe682ab51f\"}], \"anchor\": \"contact\"}, \"id\": \"7feeebc5-aad8-4175-bd4e-81027284f76b\"}]",
+            "live": true,
+            "path": "000100010001",
+            "slug": "about-us",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": 2,
+            "show_in_menus": false,
+            "latest_revision": 3,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": "2024-11-20T16:14:42.213Z",
+            "first_published_at": "2024-11-20T16:14:42.213Z",
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": true,
+            "latest_revision_created_at": "2024-11-20T16:17:55.798Z"
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 5,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-20T16:21:05.183Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><p data-block-key=\\\"1drrg\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Room Rules and Procedures\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"16enk\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"6a28c\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2a6ui\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"2vdtm\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"em347\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"4r81j\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"29inm\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"1b7pv\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"2kj90\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"dubuh\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"5r60d\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"f0cls\\\"></p>\", \"id\": \"be011f8d-c089-4b2e-9ba4-e82476944f89\"}], \"anchor\": \"procedures\"}, \"id\": \"30d5c8c4-29b8-4dcd-8ca3-ce4d7c3a6957\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"ozp61\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AAgreement\\\">Agreement</a></p>\", \"<p data-block-key=\\\"ozp61\\\">A negotiated arrangement between parties.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"ozp61\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AApplication\\\">Application</a></p>\", \"<p data-block-key=\\\"ozp61\\\">A formal request, usually for state and federal funding programs.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AAppointment\\\">Appointment</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">The Board of Directors makes appointments to various committees created for the purpose of collecting and reviewing public input such as the Citizens Advisory Council and the Metro Service Councils, and also to external organizations that include representation from Metro such as Metrolink.</p>\"]}]}, \"id\": \"8de5339a-e596-422a-96e9-1d348ac977c4\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Report Statuses\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Each Metro board report has one of 22 posible statuses:</p>\", \"id\": \"52c0a408-c3a2-4ca6-aca7-7b855322c399\"}, {\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Status\"}, {\"type\": \"rich_text\", \"heading\": \"Displayed Status\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted As Amended</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted as amended by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was approved by a majority vote of the Board.</p>\"]}]}, \"id\": \"c0885150-64d7-4181-8ddb-af704e697c35\"}], \"anchor\": \"\"}, \"id\": \"df0eabeb-b23a-4747-8d95-9057204a910b\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Visit Metro Headquarters Building\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">One Gateway Plaza<br/>Los Angeles, CA 90012-2952</p><p data-block-key=\\\"1nsov\\\">Metro Headquarters is located on the corner of Cesar E. Chavez Ave. and Vignes St.</p><p data-block-key=\\\"5bk78\\\"><a href=\\\"https://www.metro.net/about/contact/#visitus\\\">Get directions to Metro Headquarters.</a></p>\", \"id\": \"780fe99f-4159-44f3-9ac7-99f89f585700\"}], \"anchor\": \"visit\"}, \"id\": \"8655a141-976d-46ac-940c-b132f64d7381\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Data\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">The data for this website comes from the <a href=\\\"https://metro.legistar.com/\\\">Metro board reports site</a>, a system built by <a href=\\\"http://www.granicus.com/\\\">Granicus</a> using their <a href=\\\"http://www.granicus.com/solutions/legislative-management/\\\">Legistar Legislative Management Suite</a>.</p><p data-block-key=\\\"ajrfl\\\">With the help of the <a href=\\\"http://webapi.legistar.com/\\\">Legistar Web API</a>, we collect data daily and store it using the <a href=\\\"http://opencivicdata.org/\\\">Open Civic Data</a> standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government: it was built in collaboration with <a href=\\\"http://sunlightfoundation.com/\\\">The Sunlight Foundation</a>, <a href=\\\"https://developers.google.com/civic-information/?hl=en\\\">Google</a>, <a href=\\\"http://www.granicus.com/\\\">Granicus</a>, and <a href=\\\"http://www.opennorth.ca/\\\">Open North</a>.</p>\", \"id\": \"afdae4a4-3865-4a7e-b2aa-abb766d93c7d\"}], \"anchor\": \"data\"}, \"id\": \"e8e5d832-9607-405e-921d-bcdcb18ee160\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Credits\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">This site represents a collaborative effort of Metro\\u2019s Office of the CEO, Office of Board Administration, and Research &amp; Records, Information Management, to ensure Board activity is transparent and easily accessible for the public.</p><p data-block-key=\\\"9u1aq\\\">The site was built by <a href=\\\"http://datamade.us/\\\">DataMade</a>, a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.</p><p data-block-key=\\\"3s5hn\\\"></p><embed alt=\\\"\\\" embedtype=\\\"image\\\" format=\\\"left\\\" id=\\\"1\\\"/><p data-block-key=\\\"94jfg\\\"></p>\", \"id\": \"faef24a9-ef94-4206-8913-37e1330061ea\"}], \"anchor\": \"credits\"}, \"id\": \"4d81311a-e4a8-47a7-85fa-e3c984389e42\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Contact us\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">For questions about or comments for the Metro Board, please contact boardclerk@metro.net. Written public comment can be mailed to:</p><p data-block-key=\\\"4dck\\\">Office of Board Administration<br/>1 Gateway Plaza, Mail Stop 99-3-1<br/>Los Angeles, CA 90012</p><p data-block-key=\\\"enmrs\\\">If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message. Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.</p><p data-block-key=\\\"2e0h3\\\">For questions about this website or Board records, please email boardreport@metro.net.</p>\", \"id\": \"c376852b-d5e6-43d6-9fca-e6fe682ab51f\"}], \"anchor\": \"contact\"}, \"id\": \"7feeebc5-aad8-4175-bd4e-81027284f76b\"}]",
+            "live": true,
+            "path": "000100010001",
+            "slug": "about-us",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": 2,
+            "show_in_menus": false,
+            "latest_revision": 4,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": "2024-11-20T16:14:42.213Z",
+            "first_published_at": "2024-11-20T16:14:42.213Z",
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": true,
+            "latest_revision_created_at": "2024-11-20T16:21:02.185Z"
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 6,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-20T17:40:53.326Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><p data-block-key=\\\"1drrg\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Room Rules and Procedures\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"16enk\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"6a28c\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2a6ui\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"2vdtm\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"em347\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"4r81j\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"29inm\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"1b7pv\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"2kj90\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"dubuh\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"5r60d\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"f0cls\\\"></p>\", \"id\": \"be011f8d-c089-4b2e-9ba4-e82476944f89\"}], \"anchor\": \"procedures\"}, \"id\": \"30d5c8c4-29b8-4dcd-8ca3-ce4d7c3a6957\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"responsive_element\", \"value\": {\"breakpoints\": {\"sm\": 1, \"md\": 2, \"lg\": 4}, \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"kjhhq\\\">Agreement</p>\", \"<p data-block-key=\\\"kjhhq\\\">A negotiated arrangement between parties.</p>\"]}]}, \"id\": \"db5ecbfe-bb13-48f8-b814-d29cdf48ba18\"}]}, \"id\": \"8c4c61e5-2313-4f7c-96ee-ebad34958766\"}, {\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"ozp61\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AAgreement\\\">Agreement</a></p>\", \"<p data-block-key=\\\"ozp61\\\">A negotiated arrangement between parties.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"ozp61\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AApplication\\\">Application</a></p>\", \"<p data-block-key=\\\"ozp61\\\">A formal request, usually for state and federal funding programs.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=bill_type_exact%3AAppointment\\\">Appointment</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">The Board of Directors makes appointments to various committees created for the purpose of collecting and reviewing public input such as the Citizens Advisory Council and the Metro Service Councils, and also to external organizations that include representation from Metro such as Metrolink.</p>\"]}]}, \"id\": \"1fb9819a-248c-416c-a068-6764e4a23f99\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Report Statuses\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Each Metro board report has one of 22 posible statuses:</p>\", \"id\": \"52c0a408-c3a2-4ca6-aca7-7b855322c399\"}, {\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Status\"}, {\"type\": \"rich_text\", \"heading\": \"Displayed Status\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted As Amended</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted as amended by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was approved by a majority vote of the Board.</p>\"]}]}, \"id\": \"c0885150-64d7-4181-8ddb-af704e697c35\"}], \"anchor\": \"\"}, \"id\": \"df0eabeb-b23a-4747-8d95-9057204a910b\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Visit Metro Headquarters Building\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">One Gateway Plaza<br/>Los Angeles, CA 90012-2952</p><p data-block-key=\\\"1nsov\\\">Metro Headquarters is located on the corner of Cesar E. Chavez Ave. and Vignes St.</p><p data-block-key=\\\"5bk78\\\"><a href=\\\"https://www.metro.net/about/contact/#visitus\\\">Get directions to Metro Headquarters.</a></p>\", \"id\": \"780fe99f-4159-44f3-9ac7-99f89f585700\"}], \"anchor\": \"visit\"}, \"id\": \"8655a141-976d-46ac-940c-b132f64d7381\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Data\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">The data for this website comes from the <a href=\\\"https://metro.legistar.com/\\\">Metro board reports site</a>, a system built by <a href=\\\"http://www.granicus.com/\\\">Granicus</a> using their <a href=\\\"http://www.granicus.com/solutions/legislative-management/\\\">Legistar Legislative Management Suite</a>.</p><p data-block-key=\\\"ajrfl\\\">With the help of the <a href=\\\"http://webapi.legistar.com/\\\">Legistar Web API</a>, we collect data daily and store it using the <a href=\\\"http://opencivicdata.org/\\\">Open Civic Data</a> standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government: it was built in collaboration with <a href=\\\"http://sunlightfoundation.com/\\\">The Sunlight Foundation</a>, <a href=\\\"https://developers.google.com/civic-information/?hl=en\\\">Google</a>, <a href=\\\"http://www.granicus.com/\\\">Granicus</a>, and <a href=\\\"http://www.opennorth.ca/\\\">Open North</a>.</p>\", \"id\": \"afdae4a4-3865-4a7e-b2aa-abb766d93c7d\"}], \"anchor\": \"data\"}, \"id\": \"e8e5d832-9607-405e-921d-bcdcb18ee160\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Credits\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">This site represents a collaborative effort of Metro\\u2019s Office of the CEO, Office of Board Administration, and Research &amp; Records, Information Management, to ensure Board activity is transparent and easily accessible for the public.</p><p data-block-key=\\\"9u1aq\\\">The site was built by <a href=\\\"http://datamade.us/\\\">DataMade</a>, a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.</p><p data-block-key=\\\"3s5hn\\\"></p><embed alt=\\\"\\\" embedtype=\\\"image\\\" format=\\\"left\\\" id=\\\"1\\\"/><p data-block-key=\\\"94jfg\\\"></p>\", \"id\": \"faef24a9-ef94-4206-8913-37e1330061ea\"}], \"anchor\": \"credits\"}, \"id\": \"4d81311a-e4a8-47a7-85fa-e3c984389e42\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Contact us\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">For questions about or comments for the Metro Board, please contact boardclerk@metro.net. Written public comment can be mailed to:</p><p data-block-key=\\\"4dck\\\">Office of Board Administration<br/>1 Gateway Plaza, Mail Stop 99-3-1<br/>Los Angeles, CA 90012</p><p data-block-key=\\\"enmrs\\\">If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message. Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.</p><p data-block-key=\\\"2e0h3\\\">For questions about this website or Board records, please email boardreport@metro.net.</p>\", \"id\": \"c376852b-d5e6-43d6-9fca-e6fe682ab51f\"}], \"anchor\": \"contact\"}, \"id\": \"7feeebc5-aad8-4175-bd4e-81027284f76b\"}]",
+            "live": true,
+            "path": "000100010001",
+            "slug": "about-us",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": 5,
+            "show_in_menus": false,
+            "latest_revision": 5,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": "2024-11-20T16:21:05.210Z",
+            "first_published_at": "2024-11-20T16:14:42.213Z",
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": false,
+            "latest_revision_created_at": "2024-11-20T16:21:05.183Z"
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 7,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-20T17:56:26.816Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><p data-block-key=\\\"1drrg\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Room Rules and Procedures\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"16enk\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"6a28c\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2a6ui\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"2vdtm\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"em347\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"4r81j\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"29inm\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"1b7pv\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"2kj90\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"dubuh\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"5r60d\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"f0cls\\\"></p>\", \"id\": \"be011f8d-c089-4b2e-9ba4-e82476944f89\"}], \"anchor\": \"procedures\"}, \"id\": \"30d5c8c4-29b8-4dcd-8ca3-ce4d7c3a6957\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"responsive_element\", \"value\": {\"breakpoints\": {\"sm\": 1, \"md\": 2, \"lg\": 4}, \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"kjhhq\\\">Agreement</p>\", \"<p data-block-key=\\\"kjhhq\\\">A negotiated arrangement between parties.</p>\"]}]}, \"id\": \"db5ecbfe-bb13-48f8-b814-d29cdf48ba18\"}]}, \"id\": \"8c4c61e5-2313-4f7c-96ee-ebad34958766\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Report Statuses\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Each Metro board report has one of 22 posible statuses:</p>\", \"id\": \"52c0a408-c3a2-4ca6-aca7-7b855322c399\"}, {\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Status\"}, {\"type\": \"rich_text\", \"heading\": \"Displayed Status\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted As Amended</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was adopted as amended by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AApproved\\\">Approved</a></p>\", \"<p data-block-key=\\\"2xhuu\\\">Item was approved by a majority vote of the Board.</p>\"]}]}, \"id\": \"c0885150-64d7-4181-8ddb-af704e697c35\"}], \"anchor\": \"\"}, \"id\": \"df0eabeb-b23a-4747-8d95-9057204a910b\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Visit Metro Headquarters Building\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">One Gateway Plaza<br/>Los Angeles, CA 90012-2952</p><p data-block-key=\\\"1nsov\\\">Metro Headquarters is located on the corner of Cesar E. Chavez Ave. and Vignes St.</p><p data-block-key=\\\"5bk78\\\"><a href=\\\"https://www.metro.net/about/contact/#visitus\\\">Get directions to Metro Headquarters.</a></p>\", \"id\": \"780fe99f-4159-44f3-9ac7-99f89f585700\"}], \"anchor\": \"visit\"}, \"id\": \"8655a141-976d-46ac-940c-b132f64d7381\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Data\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">The data for this website comes from the <a href=\\\"https://metro.legistar.com/\\\">Metro board reports site</a>, a system built by <a href=\\\"http://www.granicus.com/\\\">Granicus</a> using their <a href=\\\"http://www.granicus.com/solutions/legislative-management/\\\">Legistar Legislative Management Suite</a>.</p><p data-block-key=\\\"ajrfl\\\">With the help of the <a href=\\\"http://webapi.legistar.com/\\\">Legistar Web API</a>, we collect data daily and store it using the <a href=\\\"http://opencivicdata.org/\\\">Open Civic Data</a> standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government: it was built in collaboration with <a href=\\\"http://sunlightfoundation.com/\\\">The Sunlight Foundation</a>, <a href=\\\"https://developers.google.com/civic-information/?hl=en\\\">Google</a>, <a href=\\\"http://www.granicus.com/\\\">Granicus</a>, and <a href=\\\"http://www.opennorth.ca/\\\">Open North</a>.</p>\", \"id\": \"afdae4a4-3865-4a7e-b2aa-abb766d93c7d\"}], \"anchor\": \"data\"}, \"id\": \"e8e5d832-9607-405e-921d-bcdcb18ee160\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Credits\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">This site represents a collaborative effort of Metro\\u2019s Office of the CEO, Office of Board Administration, and Research &amp; Records, Information Management, to ensure Board activity is transparent and easily accessible for the public.</p><p data-block-key=\\\"9u1aq\\\">The site was built by <a href=\\\"http://datamade.us/\\\">DataMade</a>, a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.</p><p data-block-key=\\\"3s5hn\\\"></p><embed alt=\\\"\\\" embedtype=\\\"image\\\" format=\\\"left\\\" id=\\\"1\\\"/><p data-block-key=\\\"94jfg\\\"></p>\", \"id\": \"faef24a9-ef94-4206-8913-37e1330061ea\"}], \"anchor\": \"credits\"}, \"id\": \"4d81311a-e4a8-47a7-85fa-e3c984389e42\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Contact us\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">For questions about or comments for the Metro Board, please contact boardclerk@metro.net. Written public comment can be mailed to:</p><p data-block-key=\\\"4dck\\\">Office of Board Administration<br/>1 Gateway Plaza, Mail Stop 99-3-1<br/>Los Angeles, CA 90012</p><p data-block-key=\\\"enmrs\\\">If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message. Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.</p><p data-block-key=\\\"2e0h3\\\">For questions about this website or Board records, please email boardreport@metro.net.</p>\", \"id\": \"c376852b-d5e6-43d6-9fca-e6fe682ab51f\"}], \"anchor\": \"contact\"}, \"id\": \"7feeebc5-aad8-4175-bd4e-81027284f76b\"}]",
+            "live": true,
+            "path": "000100010001",
+            "slug": "about-us",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": 5,
+            "show_in_menus": false,
+            "latest_revision": 6,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": "2024-11-20T16:21:05.210Z",
+            "first_published_at": "2024-11-20T16:14:42.213Z",
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": true,
+            "latest_revision_created_at": "2024-11-20T17:40:53.326Z"
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 8,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-20T18:43:59.823Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><p data-block-key=\\\"1drrg\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Room Rules and Procedures\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"16enk\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"6a28c\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2a6ui\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"2vdtm\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"em347\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"4r81j\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"29inm\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"1b7pv\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"2kj90\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"dubuh\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"5r60d\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"f0cls\\\"></p>\", \"id\": \"be011f8d-c089-4b2e-9ba4-e82476944f89\"}], \"anchor\": \"procedures\"}, \"id\": \"30d5c8c4-29b8-4dcd-8ca3-ce4d7c3a6957\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"responsive_element\", \"value\": {\"breakpoints\": {\"sm\": 1, \"md\": 2, \"lg\": 4}, \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"kjhhq\\\">Agreement</p>\", \"<p data-block-key=\\\"kjhhq\\\">A negotiated arrangement between parties.</p>\"]}]}, \"id\": \"db5ecbfe-bb13-48f8-b814-d29cdf48ba18\"}]}, \"id\": \"8c4c61e5-2313-4f7c-96ee-ebad34958766\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Report Statuses\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Each Metro board report has one of 22 posible statuses:</p>\", \"id\": \"52c0a408-c3a2-4ca6-aca7-7b855322c399\"}, {\"type\": \"responsive_element\", \"value\": {\"breakpoints\": {\"sm\": 2, \"md\": 2, \"lg\": 4}, \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Status\"}, {\"type\": \"rich_text\", \"heading\": \"Displayed Status\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\">Item was adopted by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted As Amended</a></p>\", \"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\">Item was adopted by a majority vote of the Board.</p>\"]}]}, \"id\": \"20ff5c56-3d82-49fd-8c3f-77aaefce1212\"}]}, \"id\": \"8f171ff2-5370-4f49-88b0-51463d6b68f0\"}], \"anchor\": \"\"}, \"id\": \"df0eabeb-b23a-4747-8d95-9057204a910b\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Visit Metro Headquarters Building\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">One Gateway Plaza<br/>Los Angeles, CA 90012-2952</p><p data-block-key=\\\"1nsov\\\">Metro Headquarters is located on the corner of Cesar E. Chavez Ave. and Vignes St.</p><p data-block-key=\\\"5bk78\\\"><a href=\\\"https://www.metro.net/about/contact/#visitus\\\">Get directions to Metro Headquarters.</a></p>\", \"id\": \"780fe99f-4159-44f3-9ac7-99f89f585700\"}], \"anchor\": \"visit\"}, \"id\": \"8655a141-976d-46ac-940c-b132f64d7381\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Data\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">The data for this website comes from the <a href=\\\"https://metro.legistar.com/\\\">Metro board reports site</a>, a system built by <a href=\\\"http://www.granicus.com/\\\">Granicus</a> using their <a href=\\\"http://www.granicus.com/solutions/legislative-management/\\\">Legistar Legislative Management Suite</a>.</p><p data-block-key=\\\"ajrfl\\\">With the help of the <a href=\\\"http://webapi.legistar.com/\\\">Legistar Web API</a>, we collect data daily and store it using the <a href=\\\"http://opencivicdata.org/\\\">Open Civic Data</a> standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government: it was built in collaboration with <a href=\\\"http://sunlightfoundation.com/\\\">The Sunlight Foundation</a>, <a href=\\\"https://developers.google.com/civic-information/?hl=en\\\">Google</a>, <a href=\\\"http://www.granicus.com/\\\">Granicus</a>, and <a href=\\\"http://www.opennorth.ca/\\\">Open North</a>.</p>\", \"id\": \"afdae4a4-3865-4a7e-b2aa-abb766d93c7d\"}], \"anchor\": \"data\"}, \"id\": \"e8e5d832-9607-405e-921d-bcdcb18ee160\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Credits\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">This site represents a collaborative effort of Metro\\u2019s Office of the CEO, Office of Board Administration, and Research &amp; Records, Information Management, to ensure Board activity is transparent and easily accessible for the public.</p><p data-block-key=\\\"9u1aq\\\">The site was built by <a href=\\\"http://datamade.us/\\\">DataMade</a>, a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.</p><p data-block-key=\\\"3s5hn\\\"></p><embed alt=\\\"\\\" embedtype=\\\"image\\\" format=\\\"left\\\" id=\\\"1\\\"/><p data-block-key=\\\"94jfg\\\"></p>\", \"id\": \"faef24a9-ef94-4206-8913-37e1330061ea\"}], \"anchor\": \"credits\"}, \"id\": \"4d81311a-e4a8-47a7-85fa-e3c984389e42\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Contact us\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">For questions about or comments for the Metro Board, please contact boardclerk@metro.net. Written public comment can be mailed to:</p><p data-block-key=\\\"4dck\\\">Office of Board Administration<br/>1 Gateway Plaza, Mail Stop 99-3-1<br/>Los Angeles, CA 90012</p><p data-block-key=\\\"enmrs\\\">If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message. Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.</p><p data-block-key=\\\"2e0h3\\\">For questions about this website or Board records, please email boardreport@metro.net.</p>\", \"id\": \"c376852b-d5e6-43d6-9fca-e6fe682ab51f\"}], \"anchor\": \"contact\"}, \"id\": \"7feeebc5-aad8-4175-bd4e-81027284f76b\"}]",
+            "live": true,
+            "path": "000100010001",
+            "slug": "about-us",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": 5,
+            "show_in_menus": false,
+            "latest_revision": 7,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": "2024-11-20T16:21:05.210Z",
+            "first_published_at": "2024-11-20T16:14:42.213Z",
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": true,
+            "latest_revision_created_at": "2024-11-20T17:56:26.816Z"
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.revision",
+    "pk": 9,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "base_content_type": [
+            "wagtailcore",
+            "page"
+        ],
+        "object_id": "3",
+        "submitted_for_moderation": false,
+        "created_at": "2024-11-21T14:10:05.780Z",
+        "user": [
+            "hannah"
+        ],
+        "object_str": "About us",
+        "content": {
+            "pk": 3,
+            "body": "[{\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">This site offers tools for understanding and tracking the activity of the Board Members of the Los Angeles County Metropolitan Transportation Authority. It connects Los Angeles County residents to Metro policy makers, for greater online public dialogue about issues related to transit services and programs.</p><p data-block-key=\\\"bh2mu\\\">With this site, you can:</p><ul><li data-block-key=\\\"b5g0\\\">Stay up-to-date with your local representatives</li><li data-block-key=\\\"9kar2\\\">See the schedule of public events</li><li data-block-key=\\\"ergq0\\\">Track and comment on issues you care about</li></ul>\", \"id\": \"cccde923-3381-4213-82ef-e50e21f123f6\"}], \"anchor\": \"\"}, \"id\": \"fffd0bb0-3c05-4553-aad3-849517d38c1c\"}, {\"type\": \"section\", \"value\": {\"heading\": \"\", \"content\": [{\"type\": \"navigation\", \"value\": null, \"id\": \"fcf5d8a4-6e06-4e7e-b3dd-82eac2e292e0\"}], \"anchor\": \"\"}, \"id\": \"fed3bfcd-3067-423e-ba8d-e62517e68e1a\"}, {\"type\": \"section\", \"value\": {\"heading\": \"What is the Metro Board of Directors, and how does it work?\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"xg5wn\\\">The <a href=\\\"https://www.metro.net/\\\">Los Angeles County Metropolitan Transportation Authority (Metro)</a> was created by the State of California to set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County. Metro supports the transportation improvement programs of the 88 cities and 16 municipal transit operators within Los Angeles County, as well as LA&#x27;s paratransit provider, ASI, and its regional commuter rail service provider, Metrolink.</p><h4 data-block-key=\\\"8anki\\\"><b>Board of Directors</b></h4><p data-block-key=\\\"fvkpv\\\">The <a href=\\\"https://boardagendas.metro.net/board-members/\\\">Board of Directors</a> is comprised of representatives from the City of Los Angeles, the County of Los Angeles, the other incorporated cities and unincorporated areas in Los Angeles County, and a non-voting member representing the Governor. The full Board typically meets once a month to review budgets, contracts, policies and programs, and make decisions about what to adopt, fund and build.</p><h4 data-block-key=\\\"5eof0\\\"><b>Board Member Appointments</b></h4><p data-block-key=\\\"8pmdu\\\">City of Los Angeles representatives include the Mayor of Los Angeles and the Mayor\\u2019s three appointees. Los Angeles County representatives include the Los Angeles County Board of Supervisors representative of each of the five county districts. Representatives from the other incorporated cities and unincorporated areas in Los Angeles County are appointed by the City Selection Committee.</p><p data-block-key=\\\"84tjq\\\">The Los Angeles County City Selection Committee is a group comprised of the mayor of each city within Los Angeles County, excluding the City of Los Angeles. Within the Committee, there are four Subcommittees, one for each Sector of the county, comprised of the mayor of each city within each Sector:</p><ul><li data-block-key=\\\"bs20j\\\">North County/San Fernando Valley</li><li data-block-key=\\\"7upqs\\\">San Gabriel Valley</li><li data-block-key=\\\"9otfc\\\">Southeast/Long Beach</li><li data-block-key=\\\"fcrtg\\\">Southwest Corridor</li></ul><p data-block-key=\\\"94jc5\\\">Each Sector Subcommittee nominates one mayor or council member from the Sector to serve on the Metro Board (unless a motion to nominate multiple candidates is made, seconded and passed by a majority weighted vote). Nominees are approved and appointed to the Metro Board by the entire City Selection Committee, whereby each city within the Committee may cast one \\u201cyea\\u201d or \\u201cnay\\u201d vote for every 10,000 residents.</p><p data-block-key=\\\"c0m0h\\\">Full documentation of this process can be found in the <a href=\\\"https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf\\\">Los Angeles County City Selection Committee Rules and Regulations for Appointments to Los Angeles County Metropolitan Transportation Authority</a> .</p><h4 data-block-key=\\\"asij5\\\"><b>Board Chair</b></h4><p data-block-key=\\\"cisn5\\\">Each Metro Board Chair serves a one year term, from July 1st to June 30th. The Chair\\u2019s term rotates annually between the Mayor of Los Angeles, a member of the Los Angeles County Board of Supervisors, and one of the City Selection Committee Members.</p><h4 data-block-key=\\\"e76mn\\\"><b>Board Committees</b></h4><p data-block-key=\\\"dekft\\\">Per the Administrative Ordinance, the Board of Directors has 5 standing committees. The Chair of the Board of Directors may designate other standing and ad hoc committees subject to concurrence of the Board of Directors. Learn more <a href=\\\"https://boardagendas.metro.net/committees/\\\">here</a>.</p><h4 data-block-key=\\\"8bdep\\\"><b>Board Meetings</b></h4><p data-block-key=\\\"eahbn\\\">Learn more about Metro Board of Directors meetings, and view meetings and agendas <a href=\\\"https://boardagendas.metro.net/events/\\\">here</a>.</p><p data-block-key=\\\"1drrg\\\"></p>\", \"id\": \"7d711eb3-f937-4900-8e48-164de929ca99\"}], \"anchor\": \"about-la-metro\"}, \"id\": \"6861258a-da02-48ed-a21c-c8283ac588df\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Room Rules and Procedures\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Metro Board follows specific procedures to hold meetings and organize its members.</p><p data-block-key=\\\"16enk\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-Rules-Procedures.pdf\\\">Read about all Metro Rules &amp; Procedures.</a></p><ul><li data-block-key=\\\"6a28c\\\">If you wish to address the Board, please sign up for public comment on the tablets available in the lobby <b>before 9:45 a.m.</b></li><li data-block-key=\\\"2a6ui\\\">General public comment is only to be used for topics within the Board\\u2019s jurisdiction and items not listed on the agenda.</li><li data-block-key=\\\"2vdtm\\\">Public comment on agenda items will be taken as each item is considered.</li><li data-block-key=\\\"em347\\\">In accordance with the Ralph M. Brown Act, <b>public comment will not be taken</b> on items previously considered at a committee meeting where the public was given the opportunity to comment.</li><li data-block-key=\\\"4r81j\\\"><b>Disorderly behavior or inappropriate comments at the podium</b> may be cause for exclusion from further public comment for the day or <b>removal</b> from the Board room.</li><li data-block-key=\\\"29inm\\\">You will be allowed one minute to speak.</li><li data-block-key=\\\"1b7pv\\\">If you are unable to stand, a handheld microphone is available at the podium.</li><li data-block-key=\\\"2kj90\\\">Translation headsets are also available at the podium (Spanish 12, Korean 13).</li><li data-block-key=\\\"dubuh\\\">If you wish to address the Board, please submit a public comment request through one of the digital kiosks in the lobby.</li></ul><p data-block-key=\\\"5r60d\\\"><a href=\\\"https://boardagendas.metro.net/static/pdf/Board-of-Directors-Code-of-Conduct.pdf\\\">Code of Conduct</a></p><p data-block-key=\\\"f0cls\\\"></p>\", \"id\": \"be011f8d-c089-4b2e-9ba4-e82476944f89\"}], \"anchor\": \"procedures\"}, \"id\": \"30d5c8c4-29b8-4dcd-8ca3-ce4d7c3a6957\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Types of Board Reports\", \"content\": [{\"type\": \"responsive_element\", \"value\": {\"breakpoints\": {\"sm\": 1, \"md\": 2, \"lg\": 4}, \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Type\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"kjhhq\\\">Agreement</p>\", \"<p data-block-key=\\\"kjhhq\\\">A negotiated arrangement between parties.</p>\"]}]}, \"id\": \"db5ecbfe-bb13-48f8-b814-d29cdf48ba18\"}]}, \"id\": \"8c4c61e5-2313-4f7c-96ee-ebad34958766\"}], \"anchor\": \"\"}, \"id\": \"ff0bd369-1329-4fce-a5ab-40ae385c31d7\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Board Report Statuses\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"996oh\\\">Each Metro board report has one of 22 posible statuses:</p>\", \"id\": \"52c0a408-c3a2-4ca6-aca7-7b855322c399\"}, {\"type\": \"responsive_element\", \"value\": {\"breakpoints\": {\"sm\": 2, \"md\": 2, \"lg\": 4}, \"content\": [{\"type\": \"table\", \"value\": {\"columns\": [{\"type\": \"rich_text\", \"heading\": \"Status\"}, {\"type\": \"rich_text\", \"heading\": \"Displayed Status\"}, {\"type\": \"rich_text\", \"heading\": \"Description\"}], \"rows\": [{\"values\": [\"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\">Item was adopted by a majority vote of the Board.</p>\"]}, {\"values\": [\"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted As Amended</a></p>\", \"<p data-block-key=\\\"d4gsg\\\"><a href=\\\"https://boardagendas.metro.net/search/?selected_facets=inferred_status_exact%3AAdopted\\\">Adopted</a></p>\", \"<p data-block-key=\\\"d4gsg\\\">Item was adopted by a majority vote of the Board.</p>\"]}]}, \"id\": \"20ff5c56-3d82-49fd-8c3f-77aaefce1212\"}]}, \"id\": \"8f171ff2-5370-4f49-88b0-51463d6b68f0\"}], \"anchor\": \"\"}, \"id\": \"df0eabeb-b23a-4747-8d95-9057204a910b\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Visit Metro Headquarters Building\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">One Gateway Plaza<br/>Los Angeles, CA 90012-2952</p><p data-block-key=\\\"1nsov\\\">Metro Headquarters is located on the corner of Cesar E. Chavez Ave. and Vignes St.</p><p data-block-key=\\\"5bk78\\\"><a href=\\\"https://www.metro.net/about/contact/#visitus\\\">Get directions to Metro Headquarters.</a></p>\", \"id\": \"780fe99f-4159-44f3-9ac7-99f89f585700\"}], \"anchor\": \"visit\"}, \"id\": \"8655a141-976d-46ac-940c-b132f64d7381\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Data\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">The data for this website comes from the <a href=\\\"https://metro.legistar.com/\\\">Metro board reports site</a>, a system built by <a href=\\\"http://www.granicus.com/\\\">Granicus</a> using their <a href=\\\"http://www.granicus.com/solutions/legislative-management/\\\">Legistar Legislative Management Suite</a>.</p><p data-block-key=\\\"ajrfl\\\">With the help of the <a href=\\\"http://webapi.legistar.com/\\\">Legistar Web API</a>, we collect data daily and store it using the <a href=\\\"http://opencivicdata.org/\\\">Open Civic Data</a> standard and platform. Open Civic Data standardizes information about people, organizations, events and bills at any level of government: it was built in collaboration with <a href=\\\"http://sunlightfoundation.com/\\\">The Sunlight Foundation</a>, <a href=\\\"https://developers.google.com/civic-information/?hl=en\\\">Google</a>, <a href=\\\"http://www.granicus.com/\\\">Granicus</a>, and <a href=\\\"http://www.opennorth.ca/\\\">Open North</a>.</p>\", \"id\": \"afdae4a4-3865-4a7e-b2aa-abb766d93c7d\"}], \"anchor\": \"data\"}, \"id\": \"e8e5d832-9607-405e-921d-bcdcb18ee160\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Credits\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">This site represents a collaborative effort of Metro\\u2019s Office of the CEO, Office of Board Administration, and Research &amp; Records, Information Management, to ensure Board activity is transparent and easily accessible for the public.</p><p data-block-key=\\\"9u1aq\\\">The site was built by <a href=\\\"http://datamade.us/\\\">DataMade</a>, a civic technology company. They build open source technology using open data to empower journalists, researchers, governments and advocacy organizations.</p><p data-block-key=\\\"3s5hn\\\"></p><embed alt=\\\"\\\" embedtype=\\\"image\\\" format=\\\"left\\\" id=\\\"1\\\"/><p data-block-key=\\\"94jfg\\\"></p>\", \"id\": \"faef24a9-ef94-4206-8913-37e1330061ea\"}], \"anchor\": \"credits\"}, \"id\": \"4d81311a-e4a8-47a7-85fa-e3c984389e42\"}, {\"type\": \"section\", \"value\": {\"heading\": \"Contact us\", \"content\": [{\"type\": \"text\", \"value\": \"<p data-block-key=\\\"3md9b\\\">For questions about or comments for the Metro Board, please contact boardclerk@metro.net. Written public comment can be mailed to:</p><p data-block-key=\\\"4dck\\\">Office of Board Administration<br/>1 Gateway Plaza, Mail Stop 99-3-1<br/>Los Angeles, CA 90012</p><p data-block-key=\\\"enmrs\\\">If you are commenting on a specific item, please include the item number and your position on it - for, against, general comment, or item needs more consideration - in your message. Written public comment (via mail or email) must be received by 5pm the evening prior to the meeting where the item will be considered.</p><p data-block-key=\\\"2e0h3\\\">For questions about this website or Board records, please email boardreport@metro.net.</p>\", \"id\": \"c376852b-d5e6-43d6-9fca-e6fe682ab51f\"}], \"anchor\": \"contact\"}, \"id\": \"7feeebc5-aad8-4175-bd4e-81027284f76b\"}]",
+            "live": true,
+            "path": "000100010001",
+            "slug": "about",
+            "depth": 3,
+            "owner": 1,
+            "title": "About us",
+            "locale": 1,
+            "locked": false,
+            "expired": false,
+            "alias_of": null,
+            "numchild": 0,
+            "url_path": "/home/about-us/",
+            "expire_at": null,
+            "locked_at": null,
+            "locked_by": null,
+            "seo_title": "",
+            "go_live_at": null,
+            "draft_title": "About us",
+            "content_type": 99,
+            "live_revision": 5,
+            "show_in_menus": false,
+            "latest_revision": 8,
+            "translation_key": "cd676e32-0e4a-4e60-aa61-17e11ed9e8de",
+            "last_published_at": "2024-11-20T16:21:05.210Z",
+            "first_published_at": "2024-11-20T16:14:42.213Z",
+            "search_description": "",
+            "wagtail_admin_comments": [],
+            "has_unpublished_changes": true,
+            "latest_revision_created_at": "2024-11-20T18:43:59.823Z"
+        },
+        "approved_go_live_at": null
+    }
+},
+{
+    "model": "wagtailcore.workflowpage",
+    "pk": 1,
+    "fields": {
+        "workflow": 1
+    }
+},
+{
+    "model": "wagtailcore.workflowtask",
+    "pk": 1,
+    "fields": {
+        "sort_order": 0,
+        "workflow": 1,
+        "task": 1
+    }
+},
+{
+    "model": "wagtailcore.task",
+    "pk": 1,
+    "fields": {
+        "name": "Moderators approval",
+        "content_type": [
+            "wagtailcore",
+            "groupapprovaltask"
+        ],
+        "active": true
+    }
+},
+{
+    "model": "wagtailcore.workflow",
+    "pk": 1,
+    "fields": {
+        "name": "Moderators approval",
+        "active": true
+    }
+},
+{
+    "model": "wagtailcore.groupapprovaltask",
+    "pk": 1,
+    "fields": {
+        "groups": [
+            [
+                "Moderators"
+            ]
+        ]
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 1,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-11-20T16:14:38.029Z",
+        "uuid": "3f73e34e-a895-4f02-bfc7-2682a7e40ae4",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 2,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-20T16:14:38.064Z",
+        "uuid": "3f73e34e-a895-4f02-bfc7-2682a7e40ae4",
+        "user": [
+            "hannah"
+        ],
+        "revision": 1,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 3,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-20T16:14:42.204Z",
+        "uuid": "b4a935fd-ec5e-4fa9-accb-46cd6f8e3815",
+        "user": [
+            "hannah"
+        ],
+        "revision": 2,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 4,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.publish",
+        "data": {},
+        "timestamp": "2024-11-20T16:14:42.238Z",
+        "uuid": "b4a935fd-ec5e-4fa9-accb-46cd6f8e3815",
+        "user": [
+            "hannah"
+        ],
+        "revision": 2,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 5,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-20T16:17:55.836Z",
+        "uuid": "b09ca03c-3b5a-462f-81c0-ad0a84acfb2a",
+        "user": [
+            "hannah"
+        ],
+        "revision": 3,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 6,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-20T16:21:02.200Z",
+        "uuid": "a416ceff-6304-4f72-8177-04776e76817b",
+        "user": [
+            "hannah"
+        ],
+        "revision": 4,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 7,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-20T16:21:05.197Z",
+        "uuid": "49c25941-a13c-4ab0-8430-751dbccc984c",
+        "user": [
+            "hannah"
+        ],
+        "revision": 5,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 8,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.publish",
+        "data": {},
+        "timestamp": "2024-11-20T16:21:05.243Z",
+        "uuid": "49c25941-a13c-4ab0-8430-751dbccc984c",
+        "user": [
+            "hannah"
+        ],
+        "revision": 5,
+        "content_changed": false,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 9,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-20T17:40:53.372Z",
+        "uuid": "ad31aad2-c86e-457d-bfb5-12e7ced9174d",
+        "user": [
+            "hannah"
+        ],
+        "revision": 6,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 10,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-20T17:56:26.856Z",
+        "uuid": "cc6bdf51-6f0a-447f-8de1-e611accdaaa9",
+        "user": [
+            "hannah"
+        ],
+        "revision": 7,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 11,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-20T18:43:59.866Z",
+        "uuid": "035639c0-4d2f-4160-a466-98e01d2803e8",
+        "user": [
+            "hannah"
+        ],
+        "revision": 8,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 12,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-11-21T14:10:05.814Z",
+        "uuid": "739984d0-978a-4c3f-91d0-5159fe0be870",
+        "user": [
+            "hannah"
+        ],
+        "revision": 9,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 13,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "aboutpage"
+        ],
+        "label": "About us",
+        "action": "wagtail.publish",
+        "data": {},
+        "timestamp": "2024-11-21T14:10:05.868Z",
+        "uuid": "739984d0-978a-4c3f-91d0-5159fe0be870",
+        "user": [
+            "hannah"
+        ],
+        "revision": 9,
+        "content_changed": true,
+        "deleted": false,
+        "page": 3
+    }
+},
+{
+    "model": "wagtailcore.pagesubscription",
+    "pk": 1,
+    "fields": {
+        "user": [
+            "hannah"
+        ],
+        "page": 3,
+        "comment_notifications": true
+    }
+},
+{
+    "model": "wagtailredirects.redirect",
+    "pk": 1,
+    "fields": {
+        "old_path": "/about-us",
+        "site": [
+            "localhost",
+            80
+        ],
+        "is_permanent": true,
+        "redirect_page": 3,
+        "redirect_page_route_path": "",
+        "redirect_link": "",
+        "automatically_created": true,
+        "created_at": "2024-11-21T14:10:05.859Z"
+    }
+}
+]

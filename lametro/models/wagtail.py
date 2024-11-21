@@ -11,6 +11,8 @@ from lametro.blocks import ArticleBlock
 
 
 class AboutPage(Page):
+    include_in_dump = True
+
     body = StreamField(
         [
             ("section", ArticleBlock()),

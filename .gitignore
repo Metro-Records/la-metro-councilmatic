@@ -27,3 +27,4 @@ lametro/secrets.py
 .env.local
 
 .venv
+media/

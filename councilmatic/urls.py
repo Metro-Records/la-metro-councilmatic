@@ -28,7 +28,6 @@ from lametro.views import (
     LAMetroEventDetail,
     LABillDetail,
     LABoardMembersView,
-    LAMetroAboutView,
     LACommitteeDetailView,
     LACommitteesView,
     LAPersonDetailView,
@@ -68,7 +67,6 @@ patterns = (
         ),
         url(r"^archive-search", LAMetroArchiveSearch.as_view(), name="archive-search"),
         url(r"^$", never_cache(LAMetroIndexView.as_view()), name="index"),
-        url(r"^about/$", LAMetroAboutView.as_view(), name="about"),
         url(
             r"^board-report/(?P<slug>[^/]+)/$",
             LABillDetail.as_view(),
@@ -136,7 +134,7 @@ urlpatterns = [
     path("smartlogic/", include("smartlogic.urls", namespace="smartlogic")),
     path("cms/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
-    path("pages/", include(wagtail_urls)),
+    path("", include(wagtail_urls)),
     url(r"", include("councilmatic_core.urls")),
     url(r"^test-logging/$", test_logging, name="test_logging"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
