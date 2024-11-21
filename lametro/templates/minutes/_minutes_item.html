@@ -1,26 +1,25 @@
-{% if forloop.last %}
-<div class="row" style="margin-bottom: 30px;">
-{% else %}
-<div class="row">
-{% endif %}
-
+<section class="row">
   {% if not forloop.first %}
-    <hr class="events-line"/>
+  <div class="col-12">
+    <hr class="events-line" aria-hidden="true">
+  </div>
   {% endif %}
-  <br/>
-  <div class="col-xs-4">
-    <span class="desktop-only text-muted">
-      {{ e.meeting }}<br />
+
+  <div class="col-4">
+    <span class="text-muted">
+      {{ e.meeting }}
     </span>
   </div>
-  <div class="col-xs-4">
+
+  <div class="col-4">
     {% for link in e.agenda_link %}
-      <p><a href="{{ link | safe }}">Agenda {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a><br/></p>
+      <a href="{{ link | safe }}">Agenda {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a>
     {% endfor %}
   </div>
-  <div class="col-xs-4">
+
+  <div class="col-4">
     {% for link in e.minutes_link %}
-      <p><a href="{{ link | safe }}">Minutes {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a><br/></p>
+      <a href="{{ link | safe }}">Minutes {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a>
     {% endfor %}
   </div>
-</div>
+</section>

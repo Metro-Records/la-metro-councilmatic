@@ -305,6 +305,11 @@ def query_encode(query):
 
 
 @register.filter
+def query_encode_no_plus(query):
+    return urllib.parse.quote(query)
+
+
+@register.filter
 def group_by_classification(queryset):
     for group, members in itertools.groupby(
         queryset.order_by("classification"),

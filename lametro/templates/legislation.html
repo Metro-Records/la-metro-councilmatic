@@ -6,45 +6,48 @@
 
 {% block content %}
 
-    {% if legislation %}
+{% if legislation %}
+    <section class="row mb-3">
+        <div class="col-12">
+            <h1 class="bill-page-title">
+                {% if legislation.extras.plain_text|prepare_title %}
+                    {{ legislation.identifier}} - {{ legislation.extras.plain_text|prepare_title }}
+                {% else %}
+                    {{ legislation.identifier}}
+                {% endif %}
+            </h1>
 
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <h1 class="bill-page-title">
-                    <br class="non-mobile-only" />
-                    {% if legislation.extras.plain_text|prepare_title %}
-                        {{ legislation.identifier}} - {{ legislation.extras.plain_text|prepare_title }}
-                    {% else %}
-                        {{ legislation.identifier}}
-                    {% endif %}
-                    <br>
-                </h1>
-                <h1>
-					<span class="label label-info">
-					  {{ legislation.bill_type }}
-					</span>
+            <h2 class="h1 my-3">
+                <span class="label label-info d-inline-block me-2 mb-2">
+                    {{ legislation.bill_type }}
+                </span>
 
-					{% if legislation.inferred_status %}
-					  {{ legislation.inferred_status | inferred_status_label | safe }}
-					{% endif %}
-                </h1>
+                {% if legislation.inferred_status %}
+                    {{ legislation.inferred_status | inferred_status_label | safe }}
+                {% endif %}
+            </h2>
 
-                <p>
-					<a href="{{ legislation.bill_type | get_bill_type_link }}" title="Learn more about this type of Board Report" target="_blank">
-                        <i class="fa fa-fw fa-external-link"></i> Learn more about this type of Board Report
-                    </a>
-                </p>
-                <p>
-                    <a href="{{legislation.web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank">
-                        <i class="fa fa-fw fa-external-link"></i> View on the {{CITY_VOCAB.SOURCE}} website
-                    </a>
-                </p>
-            </div>
+            <p>
+                <a href="{{ legislation.bill_type | get_bill_type_link }}" title="Learn more about this type of Board Report" target="_blank" aria-label="Learn more about this type of Board Report - link opens in a new tab">
+                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i> Learn more about this type of Board Report
+                </a>
+            </p>
+            <p>
+                <a href="{{legislation.web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank" aria-label="View on the {{CITY_VOCAB.SOURCE}} website - link opens in a new tab">
+                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i> View on the {{CITY_VOCAB.SOURCE}} website
+                </a>
+            </p>
         </div>
 
-        <div class="col-sm-8 no-pad-mobile">
+        <div class="col-md-8" aria-hidden="true">
+            <hr aria-hidden="true">
+        </div>
+    </section>
+
+    <section class="row">
+        <article class="col-md-8">
             {% if legislation.board_report %}
-	    {% with board_report=legislation.board_report %}
+                {% with board_report=legislation.board_report %}
                 <h3>
                     <i class="fa fa-align-justify" aria-hidden="true"></i>
                     Report text
@@ -54,72 +57,69 @@
                     To access embedded hyperlinks, please download the report PDF by clicking "Download Board Report".
                 </p>
 
-
                 <p>
-                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}'><i class="fa fa-file-text-o" aria-hidden="true"></i> Download Board Report</a>
+                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}' class="fw-bold fs-6" aria-label="Download Board Report - link opens in a new tab">
+                        <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Board Report
+                    </a>
                 </p>
-
 
                 {% if legislation.packet.is_ready and attachments%}
                     <p>
-                        <a href="{{legislation.packet.url}}"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
+                        <a href="{{legislation.packet.url}}" class="fw-bold fs-6"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
                     </p>
                 {% endif %}
 
                 <iframe
                     id="pdf-embed-agenda"
-                    class="pdf-viewer hidden-xs"
-                    frameborder="0"
-                    seamless="true"
-                    width="100%"
-                    height="600px">
+                    class="pdf-viewer d-none d-sm-block"
+                    height="600">
                 </iframe>
-
-                <div class="divider"></div>
-	    {% endwith %}
+                {% endwith %}
             {% elif legislation.extras.plain_text != "" %}
                 <h3>
-                    <i class='fa fa-fw fa-file-text-o'></i>
+                    <i class='fa fa-fw fa-file-text-o' aria-hidden="true"></i>
                     Report text
                 </h3>
 
-                <div class='panel panel-default'>
-                  <div class='panel-body'>
+                <div class="card">
+                    <div class="card-body bg-white">
                         {{ legislation.extras.plain_text|prepare_title}}
                     </div>
                 </div>
-
-                <div class="divider"></div>
             {% endif %}
 
-
-            <div class="divider"></div>
+            <div class="divider" aria-hidden="true"></div>
 
             {% if actions %}
-                <h3 class="no-pad-bottom"><i class='fa fa-fw fa-list-ul'></i> History</h3>
+                <h3 class="no-pad-bottom">
+                    <i class='fa fa-fw fa-list-ul' aria-hidden="true"></i>
+                    History
+                </h3>
+
                 <div class="table-responsive">
-                    <table class='table table-responsive' id='committee-actions'>
+                    <table class="table" id="committee-actions">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Action</th>
-                                <th>Meeting</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                                <th scope="col">Meeting</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for action in actions %}
                                 <tr>
-                                    <td class='nowrap text-muted small'>
-                                        <span datetime='{{action.date}}'>{{action.date|date:'n/d/y'}}</span>
+                                    <td class="nowrap text-muted small">
+                                        <time datetime="{{action.date|date:'Y-m-d'}}">{{action.date|date:'n/d/y'}}</time>
                                     </td>
                                     <td class="small">
-                                        <span class='text-default'>{{action.description}}</span>
+                                        <span class="text-default">{{action.description}}</span>
                                     </td>
                                     <td class="small">
-                                        {% if action.event.status == 'cancelled' %}<strike>{% endif %}
-                                        {{ action.event.link_html|safe }}
-                                        {% if action.event.status == 'cancelled' %}</strike>
-                                            <small>&nbsp;<span class="label label-stale">{{ action.event.status }}</span></small>
+                                        {% if action.event.status == 'cancelled' %}<del>{% endif %}
+                                            {{ action.event.link_html|safe }}
+                                        {% if action.event.status == 'cancelled' %}
+                                            </del>
+                                            <small><span class="label label-stale ms-1"> {{ action.event.status }}</span></small>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -127,45 +127,48 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="divider"></div>
+                <div class="divider" aria-hidden="true"></div>
             {% endif %}
-
-        </div>
+        </article>
 
         <!-- New col added, here. -->
-        <div class="col-sm-4">
+        <aside class="col-md-4">
             {% if attachments %}
                 <h3>
-                    <i class='fa fa-fw fa-paperclip'></i>
+                    <i class="fa fa-fw fa-paperclip" aria-hidden="true"></i>
                     Attachments ({{ attachments | length }})
                 </h3>
+
                 <ul>
                     {% for doc in attachments %}
                         <li>
-                            <a href="{{doc.links.all.0.url}}" target="blank">{{ doc.note }}</a>
+                            <a href="{{doc.links.all.0.url}}" target="blank" aria-label="{{ doc.note }} - link opens in a new tab">{{ doc.note }}</a>
                         </li>
                     {% endfor %}
                 </ul>
-                <div class="divider"></div>
+                <div class="divider mb-5" aria-hidden="true"></div>
             {% endif %}
 
             {% if related_bills %}
-            <br>
-                <h3 class="no-pad-bottom"><i class="fa fa-file-text" aria-hidden="true"></i> Related Board Reports</h3>
+                <h3 class="no-pad-bottom">
+                    <i class="fa fa-file-text" aria-hidden="true"></i>
+                    Related Board Reports
+                </h3>
+
                 <div class="table-responsive">
-                    <table class='table table-responsive' id='committee-actions'>
+                    <table class="table" id="related-bills">
                         <thead>
                             <tr>
-                                <th>Board Report</th>
-                                <th class='no-wrap'>Last action</th>
+                                <th scope="col">Board Report</th>
+                                <th class="no-wrap" scope="col">Last action</th>
                             </tr>
                         </thead>
                         <tbody>
-                          {% for relation in related_bills %}
-                          {% with bill=relation.related_bill %}
+                            {% for relation in related_bills %}
+                                {% with bill=relation.related_bill %}
                                 <tr>
-                                    <td class='text-muted small'>
-                                      <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
+                                    <td class="text-muted small">
+                                        <a href="{% url 'lametro:bill_detail' bill.slug %}">{{ bill.identifier}}</a>
 
                                         {% if bill.extras.plain_text|prepare_title %}
                                             - {{ bill.extras.plain_text|prepare_title }}
@@ -173,74 +176,72 @@
 
                                         {{bill.inferred_status | inferred_status_label | safe}}
                                     </td>
-                                    <td class='text-muted small' align='right'>{{ bill.last_action_date|date:'n/d/Y' }}</td>
+
+                                    <td class="text-muted small text-end">{{ bill.last_action_date|date:'n/d/Y' }}</td>
                                 </tr>
-                            {% endwith %}
+                                {% endwith %}
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                <div class="divider"></div>
+                <div class="divider mb-5" aria-hidden="true"></div>
             {% endif %}
 
             {% if legislation.topics %}
-            <br>
-              <h3><i class="fa fa-tag" aria-hidden="true"></i> Topics</h3>
-                {% with legislation.rich_topics|group_by_classification as topics_list %}
+                <h3><i class="fa fa-tag" aria-hidden="true"></i> Topics</h3>
+                    {% with legislation.rich_topics|group_by_classification as topics_list %}
                     {% for category, topics in topics_list %}
                         <h4>{{ category }}</h4>
                         <ul>
-                        {% for topic in topics|sort_topics %}
+                            {% for topic in topics|sort_topics %}
                             {% with topic.classification|add:":"|add:topic.name as tag_facet %}
-                            <li>
-                                <a href="{% search_with_querystring request selected_facets=tag_facet %}">
-                                  {{ topic.name }}
-                                </a>
-                            </li>
+                                <li>
+                                    <a href="{% search_with_querystring request selected_facets=tag_facet %}">
+                                        {{ topic.name }}
+                                    </a>
+                                </li>
                             {% endwith %}
-                        {% endfor %}
+                            {% endfor %}
                         </ul>
                     {% endfor %}
-                {% endwith %}
+                    {% endwith %}
             {% endif %}
-        </div>
+        </aside>
+    </section>
 
+    {% if DISQUS_SHORTNAME %}
+        <section class="row">
+            <div class="col-12">
+                <h3>Comments</h3>
 
-        <div class="row-fluid">
-            <div class="col-xs-12">
-                {% if DISQUS_SHORTNAME %}
-                    <h3>Comments</h3>
+                <div id="disqus_thread"></div>
+                <script>
+                    /**
+                     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+                     */
+                    /*
+                    var disqus_config = function () {
+                        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+                        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                    };
+                    */
+                    (function() {  // DON'T EDIT BELOW THIS LINE
+                        var d = document, s = d.createElement('script');
 
-                    <div id="disqus_thread"></div>
-                    <script>
-                        /**
-                         *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-                         *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-                         */
-                        /*
-                        var disqus_config = function () {
-                            this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-                            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-                        };
-                        */
-                        (function() {  // DON'T EDIT BELOW THIS LINE
-                            var d = document, s = d.createElement('script');
+                        s.src = '//{{ DISQUS_SHORTNAME }}.disqus.com/embed.js';
 
-                            s.src = '//{{ DISQUS_SHORTNAME }}.disqus.com/embed.js';
-
-                            s.setAttribute('data-timestamp', +new Date());
-                            (d.head || d.body).appendChild(s);
-                        })();
-                    </script>
-                    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
-                {% endif %}
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
             </div>
-        </div>
-
-    {% else %}
-        <h3>Legislation not found</h3>
+        </section>
     {% endif %}
+{% else %}
+    <h1 class="h3">Legislation not found</h1>
+{% endif %}
 
     <script type="application/ld+json">
     {
@@ -265,7 +266,7 @@
 
     <script>
 
-        $("#committee-actions").DataTable({
+        $("#committee-actions,#related-bills").DataTable({
             "info": false,
             "searching": false,
             "bLengthChange": false,
@@ -292,7 +293,7 @@
         }
         else{
             $('#pdf-embed-agenda').hide()
-            $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link'></i> View PDF")
+            $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link' aria-label='Opens in a new tab.'></i> View PDF")
         }
 
         {% for source in legislation.sources.all %}

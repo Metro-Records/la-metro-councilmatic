@@ -3,14 +3,14 @@
 {% load highlight %}
 
 <p>
-    <a class="small" target='_blank' href="{% url 'lametro:bill_detail' r.slug %}">
+    <a class="small me-1" target='_blank' href="{% url 'lametro:bill_detail' r.slug %}" aria-label="{{ r.friendly_name }} - link opens in a new tab">
         {{ r.friendly_name }}
     </a>
     {% if r.inferred_status %}{{ r.inferred_status | inferred_status_label | safe }}{% endif %}
 </p>
 
 <div class="row">
-    <div class="col-xs-11">
+    <div class="col-10 col-sm-11">
         {% if query %}
             <p class="search-result">
                 {% if r.highlighted.text.0 %}
@@ -21,16 +21,15 @@
                 {% endif %}
             </p>
         {% else %}
-            <p>
-              {{ r.listing_description | short_blurb }}
+            <p class="overflow-auto">
+                {{ r.listing_description | short_blurb }}
             </p>
         {% endif %}
     </div>
-    <div class='col-xs-1 no-pad-mobile'>
-        <div>
-            <a class='btn-bill-detail' target='_blank' href='/board-report/{{ r.slug }}/'>
-                <i class="fa fa-fw fa-chevron-right"></i>
-            </a>
-        </div>
+
+    <div class="col-2 col-sm-1">
+        <a class='btn-bill-detail' target='_blank' href='/board-report/{{ r.slug }}/' aria-label="View this Board Report's details in a new tab">
+            <i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i>
+        </a>
     </div>
 </div>

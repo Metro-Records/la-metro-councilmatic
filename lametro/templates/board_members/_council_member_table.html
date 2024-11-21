@@ -4,17 +4,17 @@
     <table class='table' id='council-members'>
         <thead>
             <tr>
-                <th>{{ CITY_VOCAB.COUNCIL_MEMBER }}</th>
-                <th></th>
-                <th>Role</th>
+                <th scope="col">{{ CITY_VOCAB.COUNCIL_MEMBER }}</th>
+                <th aria-hidden="true" scope="col"></th>
+                <th scope="col">Role</th>
             </tr>
         </thead>
         <tbody>
             {% for membership in posts %}
-            <tr id="polygon-{{ membership.post.label | slugify }}" data="{{ membership.person.name | slugify}}">
+            <tr id="polygon-{{ membership.post.label | slugify }}-{{ membership.person.name | slugify}}" data-name="{{ membership.person.name | slugify}}" data-polygon="polygon-{{ membership.post.label | slugify }}">
                 <td>
                     <div class="thumbnail-square">
-                        <img src='{{ membership.person.headshot_url }}' alt='{{ membership.person.name }}' title='{{ membership.person.name }}' class='img-responsive img-thumbnail' />
+                        <img src='{{ membership.person.headshot_url }}' alt='{{ membership.person.name }}' title='{{ membership.person.name }}' class='img-thumbnail' />
                     </div>
                 </td>
 
@@ -23,21 +23,20 @@
                 </td>
 
                 <td data-order='{{ membership.index }}'>
-                    {% firstof membership.person.board_office.role membership.role %}
-                    <br/ >
+                    <p class="mb-1">{% firstof membership.person.board_office.role membership.role %}</p>
 
-                    <span class="small">
+                    <p class="small mb-1">
                         {{ membership.post.acting_label | comma_to_line_break | safe }}
-                    </span><br />
+                    </p>
 
                     {% if "Caltrans" in membership.post.label %}
-                        <span class="badge caltrans-badge">Caltrans</span>
+                        <p class="badge caltrans-badge mb-1">Caltrans</p>
                     {% elif "District" in membership.post.label %}
-                        <span class="badge district-badge">Districts</span>
+                        <p class="badge district-badge mb-1">Districts</p>
                     {% elif "sector" in membership.post.label  %}
-                        <span class="badge sector-badge">Sectors</span>
+                        <p class="badge sector-badge mb-1">Sectors</p>
                     {% elif "Mayor" in membership.post.label %}
-                        <span class="badge city-badge">City of LA</span>
+                        <p class="badge city-badge mb-1">City of LA</p>
                     {% endif %}
                 </td>
             </tr>
@@ -45,5 +44,3 @@
         </tbody>
     </table>
 </div>
-
-

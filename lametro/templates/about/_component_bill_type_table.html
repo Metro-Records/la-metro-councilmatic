@@ -3,39 +3,41 @@
 <table class="table" id="legislation-types">
     <thead>
         <tr>
-            <th>Type</th>
-            <th class="desktop-only">Description</th>
+            <th scope="col">Type</th>
+            <th class="lg-screen-only" scope="col">Description</th>
         </tr>
     </thead>
-    <tbody>
-    {% for leg_type in LEGISLATION_TYPE_DESCRIPTIONS %}
-        <tr>
-			<td >
-                <p class="nowrap" id="{{ leg_type.html_id }}">
-                    <i class="fa fa-fw fa-{{leg_type.fa_icon}}"></i>
-					{% if leg_type.name == 'Board Box / Board Correspondence' %}
-						<a href="https://mtasearch01.metro.net:23352/apps/boardarchives/?tab=boardbox">{{leg_type.name}}</a>
-					{% else %}
-						<a href="/search/?selected_facets=bill_type_exact%3A{{leg_type.name|query_encode}}">{{leg_type.name}}</a>
-					{% endif %}
-                </p>
 
-                <div class="non-desktop-only">
+    <tbody>
+        {% for leg_type in LEGISLATION_TYPE_DESCRIPTIONS %}
+            <tr>
+                <td>
+                    <p class="nowrap" id="{{ leg_type.html_id }}">
+                        <i class="fa fa-fw fa-{{leg_type.fa_icon}}" aria-hidden="true"></i>
+                        {% if leg_type.name == 'Board Box / Board Correspondence' %}
+                            <a href="https://mtasearch01.metro.net:23352/apps/boardarchives/?tab=boardbox">{{leg_type.name}}</a>
+                        {% else %}
+                            <a href="/search/?selected_facets=bill_type_exact%3A{{leg_type.name|query_encode}}">{{leg_type.name}}</a>
+                        {% endif %}
+                    </p>
+
+                    <div class="non-lg-screen-only">
+                        {% if leg_type.html_desc %}
+                            <p>{{leg_type.desc|safe}}</p>
+                        {% else %}
+                            <p>{{leg_type.desc}}</p>
+                        {% endif %}
+                    </div>
+                </td>
+
+                <td class="lg-screen-only">
                     {% if leg_type.html_desc %}
                         <p>{{leg_type.desc|safe}}</p>
                     {% else %}
                         <p>{{leg_type.desc}}</p>
                     {% endif %}
-                </div>
-            </td>
-            <td class="desktop-only">
-                {% if leg_type.html_desc %}
-                    <p>{{leg_type.desc|safe}}</p>
-                {% else %}
-                    <p>{{leg_type.desc}}</p>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
