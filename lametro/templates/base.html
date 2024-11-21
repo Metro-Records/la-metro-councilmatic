@@ -1,4 +1,4 @@
-{% load adv_cache extras lametro_extras markdownify static wagtailcore_tags %}
+{% load adv_cache extras lametro_extras static wagtailcore_tags wagtailmarkdown %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -103,7 +103,7 @@
         {% if alerts %}
             {% for alert in alerts|dictsort:"pk" %}
                 <div class="alert alert-{{alert.type}} mb-0" tabindex="0">
-                    {{alert.description|markdownify}}
+                    {{alert.description|markdown}}
                 </div>
             {% endfor %}
         {% endif %}

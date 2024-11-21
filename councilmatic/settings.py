@@ -125,7 +125,6 @@ INSTALLED_APPS = (
     "debug_toolbar",
     "template_profiler_panel",
     "captcha",
-    "markdownify.apps.MarkdownifyConfig",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.contrib.typed_table_block",
@@ -137,7 +136,9 @@ INSTALLED_APPS = (
     "wagtail.images",
     "wagtail.search",
     "wagtail.admin",
+    "wagtail.contrib.modeladmin",
     "wagtail",
+    "wagtailmarkdown",
     "modelcluster",
     "taggit",
 )
@@ -329,17 +330,9 @@ LOGGING = {
     },
 }
 
-
-# Allow some html tags to render in markdown. Mainly for alerts
-MARKDOWNIFY = {
-    "default": {
-        "WHITELIST_TAGS": [
-            "br",
-            "strong",
-            "em",
-            "a",
-        ]
-    }
+WAGTAILMARKDOWN = {
+    "autodownload_fontawesome": True,
+    "allowed_tags": ["br", "strong", "em", "a"],
 }
 
 # Hard time limit on HTTP requests
