@@ -19,6 +19,6 @@ RUN pip install pip==24.0 && \
 
 COPY . /app
 
-RUN DJANGO_SETTINGS_MODULE=councilmatic.minimal_settings python manage.py collectstatic
+RUN DJANGO_SETTINGS_MODULE=councilmatic.minimal_settings python manage.py collectstatic --no-input
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]

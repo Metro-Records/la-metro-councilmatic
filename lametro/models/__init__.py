@@ -1,2 +1,2 @@
-from .councilmatic import *  # noqa
-from .wagtail import *  # noqa
+from .legislative import *  # noqa
+from .cms import *  # noqa
