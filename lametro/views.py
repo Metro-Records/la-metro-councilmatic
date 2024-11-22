@@ -14,7 +14,6 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
 from django.db.models import (
@@ -31,9 +30,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
     TemplateView,
-    DeleteView,
-    UpdateView,
-    CreateView,
 )
 from django.http import (
     HttpResponseRedirect,
@@ -43,7 +39,6 @@ from django.http import (
 from django.core import management
 from django.core.serializers import serialize
 from django.core.cache import cache
-from django.urls import reverse_lazy
 
 from councilmatic_core.views import (
     IndexView,
@@ -68,7 +63,6 @@ from lametro.models import (
     LAMetroEvent,
     LAMetroOrganization,
     LAMetroSubject,
-    Alert,
     EventBroadcast,
 )
 from lametro.forms import (
@@ -77,7 +71,6 @@ from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
     PersonHeadshotForm,
     PersonBioForm,
-    AlertForm,
 )
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
