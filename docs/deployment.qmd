@@ -52,5 +52,55 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 
-#### Common Commands (working title)
-<!-- TODO: remember to document createsuperuser -->
+## Inspecting Data
+
+### View an entity in the Councilmatic database
+#### Use the slug of the problematic Bill, Event, Person, or Committee
+Every detail page is accessed in the browser using a slug. Let's walk through an example.
+Visit the page for the [October 2024 Executive Management Committee meeting](https://la-metro-councilmatic-staging.herokuapp.com/event/executive-management-committee-8a0e5d3ba5e2/),
+and check the address bar for the slug (the portion after the entity type, "event" in this case).
+We can see that the slug for this meeting is `executive-management-committee-8a0e5d3ba5e2`.
+
+#### Retrieve the entity in the Django shell
+Shell into a running instance of LA Metro Councilmatic using either the CLI or the web-based console.
+Then retrieve the problematic entity using its slug:
+
+```python
+# In the Django shell
+>>> from lametro.models import *
+>>> entity = LAMetroEvent.objects.get(slug='executive-management-committee-8a0e5d3ba5e2')
+```
+
+You can use the same ORM query to retrieve any entity. Simply swap out `LAMetroEvent` for the correct model and, of course, update the slug.
+
+| Entity | Model |
+| -- | -- |
+| Person | LAMetroPerson |
+| Committee | LAMetroOrganization |
+| Bill | LAMetroBill |
+| Event | LAMetroEvent |
+
+#### View useful information
+Assuming you have retrieved the entity as illustrated in the previous step, you can view its last updated date like this:
+
+```python
+>>> entity.updated_at
+datetime.datetime(2020, 3, 25, 0, 47, 3, 471572, tzinfo=<UTC>)
+```
+
+You can also view its sources like this:
+
+```python
+>>> import pprint
+>>> pprint.pprint([(source.note, source.url) for source in entity.sources.all()])
+[('api', 'http://webapi.legistar.com/v1/metro/events/1384'),
+ ('api (sap)', 'http://webapi.legistar.com/v1/metro/events/1493'),
+ ('web',
+  'https://metro.legistar.com/MeetingDetail.aspx?LEGID=1384&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94'),
+ ('web (sap)',
+  'https://metro.legistar.com/MeetingDetail.aspx?LEGID=1493&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94')]
+```
+
+Events have Spanish language sources (e.g., "api (sap)"), as well. In initial debugging, focus on the "api" and "web" sources – by visiting these links and checking that the data in Legistar appears as expected.
+
+**Pro-tip:** If you are using iTerm2 on a Mac, hold down the command key to convert URLs into hyperlinks. Saved you a copy/paste!
