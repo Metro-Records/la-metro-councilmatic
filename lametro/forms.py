@@ -2,7 +2,6 @@ import requests
 
 from django import forms
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.exceptions import ValidationError
 
 from captcha.fields import ReCaptchaField
 from captcha.fields import ReCaptchaV3
@@ -11,8 +10,7 @@ from haystack.inputs import Raw
 from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
-
-from lametro.models import LAMetroPerson, Alert
+from lametro.models import LAMetroPerson
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
