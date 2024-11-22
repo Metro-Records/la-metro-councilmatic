@@ -1,9 +1,11 @@
 from django.db import models
+from django.utils.html import format_html
 
 from wagtail.models import Page
 from wagtail.fields import StreamField
 from wagtail.admin.panels import FieldPanel
 
+from wagtailmarkdown.utils import render_markdown
 from wagtailmarkdown.widgets import MarkdownTextarea
 
 from lametro.blocks import ArticleBlock
@@ -42,4 +44,18 @@ class Alert(models.Model):
     description = models.TextField(null=True, blank=True)
     type = models.CharField(max_length=255, choices=TYPE_CHOICES)
 
-    panels = [FieldPanel("type"), FieldPanel("description", widget=MarkdownTextarea)]
+    panels = [
+        FieldPanel(
+            "type",
+            help_text="Select a style for your alert.",
+        ),
+        FieldPanel("description", widget=MarkdownTextarea),
+    ]
+
+    def content(self):
+        return format_html(
+            "<div class='list-display-wrapper'>"
+            + render_markdown(self.description)
+            + f"<span class='button alert-{self.type}'>{self.get_type_display()}</span>"
+            + "</div>"
+        )

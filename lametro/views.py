@@ -1046,29 +1046,6 @@ class MinutesView(EventsView):
         return context
 
 
-class AlertCreateView(LoginRequiredMixin, CreateView):
-    template_name = "alerts/alerts.html"
-    form_class = AlertForm
-    success_url = reverse_lazy("alerts")
-
-
-class AlertDeleteView(DeleteView):
-    model = Alert
-    success_url = reverse_lazy("alerts")
-
-    def form_valid(self, form):
-        self.object.delete()
-
-        return super().form_valid(form)
-
-
-class AlertUpdateView(UpdateView):
-    model = Alert
-    template_name = "alerts/alert_edit.html"
-    success_url = reverse_lazy("alerts")
-    fields = ["description", "type"]
-
-
 def metro_login(request):
     logout(request)
     if request.method == "POST":

@@ -1,0 +1,57 @@
+[class*="alert"] {
+  --font-color: #fff;
+  --a: 0.75;
+  background-color: rgba(var(--r), var(--g), var(--b), var(--a));
+  color: var(--font-color);
+  border: 1px solid #fff!important;
+}
+
+.button[class*="alert"]:hover {
+  background-color: rgba(var(--r), var(--g), var(--b), var(--a));
+  color: var(--font-color);
+}
+
+.alert-primary {
+  --r: 235;
+  --g: 104;
+  --b: 100;
+}
+
+.alert-secondary {
+  --r: 170;
+  --g: 170;
+  --b: 170;
+}
+
+.alert-success {
+  --r: 34;
+  --g: 178;
+  --b: 76;
+}
+
+.alert-danger {
+  --r: 51;
+  --g: 153;
+  --b: 153;
+}
+
+.alert-warning {
+  --font-color: #000;
+  --r: 245;
+  --g: 230;
+  --b: 37;
+}
+
+.alert-info {
+  --r: 245;
+  --g: 122;
+  --b: 0;
+}
+
+.list-display-wrapper {
+  font-weight: normal!important;
+}
+
+.list-display-wrapper a {
+  color: var(--w-color-text-link-default)!important;
+}
