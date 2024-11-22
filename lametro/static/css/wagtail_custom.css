@@ -51,7 +51,3 @@
 .list-display-wrapper {
   font-weight: normal!important;
 }
-
-.list-display-wrapper a {
-  color: var(--w-color-text-link-default)!important;
-}

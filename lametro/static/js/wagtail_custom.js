@@ -22,6 +22,7 @@ const styleAlertTypeSelect = (mutationList, observer) => {
 				styleParent({target: node})
 				node.addEventListener("change", styleParent)
 				observer.disconnect()
+				return
 			}
 		})
 	})
