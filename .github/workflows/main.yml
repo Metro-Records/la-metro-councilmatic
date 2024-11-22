@@ -42,7 +42,7 @@ jobs:
     - name: Lint the code
       run: |
         pip install black flake8
-        flake8 . --exclude=lametro/migrations,councilmatic/settings*
+        flake8 . --exclude lametro/migrations,councilmatic/settings*
         black --check . --exclude lametro/migrations councilmatic/settings.py councilmatic/settings_jurisdiction.py
     - name: Install system dependencies
       run: |
@@ -62,7 +62,5 @@ jobs:
         DATABASE_URL: postgis://postgres:postgres@localhost:5432/lametro
         SEARCH_URL: http://localhost:9200
       run: |
-        flake8 .
-        black --check .
         cp .env.local.example .env.local
         pytest -sv
