@@ -1,0 +1,103 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "A Developer’s Guide to the Metro Galaxy",
+    "section": "",
+    "text": "Welcome to the documentation for LA Metro Councilmatic! Here, you’ll find information about the Metro data pipeline, debugging, and other best practices for DataMade developers."
+  },
+  {
+    "objectID": "index.html#contents",
+    "href": "index.html#contents",
+    "title": "A Developer’s Guide to the Metro Galaxy",
+    "section": "Contents",
+    "text": "Contents\n\nDebugging Data Issues\nCommands to Know\nDeployment Practices and Patterns\nGlossary"
+  },
+  {
+    "objectID": "index.html#what-does-this-do",
+    "href": "index.html#what-does-this-do",
+    "title": "A Developer’s Guide to the Metro Galaxy",
+    "section": "What does this do?",
+    "text": "What does this do?\nThe Metro Board Reports site monitors all things related to the Metro Board of Directors:\n\nthe board reports introduced and passed\nits various committees and the meetings they hold\nthe board members themselves\n\nThis site ultimately encourages greater public dialogue and increased awareness about transportation issues in LA County.\n\nAuthors\nRegina Compton and Hannah Cushman Garland developed this wiki. Some of its content originated in a dated Data Flow and Debugging guide and a short after-hours-support manual."
+  },
+  {
+    "objectID": "deployment.html",
+    "href": "deployment.html",
+    "title": "Deployment",
+    "section": "",
+    "text": "DataMade hosts a staging version and production version of Metro Councilmatic.\nBoth sites - as well as review apps for active PRs - can be found in the corresponding Heroku pipeline. Metro developers should be able to shell into these servers, (e.g., for executing management commands). If you cannot, then talk to your friendly DataMade devops team.",
+    "crumbs": [
+      "Deployment"
+    ]
+  },
+  {
+    "objectID": "deployment.html#inspecting-data",
+    "href": "deployment.html#inspecting-data",
+    "title": "Deployment",
+    "section": "Inspecting Data",
+    "text": "Inspecting Data\n\nView an entity in the Councilmatic database\n\nUse the slug of the problematic Bill, Event, Person, or Committee\nEvery detail page is accessed in the browser using a slug. Let’s walk through an example. Visit the page for the October 2024 Executive Management Committee meeting, and check the address bar for the slug (the portion after the entity type, “event” in this case). We can see that the slug for this meeting is executive-management-committee-8a0e5d3ba5e2.\n\n\nRetrieve the entity in the Django shell\nShell into a running instance of LA Metro Councilmatic using either the CLI or the web-based console. Then retrieve the problematic entity using its slug:\n# In the Django shell\n&gt;&gt;&gt; from lametro.models import *\n&gt;&gt;&gt; entity = LAMetroEvent.objects.get(slug='executive-management-committee-8a0e5d3ba5e2')\nYou can use the same ORM query to retrieve any entity. Simply swap out LAMetroEvent for the correct model and, of course, update the slug.\n\n\n\nEntity\nModel\n\n\n\n\nPerson\nLAMetroPerson\n\n\nCommittee\nLAMetroOrganization\n\n\nBill\nLAMetroBill\n\n\nEvent\nLAMetroEvent\n\n\n\n\n\nView useful information\nAssuming you have retrieved the entity as illustrated in the previous step, you can view its last updated date like this:\n&gt;&gt;&gt; entity.updated_at\ndatetime.datetime(2020, 3, 25, 0, 47, 3, 471572, tzinfo=&lt;UTC&gt;)\nYou can also view its sources like this:\n&gt;&gt;&gt; import pprint\n&gt;&gt;&gt; pprint.pprint([(source.note, source.url) for source in entity.sources.all()])\n[('api', 'http://webapi.legistar.com/v1/metro/events/1384'),\n ('api (sap)', 'http://webapi.legistar.com/v1/metro/events/1493'),\n ('web',\n  'https://metro.legistar.com/MeetingDetail.aspx?LEGID=1384&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94'),\n ('web (sap)',\n  'https://metro.legistar.com/MeetingDetail.aspx?LEGID=1493&GID=557&G=A5FAA737-A54D-4A6C-B1E8-FF70F765FA94')]\nEvents have Spanish language sources (e.g., “api (sap)”), as well. In initial debugging, focus on the “api” and “web” sources – by visiting these links and checking that the data in Legistar appears as expected.\nPro-tip: If you are using iTerm2 on a Mac, hold down the command key to convert URLs into hyperlinks. Saved you a copy/paste!",
+    "crumbs": [
+      "Deployment"
+    ]
+  },
+  {
+    "objectID": "debugging.html",
+    "href": "debugging.html",
+    "title": "Debugging",
+    "section": "",
+    "text": "Many issues can arise in the Metro galaxy, from the shallowest part of the frontend to the deepest depths of the backend. However, these issues are generally due to either a metadata error or a scraper error.\nThis documentation will focus on metadata errors. If you suspect you’re experiencing a scraper issue, please refer to the debug documentation for the scrapers.\n\n\nMetro performs a series of ETL tasks against its database. You can view the full pipeline here.\nFailures in the ETL pipeline might have a corresponding issue in the la-metro-councilmatic Sentry project, however sometimes steps run without failing but don’t generate the desired result. Read on for more on each step of the pipeline, plus past failures and their resolutions.\n\n\nWhere it lives: Django Councilmatic What is does: Deletes cached documents for recently updated bills and events\nPast issues:\n\nCached event agenda was out of sync with Legistar. We have since updated the logic for which documents to remove from the cache, so this error should be resolved, but the linked issue contains instructions for resolving this error manually, in case we see a regression.\n\n\n\n\nWhere it lives: LA Metro Councilmatic What it does: Notifies the metro-pdf-merger of new documents that need to be merged into a bill or event packet\nPast issues:\n\nSometimes the worker fails to merge documents, resulting in missing packets. There should be a corresponding error for this in the metro-pdf-merger Sentry project, however the project is pretty noisy, so you can shell into the server (metro-pdf-merger.datamade.us) and tail or grep the worker logs to double check.\nThe worker PDF merger has died mysteriously.\n\n\n\n\nWhere it lives: Django Councilmatic What it does: Extracts text from bill attachments for indexing\nPast issues:\n\nN/A\n\n\n\n\nWhere it lives: Haystack What it does: Updates the search index\nPast issues:\n\nN/A",
+    "crumbs": [
+      "Debugging"
+    ]
+  },
+  {
+    "objectID": "debugging.html#dont-panic",
+    "href": "debugging.html#dont-panic",
+    "title": "Debugging",
+    "section": "",
+    "text": "Many issues can arise in the Metro galaxy, from the shallowest part of the frontend to the deepest depths of the backend. However, these issues are generally due to either a metadata error or a scraper error.\nThis documentation will focus on metadata errors. If you suspect you’re experiencing a scraper issue, please refer to the debug documentation for the scrapers.\n\n\nMetro performs a series of ETL tasks against its database. You can view the full pipeline here.\nFailures in the ETL pipeline might have a corresponding issue in the la-metro-councilmatic Sentry project, however sometimes steps run without failing but don’t generate the desired result. Read on for more on each step of the pipeline, plus past failures and their resolutions.\n\n\nWhere it lives: Django Councilmatic What is does: Deletes cached documents for recently updated bills and events\nPast issues:\n\nCached event agenda was out of sync with Legistar. We have since updated the logic for which documents to remove from the cache, so this error should be resolved, but the linked issue contains instructions for resolving this error manually, in case we see a regression.\n\n\n\n\nWhere it lives: LA Metro Councilmatic What it does: Notifies the metro-pdf-merger of new documents that need to be merged into a bill or event packet\nPast issues:\n\nSometimes the worker fails to merge documents, resulting in missing packets. There should be a corresponding error for this in the metro-pdf-merger Sentry project, however the project is pretty noisy, so you can shell into the server (metro-pdf-merger.datamade.us) and tail or grep the worker logs to double check.\nThe worker PDF merger has died mysteriously.\n\n\n\n\nWhere it lives: Django Councilmatic What it does: Extracts text from bill attachments for indexing\nPast issues:\n\nN/A\n\n\n\n\nWhere it lives: Haystack What it does: Updates the search index\nPast issues:\n\nN/A",
+    "crumbs": [
+      "Debugging"
+    ]
+  },
+  {
+    "objectID": "glossary.html",
+    "href": "glossary.html",
+    "title": "Glossary",
+    "section": "",
+    "text": "Many of the entities Metro deals with can be called multiple things. Here is a cheatsheet to reference:\n\n\n\nBody (Legistar API)\nMeeting body (Legistar UI)\nOrganization (Open Civic Data universe, Councilmatic models)\nCommittee (Legistar UI, Councilmatic UI)\n\n\n\n\n\nMember (Legistar UI)\nPerson/s (Legistar API, Open Civic Data universe, Councilmatic models)\nBoard member (Councilmatic UI)\n\n\n\n\n\nOffice record (Legistar API)\nMembership (Open Civic Data models, Councilmatic models)\nTerm (pupa)\n\n\n\n\n\nMatter (Legistar API)\nBill (Open Civic Data universe)\nBoard report (Legistar UI, Councilmatic universe)\n\n\n\n\n\nEvent (Legistar API, Open Civic Data universe, Councilmatic models)\nMeeting (Legistar UI, Councilmatic UI)",
+    "crumbs": [
+      "Glossary"
+    ]
+  },
+  {
+    "objectID": "glossary.html#thesaurus",
+    "href": "glossary.html#thesaurus",
+    "title": "Glossary",
+    "section": "",
+    "text": "Many of the entities Metro deals with can be called multiple things. Here is a cheatsheet to reference:\n\n\n\nBody (Legistar API)\nMeeting body (Legistar UI)\nOrganization (Open Civic Data universe, Councilmatic models)\nCommittee (Legistar UI, Councilmatic UI)\n\n\n\n\n\nMember (Legistar UI)\nPerson/s (Legistar API, Open Civic Data universe, Councilmatic models)\nBoard member (Councilmatic UI)\n\n\n\n\n\nOffice record (Legistar API)\nMembership (Open Civic Data models, Councilmatic models)\nTerm (pupa)\n\n\n\n\n\nMatter (Legistar API)\nBill (Open Civic Data universe)\nBoard report (Legistar UI, Councilmatic universe)\n\n\n\n\n\nEvent (Legistar API, Open Civic Data universe, Councilmatic models)\nMeeting (Legistar UI, Councilmatic UI)",
+    "crumbs": [
+      "Glossary"
+    ]
+  },
+  {
+    "objectID": "glossary.html#dictionary",
+    "href": "glossary.html#dictionary",
+    "title": "Glossary",
+    "section": "Dictionary",
+    "text": "Dictionary\nHere are some concepts in Metro that benefit from some more context:\n\nDivision\n\nPolitical geography\n“Jurisdictions exist within a division, while Posts can represent a division”\nDivisions relevant to LA Metro:\n\nCity of Los Angeles\nLos Angeles County supervisorial districts\nStatutorially defined transit sectors\nCaltrans (Calfornia Department of Transportation) District\n\nFurther reading: https://open-civic-data.readthedocs.io/en/latest/proposals/0002.html\n\n\n\nJurisdiction\n\nLogical unit of governance\nExample: LA Metro\nFurther reading: https://open-civic-data.readthedocs.io/en/latest/proposals/0003.html\n\n\n\nPost\n\nPosition in organization\nPosts define the core positions within an organization, and can optionally be associated with a Division, i.e., the political geography they represent\nExamples:\n\nPost associated with a division: Appointee of the Mayor of the City of Los Angeles on the Board of Directors representing the City of Los Angeles\nPost not associated with a division: Chair of the Board of Directors\n\nFurther reading: https://open-civic-data.readthedocs.io/en/latest/proposals/0005.html\n\n\n\nMembership\n\n“A relationship between a Person and an Organization, possibly including a Post”\n\nCommittee Memberships are not associated with a Post because committees do not have a defined membership structure\n\nFurther reading: https://open-civic-data.readthedocs.io/en/latest/proposals/0005.html",
+    "crumbs": [
+      "Glossary"
+    ]
+  },
+  {
+    "objectID": "commands.html",
+    "href": "commands.html",
+    "title": "Commands to Know",
+    "section": "",
+    "text": "The LA Metro galaxy comes with several CLI commands and their various options. This section identifies some of the most significant commands for councilmatic, how to use them and where to execute them.\nMetro Councilmatic runs additional processes on the data, after it gets imported to the database. If you do need to run a particular management command, read on for more information about the commands that comprise hourly_processing in the Metro dashboard.\n\nRefresh the Property Image Cache\nMetro caches PDFs of board reports and event agendas. This can raise issues. The refresh_pic management command refreshes the document cache (an S3 bucket connected to Metro Councilmatic via property-image-cache) by deleting potentially out-of-date versions of board reports and agendas.\n# run the command and log the results (if on the server)\npython manage.py refresh_pic &gt;&gt; /var/log/councilmatic/lametro-refreshpic.log 2&gt;&1\n\n\nCreate PDF packets\nMetro Councilmatic has composite versions of the Event agendas (the event and all related board reports) and board reports (the report and its attachments). A separate app assists in creating these PDF packets, and the compile_pdfs command communicates with this app by telling it which packets to create.\n# run the command and log the results (if on the server)\n# documented in the `metro-pdf-merger` README: https://github.com/datamade/metro-pdf-merger#get-started\npython manage.py compile_pdfs &gt;&gt; /var/log/councilmatic/lametro-compilepdfs.log 2&gt;&1\n\npython manage.py compile_pdfs --all_documents\n\n\nConvert report attachments into plain text\nMetro Councilmatic allows users to query board reports via attachment text. The attachments must appear as plain text in the database: convert_attachment_text helps accomplish this.\n# run the command and log the results (if on the server)\npython manage.py convert_attachment_text &gt;&gt; /var/log/councilmatic/lametro-convertattachments.log 2&gt;&1\n\n# update all documents\npython manage.py convert_attachment_text --update_all\n\n\nRebuild or update the search index\nHaystack comes with a utility command for rebuilding and updating the search index. Learn more in the Haystack docs.\n# ideally, rebuild should be run with a small batch-size to avoid memory consumption issues\n# https://github.com/datamade/devops/issues/42\n# run the command and log the results (if on the server)\npython manage.py rebuild_index --batch-size=200 &gt;&gt; /var/log/councilmatic/lametro-updateindex.log 2&gt;&1\n\n# update can be run with an age argument, which instructs SmartLogic to consider bills updated so many hours ago\npython manage.py update_index --age=2\n\n# update should be run in non-interactive mode, when logging the results\n# `noinput` tells Haystack to skips the prompts\npython manage.py update_index --noinput",
+    "crumbs": [
+      "Commands to Know"
+    ]
+  }
+]

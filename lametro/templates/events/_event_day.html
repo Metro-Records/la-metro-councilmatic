@@ -1,8 +1,0 @@
-<h3 class="text-default m-0 h5">
-  <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{date | date:"D m/d/Y"}}
-</h3>
-<div class="divider" aria-hidden="true"></div>
-
-{% for event in event_list %}
-  {% include "events/_event_time_item.html" %}
-{% endfor %}

@@ -1,3 +1,0 @@
-{% load extras %}
-
-{{ paginator.count }} board report{{ paginator.count|pluralize }} {% if query %}for '{{ request.GET.q|remove_question}}'{% endif %}
