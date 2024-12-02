@@ -1,0 +1,64 @@
+---
+title: "Glossary"
+order: 4
+---
+
+## Thesaurus
+Many of the entities Metro deals with can be called multiple things. Here is a cheatsheet to reference:
+
+### Board of Directors, Committee
+- Body (Legistar API)
+- Meeting body (Legistar UI)
+- Organization (Open Civic Data universe, Councilmatic models)
+- Committee (Legistar UI, Councilmatic UI)
+
+### Board member
+- Member (Legistar UI)
+- Person/s (Legistar API, Open Civic Data universe, Councilmatic models)
+- Board member (Councilmatic UI)
+
+### Membership
+- Office record (Legistar API)
+- Membership (Open Civic Data models, Councilmatic models)
+- Term (pupa)
+
+### Bill
+- Matter (Legistar API)
+- Bill (Open Civic Data universe)
+- Board report (Legistar UI, Councilmatic universe)
+
+### Event
+- Event (Legistar API, Open Civic Data universe, Councilmatic models)
+- Meeting (Legistar UI, Councilmatic UI)
+
+
+## Dictionary
+Here are some concepts in Metro that benefit from some more context:
+
+### Division
+- Political geography
+- "Jurisdictions exist within a division, while Posts can represent a division"
+- Divisions relevant to LA Metro:
+  - City of Los Angeles
+  - [Los Angeles County supervisorial districts](https://experience.arcgis.com/experience/159e4b53494e47fe82bacd8016065843)
+  - [Statutorially defined transit sectors](https://boardagendas.metro.net/static/pdf/CitySelectionCommitte-MTA-Rules-and-Regulations.pdf)
+  - [Caltrans (Calfornia Department of Transportation) District](https://dot.ca.gov/caltrans-near-me/district-7)
+- Further reading: [https://open-civic-data.readthedocs.io/en/latest/proposals/0002.html](https://open-civic-data.readthedocs.io/en/latest/proposals/0002.html)
+
+### Jurisdiction
+- Logical unit of governance
+- Example: LA Metro
+- Further reading: [https://open-civic-data.readthedocs.io/en/latest/proposals/0003.html](https://open-civic-data.readthedocs.io/en/latest/proposals/0003.html)
+
+### Post
+- Position in organization
+- Posts define the core positions within an organization, and can optionally be associated with a Division, i.e., the political geography they represent
+- Examples:
+  - Post associated with a division: Appointee of the Mayor of the City of Los Angeles on the Board of Directors representing the City of Los Angeles
+  - Post not associated with a division: Chair of the Board of Directors
+- Further reading: [https://open-civic-data.readthedocs.io/en/latest/proposals/0005.html](https://open-civic-data.readthedocs.io/en/latest/proposals/0005.html)
+
+### Membership
+- "A relationship between a Person and an Organization, possibly including a Post"
+  - Committee Memberships are not associated with a Post because committees do not have a defined membership structure
+- Further reading: [https://open-civic-data.readthedocs.io/en/latest/proposals/0005.html](https://open-civic-data.readthedocs.io/en/latest/proposals/0005.html)
