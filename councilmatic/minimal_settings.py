@@ -22,6 +22,7 @@ INSTALLED_APPS = (
     "lametro",
     "councilmatic_core",
     "wagtail.admin",
+    "wagtail.contrib.typed_table_block",
     "wagtail",
     "debug_toolbar",
     "captcha",
