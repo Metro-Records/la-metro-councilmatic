@@ -3,7 +3,7 @@ LABEL maintainer "DataMade <info@datamade.us>"
 
 RUN apt-get update && \
     apt-get install -y libpq-dev gcc gdal-bin gnupg && \
-    apt-get install -y libxml2-dev libxslt1-dev antiword unrtf poppler-utils \
+    apt-get install -y libxml2-dev libxslt1-dev antiword unrtf poppler-utils postgresql-client \
                        tesseract-ocr flac ffmpeg lame libmad0 libsox-fmt-mp3 \
                        sox libjpeg-dev swig libpulse-dev curl git && \
     apt-get clean && \
