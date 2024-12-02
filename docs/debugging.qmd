@@ -1,0 +1,62 @@
+---
+title: "Debugging"
+order: 1
+---
+
+## Don't Panic!
+
+Many issues can arise in the Metro galaxy, from the shallowest part of the frontend to the deepest depths of the backend.
+However, these issues are generally due to either a metadata error or a scraper error.
+
+This documentation will focus on metadata errors. If you suspect you're experiencing a scraper issue, please refer to the
+[debug documentation for the scrapers](https://metro-records.github.io/scrapers-lametro/debugging.html).
+
+### Metadata Error
+Metro performs a series of ETL tasks against its database. You can view the full pipeline
+[here](https://github.com/datamade/la-metro-dashboard/blob/main/dags/hourly_processing.py).
+
+Failures in the ETL pipeline might have a corresponding issue
+[in the `la-metro-councilmatic` Sentry project](https://sentry.io/organizations/datamade/issues/?project=2131912),
+however sometimes steps run without failing but don't generate the desired result.
+Read on for more on each step of the pipeline, plus past failures and their resolutions.
+
+#### `refresh_pic`
+
+**Where it lives:** [Django Councilmatic](https://github.com/datamade/django-councilmatic/blob/2.5/councilmatic_core/management/commands/refresh_pic.py)<br />
+**What is does:** Deletes [cached documents](https://github.com/datamade/property-image-cache) for recently updated bills and events
+
+**Past issues:**
+
+- [Cached event agenda was out of sync with Legistar](https://github.com/datamade/la-metro-councilmatic/issues/443).
+We have since updated the logic for which documents to remove from the cache, so this error should be resolved,
+but the linked issue contains instructions for resolving this error manually, in case we see a regression.
+
+#### `compile_pdfs`
+
+**Where it lives:** [LA Metro Councilmatic](https://github.com/datamade/la-metro-councilmatic/blob/main/lametro/management/commands/compile_pdfs.py)<br />
+**What it does:** Notifies the [`metro-pdf-merger`](https://github.com/datamade/metro-pdf-merger) of new documents that need to be merged into a bill or event packet
+
+**Past issues:**
+
+- [Sometimes the worker fails to merge documents, resulting in missing packets](https://github.com/datamade/la-metro-councilmatic/issues/476).
+There should be a corresponding error for this [in the `metro-pdf-merger` Sentry project](https://sentry.io/organizations/datamade/issues/?project=155211),
+however the project is pretty noisy, so you can shell into the server (`metro-pdf-merger.datamade.us`) and tail or grep the worker logs to double check.
+- [The worker PDF merger has died mysteriously](https://github.com/datamade/metro-pdf-merger/issues/19).
+
+#### `convert_attachment_text`
+
+**Where it lives:** [Django Councilmatic](https://github.com/datamade/django-councilmatic/blob/2.5/councilmatic_core/management/commands/convert_attachment_text.py)<br />
+**What it does:** Extracts text from bill attachments for indexing
+
+**Past issues:**
+
+- N/A
+
+#### `update_index`
+
+**Where it lives:** [Haystack](https://django-haystack.readthedocs.io/en/master/management_commands.html#update-index)<br />
+**What it does:** Updates the search index
+
+**Past issues:**
+
+- N/A

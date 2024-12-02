@@ -216,6 +216,28 @@ docker-compose -f docker-compose.yml -f docker-compose.locust.yml run --service-
 This will start the Locust web server on http://localhost:8089. For more details,
 see the [Locust documentation](https://docs.locust.io/en/stable/).
 
+## Review Apps
+
+This repo is set up to deploy review apps on Heroku, and those pull from the staging database to match the experience of deploying as closely as possible! However, note that in order to prevent unapproved model changes from effecting the staging database, migrations are prevented from running on review apps. So those will still have to be reviewed locally.
+
+## Updating the Documentation
+
+To make changes to the documentation, [install Quarto](https://quarto.org/docs/get-started/).
+
+Then, run the following in your terminal:
+
+```bash
+quarto preview docs
+```
+
+Make your changes to the `.qmd` files in the `docs/` directory. They will be automatically
+reflected in your local version of the docs.
+
+For more on authoring docs with Quarto, see [their Getting Started guide](https://quarto.org/docs/get-started/authoring/text-editor.html) and [documentation](https://quarto.org/docs/guide/).
+
+The GitHub Pages site will rebuild automatically when your documentation changes are
+merged into `main`.
+
 ## Errors / Bugs
 
 If something is not behaving intuitively, it is a bug, and should be reported.
