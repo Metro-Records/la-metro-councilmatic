@@ -20,6 +20,7 @@ INSTALLED_APPS = (
     "opencivicdata.legislative",
     "lametro",
     "councilmatic_core",
+    "wagtail.admin",
     "wagtail",
     "debug_toolbar",
     "captcha",
