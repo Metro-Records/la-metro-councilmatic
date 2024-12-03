@@ -1,7 +1,7 @@
 {% load extras %}
 {% load lametro_extras %}
 
-{% if facet_label != 'Controlling Body' %}
+{% if facet_label != 'Controlling Body' and item_list|length > 0 %}
 
     <div class="accordion-item">
         <h3 class="accordion-header">
@@ -21,40 +21,31 @@
         <div id="collapse_{{facet_name}}" class="accordion-collapse collapse">
             <div class="accordion-body">
                 <ul class="search-facet-list">
-                    {% if facet_name in 'topics,lines_and_ways,phase,bill_type,project,metro_location,geo_admin_location,significant_date,motion_by,plan_program_policy' %}
+                    {% if facet_name != 'sponsorships' %}
+
                         {% include 'search/_ordered_search_filter_items.html' %}
 
-                    {% elif facet_name == 'sponsorships' %}
-                        {% for name, count in facets.fields.sponsorships %}
+                    {% else %}
 
+                        {% for name, count in facets.fields.sponsorships %}
                             {% if count %}
-                                <li class="small d-flex">
+                            <li class="small d-flex">
+                                <div class="skinny-list">
+                                    <a href="#" class="filter-value" data-param="sponsorships_exact:{{name}}" title="{{ name|title }}">
                                     {% if name in selected_facets.sponsorships %}
-                                        <div class="skinny-list">
-                                            <a href="#" class="filter-value" data-param="sponsorships_exact:{{name}}" title="{{ name|title }}">
-                                                <strong>{{ name | title }}</strong>
-                                            </a>
-                                            <a href="#" class="remove-filter-value btn btn-primary btn-sm" data-param="{{facet_name}}_exact:{{name}}" aria-label="Remove {{name}} filter">
-                                                <i class="fa fa-times" aria-hidden="true"></i>
-                                            </a>
-                                        </div>
+                                        <strong>{{ name | title }}</strong>
+                                        <a href="#" class="remove-filter-value btn btn-primary btn-sm" data-param="{{facet_name}}_exact:{{name}}" aria-label="Remove {{name}} filter">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </a>
                                     {% else %}
                                         <a href="#" class="filter-value" data-param="sponsorships_exact:{{name}}" title="{{ name|title }}">
                                             {{ name | title }}
                                         </a>
                                     {% endif %}
-
-                                    <span class="badge badge-facet ms-auto">{{ count }}</span>
-
-                                </li>
-                            {% endif%}
-
-                        {% endfor %}
-                    {% else %}
-
-                        {% for name, count in item_list %}
-                            {% if count %}
-                                {% include 'search/_ordered_search_filter_items.html' %}
+                                    </a>
+                                </div>
+                                <span class="badge badge-facet ms-auto">{{ count }}</span>
+                            </li>
                             {% endif %}
                         {% endfor %}
 
