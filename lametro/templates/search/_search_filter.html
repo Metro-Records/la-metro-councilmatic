@@ -31,7 +31,6 @@
                             {% if count %}
                             <li class="small d-flex">
                                 <div class="skinny-list">
-                                    <a href="#" class="filter-value" data-param="sponsorships_exact:{{name}}" title="{{ name|title }}">
                                     {% if name in selected_facets.sponsorships %}
                                         <strong>{{ name | title }}</strong>
                                         <a href="#" class="remove-filter-value btn btn-primary btn-sm" data-param="{{facet_name}}_exact:{{name}}" aria-label="Remove {{name}} filter">
@@ -42,7 +41,6 @@
                                             {{ name | title }}
                                         </a>
                                     {% endif %}
-                                    </a>
                                 </div>
                                 <span class="badge badge-facet ms-auto">{{ count }}</span>
                             </li>
