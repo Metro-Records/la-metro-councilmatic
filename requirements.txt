@@ -21,7 +21,6 @@ whitenoise
 python-dotenv==0.20.0
 esprima==4.0.1
 wagtail>=5.2,<5.3
-wagtail-markdown
 
 # Development
 django-debug-toolbar

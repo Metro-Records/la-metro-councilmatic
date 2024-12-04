@@ -44,13 +44,6 @@ def add_modeladmin_links(request, items):
     return items
 
 
-@hooks.register("insert_global_admin_js", order=100)
-def insert_markdowntextarea_overrides():
-    return format_html(
-        '<script src="{}"></script>', static("js/markdowntextarea_overrides.js")
-    )
-
-
 @hooks.register("insert_global_admin_js", order=500)
 def insert_custom_wagtail_javascript():
     return format_html('<script src="{}"></script>', static("js/wagtail_custom.js"))

@@ -138,7 +138,6 @@ INSTALLED_APPS = (
     "wagtail.admin",
     "wagtail.contrib.modeladmin",
     "wagtail",
-    "wagtailmarkdown",
     "modelcluster",
     "taggit",
 )
@@ -328,11 +327,6 @@ LOGGING = {
             "propagate": True,
         },
     },
-}
-
-WAGTAILMARKDOWN = {
-    "autodownload_fontawesome": True,
-    "allowed_tags": ["br", "strong", "em", "a"],
 }
 
 # Hard time limit on HTTP requests
