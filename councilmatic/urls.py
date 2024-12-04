@@ -44,9 +44,6 @@ from lametro.views import (
     MinutesView,
     pong,
     test_logging,
-    AlertCreateView,
-    AlertDeleteView,
-    AlertUpdateView,
 )
 from lametro.feeds import LAMetroPersonDetailFeed
 
@@ -119,9 +116,6 @@ urlpatterns = [
         manual_event_live_link,
         name="manual_event_live_link",
     ),
-    path("alerts/", AlertCreateView.as_view(), name="alerts"),
-    path("alerts/<int:pk>/delete/", AlertDeleteView.as_view(), name="delete_alert"),
-    path("alerts/<int:pk>/update/", AlertUpdateView.as_view(), name="update_alert"),
     url(
         r"^pong/$",
         pong,
