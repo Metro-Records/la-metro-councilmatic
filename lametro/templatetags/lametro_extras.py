@@ -6,6 +6,7 @@ import urllib
 
 from django import template
 from django.utils import timezone
+from django.utils.html import strip_tags
 
 from councilmatic.settings_jurisdiction import (
     legislation_types,
@@ -342,3 +343,8 @@ def bill_status_from_last_action(description):
     if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
         return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
     return None
+
+
+@register.filter
+def plaintext(value):
+    return strip_tags(value)
