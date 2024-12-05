@@ -1,5 +1,3 @@
-{% load wagtailcore_tags %}
-
 <p>
     The <a href="https://www.metro.net/" target="_blank" aria-label="Los Angeles County Metropolitan Transportation Authority - link opens in a new tab">Los Angeles County Metropolitan Transportation Authority</a>,
     commonly known as Metro, consists of several <a href="{% url 'lametro:council_members' %}">Board Members</a>, who set policy, coordinate, plan, fund, build, and operate transit services and transportation programs throughout Los Angeles County.
@@ -23,9 +21,9 @@
 
 <p>
     <span class="non-mobile-only">
-        <a href="{% slugurl 'about' %}">Read more about how Metro works &raquo;</a>
+        <a href="{% url 'lametro:about' %}">Read more about how Metro works &raquo;</a>
     </span>
     <span class="mobile-only">
-        <a href="{% slugurl 'about' %}">More about how Metro works &raquo;</a>
+        <a href="{% url 'lametro:about' %}">More about how Metro works &raquo;</a>
     </span>
 </p>

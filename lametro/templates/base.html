@@ -1,4 +1,4 @@
-{% load adv_cache extras lametro_extras markdownify static wagtailcore_tags %}
+{% load adv_cache extras lametro_extras markdownify static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +51,7 @@
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:council_members' %}">Board of Directors</a></li>
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'committees' %}">Committees</a></li>
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:contact' %}">Contact Us</a></li>
-                                <li><a class="dropdown-item dropdown-size" href="{% slugurl 'about' %}">About Us</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:about' %}">About Us</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown me-2 pt-3">
@@ -124,7 +124,7 @@
             </div>
             <ul class="nav col-md-6 justify-content-around justify-content-md-end list-unstyled">
                 <li class="ms-3"><a href="{% url 'lametro:contact' %}">Contact Us</a></li>
-                <li class="ms-3"><a href="{% slugurl 'about' %}">About Us</a></li>
+                <li class="ms-3"><a href="{% url 'lametro:about' %}">About Us</a></li>
                 <li class="ms-3"><a href="{% url 'metro_login' %}">Metro Login</a></li>
             </ul>
         </footer>

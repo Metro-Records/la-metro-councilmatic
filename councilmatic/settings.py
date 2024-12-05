@@ -40,7 +40,6 @@ env = environ.Env(
     REMOTE_ANALYTICS_FOLDER=(str, ""),
     GOOGLE_SERVICE_ACCT_API_KEY=(str, ""),
     GOOGLE_API_KEY=(str, ""),
-    WAGTAILADMIN_BASE_URL=(str, "https://boardagendas.metro.net"),
 )
 
 # Core Django Settings
@@ -138,20 +137,6 @@ INSTALLED_APPS = (
     "template_profiler_panel",
     "captcha",
     "markdownify.apps.MarkdownifyConfig",
-    "wagtail.contrib.forms",
-    "wagtail.contrib.redirects",
-    "wagtail.contrib.typed_table_block",
-    "wagtail.embeds",
-    "wagtail.sites",
-    "wagtail.users",
-    "wagtail.snippets",
-    "wagtail.documents",
-    "wagtail.images",
-    "wagtail.search",
-    "wagtail.admin",
-    "wagtail",
-    "modelcluster",
-    "taggit",
 )
 
 try:
@@ -169,7 +154,6 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 )
 
 ROOT_URLCONF = "councilmatic.urls"
@@ -215,9 +199,6 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
-
 # Third Party Keys
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY")
@@ -262,9 +243,10 @@ if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
     )
     from django.core.files.storage import get_storage_class
 
+    S3Storage = get_storage_class("storages.backends.s3boto3.S3Boto3Storage")
+
     AWS_QUERYSTRING_AUTH = False
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = get_storage_class(DEFAULT_FILE_STORAGE)
+    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = S3Storage()
 
 else:
     print("AWS not configured. Defaulting to local storage...")
@@ -356,6 +338,3 @@ MARKDOWNIFY = {
 
 # Hard time limit on HTTP requests
 REQUEST_TIMEOUT = 5
-
-WAGTAIL_SITE_NAME = "boardagendas.metro.net"
-WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL")
