@@ -198,7 +198,7 @@ def test_actions_and_agendas(
 
     assert some_bill.actions_and_agendas == []
 
-    (log_record,) = (r for r in caplog.records if r.module == "models")
+    (log_record,) = (r for r in caplog.records)
 
     assert "Could not find event corresponding to action" in log_record.message
 

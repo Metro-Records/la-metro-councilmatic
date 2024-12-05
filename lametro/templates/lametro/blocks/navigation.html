@@ -1,0 +1,14 @@
+<div class="card bg-secondary p-3">
+    <div class="card-title ms-3 mt-3">
+        <p class="h4">Contents</p>
+    </div>
+    <div class="card-body border-0">
+        <ul>
+            {% for heading, anchor in navigation_items.items %}
+            <li>
+                <a href="#{{ anchor }}">{{ heading }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

@@ -66,7 +66,7 @@ services:
       DATABASE_URL: 'postgis://postgres:postgres@postgres/lametro'
       SHARED_DB: "True"
       OCD_DIVISION_CSV: '/app/lametro_divisions.csv'
-    command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=14 && pupa update --rpm=600 lametro events window=14'
+    command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=7 && pupa update --rpm=600 lametro events window=7'
     volumes:
       - ./lametro/secrets.py:/app/lametro/secrets.py
       - ./data/lametro_divisions.csv:/app/lametro_divisions.csv
