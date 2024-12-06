@@ -1,10 +1,11 @@
 from django.templatetags.static import static
-from django.utils.html import format_html
+from django.utils.html import format_html, strip_tags
+
 
 from wagtail import hooks
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 
-from .models import Alert
+from .models import Alert, EventNotice
 
 
 class AlertAdmin(ModelAdmin):
@@ -23,7 +24,39 @@ class AlertAdmin(ModelAdmin):
     )
 
 
+class EventNoticeAdmin(ModelAdmin):
+    model = EventNotice
+    base_url_path = "event_notices"
+    menu_icon = "comment"
+    menu_order = 200
+    add_to_settings_menu = False
+    exclude_from_explorer = False
+    add_to_admin_menu = True
+    list_display = (
+        "get_message",
+        "broadcast_conditions",
+        "comment_conditions",
+    )
+    list_filter = (
+        "broadcast_conditions",
+        "comment_conditions",
+    )
+    search_fields = (
+        "broadcast_conditions",
+        "comment_conditions",
+        "message",
+    )
+
+    def get_message(self, obj):
+        return strip_tags(obj.message)[:50]
+
+    # TODO: write a get_conditions descriptor for the conditions for list_display
+
+    get_message.short_description = "Message"
+
+
 modeladmin_register(AlertAdmin)
+modeladmin_register(EventNoticeAdmin)
 
 
 class ModelAdminLink:
