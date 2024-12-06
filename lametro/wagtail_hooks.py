@@ -32,15 +32,25 @@ class EventNoticeAdmin(ModelAdmin):
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
-    list_display = ("get_message", "conditions")
-    list_filter = ("conditions",)
+    list_display = (
+        "get_message",
+        "broadcast_conditions",
+        "comment_conditions",
+    )
+    list_filter = (
+        "broadcast_conditions",
+        "comment_conditions",
+    )
     search_fields = (
-        "conditions",
+        "broadcast_conditions",
+        "comment_conditions",
         "message",
     )
 
     def get_message(self, obj):
-        return strip_tags(obj.message)
+        return strip_tags(obj.message)[:50]
+
+    # TODO: write a get_conditions descriptor for the conditions for list_display
 
     get_message.short_description = "Message"
 

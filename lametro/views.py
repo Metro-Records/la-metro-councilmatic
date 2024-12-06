@@ -64,6 +64,7 @@ from lametro.models import (
     LAMetroOrganization,
     LAMetroSubject,
     EventBroadcast,
+    EventNotice,
 )
 from lametro.forms import (
     AgendaUrlForm,
@@ -282,6 +283,16 @@ class LAMetroEventDetail(EventDetailView):
             context["pdf_form"] = AgendaPdfForm()
 
         context["USING_ECOMMENT"] = settings.USING_ECOMMENT
+
+        # Only provide notices for this event's public comment setting
+        if event.accepts_live_comment:
+            context["event_notices"] = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_live_comment"]
+            )
+        elif event.accepts_public_comment:
+            context["event_notices"] = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_comment"]
+            )
 
         return context
 

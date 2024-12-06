@@ -76,27 +76,43 @@ class EventNotice(models.Model):
     include_in_dump = True
 
     def __str__(self):
-        return f"Notice on {', '.join(self.conditions)} Events - {strip_tags(self.message)[:50]}"
+        return f"Notice on {', '.join(self.broadcast_conditions)} and {', '.join(self.comment_conditions)} Events"
 
-    CONDITION_CHOICES = [
-        ("future", "Future"),
-        ("upcoming", "Upcoming"),
-        ("ongoing", "Ongoing"),
-        ("concluded", "Concluded"),
+    BROADCAST_CONDITION_CHOICES = [
+        ("future", "Future events"),
+        ("upcoming", "Upcoming events"),
+        ("ongoing", "Ongoing events"),
+        ("concluded", "Concluded events"),
+    ]
+    COMMENT_CONDITION_CHOICES = [
+        ("accepts_live_comment", "Events that accept live public comments"),
+        ("accepts_comment", "Events that accept public comments when not live"),
     ]
 
-    conditions = ArrayField(
-        models.CharField(max_length=255, choices=CONDITION_CHOICES),
-        default=list(CONDITION_CHOICES[0]),
+    broadcast_conditions = ArrayField(
+        models.CharField(max_length=255, choices=BROADCAST_CONDITION_CHOICES),
+        default=list(BROADCAST_CONDITION_CHOICES[0]),
+    )
+    comment_conditions = ArrayField(
+        models.CharField(max_length=255, choices=COMMENT_CONDITION_CHOICES),
+        default=list(COMMENT_CONDITION_CHOICES[0]),
     )
     message = RichTextField()
 
     panels = [
         FieldPanel(
-            "conditions",
-            widget=CheckboxSelectMultipleList(choices=CONDITION_CHOICES),
+            "broadcast_conditions",
+            widget=CheckboxSelectMultipleList(choices=BROADCAST_CONDITION_CHOICES),
             help_text=(
-                "If any of the selected conditions are true for a specific event, "
+                "If any of the selected conditions are true for a specific event's broadcast, "
+                "this message will display in its detail page."
+            ),
+        ),
+        FieldPanel(
+            "comment_conditions",
+            widget=CheckboxSelectMultipleList(choices=COMMENT_CONDITION_CHOICES),
+            help_text=(
+                "If an event allows public comment under any of the selected conditions, "
                 "this message will display in its detail page."
             ),
         ),
