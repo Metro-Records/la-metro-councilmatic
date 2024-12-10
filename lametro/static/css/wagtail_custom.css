@@ -11,6 +11,11 @@
   color: var(--font-color);
 }
 
+/* Add default border to empty alert select */
+.alert- {
+  border: 1px solid var(--w-color-border-field-default)!important;
+}
+
 .alert-primary {
   --r: 235;
   --g: 104;
