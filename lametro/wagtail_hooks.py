@@ -1,7 +1,7 @@
 from django.templatetags.static import static
 from django.utils.html import format_html, strip_tags
 
-
+from html import unescape
 from wagtail import hooks
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
@@ -37,7 +37,7 @@ class EventNoticeAdmin(ModelAdmin):
     list_display = (
         "get_message",
         "broadcast_conditions",
-        "comment_conditions",
+        "get_comment_conditions",
     )
     list_filter = (
         "broadcast_conditions",
@@ -50,11 +50,13 @@ class EventNoticeAdmin(ModelAdmin):
     )
 
     def get_message(self, obj):
-        return strip_tags(obj.message)[:50]
+        return strip_tags(unescape(obj.message))[:50]
 
-    # TODO: write a get_conditions descriptor for the conditions for list_display
+    def get_comment_conditions(self, obj):
+        return [cond.replace("_", " ") for cond in obj.comment_conditions]
 
     get_message.short_description = "Message"
+    get_comment_conditions.short_description = "Comment conditions"
 
 
 modeladmin_register(AlertAdmin)
