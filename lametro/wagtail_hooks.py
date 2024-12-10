@@ -4,6 +4,8 @@ from django.utils.html import format_html, strip_tags
 
 from wagtail import hooks
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+import wagtail.admin.rich_text.editors.draftail.features as draftail_features
+from wagtail.admin.rich_text.converters.html_to_contentstate import BlockElementHandler
 
 from .models import Alert, EventNotice
 
@@ -86,4 +88,46 @@ def insert_custom_wagtail_javascript():
 def insert_custom_wagtail_css():
     return format_html(
         '<link rel="stylesheet" href="{}"></script>', static("css/wagtail_custom.css")
+    )
+
+
+@hooks.register("register_rich_text_features")
+def register_ecomment_feature(features):
+    """Register the ecomment link type"""
+    feature_name = "ecomment_link"
+    type_ = "ecomment_link"
+
+    control = {
+        "type": type_,
+        "label": "E",
+        "description": "Ecomment Link",
+        "element": "a",
+    }
+
+    features.register_editor_plugin(
+        "draftail", feature_name, draftail_features.BlockFeature(control)
+    )
+
+    from_format_str = (
+        "a[href={{event.ecomment_url}}][target=_blank]"
+        + "[aria-label='Go to public comment - link opens in a new tab']"
+    )
+    features.register_converter_rule(
+        "contentstate",
+        feature_name,
+        {
+            "from_database_format": {from_format_str: BlockElementHandler(type_)},
+            "to_database_format": {
+                "block_map": {
+                    type_: {
+                        "element": "a",
+                        "props": {
+                            "href": "{{event.ecomment_url}}",
+                            "target": "_blank",
+                            "aria-label": "Go to public comment - link opens in a new tab",
+                        },
+                    }
+                }
+            },
+        },
     )

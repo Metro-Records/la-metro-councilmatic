@@ -97,7 +97,20 @@ class EventNotice(models.Model):
         models.CharField(max_length=255, choices=COMMENT_CONDITION_CHOICES),
         default=list(COMMENT_CONDITION_CHOICES[0]),
     )
-    message = RichTextField()
+    message = RichTextField(
+        features=[
+            "bold",
+            "italic",
+            "ecomment_link",
+            "h2",
+            "h3",
+            "h4",
+            "ol",
+            "ul",
+            "hr",
+            "link",
+        ]
+    )
 
     panels = [
         FieldPanel(
