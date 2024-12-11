@@ -63,7 +63,6 @@
                         {% endif %}
                     {% endfor %}
 
-                    <!-- TODO: handle this ecomment block in the cms as well -->
                     {% if event.is_ongoing and USING_ECOMMENT %}
                         <p>
                             <strong>On the web:</strong>
@@ -81,8 +80,6 @@
                             {{ notice.message|safe }}
                         {% endif %}
                     {% endfor %}
-
-                    <!-- TODO: handle this ecomment block in the cms as well -->
 
                     {% if USING_ECOMMENT %}
                         <p>{{ event.UPCOMING_ECOMMENT_MESSAGE }}</p>
