@@ -20,7 +20,6 @@ django-environ
 whitenoise
 python-dotenv==0.20.0
 esprima==4.0.1
-django-markdownify==0.9.3
 wagtail>=5.2,<5.3
 
 # Development
