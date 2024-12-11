@@ -1,14 +1,19 @@
 [class*="alert"] {
   --font-color: #fff;
-  --a: 0.75;
+  --a: 0.6;
   background-color: rgba(var(--r), var(--g), var(--b), var(--a));
   color: var(--font-color);
-  border: 1px solid #fff!important;
+  border: 1px solid rgba(var(--r), var(--g), var(--b), 1)!important;
 }
 
 .button[class*="alert"]:hover {
   background-color: rgba(var(--r), var(--g), var(--b), var(--a));
   color: var(--font-color);
+}
+
+/* Add default border to empty alert select */
+.alert- {
+  border: 1px solid var(--w-color-border-field-default)!important;
 }
 
 .alert-primary {

@@ -53,6 +53,18 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG")
 SHOW_TEST_EVENTS = env.bool("SHOW_TEST_EVENTS")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+
+# Derive allowed origins from configured hosts
+CSRF_TRUSTED_ORIGINS = []
+
+for host in ALLOWED_HOSTS:
+    if host.startswith("."):
+        origin = f"https://*{host}"
+    else:
+        origin = f"https://{host}"
+
+    CSRF_TRUSTED_ORIGINS.append(origin)
+
 COUNCILMATIC_SUPPRESS_LIVE_MEDIA = env.list("COUNCILMATIC_SUPPRESS_LIVE_MEDIA")
 
 if env("LOCAL_DOCKER"):

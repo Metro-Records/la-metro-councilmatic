@@ -74,8 +74,7 @@ class ModelAdminLink:
 
 @hooks.register("construct_wagtail_userbar")
 def add_modeladmin_links(request, items):
-    for modeladmin_cls in (AlertAdmin,):
-        items.append(ModelAdminLink(modeladmin_cls))
+    items.append(ModelAdminLink(AlertAdmin))
     return items
 
 
