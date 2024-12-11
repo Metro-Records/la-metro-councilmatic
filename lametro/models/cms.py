@@ -101,7 +101,6 @@ class EventNotice(models.Model):
         features=[
             "bold",
             "italic",
-            "ecomment_link",
             "h2",
             "h3",
             "h4",
