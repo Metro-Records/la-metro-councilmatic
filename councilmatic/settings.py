@@ -273,6 +273,24 @@ else:
 AWS_KEY = env("AWS_KEY")
 AWS_SECRET = env("AWS_SECRET")
 
+# - Email configuration
+try:
+    EMAIL_HOST_PASSWORD = os.environ["DJANGO_EMAIL_HOST_PASSWORD"]
+
+except KeyError:
+    print("Email password not found, mail sending will not be available")
+
+else:
+    if EMAIL_HOST_PASSWORD:
+        EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "smtp.mandrillapp.com")
+        EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", 587)
+        EMAIL_HOST_USER = "lametro@councilmatic.org"
+        EMAIL_USE_TLS = True
+
+        DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    else:
+        print("Email password not found, mail sending will not be available")
+
 # LOGGING
 SENTRY_DSN = env("SENTRY_DSN")
 
