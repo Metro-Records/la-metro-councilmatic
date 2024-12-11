@@ -87,6 +87,7 @@ class EventNotice(models.Model):
     COMMENT_CONDITION_CHOICES = [
         ("accepts_live_comment", "Events that accept live public comments"),
         ("accepts_comment", "Events that accept public comments when not live"),
+        ("accepts_no_comment", "Events that do not accept public comments at all"),
     ]
 
     broadcast_conditions = ArrayField(
@@ -124,8 +125,8 @@ class EventNotice(models.Model):
             "comment_conditions",
             widget=CheckboxSelectMultipleList(choices=COMMENT_CONDITION_CHOICES),
             help_text=(
-                "If an event allows public comment under any of the selected conditions, "
-                "this message will display in its detail page."
+                "If an event's public comment setting matches any of the selected "
+                "conditions, this message will display in its detail page."
             ),
         ),
         FieldPanel("message"),

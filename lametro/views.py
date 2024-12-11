@@ -293,6 +293,10 @@ class LAMetroEventDetail(EventDetailView):
             context["event_notices"] = EventNotice.objects.filter(
                 comment_conditions__contains=["accepts_comment"]
             )
+        else:  # Events that do not accept public comment at all
+            context["event_notices"] = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_no_comment"]
+            )
 
         return context
 
