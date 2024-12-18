@@ -35,6 +35,9 @@ class Command(BaseCommand):
                 "wagtailcore.grouppagepermission",
                 "wagtailsearch.indexentry",
                 "sessions",
+                "councilmatic_core",
+                "core",
+                "legislative",
             ]
             + excluded_app_models,
         )

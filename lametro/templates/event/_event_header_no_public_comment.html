@@ -1,21 +1,23 @@
 <div class="row">
-    {% if has_agenda and not event.has_passed %}
-    <div class="col-sm-7">
+    {% if has_agenda and event_notices %}
+    <section class="col-md-7">
     {% else %}
-    <div class="col-sm-12">
+    <section class="col-12">
     {% endif %}
 
         <p>{{event.description}}</p>
         <p class="small text-muted">
             {% if event.status == 'cancelled' %}
-                <strike>
-                <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
-                <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
-                </strike>
+                <del class="d-block">
+                    <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{event.start_time | date:"D n/d/Y"}}
+                </del>
+                <del class="d-block">
+                    <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{event.start_time | date:"g:i a"}}
+                </del>
             {% else %}
-                <i class="fa fa-fw fa-calendar-o"></i> {{event.start_time | date:"D n/d/Y"}}<br/>
-                <i class="fa fa-fw fa-clock-o"></i> {{event.start_time | date:"g:i a"}}<br/>
-                <i class="fa fa-fw fa-map-marker"></i> {{event.location.name}}
+                <span class="d-block"><i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{event.start_time | date:"D n/d/Y"}}</span>
+                <span class="d-block"><i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{event.start_time | date:"g:i a"}}</span>
+                <span class="d-block"><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{event.location.name}}</span>
             {% endif %}
         </p>
 
@@ -24,11 +26,35 @@
                 {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
                     Not seeing an agenda? Please use this link:<br>
                 {% endif %}
-                <a href='{{event.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank">
-                    <i class='fa fa-fw fa-external-link'></i>
+                <a href='{{event.web_source.url}}' title='View on the {{CITY_VOCAB.SOURCE}} website' target="_blank"  aria-label="View on the {{CITY_VOCAB.SOURCE}} website - link opens in a new tab">
+                    <i class='fa fa-fw fa-external-link' aria-hidden="true"></i>
                     View on the {{CITY_VOCAB.SOURCE}} website
                 </a>
             {% endif %}
         </p>
-    </div>
+    </section>
+
+    {% if has_agenda and event_notices %}
+        <article class="col-md-5">
+            {% if not event.has_passed %}
+                {% for notice in event_notices %}
+                    {% if "upcoming" in notice.broadcast_conditions and event.is_upcoming %}
+                        {{ notice.message|safe }}
+                    {% elif "ongoing" in notice.broadcast_conditions and event.is_ongoing %}
+                        {{ notice.message|safe }}
+                    {% elif "future" in notice.broadcast_conditions and not event.is_upcoming and not event.is_ongoing %}
+                        <!-- Event is in the future -->
+                        {{ notice.message|safe }}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <!-- Event has concluded -->
+                {% for notice in event_notices %}
+                    {% if "concluded" in notice.broadcast_conditions %}
+                        {{ notice.message|safe }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </article>
+    {% endif %}
 </div>
