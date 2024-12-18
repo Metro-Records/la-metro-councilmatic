@@ -283,7 +283,20 @@ class LAMetroEventDetail(EventDetailView):
             context["pdf_form"] = AgendaPdfForm()
 
         context["USING_ECOMMENT"] = settings.USING_ECOMMENT
-        context["event_notices"] = EventNotice.objects.all()
+
+        # Only provide notices for this event's public comment setting
+        if event.accepts_live_comment:
+            context["event_notices"] = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_live_comment"]
+            )
+        elif event.accepts_public_comment:
+            context["event_notices"] = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_comment"]
+            )
+        else:  # Events that do not accept public comment at all
+            context["event_notices"] = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_no_comment"]
+            )
 
         return context
 

@@ -35,17 +35,26 @@ class EventNoticeAdmin(ModelAdmin):
     list_display = (
         "get_message",
         "broadcast_conditions",
+        "get_comment_conditions",
     )
-    list_filter = ("broadcast_conditions",)
+    list_filter = (
+        "broadcast_conditions",
+        "comment_conditions",
+    )
     search_fields = (
         "broadcast_conditions",
+        "comment_conditions",
         "message",
     )
 
     def get_message(self, obj):
         return strip_tags(unescape(obj.message))[:50]
 
+    def get_comment_conditions(self, obj):
+        return [cond.replace("_", " ") for cond in obj.comment_conditions]
+
     get_message.short_description = "Message"
+    get_comment_conditions.short_description = "Comment conditions"
 
 
 modeladmin_register(AlertAdmin)
