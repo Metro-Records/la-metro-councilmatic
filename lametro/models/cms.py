@@ -85,9 +85,15 @@ class EventNotice(models.Model):
         ("concluded", "Concluded events"),
     ]
     COMMENT_CONDITION_CHOICES = [
-        ("accepts_live_comment", "Events that accept live public comments"),
-        ("accepts_comment", "Events that accept public comments when not live"),
-        ("accepts_no_comment", "Events that do not accept public comments at all"),
+        (
+            "accepts_live_comment",
+            "Events that accept public comment before and during the meeting",
+        ),
+        (
+            "accepts_comment",
+            "Events that accept public comment before but not during the meeting",
+        ),
+        ("accepts_no_comment", "Events that do not accept public comment"),
     ]
 
     broadcast_conditions = ArrayField(
