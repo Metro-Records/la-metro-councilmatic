@@ -1,10 +1,12 @@
+from django.contrib import admin  # noqa
+from django.contrib.admin import SimpleListFilter
 from django.templatetags.static import static
 from django.utils.html import format_html
 
 from wagtail import hooks
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 
-from .models import Alert
+from lametro.models import Alert, BoardMemberPage
 
 
 class AlertAdmin(ModelAdmin):
@@ -23,7 +25,68 @@ class AlertAdmin(ModelAdmin):
     )
 
 
+class MembershipStatusFilter(SimpleListFilter):
+    title = "membership status"
+    parameter_name = "current"
+
+    def lookups(self, request, model_admin):
+        return [
+            ("true", "Has current memberships"),
+            ("false", "Does not have current memberships"),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if not self.value() in ("true", "false"):
+                return queryset.none()
+
+            people = [
+                page.person
+                for page in BoardMemberPage.objects.select_related("person")
+                .prefetch_related("person__memberships")
+                .distinct()
+            ]
+
+            if self.value() == "true":
+                filter_func = lambda person: person.current_memberships.exists()  # noqa
+            else:
+                filter_func = (
+                    lambda person: not person.current_memberships.exists()
+                )  # noqa
+
+            return queryset.filter(
+                person__id__in=(p.id for p in filter(filter_func, people))
+            )
+
+
+class BoardMemberPageAdmin(ModelAdmin):
+    model = BoardMemberPage
+    list_display = (
+        "member",
+        "current_memberships",
+    )
+    list_select_related = ("person",)
+    list_filter = (MembershipStatusFilter,)
+
+    @admin.display
+    def member(self, obj):
+        return obj.person.name
+
+    @admin.display(empty_value="")
+    def current_memberships(self, obj):
+        if (
+            current_memberships := obj.person.current_memberships.order_by(
+                "organization__name"
+            )
+            .distinct()
+            .values_list("organization__name", flat=True)
+        ):
+            organizations = "\n".join(f"<li>{org}</li>" for org in current_memberships)
+            return format_html(f"<ul>{organizations}</ul>")
+
+
 modeladmin_register(AlertAdmin)
+modeladmin_register(BoardMemberPageAdmin)
 
 
 class ModelAdminLink:
@@ -31,7 +94,7 @@ class ModelAdminLink:
         self.modeladmin = modeladmin_cls()
 
     def render(self, request):
-        return (
+        return format_html(
             f'<li class="w-userbar__item" role="presentation"><a href="{self.modeladmin.url_helper.index_url}" '
             + f'target="_parent" role="menuitem">Manage {self.modeladmin.get_menu_label()}</a></li>'
         )

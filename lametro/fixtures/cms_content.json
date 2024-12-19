@@ -112,7 +112,7 @@
     "pk": 1,
     "fields": {
         "password": "pbkdf2_sha256$260000$B9ENOePr7fGI3Pa5LU7l1h$ekAXX9iQL7ygx/1ug0AI5GLbltK6rT7aFiPw/gU18Ag=",
-        "last_login": "2024-11-21T14:09:55.136Z",
+        "last_login": "2024-12-12T20:07:40.414Z",
         "is_superuser": true,
         "username": "hannah",
         "first_name": "",
@@ -121,6 +121,24 @@
         "is_staff": true,
         "is_active": true,
         "date_joined": "2024-11-20T16:12:03.607Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$NcCaBlSJoz4J6WvLwVpsWR$fwO0cgp1wvzOwvZQwqk4b/2RB6LND0YxhcOWbtC6DdI=",
+        "last_login": "2024-12-12T14:59:54.870Z",
+        "is_superuser": true,
+        "username": "xavier",
+        "first_name": "xavier",
+        "last_name": "medrano",
+        "email": "xavier.medrano@datamade.us",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2024-12-12T14:59:42.914Z",
         "groups": [],
         "user_permissions": []
     }
@@ -138,6 +156,24 @@
     "fields": {
         "user": [
             "hannah"
+        ],
+        "submitted_notifications": true,
+        "approved_notifications": true,
+        "rejected_notifications": true,
+        "updated_comments_notifications": true,
+        "preferred_language": "",
+        "current_time_zone": "",
+        "avatar": "",
+        "dismissibles": {},
+        "theme": "system"
+    }
+},
+{
+    "model": "wagtailusers.userprofile",
+    "pk": 2,
+    "fields": {
+        "user": [
+            "xavier"
         ],
         "submitted_notifications": true,
         "approved_notifications": true,
@@ -223,6 +259,1194 @@
         "site_name": "",
         "root_page": 2,
         "is_default_site": true
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 1,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming Events - test",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-05T21:07:49.520Z",
+        "uuid": "a682126c-8efe-4eb4-a5f2-a9180a80e29e",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 2,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - test",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-05T21:13:58.295Z",
+        "uuid": "91e9fe0e-0cf7-4a79-9d24-9a179985f613",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 3,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - This is a notice for all events that are either up",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-05T21:23:23.266Z",
+        "uuid": "99005e63-ef99-4a32-a50d-218994de9710",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 4,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - This is a message that will show up on all upcomin",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-05T21:35:51.980Z",
+        "uuid": "45ece563-186f-44b5-b8c8-45b9148601bb",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 5,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on concluded Events - This is a message that will show up on all conclud",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-05T21:36:09.738Z",
+        "uuid": "3399e7ca-dc66-4930-88ee-c9283ae19fe8",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 6,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - This message will show up on all future events.",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-06T15:24:23.745Z",
+        "uuid": "25558169-8ea1-4df3-bf25-bd9ecd22cf59",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "3"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 7,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Here&#x27;s a test notice for upcoming/ongoingThis",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T16:02:20.156Z",
+        "uuid": "ddefa25d-1df8-4d3a-9a1e-d5aca263d7a6",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 8,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Here&#x27;s a test notice for upcoming/ongoingThis",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T16:02:56.717Z",
+        "uuid": "9bcdffd5-c169-4383-a282-29951148e616",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 9,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T16:24:09.806Z",
+        "uuid": "c4a4a548-58c8-4b5b-adf6-c9ed9c35ef96",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 10,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T16:25:12.637Z",
+        "uuid": "29cd228e-9382-4ead-84f7-68b05eeea4bc",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 11,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotely - test futureDuring",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T16:34:30.652Z",
+        "uuid": "4ae7c6de-2a6c-4d1a-94a6-42b1b6a725cf",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "3"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 12,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T19:01:19.588Z",
+        "uuid": "15884b57-5e1b-471d-b058-25fa4e93844d",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 13,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotely - test futureDuring",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T19:01:37.820Z",
+        "uuid": "a92169ec-5f19-472f-865c-cef99b654d12",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "3"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 14,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - This is a message that will show up on all conclud",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T19:01:50.555Z",
+        "uuid": "59898b94-ff94-4cf8-b4a5-3aedcb9e73a1",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 15,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on concluded Events - This is a message that will show up on all conclud",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T19:01:59.762Z",
+        "uuid": "bfa0ba23-7cdc-4037-a910-3f2f6f0ab820",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 16,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-06T19:22:46.549Z",
+        "uuid": "fb81305d-874b-46c4-b3e3-b153a04d9cec",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 17,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotely - test futureDuring",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-06T19:23:38.658Z",
+        "uuid": "032e1309-c53b-4958-b87e-50f94628a3c9",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 18,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotely - test futureDuring",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-06T19:34:14.747Z",
+        "uuid": "c4dae2f8-ddaa-44c1-96c1-85bd5f12aad9",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 19,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-06T19:34:30.105Z",
+        "uuid": "132d0dad-2b69-479c-99b7-2182d98f9560",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 20,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:12:03.261Z",
+        "uuid": "0c22bc0d-ab4f-428f-a515-a7f3ac4ae8b6",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 21,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:14:38.536Z",
+        "uuid": "81719762-b957-408f-860e-300932f31518",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": false,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 22,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:14:50.542Z",
+        "uuid": "0f9cfc94-108b-4344-b8f3-18576864fc31",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 23,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:15:17.993Z",
+        "uuid": "b230ff13-8732-4923-9bee-56ddb47b0452",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 24,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:18:48.104Z",
+        "uuid": "27ffd1cd-855f-4cfb-b7aa-8a56ccbd6467",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 25,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:26:37.199Z",
+        "uuid": "89769dda-3e3a-4bcf-b084-814065f318dc",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 26,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-06T20:41:23.678Z",
+        "uuid": "2708607e-599e-4771-b9fe-2473400f243a",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 27,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotely - test futureDuring",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-06T20:41:39.368Z",
+        "uuid": "7f28d7d8-b82e-4517-a56e-27f86b8dfaf3",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 28,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing Events - Submit public comment remotely - test upcoming/ong",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:45:00.307Z",
+        "uuid": "d4580e22-fa2d-4c7e-bd54-34ac9ddcbf09",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 29,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotely - test futureDuring",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:45:10.330Z",
+        "uuid": "20bd2fae-2477-4b1c-a28d-27482f665fd1",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 30,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotelyBefore the meetingVi",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-06T20:57:50.214Z",
+        "uuid": "2c5d4fef-0bc6-4327-8602-f4e5b8109d84",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "3"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 31,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotely - test future/not l",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:58:08.304Z",
+        "uuid": "a678405e-323c-4350-9dca-dd71bd670ce6",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "3"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 32,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future Events - Submit public comment remotely - test futureDuring",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-06T20:59:43.955Z",
+        "uuid": "35e32c46-f92b-43e4-8815-ef3f832cc75e",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 33,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing and accepts_live_comment Events",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-10T14:46:57.764Z",
+        "uuid": "056b28b3-ddc7-4dd4-b1cc-21a8617b4904",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 34,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing and accepts_live_comment Events",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-10T16:52:36.980Z",
+        "uuid": "a80a4436-e0bb-4055-8cb9-e6e29b16d5b2",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 35,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing and accepts_live_comment Events",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-10T20:15:00.961Z",
+        "uuid": "112913c6-4736-4ccf-8134-773d56450474",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 36,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future and accepts_comment Events",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-10T20:30:20.213Z",
+        "uuid": "90bfc1a5-1763-426c-80ff-c5d37ff9e87b",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "3"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 37,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing and accepts_live_comment Events",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-11T17:02:39.898Z",
+        "uuid": "69e1b719-6620-4e20-9c74-6f4ca8b1f892",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 38,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-11T21:18:08.727Z",
+        "uuid": "7c9394ba-76d6-4091-8c67-fe082695423e",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 39,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-11T21:18:58.657Z",
+        "uuid": "9ee4df24-e493-497b-a364-77d03e94f5ce",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 40,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-11T21:20:50.242Z",
+        "uuid": "e1776095-4cf3-4334-958d-f2674562cdd3",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "3"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 41,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on ongoing and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-11T21:21:12.655Z",
+        "uuid": "da251720-fe69-46a4-8f5f-fcb31e890e9b",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "4"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 42,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on ongoing and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-11T21:27:58.375Z",
+        "uuid": "3a8ad1b1-9018-4d58-a59a-5ddffa59bf2c",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "5"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 43,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on concluded and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-11T21:30:29.476Z",
+        "uuid": "ec20b0cd-40a5-4587-92a7-f8aacf7ed1d5",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "6"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 44,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming and accepts_live_comment Events",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-11T21:32:04.907Z",
+        "uuid": "cc05b524-6dd4-4ce7-9c87-e9be86f8cd26",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "4"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 45,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming and accepts_live_comment Events",
+        "action": "wagtail.delete",
+        "data": {},
+        "timestamp": "2024-12-11T21:32:25.882Z",
+        "uuid": "205a4d04-7c25-4bed-8b20-d17c76ba1e48",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": false,
+        "deleted": false,
+        "object_id": "4"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 46,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-11T21:47:00.474Z",
+        "uuid": "f40eda19-9fd8-41d5-b178-0deadbdd4ca3",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 47,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-11T21:47:33.665Z",
+        "uuid": "d4f8906d-d9bb-4920-93f7-18b5ba2b244f",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 48,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future and accepts_live_comment Events",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-12T14:45:13.165Z",
+        "uuid": "59d9bcb5-1b11-4974-b177-8f443444e772",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": false,
+        "deleted": false,
+        "object_id": "2"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 49,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future, upcoming, ongoing and accepts_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-12T14:45:29.124Z",
+        "uuid": "f206845c-0f3b-4ce7-bd7b-d9bf05c45b10",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "3"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 50,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing and accepts_live_comment Events",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-12T14:46:55.180Z",
+        "uuid": "75a8c0f9-f70d-4352-a44f-72d6f8356d38",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "1"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 51,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on upcoming, ongoing and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-12T15:05:04Z",
+        "uuid": "99095219-8602-4857-9443-95ceb3813989",
+        "user": [
+            "xavier"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "4"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 52,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future and accepts_live_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-12T15:06:35.411Z",
+        "uuid": "819831a2-abe7-42b1-be17-1b04152d96d7",
+        "user": [
+            "xavier"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "5"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 53,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "eventnotice"
+        ],
+        "label": "Notice on future, upcoming, ongoing and accepts_comment Events",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-12T15:08:47.211Z",
+        "uuid": "4259048e-9d1c-40ae-96dc-a62e4c1a7ca1",
+        "user": [
+            "xavier"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "6"
+    }
+},
+{
+    "model": "wagtailcore.modellogentry",
+    "pk": 54,
+    "fields": {
+        "content_type": [
+            "auth",
+            "user"
+        ],
+        "label": "xavier",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-12T15:20:00.803Z",
+        "uuid": "04a442a4-5ceb-45d3-aa29-f77cd490d574",
+        "user": [
+            "xavier"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "object_id": "2"
     }
 },
 {
@@ -1344,6 +2568,94 @@
     }
 },
 {
+    "model": "wagtailcore.pagelogentry",
+    "pk": 16,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "boardofdirectorspage"
+        ],
+        "label": "Board of Directors",
+        "action": "wagtail.create",
+        "data": {},
+        "timestamp": "2024-12-04T19:59:25.451Z",
+        "uuid": "0292cb5b-e388-471d-bc72-5fb72073db17",
+        "user": [
+            "hannah"
+        ],
+        "revision": null,
+        "content_changed": true,
+        "deleted": false,
+        "page": 4
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 17,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "boardofdirectorspage"
+        ],
+        "label": "Board of Directors",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-04T19:59:25.483Z",
+        "uuid": "0292cb5b-e388-471d-bc72-5fb72073db17",
+        "user": [
+            "hannah"
+        ],
+        "revision": 11,
+        "content_changed": true,
+        "deleted": false,
+        "page": 4
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 18,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "boardofdirectorspage"
+        ],
+        "label": "Board of Directors",
+        "action": "wagtail.publish",
+        "data": {},
+        "timestamp": "2024-12-04T19:59:25.520Z",
+        "uuid": "0292cb5b-e388-471d-bc72-5fb72073db17",
+        "user": [
+            "hannah"
+        ],
+        "revision": 11,
+        "content_changed": true,
+        "deleted": false,
+        "page": 4
+    }
+},
+{
+    "model": "wagtailcore.pagelogentry",
+    "pk": 19,
+    "fields": {
+        "content_type": [
+            "lametro",
+            "boardofdirectorspage"
+        ],
+        "label": "Board of Directors",
+        "action": "wagtail.edit",
+        "data": {},
+        "timestamp": "2024-12-04T20:32:53.045Z",
+        "uuid": "27c2bb36-62c1-42ba-a982-7158e0e58684",
+        "user": [
+            "hannah"
+        ],
+        "revision": 12,
+        "content_changed": true,
+        "deleted": false,
+        "page": 4
+    }
+},
+{
     "model": "wagtailcore.pagesubscription",
     "pk": 1,
     "fields": {
@@ -1362,6 +2674,17 @@
             "hannah"
         ],
         "page": 2,
+        "comment_notifications": false
+    }
+},
+{
+    "model": "wagtailcore.pagesubscription",
+    "pk": 3,
+    "fields": {
+        "user": [
+            "xavier"
+        ],
+        "page": 3,
         "comment_notifications": false
     }
 },

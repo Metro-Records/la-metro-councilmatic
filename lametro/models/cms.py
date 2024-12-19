@@ -136,9 +136,25 @@ class BoardOfDirectorsPage(Page):
 class BoardMemberPage(Page):
     include_in_dump = True
 
-    # headshot
-    # bio
-    # other text?
+    person = models.ForeignKey("lametro.LAMetroPerson", on_delete=models.CASCADE)
+
+    headshot = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    bio = RichTextField(blank=True, null=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("person"),
+        FieldPanel("headshot"),
+        FieldPanel("bio"),
+    ]
+
+    def current_member(self):
+        return self.person.current_memberships.exist()
 
 
 class Alert(models.Model):

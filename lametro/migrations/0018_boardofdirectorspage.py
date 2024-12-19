@@ -6,7 +6,6 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("wagtailcore", "0089_log_entry_data_json_null_to_object"),
         ("lametro", "0017_alter_alert_description"),
