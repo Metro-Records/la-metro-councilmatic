@@ -10,7 +10,6 @@ from haystack.inputs import Raw
 from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
-from lametro.models import LAMetroPerson
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
@@ -151,33 +150,3 @@ class AgendaPdfForm(forms.Form):
             return agenda_pdf
         else:
             raise forms.ValidationError("File type not supported. Please submit a PDF.")
-
-
-class PersonHeadshotForm(forms.ModelForm):
-    headshot_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
-
-    def __init__(self, *args, **kwargs):
-        super(PersonHeadshotForm, self).__init__(*args, **kwargs)
-        self.fields["headshot"].widget.attrs.update(
-            {
-                "required": "True",
-            }
-        )
-
-    class Meta:
-        model = LAMetroPerson
-        fields = ["headshot"]
-
-
-class PersonBioForm(forms.ModelForm):
-    bio_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
-
-    def __init__(self, *args, **kwargs):
-        super(PersonBioForm, self).__init__(*args, **kwargs)
-        self.fields["councilmatic_biography"].widget.attrs.update(
-            {"rows": "5", "required": "True"}
-        )
-
-    class Meta:
-        model = LAMetroPerson
-        fields = ["councilmatic_biography"]

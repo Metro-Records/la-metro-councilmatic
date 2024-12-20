@@ -469,8 +469,9 @@ class LAMetroPerson(Person, SourcesMixin):
 
     @property
     def headshot_url(self):
-        if self.headshot:
-            return self.headshot.url
+        print(self.details.headshot)
+        if self.details.headshot:
+            return self.details.headshot
 
         file_directory = os.path.dirname(__file__)
         absolute_file_directory = os.path.abspath(file_directory)

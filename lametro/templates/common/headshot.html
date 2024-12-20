@@ -1,0 +1,11 @@
+{% load static wagtailimages_tags %}
+
+{% if person.details.headshot %}
+    {% if original %}
+        {% image person.details.headshot width-640 class="img-fluid rounded-3 p-1" alt=person.name %}
+    {% else %}
+        {% image person.details.headshot fill-100x100 class="img-fluid rounded-3 p-1" alt=person.name %}
+    {% endif %}
+{% else %}
+    <img src='{% static "images/headshot_placeholder.png" %}' alt="{{person.name}}" title="{{person.name}}" class="img-fluid rounded-3 p-1" id="person-detail-headshot" />
+{% endif %}
