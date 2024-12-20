@@ -38,7 +38,6 @@ from django.http import (
 )
 from django.core import management
 from django.core.serializers import serialize
-from django.core.cache import cache
 
 from councilmatic_core.views import (
     IndexView,
@@ -64,13 +63,12 @@ from lametro.models import (
     LAMetroOrganization,
     LAMetroSubject,
     EventBroadcast,
+    BoardMemberDetails,
 )
 from lametro.forms import (
     AgendaUrlForm,
     AgendaPdfForm,
     LAMetroCouncilmaticSearchForm,
-    PersonHeadshotForm,
-    PersonBioForm,
 )
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
@@ -662,63 +660,26 @@ class LAPersonDetailView(PersonDetailView):
 
         return response
 
-    def post(self, request, *args, **kwargs):
-        slug = self.kwargs["slug"]
-        person = self.model.objects.get(slug=slug)
-        self.object = self.get_object()
-
-        # The submitted hidden field determines which form was used
-        if "bio_form" in request.POST:
-            form = PersonBioForm(request.POST, instance=person)
-            bio_content = request.POST.get("councilmatic_biography")
-
-            # Prevent whitespace from being submitted
-            if bio_content.isspace():
-                error = "Please fill out the bio"
-                return self.render_to_response(
-                    self.get_context_data(form=form, bio_error=error)
-                )
-            else:
-                form.save()
-                return HttpResponseRedirect(self.request.path_info)
-
-        elif "headshot_form" in request.POST:
-            form = PersonHeadshotForm(request.POST, instance=person)
-            file_obj = request.FILES.get("headshot", "")
-
-            is_valid_file = self.validate_file(file_obj)
-
-            if not is_valid_file:
-                error = "Must be a valid image file, and size must be under 7.5mb."
-                return self.render_to_response(
-                    self.get_context_data(form=form, headshot_error=error)
-                )
-
-            person.headshot = file_obj
-            person.save()
-
-            cache.clear()
-
-            return HttpResponseRedirect(self.request.path_info)
-
-    def validate_file(self, file):
-        image_formats = (".png", ".jpeg", ".jpg", ".tif", ".tiff", ".webp", ".avif")
-
-        is_image = file.name.endswith(tuple(image_formats))
-        max_file_size = 7864320  # 7.5mb
-
-        if is_image and file.size <= max_file_size:
-            return True
-        return False
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         person = context["person"]
 
-        context["headshot_form"] = PersonHeadshotForm
-        context["biography_form"] = PersonBioForm
+        try:
+            person_details = BoardMemberDetails.objects.get(person=person)
+        except BoardMemberDetails.DoesNotExist:
+            context["person_details"] = None
+        else:
+            context["person_details"] = (
+                person_details.live_revision.as_object()
+                if person_details.live_revision
+                else None
+            )
 
-        council_post = person.latest_council_membership.post
+        council_post = (
+            person.latest_council_membership.post
+            if person.latest_council_membership
+            else ""
+        )
 
         try:
             context["qualifying_post"] = council_post.acting_label
