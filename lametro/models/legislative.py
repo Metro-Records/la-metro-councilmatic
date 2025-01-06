@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import json
 import logging
-import os
-from pathlib import Path
 import pytz
 
 import requests
@@ -17,7 +15,6 @@ from django.core.cache import cache
 
 from django.db.models import Prefetch, Case, When, Value, Q, F, Subquery, OuterRef
 from django.db.models.functions import Now, Cast
-from django.templatetags.static import static
 from opencivicdata.legislative.models import (
     EventMedia,
     EventAgendaItem,
@@ -466,28 +463,6 @@ class LAMetroPerson(Person, SourcesMixin):
             ceo = None
 
         return ceo
-
-    @property
-    def headshot_url(self):
-        print(self.details.headshot)
-        if self.details.headshot:
-            return self.details.headshot
-
-        file_directory = os.path.dirname(__file__)
-        absolute_file_directory = os.path.abspath(file_directory)
-
-        filename = self.slug_name + ".jpg"
-
-        manual_headshot = os.path.join(
-            absolute_file_directory, "static", "images", "manual-headshots", filename
-        )
-
-        if Path(manual_headshot).exists():
-            image_url = f"images/manual-headshots/{filename}"
-        else:
-            image_url = "images/headshot_placeholder.png"
-
-        return static(image_url)
 
     @property
     def current_bio(self):

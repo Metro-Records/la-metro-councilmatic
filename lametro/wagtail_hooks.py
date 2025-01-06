@@ -98,7 +98,6 @@ class LinkedStatusTagColumn(LiveStatusTagColumn):
     cell_template_name = "snippets/related_object_status_tag.html"
 
     def get_cell_context_data(self, instance, parent_context):
-        print("getting context")
         context = super().get_cell_context_data(instance, parent_context)
         context["url"] = instance.get_url()
         return context

@@ -145,12 +145,6 @@
             "order": []
         });
 
-        $('.thumbnail-square img').each(function() {
-            if ($(this).width() > $(this).height()) {
-                $(this).addClass('landscape');
-            }
-        });
-
         function collapseEvents(){
             $(".event-listing:gt(4)").hide();
             $("#more-events").show();

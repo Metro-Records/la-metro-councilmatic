@@ -14,7 +14,7 @@
             <tr id="polygon-{{ membership.post.label | slugify }}-{{ membership.person.name | slugify}}" data-name="{{ membership.person.name | slugify}}" data-polygon="polygon-{{ membership.post.label | slugify }}">
                 <td>
                     <div class="thumbnail-square">
-                        {% with person=membership.person aspect_ratio="fill-100x100" %}
+                        {% with person=membership.person %}
                             {% include 'common/headshot.html' %}
                         {% endwith %}
                     </div>
