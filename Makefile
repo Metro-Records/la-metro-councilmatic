@@ -20,3 +20,5 @@ councilmatic_core_person.csv :
 			    SELECT name, slug \
 			    FROM councilmatic_core_person \
 		    ) TO STDOUT WITH CSV HEADER\"" > $@
+
+include wagtail.mk
