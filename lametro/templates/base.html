@@ -1,4 +1,4 @@
-{% load adv_cache extras lametro_extras static wagtailcore_tags wagtailuserbar %}
+{% load adv_cache extras lametro_extras markdownify static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +51,7 @@
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:council_members' %}">Board of Directors</a></li>
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'committees' %}">Committees</a></li>
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:contact' %}">Contact Us</a></li>
-                                <li><a class="dropdown-item dropdown-size" href="{% slugurl 'about' %}">About Us</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:about' %}">About Us</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown me-2 pt-3">
@@ -73,7 +73,25 @@
                             </ul>
                         </li>
                         {% nocache %}
-                            <li><div id="google_translate_element"></div></li>
+                            {% if user.is_authenticated %}
+                                <li class="nav-item dropdown me-2 pt-3">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Admin
+                                    </a>
+                                    <ul class="dropdown-menu shadow rounded-bottom">
+                                        <li>
+                                            <a class="dropdown-item dropdown-size" href="{% url 'alerts' %}">Alerts</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item pt-3">
+                                    <a class="nav-link" href="{% url 'metro_logout' %}">
+                                        <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li><div id="google_translate_element"></div></li>
+                            {% endif %}
                         {% endnocache %}
                     </ul>
                 </div><!-- /.navbar-collapse -->
@@ -85,7 +103,7 @@
         {% if alerts %}
             {% for alert in alerts|dictsort:"pk" %}
                 <div class="alert alert-{{alert.type}} mb-0" tabindex="0">
-                    {{alert.description|richtext}}
+                    {{alert.description|markdownify}}
                 </div>
             {% endfor %}
         {% endif %}
@@ -97,8 +115,6 @@
             {% endblock %}
         </main>
 
-        {% wagtailuserbar 'bottom-left' %}
-
         <footer class="d-md-flex flex-wrap justify-content-md-between align-items-center border-top" id="footer">
             <div class="col-md-6 d-flex align-items-center justify-content-center">
                 <a class="navbar-brand me-md-auto" href="/">
@@ -108,7 +124,7 @@
             </div>
             <ul class="nav col-md-6 justify-content-around justify-content-md-end list-unstyled">
                 <li class="ms-3"><a href="{% url 'lametro:contact' %}">Contact Us</a></li>
-                <li class="ms-3"><a href="{% slugurl 'about' %}">About Us</a></li>
+                <li class="ms-3"><a href="{% url 'lametro:about' %}">About Us</a></li>
                 <li class="ms-3"><a href="{% url 'metro_login' %}">Metro Login</a></li>
             </ul>
         </footer>

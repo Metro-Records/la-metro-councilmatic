@@ -1,16 +1,11 @@
 from django.conf import settings
 from django.conf.urls import include, url
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from django.views.static import serve
 from django.views.decorators.cache import never_cache
 
 from haystack.query import EmptySearchQuerySet
-
-from wagtail.admin import urls as wagtailadmin_urls
-from wagtail import urls as wagtail_urls
-from wagtail.documents import urls as wagtaildocs_urls
 
 from councilmatic_core.views import (
     CouncilmaticSearchForm,
@@ -28,6 +23,7 @@ from lametro.views import (
     LAMetroEventDetail,
     LABillDetail,
     LABoardMembersView,
+    LAMetroAboutView,
     LACommitteeDetailView,
     LACommitteesView,
     LAPersonDetailView,
@@ -44,6 +40,9 @@ from lametro.views import (
     MinutesView,
     pong,
     test_logging,
+    AlertCreateView,
+    AlertDeleteView,
+    AlertUpdateView,
 )
 from lametro.feeds import LAMetroPersonDetailFeed
 
@@ -64,6 +63,7 @@ patterns = (
         ),
         url(r"^archive-search", LAMetroArchiveSearch.as_view(), name="archive-search"),
         url(r"^$", never_cache(LAMetroIndexView.as_view()), name="index"),
+        url(r"^about/$", LAMetroAboutView.as_view(), name="about"),
         url(
             r"^board-report/(?P<slug>[^/]+)/$",
             LABillDetail.as_view(),
@@ -116,6 +116,9 @@ urlpatterns = [
         manual_event_live_link,
         name="manual_event_live_link",
     ),
+    path("alerts/", AlertCreateView.as_view(), name="alerts"),
+    path("alerts/<int:pk>/delete/", AlertDeleteView.as_view(), name="delete_alert"),
+    path("alerts/<int:pk>/update/", AlertUpdateView.as_view(), name="update_alert"),
     url(
         r"^pong/$",
         pong,
@@ -126,12 +129,9 @@ urlpatterns = [
         name="lametro_ses_endpoint",
     ),
     path("smartlogic/", include("smartlogic.urls", namespace="smartlogic")),
-    path("cms/", include(wagtailadmin_urls)),
-    path("documents/", include(wagtaildocs_urls)),
-    path("", include(wagtail_urls)),
     url(r"", include("councilmatic_core.urls")),
     url(r"^test-logging/$", test_logging, name="test_logging"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 if settings.DEBUG:
     import debug_toolbar

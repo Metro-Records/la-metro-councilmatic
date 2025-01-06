@@ -62,5 +62,7 @@ jobs:
         DATABASE_URL: postgis://postgres:postgres@localhost:5432/lametro
         SEARCH_URL: http://localhost:9200
       run: |
+        flake8 .
+        black --check .
         cp .env.local.example .env.local
         pytest -sv

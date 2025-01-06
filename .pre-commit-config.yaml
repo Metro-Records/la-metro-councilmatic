@@ -15,5 +15,5 @@ repos:
     rev: '9f60881'
     hooks:
       - id: flake8
-        files: ^(lametro|councilmatic|tests)
+        files: lametro councilmatic tests
         exclude: lametro/migrations councilmatic/settings.py

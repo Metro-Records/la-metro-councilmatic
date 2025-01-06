@@ -2,6 +2,7 @@ import requests
 
 from django import forms
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.exceptions import ValidationError
 
 from captcha.fields import ReCaptchaField
 from captcha.fields import ReCaptchaV3
@@ -10,7 +11,8 @@ from haystack.inputs import Raw
 from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
-from lametro.models import LAMetroPerson
+
+from lametro.models import LAMetroPerson, Alert
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
@@ -181,3 +183,23 @@ class PersonBioForm(forms.ModelForm):
     class Meta:
         model = LAMetroPerson
         fields = ["councilmatic_biography"]
+
+
+class AlertForm(forms.ModelForm):
+    def clean_description(self):
+        data = self.cleaned_data.get("description", None)
+        if not data:
+            raise ValidationError("Please provide an alert description")
+        return data
+
+    class Meta:
+        model = Alert
+        fields = "__all__"
+        widgets = {
+            "description": forms.Textarea(
+                attrs={
+                    "rows": 4,
+                    "placeholder": "Enter alert text",
+                }
+            ),
+        }
