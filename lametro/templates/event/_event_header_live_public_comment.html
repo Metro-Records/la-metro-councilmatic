@@ -1,3 +1,5 @@
+{% load wagtailcore_tags %}
+
 <section class="row">
     {% if has_agenda and event_notices %}
     <section class="col-md-7">
@@ -55,39 +57,22 @@
 
     {% if has_agenda and event_notices %}
         <article class="col-md-5">
-            {% if not event.has_passed %}
-                {% for notice in event_notices %}
-                    {% if "upcoming" in notice.broadcast_conditions and event.is_upcoming %}
-                        {{ notice.message|safe }}
-                    {% elif "ongoing" in notice.broadcast_conditions and event.is_ongoing %}
-                        {{ notice.message|safe }}
+            {% for notice in event_notices %}
+                {{ notice.message|richtext }}
+            {% endfor %}
 
-                        {% if USING_ECOMMENT %}
-                            <p>
-                                <strong>On the web:</strong>
-                                <a href="{{ event.ecomment_url }}" target="_blank" aria-label="Go to public comment - link opens in a new tab">
-                                    <i class="fa fa-fw fa-external-link" aria-hidden="true"></i>
-                                    Go to public comment
-                                </a>
-                            </p>
-                        {% endif %}
-                    {% elif "future" in notice.broadcast_conditions and not event.is_upcoming and not event.is_ongoing %}
-                        <!-- Event is in the future -->
-                        {{ notice.message|safe }}
-
-                        {% if USING_ECOMMENT %}
-                            <p>{{ event.UPCOMING_ECOMMENT_MESSAGE }}</p>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-
-            {% else %}
-                <!-- Event has concluded -->
-                {% for notice in event_notices %}
-                    {% if 'concluded' in notice.broadcast_conditions %}
-                        {{ notice.message|safe }}
-                    {% endif %}
-                {% endfor %}
+            {% if USING_ECOMMENT %}
+                {% if event.is_ongoing %}
+                    <p>
+                        <strong>On the web:</strong>
+                        <a href="{{ event.ecomment_url }}" target="_blank" aria-label="Go to public comment - link opens in a new tab">
+                            <i class="fa fa-fw fa-external-link" aria-hidden="true"></i>
+                            Go to public comment
+                        </a>
+                    </p>
+                {% elif event_status == "future" %}
+                    <p>{{ event.UPCOMING_ECOMMENT_MESSAGE }}</p>
+                {% endif %}
             {% endif %}
         </article>
     {% endif %}

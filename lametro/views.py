@@ -286,19 +286,41 @@ class LAMetroEventDetail(EventDetailView):
 
         # Only provide notices for this event's public comment setting
         if event.accepts_live_comment:
-            context["event_notices"] = EventNotice.objects.filter(
+            notices_by_comment = EventNotice.objects.filter(
                 comment_conditions__contains=["accepts_live_comment"]
             )
         elif event.accepts_public_comment:
-            context["event_notices"] = EventNotice.objects.filter(
+            notices_by_comment = EventNotice.objects.filter(
                 comment_conditions__contains=["accepts_comment"]
             )
         else:  # Events that do not accept public comment at all
-            context["event_notices"] = EventNotice.objects.filter(
+            notices_by_comment = EventNotice.objects.filter(
                 comment_conditions__contains=["accepts_no_comment"]
             )
 
+        # Further filter notices by event broadcast status
+        context["event_status"] = self.get_event_status(event)
+        for status in ("future", "upcoming", "ongoing", "concluded"):
+            if context["event_status"] == status:
+                event_notices = notices_by_comment.filter(
+                    broadcast_conditions__contains=[status]
+                )
+                break
+
+        context["event_notices"] = event_notices
         return context
+
+    def get_event_status(self, event):
+        # Returns the event's broadcast status as a string
+
+        if event.is_upcoming:
+            return "upcoming"
+        elif event.is_ongoing:
+            return "ongoing"
+        elif event.has_passed:
+            return "concluded"
+        else:
+            return "future"
 
 
 def handle_uploaded_agenda(agenda, event):
