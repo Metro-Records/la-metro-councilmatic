@@ -157,9 +157,8 @@ This repo is set up to deploy review apps on Heroku, and those pull from the sta
 1. Configure the S3 connection, as documented above.
 2. Once a release phase successfully completes, provision an Essential 0 database for your review app.
 3. Retrieve the URI from the Credentials tab.
-4. Run `export HEROKU_DATABASE_URL=<YOUR URI HERE>`.
-5. If needed, run `docker compose run --rm -e DATABASE_URL=${HEROKU_DATABASE_URI} scrapers` to populate initial legislative data.
-6. Run `docker compose run --rm -e DATABASE_URL=${HEROKU_DATABASE_URI} app python manage.py load_content` to populate initial CMS content from the version controlled fixtures.
+4. Update the app's `DATABASE_URL` config value to the new URI.
+5. On your local machine, run `DATABASE_URL=<YOUR URI HERE> make -e wagtail_db`. This will populate initial legislative data and import content from the version controlled fixture data.
 
 ## Adding a new board member
 
