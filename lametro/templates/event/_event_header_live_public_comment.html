@@ -1,5 +1,7 @@
+{% load wagtailcore_tags %}
+
 <section class="row">
-    {% if has_agenda and not event.has_passed %}
+    {% if has_agenda and event_notices %}
     <section class="col-md-7">
     {% else %}
     <section class="col-12">
@@ -53,38 +55,14 @@
         {% endif %}
     </section>
 
-    {% if has_agenda and not event.has_passed %}
+    {% if has_agenda and event_notices %}
         <article class="col-md-5">
-            <h2 class="h4">Submit public comment remotely</h2>
+            {% for notice in event_notices %}
+                {{ notice.message|richtext }}
+            {% endfor %}
 
-            <p>
-                <strong>During the meeting</strong>
-            </p>
-
-            <strong>By phone:</strong>
-
-            {% if event.is_upcoming or event.is_ongoing %}
-                <p>You may join the public comment participation call 5 minutes prior to the start of the meeting.</p>
-
-                <p>
-                    <span class="d-block"><strong>Dial-in:</strong> 888-978-8818</span>
-                    <span class="d-block"><strong>English Access Code:</strong> 5647249#</span>
-                    <span class="d-block"><strong>Spanish Access Code:</strong> 7292892#</span>
-                </p>
-
-                <p>To give public comment on an item, enter #2 (pound two) when that item is taken up by the Board.</p>
-
-                <p>Need assistance with your audio? Please dial 888-796-6118.</p>
-
-                <p>
-                    <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
-                    <em>
-                        When you call in to comment, you will be able to hear the live stream of the meeting while you wait to comment.
-                        <strong>If you are also listening to the meeting on another device, please lower the volume on the second device to avoid feedback and ensure you can be heard clearly.</strong>
-                    </em>
-                </p>
-
-                {% if event.is_ongoing and USING_ECOMMENT %}
+            {% if USING_ECOMMENT %}
+                {% if event_status == "ongoing" %}
                     <p>
                         <strong>On the web:</strong>
                         <a href="{{ event.ecomment_url }}" target="_blank" aria-label="Go to public comment - link opens in a new tab">
@@ -92,39 +70,9 @@
                             Go to public comment
                         </a>
                     </p>
-                {% endif %}
-            {% else %}
-                <p>
-                    Dial-in information to submit public comment by phone will become available on this page the evening before the meeting.
-                </p>
-
-                {% if USING_ECOMMENT %}
+                {% elif event_status == "future" %}
                     <p>{{ event.UPCOMING_ECOMMENT_MESSAGE }}</p>
                 {% endif %}
-
-                <hr aria-hidden="true">
-
-                <p>
-                    <strong class="d-block mb-2">Before the meeting</strong>
-                </p>
-
-                <div>
-                    <strong>Via email:</strong>
-                    <a href="mailto:boardclerk@metro.net">boardclerk@metro.net</a>
-                </div>
-
-                <div class="mb-3">
-                    <strong>By postal mail: </strong>
-                    <address class="d-inline">Office of Board Administration, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012</address>
-                </div>
-
-                <p>
-                    <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
-                    <em>
-                        Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail.
-                        <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong>
-                    </em>
-                </p>
             {% endif %}
         </article>
     {% endif %}

@@ -13,7 +13,7 @@ import requests_mock
 
 from opencivicdata.legislative.models import EventDocument
 
-from lametro.models import LAMetroEvent, app_timezone, EventBroadcast
+from lametro.models import LAMetroEvent, app_timezone, EventBroadcast, EventNotice
 from lametro.views import handle_uploaded_agenda
 from lametro.templatetags.lametro_extras import updates_made
 from lametro.forms import AgendaPdfForm
@@ -689,18 +689,22 @@ def test_live_comment_details_display_as_expected(
     test_event = event.build(name=event_name, start_date=in_an_hour)
     event_document.build(note="Agenda", event_id=test_event.id)
 
+    live_comment_signature = (
+        "You may join the public comment participation call "
+        + "5 minutes prior to the start of the meeting."
+    )
+    notice = EventNotice(
+        broadcast_conditions=["upcoming"],
+        comment_conditions=["accepts_live_comment"],
+        message=live_comment_signature,
+    )
+    notice.save()
+
     url = reverse("lametro:events", args=[test_event.slug])
     response = client.get(url)
     response_content = response.content.decode("utf-8")
 
-    live_comment_signature = (
-        "During the meeting",
-        "By phone:",
-        "You may join the public comment participation call 5 minutes prior to the start of the meeting.",
-    )
-
-    for line in live_comment_signature:
-        assert (line in response_content) == expected_live_comment_value
+    assert (live_comment_signature in response_content) == expected_live_comment_value
 
 
 @pytest.mark.django_db
