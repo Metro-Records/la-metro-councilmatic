@@ -62,7 +62,7 @@
             {% endfor %}
 
             {% if USING_ECOMMENT %}
-                {% if event.is_ongoing %}
+                {% if event_status == "ongoing" %}
                     <p>
                         <strong>On the web:</strong>
                         <a href="{{ event.ecomment_url }}" target="_blank" aria-label="Go to public comment - link opens in a new tab">
