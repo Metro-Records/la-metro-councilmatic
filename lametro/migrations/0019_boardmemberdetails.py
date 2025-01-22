@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("wagtailimages", "0025_alter_image_file_alter_rendition_file"),
         ("wagtailcore", "0089_log_entry_data_json_null_to_object"),
-        ("lametro", "0017_alter_alert_description"),
+        ("lametro", "0018_eventnotice"),
     ]
 
     operations = [
