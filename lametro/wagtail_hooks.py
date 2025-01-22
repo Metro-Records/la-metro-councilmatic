@@ -146,7 +146,7 @@ class BoardMemberDetailsViewSet(SnippetViewSet):
         ]
     )
 
-    
+
 class EventNoticeAdmin(ModelAdmin):
     model = EventNotice
     base_url_path = "event_notices"
