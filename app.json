@@ -134,6 +134,9 @@
         },
         "LOCAL_DOCKER": {
           "value": "False"
+        },
+        "WAGTAIL_STAGING": {
+          "value": "True",
         }
       }
     }
