@@ -6,8 +6,15 @@ import wagtail.fields
 import wagtail.models
 
 
-class Migration(migrations.Migration):
+def initialize_detail_pages(apps, schema_editor):
+    BoardMemberDetails = apps.get_model("lametro", "BoardMemberDetails")
+    LAMetroPerson = apps.get_model("lametro", "LAMetroPerson")
 
+    for person in LAMetroPerson.objects.all():
+        BoardMemberDetails.objects.create(person=person)
+
+
+class Migration(migrations.Migration):
     dependencies = [
         ("wagtailimages", "0025_alter_image_file_alter_rendition_file"),
         ("wagtailcore", "0089_log_entry_data_json_null_to_object"),
@@ -129,4 +136,5 @@ class Migration(migrations.Migration):
             },
             bases=(wagtail.models.PreviewableMixin, models.Model),
         ),
+        migrations.RunPython(initialize_detail_pages, migrations.RunPython.noop),
     ]
