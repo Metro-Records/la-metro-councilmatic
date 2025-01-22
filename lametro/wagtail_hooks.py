@@ -1,7 +1,9 @@
 from django.contrib import admin  # noqa
 from django.templatetags.static import static
-from django.utils.html import format_html
+from django.utils.html import format_html, strip_tags
 
+from html import unescape
+import django_filters
 from wagtail import hooks
 from wagtail.admin.admin_url_finder import AdminURLFinder
 from wagtail.admin.panels import (
@@ -17,9 +19,7 @@ from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
-import django_filters
-
-from lametro.models import Alert, BoardMemberDetails, LAMetroOrganization
+from lametro.models import Alert, BoardMemberDetails, LAMetroOrganization, EventNotice
 
 
 class AlertAdmin(ModelAdmin):
@@ -146,8 +146,42 @@ class BoardMemberDetailsViewSet(SnippetViewSet):
         ]
     )
 
+    
+class EventNoticeAdmin(ModelAdmin):
+    model = EventNotice
+    base_url_path = "event_notices"
+    menu_icon = "comment"
+    menu_order = 200
+    add_to_settings_menu = False
+    exclude_from_explorer = False
+    add_to_admin_menu = True
+    list_display = (
+        "get_message",
+        "broadcast_conditions",
+        "get_comment_conditions",
+    )
+    list_filter = (
+        "broadcast_conditions",
+        "comment_conditions",
+    )
+    search_fields = (
+        "broadcast_conditions",
+        "comment_conditions",
+        "message",
+    )
+
+    def get_message(self, obj):
+        return strip_tags(unescape(obj.message))[:50]
+
+    def get_comment_conditions(self, obj):
+        return [cond.replace("_", " ") for cond in obj.comment_conditions]
+
+    get_message.short_description = "Message"
+    get_comment_conditions.short_description = "Comment conditions"
+
 
 modeladmin_register(AlertAdmin)
+modeladmin_register(EventNoticeAdmin)
 register_snippet(BoardMemberDetailsViewSet)
 
 
@@ -220,7 +254,8 @@ class BoardMemberEditLink(UserBarLink):
 @hooks.register("construct_wagtail_userbar")
 def add_modeladmin_links(request, items):
     items.append(BoardMemberEditLink())
-    items.append(ModelAdminLink(AlertAdmin))
+    for link in (AlertAdmin, EventNoticeAdmin):
+        items.append(ModelAdminLink(link))
     return items
 
 

@@ -21,12 +21,10 @@
 {% endif %}
 
 {% if messages %}
-<!-- TODO: once the bootstrap 5 changes come in,
-    we can easily make these messages dismissable -->
-    <hr aria-hidden="true">
     {% for message in messages %}
-        <div class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %}" style="margin-bottom: 0px;">
+        <div class="alert alert-dismissible fade show{% if message.tags %} alert-{{ message.tags }}{% endif %} mb-0">
             <strong>Update for Metro</strong> - {{ message }}
+            <button type="button" class="btn-close pull-right" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endfor %}
 {% endif %}
