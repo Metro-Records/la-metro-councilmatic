@@ -818,3 +818,8 @@ caption {
 .alert p:last-of-type {
     margin: unset;
 }
+
+.richtext-image {
+    max-width: 100%;
+    height: auto;
+}

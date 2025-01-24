@@ -109,7 +109,7 @@
           "value": "True"
         },
         "DJANGO_ALLOWED_HOSTS": {
-          "value": ".herokuapp.com"
+          "value": ".herokuapp.com,localhost"
         },
         "FLUSH_KEY": {
           "value": "flushitallaway"
