@@ -1,5 +1,7 @@
+{% load wagtailcore_tags %}
+
 <section class="row">
-    {% if has_agenda and not event.has_passed %}
+    {% if has_agenda and event_notices %}
     <section class="col-md-7">
     {% else %}
     <section class="col-12">
@@ -35,31 +37,12 @@
         {% endif %}
     </section>
 
-    {% if has_agenda and not event.has_passed %}
-        <aside class="col-md-5">
-            <h2 class="h4">Submit public comment remotely</h2>
-
-            <p>
-                <strong class="d-block mb-2">Before the meeting</strong>
-            </p>
-
-            <div>
-                <strong>Via email:</strong>
-                <a href="mailto:boardclerk@metro.net">boardclerk@metro.net</a>
-            </div>
-
-            <div class="mb-3">
-                <strong>By postal mail: </strong>
-                <address class="d-inline">Office of Board Administration, One Gateway Plaza, MS: 99-3-1, Los Angeles, CA 90012</address>
-            </div>
-
-            <p>
-                <i class="fa fa-fw fa-exclamation-circle" aria-hidden="true"></i>
-                <em>
-                    Please make sure to note the meeting name, meeting date, and agenda number or item along with comments submitted by email or postal mail.
-                    <strong>Comments via mail must be received by 5pm on the day prior to the meeting.</strong>
-                </em>
-            </p>
-        </aside>
+    {% if has_agenda and event_notices %}
+        <article class="col-md-5">
+            {% for notice in event_notices %}
+                {{ notice.message|richtext }}
+            {% endfor %}
+        </article>
     {% endif %}
+
 </section>

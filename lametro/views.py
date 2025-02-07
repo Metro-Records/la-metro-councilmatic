@@ -14,7 +14,6 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now, Cast
 from django.db.models import (
@@ -31,9 +30,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
     TemplateView,
-    DeleteView,
-    UpdateView,
-    CreateView,
 )
 from django.http import (
     HttpResponseRedirect,
@@ -43,13 +39,11 @@ from django.http import (
 from django.core import management
 from django.core.serializers import serialize
 from django.core.cache import cache
-from django.urls import reverse_lazy
 
 from councilmatic_core.views import (
     IndexView,
     BillDetailView,
     CouncilMembersView,
-    AboutView,
     CommitteeDetailView,
     CommitteesView,
     PersonDetailView,
@@ -69,8 +63,8 @@ from lametro.models import (
     LAMetroEvent,
     LAMetroOrganization,
     LAMetroSubject,
-    Alert,
     EventBroadcast,
+    EventNotice,
 )
 from lametro.forms import (
     AgendaUrlForm,
@@ -78,10 +72,9 @@ from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
     PersonHeadshotForm,
     PersonBioForm,
-    AlertForm,
 )
 
-from councilmatic.settings_jurisdiction import MEMBER_BIOS, BILL_STATUS_DESCRIPTIONS
+from councilmatic.settings_jurisdiction import MEMBER_BIOS
 from councilmatic.settings import PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
@@ -291,7 +284,43 @@ class LAMetroEventDetail(EventDetailView):
 
         context["USING_ECOMMENT"] = settings.USING_ECOMMENT
 
+        # Only provide notices for this event's public comment setting
+        if event.accepts_live_comment:
+            notices_by_comment = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_live_comment"]
+            )
+        elif event.accepts_public_comment:
+            notices_by_comment = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_comment"]
+            )
+        else:  # Events that do not accept public comment at all
+            notices_by_comment = EventNotice.objects.filter(
+                comment_conditions__contains=["accepts_no_comment"]
+            )
+
+        # Further filter notices by event broadcast status
+        context["event_status"] = self.get_event_status(event)
+        for status in ("future", "upcoming", "ongoing", "concluded"):
+            if context["event_status"] == status:
+                event_notices = notices_by_comment.filter(
+                    broadcast_conditions__contains=[status]
+                )
+                break
+
+        context["event_notices"] = event_notices
         return context
+
+    def get_event_status(self, event):
+        # Returns the event's broadcast status as a string
+
+        if event.is_upcoming:
+            return "upcoming"
+        elif event.is_ongoing:
+            return "ongoing"
+        elif event.has_passed:
+            return "concluded"
+        else:
+            return "future"
 
 
 def handle_uploaded_agenda(agenda, event):
@@ -565,19 +594,6 @@ class LABoardMembersView(CouncilMembersView):
 
         if settings.MAP_CONFIG:
             context.update(self.map())
-
-        return context
-
-
-class LAMetroAboutView(AboutView):
-    template_name = "about/about.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["timestamp"] = datetime.now(app_timezone).strftime("%m%d%Y%s")
-
-        context["BILL_STATUS_DESCRIPTIONS"] = BILL_STATUS_DESCRIPTIONS
 
         return context
 
@@ -1058,29 +1074,6 @@ class MinutesView(EventsView):
         context["all_minutes"] = all_minutes_grouped
 
         return context
-
-
-class AlertCreateView(LoginRequiredMixin, CreateView):
-    template_name = "alerts/alerts.html"
-    form_class = AlertForm
-    success_url = reverse_lazy("alerts")
-
-
-class AlertDeleteView(DeleteView):
-    model = Alert
-    success_url = reverse_lazy("alerts")
-
-    def form_valid(self, form):
-        self.object.delete()
-
-        return super().form_valid(form)
-
-
-class AlertUpdateView(UpdateView):
-    model = Alert
-    template_name = "alerts/alert_edit.html"
-    success_url = reverse_lazy("alerts")
-    fields = ["description", "type"]
 
 
 def metro_login(request):

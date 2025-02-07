@@ -14,7 +14,7 @@ env = environ.Env(
     DJANGO_ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1", "0.0.0.0"]),
     COUNCILMATIC_SUPPRESS_LIVE_MEDIA=(list, []),
     DATABASE_URL=(str, "postgis://postgres:postgres@postgres:5432/lametro"),
-    SEARCH_URL=(str, "http://elasticsearch:9200"),
+    SEARCH_URL=(str, os.getenv("SEARCHBOX_URL", "http://elasticsearch:9200")),
     SHOW_TEST_EVENTS=(bool, False),
     MERGE_HOST=(str, "https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/"),
     MERGE_ENDPOINT=(
@@ -40,6 +40,7 @@ env = environ.Env(
     REMOTE_ANALYTICS_FOLDER=(str, ""),
     GOOGLE_SERVICE_ACCT_API_KEY=(str, ""),
     GOOGLE_API_KEY=(str, ""),
+    WAGTAILADMIN_BASE_URL=(str, "https://boardagendas.metro.net"),
 )
 
 # Core Django Settings
@@ -136,7 +137,21 @@ INSTALLED_APPS = (
     "debug_toolbar",
     "template_profiler_panel",
     "captcha",
-    "markdownify.apps.MarkdownifyConfig",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.contrib.typed_table_block",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail.contrib.modeladmin",
+    "wagtail",
+    "modelcluster",
+    "taggit",
 )
 
 try:
@@ -154,6 +169,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 )
 
 ROOT_URLCONF = "councilmatic.urls"
@@ -199,6 +215,9 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
+
 # Third Party Keys
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY")
@@ -243,10 +262,9 @@ if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
     )
     from django.core.files.storage import get_storage_class
 
-    S3Storage = get_storage_class("storages.backends.s3boto3.S3Boto3Storage")
-
     AWS_QUERYSTRING_AUTH = False
-    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = S3Storage()
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = get_storage_class(DEFAULT_FILE_STORAGE)
 
 else:
     print("AWS not configured. Defaulting to local storage...")
@@ -254,6 +272,24 @@ else:
 # - Used by refresh_pic management command
 AWS_KEY = env("AWS_KEY")
 AWS_SECRET = env("AWS_SECRET")
+
+# - Email configuration
+try:
+    EMAIL_HOST_PASSWORD = os.environ["DJANGO_EMAIL_HOST_PASSWORD"]
+
+except KeyError:
+    print("Email password not found, mail sending will not be available")
+
+else:
+    if EMAIL_HOST_PASSWORD:
+        EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "smtp.mandrillapp.com")
+        EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", 587)
+        EMAIL_HOST_USER = "lametro@councilmatic.org"
+        EMAIL_USE_TLS = True
+
+        DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    else:
+        print("Email password not found, mail sending will not be available")
 
 # LOGGING
 SENTRY_DSN = env("SENTRY_DSN")
@@ -323,18 +359,8 @@ LOGGING = {
     },
 }
 
-
-# Allow some html tags to render in markdown. Mainly for alerts
-MARKDOWNIFY = {
-    "default": {
-        "WHITELIST_TAGS": [
-            "br",
-            "strong",
-            "em",
-            "a",
-        ]
-    }
-}
-
 # Hard time limit on HTTP requests
 REQUEST_TIMEOUT = 5
+
+WAGTAIL_SITE_NAME = "boardagendas.metro.net"
+WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL")

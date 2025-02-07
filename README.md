@@ -149,6 +149,17 @@ Grab the values for the `AWS_ACCESS_KEY_ID` and the `AWS_SECRET_ACCESS_KEY` and 
 
 Now you should be able to start uploading some files!
 
+## Review Apps
+This repo is set up to deploy review apps on Heroku, and those pull from the staging database to match the experience of deploying as closely as possible! However, note that in order to prevent unapproved model changes from effecting the staging database, migrations are prevented from running on review apps. So those will still have to be reviewed locally.
+
+### Review apps for Wagtail changes
+
+1. Configure the S3 connection, as documented above.
+2. Once a release phase successfully completes, provision an Essential 0 database for your review app.
+3. Retrieve the URI from the Credentials tab.
+4. Update the app's `DATABASE_URL` config value to the new URI.
+5. On your local machine, run `DATABASE_URL=<YOUR URI HERE> make -e wagtail_db`. This will populate initial legislative data and import content from the version controlled fixture data.
+
 ## Adding a new board member
 
 Hooray! A new member has been elected or appointed to the Board of Directors.
@@ -205,9 +216,10 @@ This will start the Locust web server on http://localhost:8089. For more details
 see the [Locust documentation](https://docs.locust.io/en/stable/).
 
 ## Review Apps
+
 This repo is set up to deploy review apps on Heroku, and those pull from the staging database to match the experience of deploying as closely as possible! However, note that in order to prevent unapproved model changes from effecting the staging database, migrations are prevented from running on review apps. So those will still have to be reviewed locally.
 
-## Updating the documentation
+## Updating the Documentation
 
 To make changes to the documentation, [install Quarto](https://quarto.org/docs/get-started/).
 

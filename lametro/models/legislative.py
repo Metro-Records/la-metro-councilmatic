@@ -1237,17 +1237,3 @@ class LAMetroSubject(models.Model):
 
         else:
             return self.name
-
-
-class Alert(models.Model):
-    TYPE_CHOICES = [
-        ("primary", "Primary"),
-        ("secondary", "Secondary"),
-        ("success", "Success"),
-        ("danger", "Danger"),
-        ("warning", "Warning"),
-        ("info", "Info"),
-    ]
-
-    description = models.TextField(null=True, blank=True)
-    type = models.CharField(max_length=255, choices=TYPE_CHOICES)
