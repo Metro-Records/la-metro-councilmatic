@@ -79,7 +79,9 @@
                 <tr>
                     <td data-order="{{ membership.index }}">
                         <div class="thumbnail-square">
-                            <img src="{{ membership.person.headshot_url }}" alt="{{membership.person.name}}" title="{{membership.person.name}}" class="img-responsive img-thumbnail">
+                            {% with person=membership.person %}
+                                {% include "common/headshot.html" %}
+                            {% endwith %}
                         </div>
                     </td>
                     <td>
@@ -107,7 +109,9 @@
                 <tr>
                     <td class="w-12pcnt">
                         <div class="thumbnail-square">
-                            <img src="{{ ceo.headshot_url }}" alt="{{ceo.name}}" title="{{ceo.name}}" class="img-responsive img-thumbnail">
+                            {% with person=ceo %}
+                                {% include "common/headshot.html" %}
+                            {% endwith %}
                         </div>
                     </td>
                     <td class="w-22pcnt"><a href="{% url 'lametro:person' ceo.slug %}">{{ ceo.name }}</a></td>
@@ -139,12 +143,6 @@
                 null
             ],
             "order": []
-        });
-
-        $('.thumbnail-square img').each(function() {
-            if ($(this).width() > $(this).height()) {
-                $(this).addClass('landscape');
-            }
         });
 
         function collapseEvents(){

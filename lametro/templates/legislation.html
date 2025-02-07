@@ -282,12 +282,6 @@
             "order": [[ 1, "desc" ]]
         });
 
-        $('.thumbnail-square img').each(function() {
-            if ($(this).width() > $(this).height()) {
-                $(this).addClass('landscape');
-            }
-        });
-
         if (window.innerWidth > 768){
             $("#pdf-embed-agenda").attr("src", "/pdfviewer/?{{legislation.board_report.url|full_text_doc_url}}");
         }
