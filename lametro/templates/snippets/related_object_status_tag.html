@@ -1,0 +1,4 @@
+{% load wagtailadmin_tags %}
+<td {% if column.classname %}class="{{ column.classname }}"{% endif %}>
+    {% status value url=url title=_("Visit the live page") classname="w-status--primary" attrs='target="_blank" rel="noreferrer"' %}
+</td>

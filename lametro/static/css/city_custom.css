@@ -367,10 +367,6 @@ hr .events-line {
     .current-meeting-img {
         max-width: 75%;
     }
-
-    #person-detail-headshot {
-        max-height: none;
-    }
 }
 
 @media only screen and (max-width : 415px) {
@@ -817,6 +813,11 @@ caption {
 
 .alert p:last-of-type {
     margin: unset;
+}
+
+.thumbnail-square {
+    width: 75px;
+    height: 75px;
 }
 
 .richtext-image {
