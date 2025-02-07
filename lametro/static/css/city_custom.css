@@ -819,3 +819,8 @@ caption {
     width: 75px;
     height: 75px;
 }
+
+.richtext-image {
+    max-width: 100%;
+    height: auto;
+}
