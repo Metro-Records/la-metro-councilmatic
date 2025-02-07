@@ -203,7 +203,20 @@ class EventNotice(models.Model):
         return strip_tags(unescape(self.message))[:50]
 
     def get_comment_conditions(self):
-        return self.format_conditions(self.comment_conditions)
+        """
+        Display the longer version of the condition choices
+        in the listing view for clarity
+        """
+        long_conditions = []
+        for cond in self.comment_conditions:
+            long_conditions.extend(
+                [
+                    choice[1]
+                    for choice in self.COMMENT_CONDITION_CHOICES
+                    if choice[0] == cond
+                ]
+            )
+        return self.format_conditions(long_conditions)
 
     def get_broadcast_conditions(self):
         return self.format_conditions(self.broadcast_conditions)
