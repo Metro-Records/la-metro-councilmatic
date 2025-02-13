@@ -12,9 +12,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from councilmatic_core.views import (
-    CouncilmaticSearchForm,
-)
+from councilmatic_core.views import CouncilmaticSearchForm, pdfviewer
 from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
 
 from lametro.api import (
@@ -126,10 +124,11 @@ urlpatterns = [
         name="lametro_ses_endpoint",
     ),
     path("smartlogic/", include("smartlogic.urls", namespace="smartlogic")),
-    url(r"", include("councilmatic_core.urls")),
+    url(r"^pdfviewer/$", pdfviewer, name="pdfviewer"),
     path("cms/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("", include(wagtail_urls)),
+    url(r"", include("councilmatic_core.urls")),
     url(r"^test-logging/$", test_logging, name="test_logging"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
