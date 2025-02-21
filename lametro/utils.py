@@ -155,12 +155,12 @@ def get_wagtail_document(queryset, static_path, static_title):
     """
     if len(queryset) == 1:
         return queryset[0]
-    elif not queryset.exists():
-        # Fall back to the document in this repo
+    elif len(queryset) > 1:
+        # Multiple files found. Use the one created most recently
+        return queryset.order_by("-created_at")[0]
+    else:
+        # No files found. Fall back to the document in this repo
         return {
             "url": static(static_path),
             "title": static_title,
         }
-    else:
-        # Multiple files found. Use the one created most recently
-        return queryset.order_by("-created_at")[0]
