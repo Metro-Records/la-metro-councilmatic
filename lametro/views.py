@@ -77,7 +77,9 @@ from councilmatic.settings import PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
 
-from .utils import get_list_from_csv
+from .utils import get_list_from_csv, get_wagtail_document
+
+from wagtail.documents.models import Document as WagtailDoc
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -106,6 +108,13 @@ class LAMetroIndexView(IndexView):
             "start_date"
         )
         context["form"] = LAMetroCouncilmaticSearchForm()
+
+        wagtail_calendar_qs = WagtailDoc.objects.filter(title__icontains="fiscal year")
+        calendar_static_path = "pdf/fy25-committee-board-calendar.pdf"
+        calendar_static_title = "Fiscal Year 2025 (PDF)"
+        context["fiscal_calendar"] = get_wagtail_document(
+            wagtail_calendar_qs, calendar_static_path, calendar_static_title
+        )
 
         return context
 
@@ -504,6 +513,13 @@ class LAMetroEventsView(EventsView):
             if settings.USING_NOTIFICATIONS:
                 if len(user.eventssubscriptions.all()) > 0:
                     context["user_subscribed"] = True
+
+        wagtail_calendar_qs = WagtailDoc.objects.filter(title__icontains="fiscal year")
+        calendar_static_path = "pdf/fy25-committee-board-calendar.pdf"
+        calendar_static_title = "Fiscal Year 2025 (PDF)"
+        context["fiscal_calendar"] = get_wagtail_document(
+            wagtail_calendar_qs, calendar_static_path, calendar_static_title
+        )
 
         return context
 

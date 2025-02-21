@@ -7,6 +7,7 @@ import sys
 import time
 
 from django.conf import settings
+from django.templatetags.static import static
 
 from haystack.utils.highlighting import Highlighter
 
@@ -145,3 +146,21 @@ def timed_get(url, params=None, **kwargs):
         sys.settrace(None)
 
     return resp
+
+
+def get_wagtail_document(queryset, static_path, static_title):
+    """
+    Get the most relevant wagtail document. If none found,
+    return a dict with the url and title for the corresponding static file.
+    """
+    if len(queryset) == 1:
+        return queryset[0]
+    elif not queryset.exists():
+        # Fall back to the document in this repo
+        return {
+            "url": static(static_path),
+            "title": static_title,
+        }
+    else:
+        # Multiple files found. Use the one created most recently
+        return queryset.order_by("-created_at")[0]

@@ -81,9 +81,9 @@
                         <div class="ms-lg-auto d-inline-block mt-2">
                             <p class="mb-0">
                                 Download event calendar:
-                                <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2024 (PDF) - link opens in a new tab">
+                                <a href="{{ fiscal_calendar.url }}" target="_blank" class="btn btn-link" aria-label="{{ fiscal_calendar.title }} - link opens in a new tab">
                                     <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                    Fiscal Year 2025 (PDF)
+                                    {{ fiscal_calendar.title }}
                                 </a>
                             </p>
                         </div>
@@ -127,9 +127,9 @@
                         <div class="ms-lg-auto d-inline-block mt-2">
                             <p class="mb-0">
                                 Download event calendar:
-                                <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2025 (PDF) - link opens in a new tab">
+                                <a href="{{ fiscal_calendar.url }}" target="_blank" class="btn btn-link" aria-label="{{ fiscal_calendar.title }} - link opens in a new tab">
                                     <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                    Fiscal Year 2025 (PDF)
+                                    {{ fiscal_calendar.title }}
                                 </a>
                             </p>
                         </div>
