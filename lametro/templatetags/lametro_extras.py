@@ -190,7 +190,12 @@ def find_agenda_url(all_documents):
 
     valid_urls += pdf_url
 
-    return valid_urls[0]
+    try:
+        agenda_url = valid_urls[0]
+    except IndexError:
+        agenda_url = None
+
+    return agenda_url
 
 
 @register.simple_tag(takes_context=True)
