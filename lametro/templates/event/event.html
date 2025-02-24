@@ -303,12 +303,14 @@
     });
 
      if (window.innerWidth > 768){
+        let agendaUrl = ""
+
         {% if agenda_url %}
-            const agendaUrl = "/pdfviewer/?{{agenda_url|full_text_doc_url}}"
+            agendaUrl = "/pdfviewer/?{{agenda_url|full_text_doc_url}}"
         {% elif uploaded_agenda_url %}
-            const agendaUrl = "/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}"
+            agendaUrl = "/pdfviewer/?{{uploaded_agenda_url|full_text_doc_url}}"
         {% elif uploaded_agenda_pdf %}
-            const agendaUrl = "{% static uploaded_agenda_pdf %}"
+            agendaUrl = "{% static uploaded_agenda_pdf %}"
         {% endif %}
 
         $("#pdf-embed-agenda").attr("src", agendaUrl);
