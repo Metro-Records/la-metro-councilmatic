@@ -1,8 +1,7 @@
 from django.contrib import admin  # noqa
 from django.templatetags.static import static
-from django.utils.html import format_html, strip_tags
+from django.utils.html import format_html
 
-from html import unescape
 import django_filters
 from wagtail import hooks
 from wagtail.admin.admin_url_finder import AdminURLFinder
@@ -14,7 +13,6 @@ from wagtail.admin.panels import (
     HelpPanel,
 )
 from wagtail.admin.ui.tables import UpdatedAtColumn, LiveStatusTagColumn
-from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
@@ -22,9 +20,9 @@ from wagtail.snippets.views.snippets import SnippetViewSet
 from lametro.models import Alert, BoardMemberDetails, LAMetroOrganization, EventNotice
 
 
-class AlertAdmin(ModelAdmin):
+class AlertViewSet(SnippetViewSet):
     model = Alert
-    base_url_path = "alerts"
+    icon = "warning"
     menu_icon = "warning"
     menu_order = 100
     add_to_settings_menu = False
@@ -94,6 +92,19 @@ class BoardMemberFilterSet(django_filters.FilterSet):
         fields = ["current_member"]
 
 
+class EventNoticeFilterSet(django_filters.FilterSet):
+    broadcast_conditions = django_filters.ChoiceFilter(
+        lookup_expr="icontains", choices=EventNotice.BROADCAST_CONDITION_CHOICES
+    )
+    comment_conditions = django_filters.ChoiceFilter(
+        lookup_expr="icontains", choices=EventNotice.COMMENT_CONDITION_CHOICES
+    )
+
+    class Meta:
+        model = EventNotice
+        fields = ("broadcast_conditions", "comment_conditions")
+
+
 class LinkedStatusTagColumn(LiveStatusTagColumn):
     cell_template_name = "snippets/related_object_status_tag.html"
 
@@ -147,41 +158,29 @@ class BoardMemberDetailsViewSet(SnippetViewSet):
     )
 
 
-class EventNoticeAdmin(ModelAdmin):
+class EventNoticeViewSet(SnippetViewSet):
     model = EventNotice
-    base_url_path = "event_notices"
+    icon = "comment"
     menu_icon = "comment"
     menu_order = 200
+    filterset_class = EventNoticeFilterSet
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
     list_display = (
         "get_message",
-        "broadcast_conditions",
+        "get_broadcast_conditions",
         "get_comment_conditions",
     )
     list_filter = (
         "broadcast_conditions",
         "comment_conditions",
     )
-    search_fields = (
-        "broadcast_conditions",
-        "comment_conditions",
-        "message",
-    )
-
-    def get_message(self, obj):
-        return strip_tags(unescape(obj.message))[:50]
-
-    def get_comment_conditions(self, obj):
-        return [cond.replace("_", " ") for cond in obj.comment_conditions]
-
-    get_message.short_description = "Message"
-    get_comment_conditions.short_description = "Comment conditions"
+    search_fields = ("message",)
 
 
-modeladmin_register(AlertAdmin)
-modeladmin_register(EventNoticeAdmin)
+register_snippet(AlertViewSet)
+register_snippet(EventNoticeViewSet)
 register_snippet(BoardMemberDetailsViewSet)
 
 
@@ -215,17 +214,17 @@ class UserBarLink:
         )
 
 
-class ModelAdminLink(UserBarLink):
+class ViewSetLink(UserBarLink):
     icon_name = "plus"
 
-    def __init__(self, modeladmin_cls):
-        self.modeladmin = modeladmin_cls()
+    def __init__(self, viewset_cls):
+        self.viewset = viewset_cls()
 
     def get_href(self, request):
-        return self.modeladmin.url_helper.index_url
+        return f"/cms/{self.viewset.url_prefix}/"
 
     def get_link_text(self, request):
-        return f"Manage {self.modeladmin.get_menu_label().lower()}"
+        return f"Manage {self.viewset.get_menu_label().lower()}"
 
 
 class BoardMemberEditLink(UserBarLink):
@@ -252,10 +251,10 @@ class BoardMemberEditLink(UserBarLink):
 
 
 @hooks.register("construct_wagtail_userbar")
-def add_modeladmin_links(request, items):
+def add_viewset_links(request, items):
     items.append(BoardMemberEditLink())
-    for link in (AlertAdmin, EventNoticeAdmin):
-        items.append(ModelAdminLink(link))
+    for link in (AlertViewSet, EventNoticeViewSet):
+        items.append(ViewSetLink(link))
     return items
 
 

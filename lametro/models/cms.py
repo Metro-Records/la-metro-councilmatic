@@ -4,6 +4,7 @@ from django.urls import reverse
 from django import forms
 from django.utils.html import format_html, strip_tags
 from django.contrib.postgres.fields import ArrayField
+from html import unescape
 
 from wagtail.models import Page, PreviewableMixin, DraftStateMixin, RevisionMixin
 from wagtail.fields import StreamField, RichTextField
@@ -197,3 +198,33 @@ class EventNotice(models.Model):
         ),
         FieldPanel("message"),
     ]
+
+    def get_message(self):
+        return strip_tags(unescape(self.message))[:50]
+
+    def get_comment_conditions(self):
+        """
+        Display the longer version of the condition choices
+        in the listing view for clarity
+        """
+        long_conditions = []
+        for cond in self.comment_conditions:
+            long_conditions.extend(
+                [
+                    choice[1]
+                    for choice in self.COMMENT_CONDITION_CHOICES
+                    if choice[0] == cond
+                ]
+            )
+        return self.format_conditions(long_conditions)
+
+    def get_broadcast_conditions(self):
+        return self.format_conditions(self.broadcast_conditions)
+
+    def format_conditions(self, conditions):
+        formatted_conditions = [cond.replace("_", " ") for cond in conditions]
+        return " | ".join(formatted_conditions)
+
+    get_message.short_description = "Message"
+    get_comment_conditions.short_description = "Comment conditions"
+    get_broadcast_conditions.short_description = "Broadcast conditions"
