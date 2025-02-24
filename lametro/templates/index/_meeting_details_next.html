@@ -34,20 +34,19 @@
         </p>
 
         <!-- Supplementary links -->
-        {% if meeting.documents.all %}
-          <div class="row">
-            <div class="col-7">
-              {% with agenda_url=meeting.documents.all|find_agenda_url %}
-                {% if agenda_url %}
-                  <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{ agenda_url }}' aria-label="Get Agenda PDF - link opens in a new tab">
-                    <i class='fa fa-fw fa-download' aria-hidden="true"></i>
-                    Get Agenda PDF
-                  </a>
-                {% endif %}
-              {% endwith %}
+        {% with agenda_url=meeting.documents.all|find_agenda_url %}
+          {% if agenda_url %}
+            <div class="row">
+              <div class="col-7">
+                <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{ agenda_url }}' aria-label="Get Agenda PDF - link opens in a new tab">
+                  <i class='fa fa-fw fa-download' aria-hidden="true"></i>
+                  Get Agenda PDF
+                </a>
+              </div>
             </div>
-          </div>
-        {% endif %}
+          {% endif %}
+        {% endwith %}
+
       </div>
       {% endfor %}
     </div>
