@@ -14,7 +14,7 @@ from councilmatic.settings_jurisdiction import (
 from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Bill
 
-from lametro.models import app_timezone, Alert, EventBroadcast
+from lametro.models import app_timezone, Alert, EventBroadcast, FiscalYearCalendar
 from lametro.utils import ExactHighlighter, format_full_text, parse_subject
 
 
@@ -342,3 +342,11 @@ def bill_status_from_last_action(description):
     if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
         return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
     return None
+
+
+@register.inclusion_tag("snippets/fiscal_year_calendar.html", takes_context=True)
+def fiscal_year_calendar(context):
+    return {
+        "fiscal_year_calendar": FiscalYearCalendar.objects.first(),
+        "request": context["request"],
+    }

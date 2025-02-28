@@ -4,6 +4,7 @@ from django.urls import reverse
 from django import forms
 from django.utils.html import format_html, strip_tags
 from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ValidationError
 
 from wagtail.models import Page, PreviewableMixin, DraftStateMixin, RevisionMixin
 from wagtail.fields import StreamField, RichTextField
@@ -197,3 +198,33 @@ class EventNotice(models.Model):
         ),
         FieldPanel("message"),
     ]
+
+
+class FiscalYearCalendar(models.Model):
+    include_in_dump = True
+
+    title = models.CharField(max_length=256, blank=True, null=True)
+    calendar = models.ForeignKey(
+        "wagtaildocs.Document",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("calendar"),
+    ]
+
+    def __str__(self):
+        return self.title
+
+    def clean(self):
+        # Ensure that only one calendar exists at a time
+        model = self.__class__
+        if model.objects.count() > 0 and self.id != model.objects.get().id:
+            raise ValidationError(
+                "Only one calendar can exist at a time. "
+                "Please edit the existing calendar object."
+            )

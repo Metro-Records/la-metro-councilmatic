@@ -1,6 +1,6 @@
 {% extends "base_with_margins.html" %}
 
-{% load static %}
+{% load static wagtailcore_tags lametro_extras %}
 
 {% block title %}Events{% endblock %}
 
@@ -65,11 +65,7 @@
                         </small>
                     </div>
                     <p class="mt-3 mt-sm-0">
-                        <span>Download event calendar:</span>
-                        <a href="{{ fiscal_calendar.url }}" target="_blank" class="btn btn-link pt-0 d-block d-sm-inline text-start" aria-label="{{ fiscal_calendar.title }} - link opens in a new tab">
-                            <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                            {{ fiscal_calendar.title }}
-                        </a>
+                        {% fiscal_year_calendar %}
                     </p>
                 </div>
 

@@ -19,7 +19,13 @@ from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
-from lametro.models import Alert, BoardMemberDetails, LAMetroOrganization, EventNotice
+from lametro.models import (
+    Alert,
+    BoardMemberDetails,
+    LAMetroOrganization,
+    EventNotice,
+    FiscalYearCalendar,
+)
 
 
 class AlertAdmin(ModelAdmin):
@@ -151,7 +157,7 @@ class EventNoticeAdmin(ModelAdmin):
     model = EventNotice
     base_url_path = "event_notices"
     menu_icon = "comment"
-    menu_order = 200
+    menu_order = 201
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
@@ -180,8 +186,24 @@ class EventNoticeAdmin(ModelAdmin):
     get_comment_conditions.short_description = "Comment conditions"
 
 
+class FiscalYearCalendarAdmin(ModelAdmin):
+    model = FiscalYearCalendar
+    base_url_path = "fiscal_year_calendar"
+    menu_icon = "calendar-alt"
+    menu_order = 202
+    menu_label = "Fiscal Year Calendar"
+    add_to_settings_menu = False
+    exclude_from_explorer = False
+    add_to_admin_menu = True
+    list_display = (
+        "title",
+        "calendar",
+    )
+
+
 modeladmin_register(AlertAdmin)
 modeladmin_register(EventNoticeAdmin)
+modeladmin_register(FiscalYearCalendarAdmin)
 register_snippet(BoardMemberDetailsViewSet)
 
 
@@ -254,7 +276,7 @@ class BoardMemberEditLink(UserBarLink):
 @hooks.register("construct_wagtail_userbar")
 def add_modeladmin_links(request, items):
     items.append(BoardMemberEditLink())
-    for link in (AlertAdmin, EventNoticeAdmin):
+    for link in (AlertAdmin, EventNoticeAdmin, FiscalYearCalendarAdmin):
         items.append(ModelAdminLink(link))
     return items
 
