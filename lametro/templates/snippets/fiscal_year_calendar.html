@@ -1,5 +1,14 @@
+{% load static %}
+
 <span>Download event calendar:</span>
-<a href="{{ fiscal_year_calendar.calendar.url }}" target="_blank" class="btn btn-link" aria-label="{{ fiscal_year_calendar.title }} - link opens in a new tab">
-    <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-    {{ fiscal_year_calendar.title }}
-</a>
+{% if fiscal_year_calendar.calendar %}
+    <a href="{{ fiscal_year_calendar.calendar.url }}" target="_blank" class="btn btn-link" aria-label="{{ fiscal_year_calendar.title }} - link opens in a new tab">
+        <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+        {{ fiscal_year_calendar.title }}
+    </a>
+{% else %}
+    <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2025 (PDF) - link opens in a new tab">
+        <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+        Fiscal Year 2025 (PDF)
+    </a>
+{% endif %}
