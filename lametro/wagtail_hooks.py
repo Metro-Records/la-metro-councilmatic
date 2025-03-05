@@ -17,7 +17,13 @@ from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet
 
-from lametro.models import Alert, BoardMemberDetails, LAMetroOrganization, EventNotice
+from lametro.models import (
+    Alert,
+    BoardMemberDetails,
+    LAMetroOrganization,
+    EventNotice,
+    FiscalYearCalendar,
+)
 
 
 class AlertViewSet(SnippetViewSet):
@@ -162,7 +168,7 @@ class EventNoticeViewSet(SnippetViewSet):
     model = EventNotice
     icon = "comment"
     menu_icon = "comment"
-    menu_order = 200
+    menu_order = 201
     filterset_class = EventNoticeFilterSet
     add_to_settings_menu = False
     exclude_from_explorer = False
@@ -179,8 +185,24 @@ class EventNoticeViewSet(SnippetViewSet):
     search_fields = ("message",)
 
 
+class FiscalYearCalendarViewSet(SnippetViewSet):
+    model = FiscalYearCalendar
+    base_url_path = "fiscal_year_calendar"
+    menu_icon = "calendar-alt"
+    menu_order = 202
+    menu_label = "Fiscal Year Calendar"
+    add_to_settings_menu = False
+    exclude_from_explorer = False
+    add_to_admin_menu = True
+    list_display = (
+        "title",
+        "calendar",
+    )
+
+
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
+register_snippet(FiscalYearCalendarViewSet)
 register_snippet(BoardMemberDetailsViewSet)
 
 
@@ -253,7 +275,7 @@ class BoardMemberEditLink(UserBarLink):
 @hooks.register("construct_wagtail_userbar")
 def add_viewset_links(request, items):
     items.append(BoardMemberEditLink())
-    for link in (AlertViewSet, EventNoticeViewSet):
+    for link in (AlertViewSet, EventNoticeViewSet, FiscalYearCalendarViewSet):
         items.append(ViewSetLink(link))
     return items
 
