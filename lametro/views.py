@@ -3,7 +3,6 @@ import urllib
 from datetime import datetime
 from dateutil import parser
 import requests
-import os
 
 from haystack.query import SearchQuerySet
 
@@ -36,7 +35,6 @@ from django.http import (
     HttpResponsePermanentRedirect,
     HttpResponseNotFound,
 )
-from django.core import management
 from django.core.serializers import serialize
 
 from councilmatic_core.views import (
@@ -67,8 +65,6 @@ from lametro.models import (
     EventNotice,
 )
 from lametro.forms import (
-    AgendaUrlForm,
-    AgendaPdfForm,
     LAMetroCouncilmaticSearchForm,
 )
 
@@ -142,45 +138,6 @@ class LAMetroEventDetail(EventDetailView):
     model = LAMetroEvent
     template_name = "event/event.html"
 
-    def post(self, request, *args, **kwargs):
-        # Assign object to detail view, so that get_context_data can find this
-        # variable: https://stackoverflow.com/questions/34460708/checkoutview-object-has-no-attribute-object
-        self.object = self.get_object()
-        event = self.get_object()
-        event_slug = event.slug
-
-        # Look for the button name and assign form values.
-        if "url_form" in request.POST:
-            url_form = AgendaUrlForm(request.POST)
-            pdf_form = AgendaPdfForm()
-        elif "pdf_form" in request.POST:
-            pdf_form = AgendaPdfForm(request.POST, request.FILES)
-            url_form = AgendaUrlForm()
-
-        # Validate forms and redirect.
-        if url_form.is_valid():
-            agenda_url = url_form["agenda"].value()
-            document_obj, created = EventDocument.objects.get_or_create(
-                event=event, note="Event Document - Manual upload URL"
-            )
-
-            document_obj.date = timezone.now().date()
-            document_obj.save()
-
-            document_obj.links.create(url=agenda_url)
-
-            return HttpResponseRedirect("/event/%s" % event_slug)
-        elif pdf_form.is_valid() and "pdf_form" in request.POST:
-            agenda_pdf = request.FILES["agenda"]
-
-            handle_uploaded_agenda(agenda=agenda_pdf, event=event)
-
-            return HttpResponseRedirect("/event/%s" % event_slug)
-        else:
-            return self.render_to_response(
-                self.get_context_data(url_form=url_form, pdf_form=pdf_form)
-            )
-
     def get_queryset(self):
         # Get the queryset with prefetched media_urls in proper order.
         return LAMetroEvent.objects.with_media()
@@ -192,7 +149,7 @@ class LAMetroEventDetail(EventDetailView):
         # Metro admins should see a status report if Legistar is down.
         # GET the calendar page, which contains relevant URL for agendas.
         if self.request.user.is_authenticated:
-            r = requests.get("https://metro.legistar.com/calendar.aspx")
+            r = requests.head("https://metro.legistar.com/calendar.aspx")
             context["legistar_ok"] = r.ok
 
             # GET the event URL; allow admin to delete event if 404
@@ -226,7 +183,7 @@ class LAMetroEventDetail(EventDetailView):
             )
         )
 
-        agenda_with_board_reports = (
+        context["related_board_reports"] = (
             event.agenda.filter(related_entities__bill__versions__isnull=False)
             .annotate(int_order=Cast("order", IntegerField()))
             .order_by("int_order")
@@ -235,50 +192,25 @@ class LAMetroEventDetail(EventDetailView):
             )
         )
 
-        # Find agenda link.
-        documents = event.documents.prefetch_related("links").all()
-        if documents:
-            for document in documents:
-                if "Agenda" in document.note:
-                    context["agenda_url"] = document.links.first().url
-                    context["document_timestamp"] = document.date
-                elif "Manual upload URL" in document.note:
-                    context["uploaded_agenda_url"] = document.links.first().url
-                    context["document_timestamp"] = document.date
-                elif "Manual upload PDF" in document.note:
-                    context["uploaded_agenda_pdf"] = document.links.first().url
-                    context["document_timestamp"] = document.date
-                    """
-                    LA Metro Councilmatic uses the adv_cache library
-                    to partially cache templates: in the event view, we cache
-                    the entire template, except the iframe. (N.B. With
-                    this library, the views do not cached, unless
-                    explicitly wrapped in a django cache decorator.
-                    Nonetheless, several popular browsers (e.g.,
-                    Chrome and Firefox) retrieve cached iframe images,
-                    regardless of the site's caching specifications.
-                    We use the agenda's "date" timestamp to bust
-                    the iframe cache: we save it inside context and
-                    then assign it as the "name" of the iframe,
-                    preventing the browser from retrieving a cached
-                    iframe, when the timestamp changes.
-                    """
-        context["documents"] = documents
-
-        context["related_board_reports"] = agenda_with_board_reports
-        context["base_url"] = PIC_BASE_URL  # Give JS access to this variable
-
-        context["has_agenda"] = (
-            context.get("agenda_url")
-            or context.get("uploaded_agenda_url")
-            or context.get("uploaded_agenda_pdf")
+        documents = (
+            event.documents.annotate(
+                precedence=Case(
+                    When(note__icontains="manual", then=2),
+                    When(note__icontains="agenda", then=1),
+                    default=999,
+                    output_field=IntegerField(),
+                )
+            )
+            .order_by("precedence")
+            .prefetch_related("links")
         )
 
-        # Render forms if not a POST request
-        if "url_form" not in context:
-            context["url_form"] = AgendaUrlForm()
-        if "pdf_form" not in context:
-            context["pdf_form"] = AgendaPdfForm()
+        if documents:
+            agenda = documents.first()
+            context["agenda_url"] = agenda.links.get().url
+            context["document_timestamp"] = agenda.date
+
+        context["base_url"] = PIC_BASE_URL  # Give JS access to this variable
 
         context["USING_ECOMMENT"] = settings.USING_ECOMMENT
 
@@ -319,43 +251,6 @@ class LAMetroEventDetail(EventDetailView):
             return "concluded"
         else:
             return "future"
-
-
-def handle_uploaded_agenda(agenda, event):
-    with open("lametro/static/pdf/agenda-%s.pdf" % event.slug, "wb+") as destination:
-        for chunk in agenda.chunks():
-            destination.write(chunk)
-
-    # Create the document in database
-    document_obj, created = EventDocument.objects.get_or_create(
-        event=event, note="Event Document - Manual upload PDF"
-    )
-
-    document_obj.date = timezone.now().date()
-    document_obj.links.create(url="pdf/agenda-%s.pdf" % event.slug)
-    document_obj.save()
-
-    # Collect static to render PDF on server
-    management.call_command("collectstatic", "--noinput")
-
-
-@login_required
-def delete_submission(request, event_slug):
-    event = LAMetroEvent.objects.get(slug=event_slug)
-    event_doc = EventDocument.objects.filter(
-        event_id=event.id, note__icontains="Manual upload"
-    )
-
-    for e in event_doc:
-        # Remove stored PDF from Metro app.
-        if "Manual upload PDF" in e.note:
-            try:
-                os.remove("lametro/static/%s" % e.links.get().url)
-            except OSError:
-                pass
-        e.delete()
-
-    return HttpResponseRedirect("/event/%s" % event_slug)
 
 
 @login_required

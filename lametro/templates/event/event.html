@@ -58,52 +58,7 @@
         {% endif %}
 
         {% if user.is_authenticated %}
-            {% get_events_with_manual_broadcasts as manual_events %}
-
-            {% if not event_ok %}
-                <div class="card-body" style="margin-top: 20px">
-                    <p class="card-text">This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.</p>
-                    <a href="{% url 'delete_event' event.slug %}" class='btn btn-teal' style="margin-bottom: 20px"><i class="fa fa-times" aria-hidden="true"></i> Delete Event</a>
-                </div>
-            {% elif event.status != 'cancelled' %}
-                <div class="card-body" style="margin-top: 20px">
-                    {% if event.has_manual_broadcast and event.media.all.exists %}
-                        <p class="card-text">
-                            This event now has a proper broadcast link, and the previous manual broadcast can now be unpublished.
-                            Please unpublish the manual link.
-                        </p>
-                        <a href="{% url 'manual_event_live_link' event.slug %}" class="btn btn-teal"><i class= "fa fa-headphones" aria-hidden="true"></i> Unpublish Watch Live Link</a>
-                    {% elif event.media.all.exists %}
-                        <p class="card-text">This event has a proper broadcast link, and cannot have a manual broadcast published.</p>
-                    {% elif not event.has_manual_broadcast and manual_events|length >= 1 %}
-                        <p class="card-text">
-                            Please unpublish any existing manually live links before publishing this one.
-                            The following event already has a manual broadcast at the moment:
-                        </p>
-                        <ul>
-                            {% for m_event in manual_events %}
-                                <li style="font-size:16px">
-                                    <a href="/event/{{m_event.slug}}">{{m_event.name}}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        <button class='btn btn-teal' disabled style="margin-bottom: 20px"><i class="fa fa-headphones" aria-hidden="true"></i> Publish Watch Live Link</button>
-                    {% elif not event.has_manual_broadcast %}
-                        <p class="card-text">
-                            You can manually publish a "Watch Live" link for this meeting if needed.
-                            Once the scheduled end time has passed, you will be responsible for undoing this change.
-                            Please be advised that this should only be done if Legistar is currently unavailable.
-                        </p>
-                        <a href="{% url 'manual_event_live_link' event.slug %}" class="btn btn-teal"><i class= "fa fa-headphones" aria-hidden="true"></i> Publish Watch Live Link</a>
-                    {% else %}
-                        <p class="card-text">
-                            This meeting currently has a manually published "Watch Live" link.
-                            Once the scheduled end time has passed, you will be responsible for unpublishing this link.
-                        </p>
-                        <a href="{% url 'manual_event_live_link' event.slug %}" class="btn btn-teal"><i class= "fa fa-headphones" aria-hidden="true"></i> Unpublish Watch Live Link</a>
-                    {% endif %}
-                </div>
-            {% endif %}
+            {% include 'event/_admin_actions.html' %}
         {% endif %}
 
         <!-- Details -->
@@ -130,21 +85,7 @@
                     {% endif %}
 
                     <!-- Check that the database has an agenda to display -->
-                    {% if has_agenda %}
-
-                        <!-- An event can have both manually uploaded and auto-imported agendas, i.e., if a Metro Admin uploads an agenda and then import_data runs. Give the Admin an option to delete the manually uploaded agenda, but ONLY if an auto-imported agenda does not exist. -->
-                        {% if not agenda_url and user.is_authenticated %}
-                            <div class="card-body mb-3">
-                                <p class="card-text">
-                                    An admin submitted a URL to render this agenda. Not seeing what you expect?
-                                    Delete this agenda, and afterwards, you can resubmit.
-                                </p>
-                                <a href="{% url 'delete_submission' event.slug %}" class="btn btn-teal">
-                                    <i class="fa fa-times" aria-hidden="true"></i> Delete!
-                                </a>
-                            </div>
-                        {% endif %}
-
+                    {% if agenda_url %}
                         <div class="row">
                             <div class="col-sm-8">
                                 <h2 class="h4">Agenda</h2>
@@ -190,70 +131,15 @@
                             height="600">
                         </iframe>
                     {% else %}
-                        {% if user.is_authenticated %}
-                            <p>
-                                This event does not have an agenda. To add one, please provide a link to Legistar or directly upload a PDF.
-                                <span class="text-uppercase"><strong>Only upload a PDF during a Legistar outage!</strong></span>
-                            </p>
-
-                            <div class="accordion" id="accordionUpload" role="tablist" aria-multiselectable="true">
-                                <!-- URL Upload -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header h4" id="headingOne" role="tab">
-                                        <button class="accordion-button {% if not url_form.errors %}collapsed{% endif %}" type="button" role="button" data-bs-toggle="collapse" data-bs-target="#collapseURL" aria-expanded="{% if url_form.errors %}true{%else%}false{% endif %}" aria-controls="collapseURL">
-                                            <i class="fa fa-link me-1" aria-hidden="true"></i>
-                                            Upload an Agenda URL
-                                        </button>
-                                    </h2>
-                                    <div id="collapseURL" class="accordion-collapse collapse {% if url_form.errors %}show{% endif %}" role="tabpanel" aria-labelledby="headingOne">
-                                        <div class="accordion-body">
-                                            <p>Find the corresponding agenda URL on Legistar, and paste it here.</p>
-                                            <!-- The variable "name" identifies the modal and form submit button -->
-                                            {% with form=url_form name='url_form' %}
-                                                {% include 'event/_agenda_url_form.html' %}
-                                            {% endwith %}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- PDF Upload -->
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header h4" id="headingTwo" role="tab">
-                                        <button class="accordion-button {% if not pdf_form.errors %}collapsed{% endif %}" type="button" role="button" data-bs-toggle="collapse" data-bs-target="#collapsePDF" aria-expanded="{% if pdf_form.errors %}true{%else%}false{% endif %}" aria-controls="collapsePDF">
-                                            <i class="fa fa-file-text me-1" aria-hidden="true"></i>
-                                            Upload an Agenda PDF
-                                        </button>
-                                    </h2>
-                                    <div id="collapsePDF" class="accordion-collapse collapse {% if pdf_form.errors %}show{% endif %}" role="tabpanel" aria-labelledby="headingTwo">
-                                        <div class="accordion-body">
-                                            <div class="alert alert-info" role="alert">
-                                                <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                                                {% if legistar_ok %}
-                                                    <strong>Caution!</strong> Our system does NOT detect a Legistar outage. Do not use this option.
-                                                {% else %}
-                                                    Our system detects a Legistar outage. Proceed with this option but exercise caution.
-                                                {% endif %}
-                                            </div>
-
-                                            <!-- The variable "name" identifies the modal and form submit button -->
-                                            {% with form=pdf_form name='pdf_form' %}
-                                                {% include 'event/_agenda_pdf_form.html' %}
-                                            {% endwith %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% else %}
-                            <p>
-                                Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.
-                                If you are unable to access an Agenda within either of these time frames, please visit:
-                                <a href="http://metro.legistar.com/calendar.aspx" target="_blank" aria-label="http://metro.legistar.com/calendar.aspx - link opens in a new tab">http://metro.legistar.com/calendar.aspx</a>.
-                            </p>
-                        {% endif %}
+                        <p>
+                            Agenda will be posted no later than 72 hours prior to the start of the meeting, or 24 hours for Special Board meetings.
+                            If you are unable to access an Agenda within either of these time frames, please visit:
+                            <a href="http://metro.legistar.com/calendar.aspx" target="_blank" aria-label="http://metro.legistar.com/calendar.aspx - link opens in a new tab">http://metro.legistar.com/calendar.aspx</a>.
+                        </p>
                     {% endif %}
                 </div>
                 <div class="col-lg-5 mt-4 mt-lg-0">
-                    {% if documents %}
+                    {% if related_board_reports %}
                         {% include 'event/_related_bills.html' %}
                     {% endif %}
                 </div>

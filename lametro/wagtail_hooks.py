@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django import forms
 from django.contrib import admin  # noqa
 from django.templatetags.static import static
 from django.utils.html import format_html
@@ -203,9 +204,6 @@ class FiscalYearCalendarViewSet(SnippetViewSet):
         "calendar",
     )
 
-from django import forms
-
-
 class EventAgendaForm(forms.ModelForm):
     class Meta:
         model = EventAgenda
@@ -217,10 +215,7 @@ class EventAgendaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields["event"].widget.choices = [
-            (e.id, e)
-            for e in LAMetroEvent.objects.filter(
-                start_date__gte=datetime.now().isoformat()
-            ).order_by("start_date")
+            (e.id, e) for e in LAMetroEvent.objects.all().order_by("start_date")
         ]
 
 

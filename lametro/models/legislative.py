@@ -60,7 +60,17 @@ class SourcesMixin(object):
     @property
     def api_representation(self):
         try:
-            response = timed_get(self.api_source.url)
+            from lametro.secrets import TOKEN
+        except ImportError:
+            logger.warning(
+                "No API token provided. Future events may be allowed to be deleted in the UI."
+            )
+            TOKEN = None
+
+        api_url = self.api_source.url + f"?token={TOKEN}" if TOKEN else ""
+
+        try:
+            response = timed_get(api_url)
             response.raise_for_status()
 
         except (LAMetroRequestTimeoutException, requests.Timeout):

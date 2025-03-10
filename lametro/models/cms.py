@@ -265,7 +265,7 @@ class FiscalYearCalendar(models.Model):
 
 class EventAgenda(models.Model):
 
-    event = models.ForeignKey(
+    event = models.OneToOneField(
         "lametro.LAMetroEvent",
         on_delete=models.CASCADE,
         related_name="manual_agenda",
