@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.validators import URLValidator
 from django.db import models
 from django.urls import reverse
 from django import forms
@@ -7,9 +8,10 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from html import unescape
 
+from wagtail.documents import get_document_model
 from wagtail.models import Page, PreviewableMixin, DraftStateMixin, RevisionMixin
 from wagtail.fields import StreamField, RichTextField
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, PageChooserPanel
 from wagtail.rich_text import expand_db_html
 
 from lametro.blocks import ArticleBlock
@@ -259,3 +261,53 @@ class FiscalYearCalendar(models.Model):
                 "Only one calendar can exist at a time. "
                 "Please edit the existing calendar object."
             )
+
+
+class EventAgenda(models.Model):
+
+    event = models.ForeignKey(
+        "lametro.LAMetroEvent",
+        on_delete=models.CASCADE,
+        related_name="manual_agenda",
+    )
+
+    url = models.URLField(blank=True, null=True, help_text="URL to existing agenda PDF")
+
+    document = models.ForeignKey(
+        get_document_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __str__(self):
+        return f"Manually added agenda for {self.event}"
+
+    def clean(self):
+        """
+        Ensure that either a URL or a file is provided, but not both or neither.
+        """
+        if bool(self.url) == bool(self.document):
+            raise ValidationError(
+                "Please provide either a URL or a file, not both or neither."
+            )
+
+        if self.url:
+            try:
+                validator = URLValidator()
+                validator(self.url)
+            except ValidationError:
+                raise ValidationError({"url": "Please enter a valid URL."})
+
+    def save(self, *args, **kwargs):
+        from opencivicdata.legislative.models import EventDocument
+
+        document_obj, _ = EventDocument.objects.get_or_create(
+            event=self.event, note="Manual Agenda"
+        )
+
+        document_url = self.document.url if self.document else self.url
+        document_obj.links.create(url=document_url)
+        document_obj.save()
+
+        super().save(*args, **kwargs)

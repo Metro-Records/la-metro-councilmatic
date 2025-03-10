@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import admin  # noqa
 from django.templatetags.static import static
 from django.utils.html import format_html
@@ -23,6 +25,8 @@ from lametro.models import (
     LAMetroOrganization,
     EventNotice,
     FiscalYearCalendar,
+    EventAgenda,
+    LAMetroEvent,
 )
 
 
@@ -199,11 +203,43 @@ class FiscalYearCalendarViewSet(SnippetViewSet):
         "calendar",
     )
 
+from django import forms
+
+
+class EventAgendaForm(forms.ModelForm):
+    class Meta:
+        model = EventAgenda
+        fields = ("event", "url", "document")
+
+    def __init__(self, *args, **kwargs):
+        del kwargs["for_user"]
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["event"].widget.choices = [
+            (e.id, e)
+            for e in LAMetroEvent.objects.filter(
+                start_date__gte=datetime.now().isoformat()
+            ).order_by("start_date")
+        ]
+
+
+class EventAgendaViewSet(SnippetViewSet):
+    model = EventAgenda
+    icon = "user"
+    add_to_admin_menu = True
+    menu_icon = "user"
+    menu_order = 200
+
+    def get_form_class(self, *args, **kwargs):
+        return EventAgendaForm
+
 
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
 register_snippet(BoardMemberDetailsViewSet)
+register_snippet(EventAgendaViewSet)
 
 
 class UserBarLink:
