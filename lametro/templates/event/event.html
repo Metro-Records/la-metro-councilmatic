@@ -85,12 +85,12 @@
                     {% endif %}
 
                     <!-- Check that the database has an agenda to display -->
-                    {% if agenda_url %}
+                    {% if agenda.url %}
                         <div class="row">
                             <div class="col-sm-8">
                                 <h2 class="h4">Agenda</h2>
                                 <p class="mb-1">
-                                    <a id="pdf-download-link" class="fw-bold fs-6" target="_blank" href={% if agenda_url %} '{{agenda_url}}' {% elif uploaded_agenda_url %} '{{uploaded_agenda_url}}' {% elif uploaded_agenda_pdf %} '{% static uploaded_agenda_pdf %}' {% endif %} aria-label="Download Agenda - link opens in a new tab">
+                                    <a id="pdf-download-link" class="fw-bold fs-6" target="_blank" href='{{agenda.url}}' aria-label="Download Agenda - link opens in a new tab">
                                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
                                         Download Agenda
                                     </a>
@@ -127,7 +127,7 @@
                         <iframe
                             id="pdf-embed-agenda"
                             class="pdf-viewer d-none d-md-block"
-                            name="{{document_timestamp}}"
+                            name="{{agenda.timestamp}}"
                             height="600">
                         </iframe>
                     {% else %}
@@ -171,35 +171,18 @@
 {% block extra_js %}
     <script>
     $(document).ready(function() {
-        // Admin view: Display preview of event document submitted via URL
-        $('#url_form_modal').on('shown.bs.modal', function (e) {
-            e.preventDefault();
-            agenda_url_submitted = $('#agenda_url').val();
-            base_url = '{{base_url}}'
-            agenda_url_clean = full_text_doc_url_js(agenda_url_submitted, base_url);
-            document.getElementById('pdf-embed-agenda-check').src = agenda_url_clean
-        });
+        if (window.innerWidth > 768){
+            const agendaUrl =  "{% if agenda.manual %}{{ agenda.url }}{% else %}/pdfviewer/?{{agenda.url|full_text_doc_url}}{% endif %}"
+            $("#pdf-embed-agenda").attr("src", agendaUrl);
+        }
+        else{
+            $('#pdf-embed-agenda').hide()
+            $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link'></i> View PDF")
+        }
 
-        // Admin view: Cancel submission of PDF
-        $('#pdf-form-cancel').on('click', function() {
-            document.getElementById('pdf-check-viewer-test').src = '';
-            document.getElementById('pdf-form-input').value= null;
-            $('#pdf-form-message, #pdf-check-viewer-test, #pdf-form-cancel, #pdf-form-submit').addClass('hidden');
-        });
-    });
-
-     if (window.innerWidth > 768){
-        const agendaUrl =  "{% if event.manual_agenda and agenda_url == event.manual_agenda.document_url %}{{ agenda_url }}{% else %}/pdfviewer/?{{agenda_url|full_text_doc_url}}{% endif %}"
-        $("#pdf-embed-agenda").attr("src", agendaUrl);
-    }
-    else{
-        $('#pdf-embed-agenda').hide()
-        $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link'></i> View PDF")
-    }
-
-    {% for source in event.sources.all %}
-        console.log('source: {{source}}');
-    {% endfor %}
+        {% for source in event.sources.all %}
+            console.log('source: {{source}}');
+        {% endfor %}
+    })
     </script>
-
 {% endblock %}

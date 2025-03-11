@@ -1,7 +1,7 @@
 {% load wagtailcore_tags %}
 
 <section class="row">
-    {% if has_agenda and event_notices %}
+    {% if agenda.url and notices %}
     <section class="col-md-7">
     {% else %}
     <section class="col-12">
@@ -26,7 +26,7 @@
 
         {% if event.web_source.url %}
             <p class="small">
-                {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
+                {% if not agenda.url %}
                     <span class="d-block">Not seeing an agenda? Please use this link:</span>
                 {% endif %}
                 <a href="{{event.web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank" aria-label="View on the {{CITY_VOCAB.SOURCE}} website - link opens in a new tab">
@@ -37,9 +37,9 @@
         {% endif %}
     </section>
 
-    {% if has_agenda and event_notices %}
+    {% if agenda.url and notices %}
         <article class="col-md-5">
-            {% for notice in event_notices %}
+            {% for notice in notices %}
                 {{ notice.message|richtext }}
             {% endfor %}
         </article>

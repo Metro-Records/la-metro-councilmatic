@@ -1,7 +1,7 @@
 {% load lametro_extras %}
 
 {% get_events_with_manual_broadcasts as manual_events %}
-<div class="card p-0">
+<div class="card p-0 my-3">
     <div class="card-header">
         <i class= "fa fa-fw fa-wrench fa-fw" aria-hidden="true"></i>
         Admin Actions
@@ -81,12 +81,12 @@
                 {% endif %}
             </li>
             <li class="list-group-item">
-                {% if event.manual_agenda and agenda_url == event.manual_agenda.document_url %}
+                {% if agenda.manual %}
                     <p class="card-text">This event has a manually uploaded agenda. Not what you expect? Click the button below to update or remove the manual agenda.</p>
                     <p>
                         <a class='btn btn-teal' href="{{ manage_agenda_url }}"><i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i> Manage Manual Agenda</a>
                     </p>
-                {% elif agenda_url %}
+                {% elif agenda.url %}
                     <p class="card-text">This event's agenda has been scraped.{% if event.manual_agenda %} This event also has a manually uploaded agenda. Click the button below to remove it.</p>
                     <p>
                         <a class='btn btn-teal' href="{{ manage_agenda_url }}"><i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i> Manage Manual Agenda</a>

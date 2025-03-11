@@ -1,5 +1,4 @@
 import itertools
-from typing import Optional
 import urllib
 from datetime import datetime
 from dateutil import parser
@@ -15,7 +14,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.db.models.functions import Lower, Now, Cast
+from django.db.models.functions import Lower, Now
 from django.db.models import (
     Max,
     Prefetch,
@@ -37,7 +36,6 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.core.serializers import serialize
-from wagtail.admin.admin_url_finder import AdminURLFinder
 
 from councilmatic_core.views import (
     IndexView,
@@ -53,7 +51,6 @@ from councilmatic_core.views import (
 from councilmatic_core.models import Organization, Membership
 
 from opencivicdata.core.models import PersonLink
-from opencivicdata.legislative.models import BillVersion
 
 from lametro.models import (
     LAMetroBill,
@@ -64,15 +61,13 @@ from lametro.models import (
     LAMetroSubject,
     EventBroadcast,
     BoardMemberDetails,
-    EventNotice,
-    EventAgenda,
 )
 from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
 )
+from lametro.services import EventService
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
-from councilmatic.settings import PIC_BASE_URL
 
 from opencivicdata.legislative.models import EventDocument
 
@@ -147,125 +142,23 @@ class LAMetroEventDetail(EventDetailView):
 
     def get_context_data(self, **kwargs) -> dict:
         context = super(EventDetailView, self).get_context_data(**kwargs)
-        event = context["event"]
-
-        # Metro admins should see a status report if Legistar is down.
-        # GET the calendar page, which contains relevant URL for agendas.
-        if self.request.user.is_authenticated:
-            r = requests.head("https://metro.legistar.com/calendar.aspx")
-            context["legistar_ok"] = r.ok
-
-            # GET the event URL; allow admin to delete event if 404
-            # or if event name has changed
-            # https://github.com/datamade/la-metro-councilmatic/issues/692#issuecomment-934648716
-            api_rep = event.api_representation
-
-            if api_rep:
-                context["event_ok"] = event.api_body_name == api_rep["EventBodyName"]
-            else:
-                context["event_ok"] = False
-
-        try:
-            context["minutes"] = event.documents.filter(note__icontains="minutes")
-        except EventDocument.DoesNotExist:
-            pass
-
-        related_bills = (
-            LAMetroBill.objects.with_latest_actions()
-            .defer("extras")
-            .filter(eventrelatedentity__agenda_item__event=event)
-            .prefetch_related(
-                Prefetch(
-                    "versions",
-                    queryset=BillVersion.objects.filter(
-                        note="Board Report"
-                    ).prefetch_related("links"),
-                    to_attr="br",
-                ),
-                "packet",
-            )
-        )
-
-        context["related_board_reports"] = (
-            event.agenda.filter(related_entities__bill__versions__isnull=False)
-            .annotate(int_order=Cast("order", IntegerField()))
-            .order_by("int_order")
-            .prefetch_related(
-                Prefetch("related_entities__bill", queryset=related_bills)
-            )
-        )
-
-        documents = (
-            event.documents.annotate(
-                precedence=Case(
-                    When(note__icontains="manual", then=2),
-                    When(note__icontains="agenda", then=1),
-                    default=999,
-                    output_field=IntegerField(),
-                )
-            )
-            .order_by("precedence")
-            .prefetch_related("links")
-        )
-
-        if documents:
-            agenda = documents.first()
-            context["agenda_url"] = agenda.links.get().url
-            context["document_timestamp"] = agenda.date
-
-        context["base_url"] = PIC_BASE_URL  # Give JS access to this variable
-
-        manage_agenda_url: Optional[str] = None
-
-        try:
-            manual_agenda = EventAgenda.objects.get(event=event)
-        except EventAgenda.DoesNotExist:
-            manage_agenda_url = f"{reverse(EventAgenda.snippet_viewset.get_url_name('add'))}?event={event.slug}"
-        else:
-            finder = AdminURLFinder()
-            manage_agenda_url = finder.get_edit_url(manual_agenda)
-
-        context["manage_agenda_url"] = manage_agenda_url
-
         context["USING_ECOMMENT"] = settings.USING_ECOMMENT
 
-        # Only provide notices for this event's public comment setting
-        if event.accepts_live_comment:
-            notices_by_comment = EventNotice.objects.filter(
-                comment_conditions__contains=["accepts_live_comment"]
-            )
-        elif event.accepts_public_comment:
-            notices_by_comment = EventNotice.objects.filter(
-                comment_conditions__contains=["accepts_comment"]
-            )
-        else:  # Events that do not accept public comment at all
-            notices_by_comment = EventNotice.objects.filter(
-                comment_conditions__contains=["accepts_no_comment"]
-            )
+        event = context["event"]
 
-        # Further filter notices by event broadcast status
-        context["event_status"] = self.get_event_status(event)
-        for status in ("future", "upcoming", "ongoing", "concluded"):
-            if context["event_status"] == status:
-                event_notices = notices_by_comment.filter(
-                    broadcast_conditions__contains=[status]
-                )
-                break
+        if self.request.user.is_authenticated:
+            context["legistar_ok"] = requests.head(
+                "https://metro.legistar.com/calendar.aspx"
+            ).ok
+            context["event_ok"] = EventService.assert_consistent_with_api(event)
 
-        context["event_notices"] = event_notices
+        context["minutes"] = EventService.get_minutes(event)
+        context["related_board_reports"] = EventService.get_related_board_reports(event)
+        context["agenda"] = EventService.get_agenda(event)
+        context["manage_agenda_url"] = EventService.get_manage_agenda_url(event)
+        context["notices"] = EventService.get_notices(event)
+
         return context
-
-    def get_event_status(self, event):
-        # Returns the event's broadcast status as a string
-
-        if event.is_upcoming:
-            return "upcoming"
-        elif event.is_ongoing:
-            return "ongoing"
-        elif event.has_passed:
-            return "concluded"
-        else:
-            return "future"
 
 
 @login_required

@@ -57,38 +57,6 @@ class SourcesMixin(object):
     def api_source(self):
         return self.sources.get(note="api")
 
-    @property
-    def api_representation(self):
-        try:
-            from lametro.secrets import TOKEN
-        except ImportError:
-            logger.warning(
-                "No API token provided. Future events may be allowed to be deleted in the UI."
-            )
-            TOKEN = None
-
-        api_url = self.api_source.url + f"?token={TOKEN}" if TOKEN else ""
-
-        try:
-            response = timed_get(api_url, timeout=3)
-            response.raise_for_status()
-
-        except (LAMetroRequestTimeoutException, requests.Timeout):
-            logger.warning(f"Request to {self.api_source.url} timed out.")
-            return None
-
-        except requests.HTTPError:
-            logger.warning(
-                f"Request to {self.api_source.url} resulted in non-200 status code: {response.status_code}"
-            )
-            return None
-
-        except requests.ConnectionError:
-            logger.warning(f"Request to {self.api_source.url} disconnected.")
-            return None
-
-        return response.json()
-
 
 class LAMetroBillManager(models.Manager):
     def get_queryset(self):
@@ -929,22 +897,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             return "In progress"
         else:
             return "Upcoming"
-
-    @property
-    def api_body_name(self):
-        """
-        Return the name of the meeting body, as it would have appeared in the
-        API when scraped, for comparison to the current API data. This method
-        effectively undoes transformations applied in the events scraper:
-        https://github.com/opencivicdata/scrapers-us-municipal/blob/11a1532e46953eb2feec89ed6b978de0052b9fb7/lametro/events.py#L200-L211
-        """
-        if self.name == "Regular Board Meeting":
-            return "Board of Directors - Regular Board Meeting"
-
-        elif self.name == "Special Board Meeting":
-            return "Board of Directors - Special Board Meeting"
-
-        return self.name
 
     @property
     def has_manual_broadcast(self):
