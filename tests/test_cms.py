@@ -8,15 +8,11 @@ from lametro.models import EventAgenda
 
 @pytest.mark.parametrize("legistar_ok", [True, False])
 @pytest.mark.parametrize("event_ok", [True, False])
-@pytest.mark.parametrize("manual_broadcast", [True, False])
-@pytest.mark.parametrize("scraped_broadcast", [True, False])
 @pytest.mark.parametrize("manual_agenda", [True, False])
 @pytest.mark.parametrize("scraped_agenda", [True, False])
 def test_event_admin_renders_based_on_context(
     legistar_ok,
     event_ok,
-    manual_broadcast,
-    scraped_broadcast,
     manual_agenda,
     scraped_agenda,
     mocker,

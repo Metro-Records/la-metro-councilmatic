@@ -12,6 +12,7 @@ from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Prefetch, Case, When, Value, Q, F, Subquery, OuterRef
 from django.db.models.functions import Now, Cast
@@ -51,11 +52,17 @@ logger = logging.getLogger(__name__)
 class SourcesMixin(object):
     @property
     def web_source(self):
-        return self.sources.get(note="web")
+        try:
+            return self.sources.get(note="web")
+        except ObjectDoesNotExist:
+            return None
 
     @property
     def api_source(self):
-        return self.sources.get(note="api")
+        try:
+            return self.sources.get(note="api")
+        except ObjectDoesNotExist:
+            return None
 
 
 class LAMetroBillManager(models.Manager):

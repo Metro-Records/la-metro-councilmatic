@@ -28,6 +28,9 @@ except ImportError:
 class EventService:
     @staticmethod
     def assert_consistent_with_api(event) -> bool:
+        if not event.api_source:
+            return False
+
         api_url = event.api_source.url + f"?token={TOKEN}" if TOKEN else ""
 
         try:
