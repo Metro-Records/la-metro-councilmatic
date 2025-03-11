@@ -81,7 +81,12 @@
                 {% endif %}
             </li>
             <li class="list-group-item">
-                {% if agenda_url %}
+                {% if event.manual_agenda and agenda_url == event.manual_agenda.document_url %}
+                    <p class="card-text">This event has a manually uploaded agenda. Not what you expect? Click the button below to update or remove the manual agenda.</p>
+                    <p>
+                        <a class='btn btn-teal' href="{{ manage_agenda_url }}"><i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i> Manage Manual Agenda</a>
+                    </p>
+                {% elif agenda_url %}
                     <p class="card-text">This event's agenda has been scraped.{% if event.manual_agenda %} This event also has a manually uploaded agenda. Click the button below to remove it.</p>
                     <p>
                         <a class='btn btn-teal' href="{{ manage_agenda_url }}"><i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i> Manage Manual Agenda</a>

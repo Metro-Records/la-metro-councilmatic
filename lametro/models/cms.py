@@ -11,7 +11,7 @@ from html import unescape
 from wagtail.documents import get_document_model
 from wagtail.models import Page, PreviewableMixin, DraftStateMixin, RevisionMixin
 from wagtail.fields import StreamField, RichTextField
-from wagtail.admin.panels import FieldPanel, PageChooserPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.rich_text import expand_db_html
 
 from lametro.blocks import ArticleBlock
@@ -281,7 +281,25 @@ class EventAgenda(models.Model):
     )
 
     def __str__(self):
-        return f"Manually added agenda for {self.event}"
+        return f"Manual Agenda for {self.event}"
+
+    @property
+    def document_url(self):
+        return self.document.url if self.document else self.url
+
+    @property
+    def status_string(self):
+        if (
+            self.event.documents.exclude(note__icontains="manual")
+            .filter(note__icontains="agenda")
+            .exists()
+        ):
+            return "Superseded"
+        return "Live"
+
+    @property
+    def live(self):
+        return self.status_string == "Live"
 
     def clean(self):
         """
@@ -307,7 +325,12 @@ class EventAgenda(models.Model):
         )
 
         document_url = self.document.url if self.document else self.url
-        document_obj.links.create(url=document_url)
-        document_obj.save()
+
+        document_obj.links.update_or_create(
+            document=document_obj, defaults={"url": document_url}
+        )
 
         super().save(*args, **kwargs)
+
+    def get_url(self):
+        return reverse("lametro:events", kwargs={"slug": self.event.slug})

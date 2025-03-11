@@ -14,6 +14,7 @@ from wagtail.admin.panels import (
     HelpPanel,
 )
 from wagtail.admin.ui.tables import UpdatedAtColumn, LiveStatusTagColumn
+from wagtail.documents.widgets import AdminDocumentChooser
 from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, CreateView
@@ -117,6 +118,10 @@ class EventNoticeFilterSet(django_filters.FilterSet):
 class LinkedStatusTagColumn(LiveStatusTagColumn):
     cell_template_name = "snippets/related_object_status_tag.html"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sort_key = None
+
     def get_cell_context_data(self, instance, parent_context):
         context = super().get_cell_context_data(instance, parent_context)
         context["url"] = instance.get_url()
@@ -207,6 +212,7 @@ class EventAgendaForm(forms.ModelForm):
     class Meta:
         model = EventAgenda
         fields = ("event", "url", "document")
+        widgets = {"document": AdminDocumentChooser}
 
     def __init__(self, *args, **kwargs):
         del kwargs["for_user"]
@@ -234,6 +240,12 @@ class EventAgendaViewSet(SnippetViewSet):
     add_to_admin_menu = True
     menu_icon = "user"
     menu_order = 200
+    list_display = [
+        "__str__",
+        UpdatedAtColumn(),
+        LinkedStatusTagColumn(),
+    ]
+    ordering = ("-_updated_at",)
     add_view_class = EventAgendaCreateView
 
     def get_form_class(self, *args, **kwargs):
