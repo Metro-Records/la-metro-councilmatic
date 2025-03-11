@@ -35,9 +35,10 @@
                     <a href="{% url 'delete_event' event.slug %}" class='btn btn-teal' style="margin-bottom: 20px"><i class="fa fa-fw fa-times" aria-hidden="true"></i> Delete Event</a>
                 </p>
             </li>
-        {% elif event.status != 'cancelled' %}
+        {% endif %}
+        {% if event.status != 'cancelled' %}
             <li class="list-group-item">
-                {% if event.has_manual_broadcast and event.media.all.exists %}
+                {% if event.has_manual_broadcast and event.media.exists %}
                     <p class="card-text">
                         This event now has a proper broadcast link, and the previous manual broadcast can now be unpublished.
                         Please unpublish the manual link.
@@ -82,7 +83,7 @@
             </li>
             <li class="list-group-item">
                 {% if agenda.manual %}
-                    <p class="card-text">This event has a manually uploaded agenda. Not what you expect? Click the button below to update or remove the manual agenda.</p>
+                    <p class="card-text">This event has a manually uploaded agenda. Not what you expect? Click the button below to update or remove it.</p>
                     <p>
                         <a class='btn btn-teal' href="{{ manage_agenda_url }}"><i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i> Manage Manual Agenda</a>
                     </p>
