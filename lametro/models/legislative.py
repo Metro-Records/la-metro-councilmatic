@@ -70,7 +70,7 @@ class SourcesMixin(object):
         api_url = self.api_source.url + f"?token={TOKEN}" if TOKEN else ""
 
         try:
-            response = timed_get(api_url)
+            response = timed_get(api_url, timeout=3)
             response.raise_for_status()
 
         except (LAMetroRequestTimeoutException, requests.Timeout):

@@ -1,4 +1,5 @@
 import itertools
+from typing import Optional
 import urllib
 from datetime import datetime
 from dateutil import parser
@@ -36,6 +37,7 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.core.serializers import serialize
+from wagtail.admin.admin_url_finder import AdminURLFinder
 
 from councilmatic_core.views import (
     IndexView,
@@ -63,6 +65,7 @@ from lametro.models import (
     EventBroadcast,
     BoardMemberDetails,
     EventNotice,
+    EventAgenda,
 )
 from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
@@ -142,7 +145,7 @@ class LAMetroEventDetail(EventDetailView):
         # Get the queryset with prefetched media_urls in proper order.
         return LAMetroEvent.objects.with_media()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
         context = super(EventDetailView, self).get_context_data(**kwargs)
         event = context["event"]
 
@@ -211,6 +214,18 @@ class LAMetroEventDetail(EventDetailView):
             context["document_timestamp"] = agenda.date
 
         context["base_url"] = PIC_BASE_URL  # Give JS access to this variable
+
+        manage_agenda_url: Optional[str] = None
+
+        try:
+            manual_agenda = EventAgenda.objects.get(event=event)
+        except EventAgenda.DoesNotExist:
+            manage_agenda_url = f"{reverse(EventAgenda.snippet_viewset.get_url_name('add'))}?event={event.slug}"
+        else:
+            finder = AdminURLFinder()
+            manage_agenda_url = finder.get_edit_url(manual_agenda)
+
+        context["manage_agenda_url"] = manage_agenda_url
 
         context["USING_ECOMMENT"] = settings.USING_ECOMMENT
 

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django import forms
 from django.contrib import admin  # noqa
 from django.templatetags.static import static
@@ -18,7 +16,7 @@ from wagtail.admin.panels import (
 from wagtail.admin.ui.tables import UpdatedAtColumn, LiveStatusTagColumn
 from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
-from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.snippets.views.snippets import SnippetViewSet, CreateView
 
 from lametro.models import (
     Alert,
@@ -204,6 +202,7 @@ class FiscalYearCalendarViewSet(SnippetViewSet):
         "calendar",
     )
 
+
 class EventAgendaForm(forms.ModelForm):
     class Meta:
         model = EventAgenda
@@ -219,12 +218,23 @@ class EventAgendaForm(forms.ModelForm):
         ]
 
 
+class EventAgendaCreateView(CreateView):
+    def get_form_kwargs(self, *args, **kwargs):
+        form_kwargs = super().get_form_kwargs(*args, **kwargs)
+        if event := self.request.GET.get("event"):
+            form_kwargs["instance"] = EventAgenda(
+                event=LAMetroEvent.objects.get(slug=event)
+            )
+        return form_kwargs
+
+
 class EventAgendaViewSet(SnippetViewSet):
     model = EventAgenda
     icon = "user"
     add_to_admin_menu = True
     menu_icon = "user"
     menu_order = 200
+    add_view_class = EventAgendaCreateView
 
     def get_form_class(self, *args, **kwargs):
         return EventAgendaForm
@@ -242,11 +252,13 @@ class UserBarLink:
 
     def get_icon(self):
         return format_html(
-            f"""
-            <svg class="icon icon-{self.icon_name} w-action-icon" aria-hidden="true">'
-                <use href="#icon-{self.icon_name}"></use>
+            """
+            <svg class="icon icon-{0} w-action-icon" aria-hidden="true">
+                <use href="#icon-{0}"></use>
             </svg>
-        """
+            """.format(
+                self.icon_name
+            )
         )
 
     def render(self, request, href=None):
@@ -256,14 +268,16 @@ class UserBarLink:
         link_text = self.get_link_text(request)
 
         return format_html(
-            f"""
+            """
             <li class="w-userbar__item" role="presentation">
-                <a href="{href}" target="_parent" role="menuitem">
-                    {self.get_icon()}
-                    {link_text}
+                <a href="{0}" target="_parent" role="menuitem">
+                    {1}
+                    {2}
                 </a>
             </li>
-        """
+            """.format(
+                href, self.get_icon(), link_text
+            )
         )
 
 
