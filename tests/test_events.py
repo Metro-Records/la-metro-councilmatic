@@ -466,7 +466,7 @@ def test_delete_button_shows(
     api_source = "http://webapi.legistar.com/v1/metro/events/{0}".format(e.slug)
 
     mock_source = mocker.MagicMock()
-    mock_source.url = api_source
+    mock_source.url = {"url": api_source}
     mocker.patch(
         "lametro.models.LAMetroEvent.api_source",
         new_callable=mocker.PropertyMock,
