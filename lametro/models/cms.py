@@ -127,6 +127,9 @@ class Alert(models.Model):
             + "</div>"
         )
 
+    class Meta:
+        ordering = ["pk"]
+
 
 class CheckboxSelectMultipleList(forms.CheckboxSelectMultiple):
     def format_value(self, value):
