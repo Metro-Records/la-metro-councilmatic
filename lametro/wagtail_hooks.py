@@ -34,7 +34,7 @@ class AlertViewSet(SnippetViewSet):
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
-    list_display = ("content",)
+    list_display = ("content", "expiration")
     list_filter = ("type",)
     search_fields = (
         "type",
