@@ -332,7 +332,7 @@ def sort_topics(topics):
 
 @register.simple_tag
 def get_alerts():
-    return Alert.objects.all()
+    return Alert.objects.exclude(expiration__lt=timezone.now())
 
 
 @register.simple_tag

@@ -105,6 +105,7 @@ class Alert(models.Model):
 
     description = RichTextField()
     type = models.CharField(max_length=255, choices=TYPE_CHOICES)
+    expiration = models.DateTimeField(null=True, blank=True)
 
     panels = [
         FieldPanel(
@@ -112,6 +113,10 @@ class Alert(models.Model):
             help_text="Select a style for your alert.",
         ),
         FieldPanel("description"),
+        FieldPanel(
+            "expiration",
+            help_text="Time in PT after which this alert will no longer display.",
+        ),
     ]
 
     def content(self):
