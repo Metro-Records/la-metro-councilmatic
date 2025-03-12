@@ -29,3 +29,4 @@ lametro/secrets.py
 
 .venv
 media/
+*.code-workspace
