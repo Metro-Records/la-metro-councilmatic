@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from uuid import uuid4
 from random import randrange
+from pytz import utc
 
 from opencivicdata.legislative.models import (
     LegislativeSession,
@@ -19,6 +20,7 @@ from lametro.models import (
     LAMetroOrganization,
     LAMetroSubject,
     EventBroadcast,
+    Alert,
 )
 
 
@@ -314,6 +316,36 @@ def metro_subject(db):
             return subject
 
     return LAMetroSubjectFactory()
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def alert(db):
+    """
+    An alert builder. The expiration can be entered as either a timezone aware
+    datetime object, or a datetime string in the format '%Y-%m-%d %H:%M:%S'.
+    """
+
+    class AlertFactory:
+        def build(self, **kwargs):
+            alert_details = {
+                "description": "An alert for use in pytest!",
+                "type": Alert.TYPE_CHOICES[0],
+                "expiration": None,
+            }
+
+            alert_details.update(kwargs)
+
+            dt_format = "%Y-%m-%d %H:%M:%S"
+            if type(kwargs.get("expiration")) is str:
+                expiration = datetime.strptime(kwargs["expiration"], dt_format)
+                alert_details["expiration"] = expiration.replace(tzinfo=utc)
+
+            alert = Alert.objects.create(**alert_details)
+
+            return alert
+
+    return AlertFactory()
 
 
 @pytest.fixture
