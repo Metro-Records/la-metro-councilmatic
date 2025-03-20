@@ -1,6 +1,8 @@
 from django.contrib import admin  # noqa
 from django.templatetags.static import static
 from django.utils.html import format_html
+from django.utils import timezone
+from django.db.models import Q
 
 import django_filters
 from wagtail import hooks
@@ -26,20 +28,48 @@ from lametro.models import (
 )
 
 
+class AlertFilterSet(django_filters.FilterSet):
+    EXPIRED_CHOICES = (
+        ("expired", "Expired"),
+        ("all", "All Alerts"),
+    )
+
+    expired = django_filters.ChoiceFilter(
+        label="Alert Status",
+        method="filter_expired_alerts",
+        choices=EXPIRED_CHOICES,
+        empty_label="Not Expired",
+    )
+
+    def filter_expired_alerts(self, queryset, name, value):
+        if value == "expired":
+            return Alert.objects.filter(expiration__lte=timezone.now())
+        elif value == "all":
+            return Alert.objects.all()
+        else:
+            return queryset
+
+
 class AlertViewSet(SnippetViewSet):
     model = Alert
     icon = "warning"
     menu_icon = "warning"
     menu_order = 100
+    filterset_class = AlertFilterSet
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
-    list_display = ("content",)
+    list_display = ("content", "expiration")
     list_filter = ("type",)
     search_fields = (
         "type",
         "description",
     )
+
+    def get_queryset(self, request):
+        return Alert.objects.filter(
+            Q(expiration__gt=timezone.now()) | Q(expiration__isnull=True)
+        )
 
 
 BOOLEAN_CHOICES = (
