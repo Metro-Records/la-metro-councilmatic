@@ -267,3 +267,35 @@ class FiscalYearCalendar(models.Model):
                 "Only one calendar can exist at a time. "
                 "Please edit the existing calendar object."
             )
+
+
+class Tooltip(models.Model):
+    include_in_dump = True
+
+    target = models.CharField(max_length=255, unique=True)
+    content = RichTextField(
+        features=[
+            "bold",
+            "italic",
+            "link",
+        ]
+    )
+    disabled = models.BooleanField(default=False)
+
+    panels = [
+        FieldPanel(
+            "target",
+            help_text=(
+                "The name of the facet or topic category that this tooltip will "
+                "appear next to."
+            ),
+        ),
+        FieldPanel(
+            "content",
+            help_text=("The content of the tooltip."),
+        ),
+        FieldPanel("disabled"),
+    ]
+
+    def __str__(self):
+        return self.target
