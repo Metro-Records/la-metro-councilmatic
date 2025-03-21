@@ -262,7 +262,7 @@ class TooltipViewSet(SnippetViewSet):
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
-    list_display = ("target", "content", "disabled")
+    list_display = ("target", "short_content", "is_disabled")
     list_filter = ("disabled",)
     search_fields = ("target", "content")
 

@@ -299,3 +299,12 @@ class Tooltip(models.Model):
 
     def __str__(self):
         return self.target
+
+    def short_content(self):
+        shortened = strip_tags(unescape(self.content))[:50]
+        if len(self.content) > 50:
+            shortened += "..."
+        return shortened
+
+    def is_disabled(self):
+        return "Yes" if self.disabled else "No"
