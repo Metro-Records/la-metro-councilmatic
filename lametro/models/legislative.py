@@ -12,6 +12,7 @@ from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.db.models import Prefetch, Case, When, Value, Q, F, Subquery, OuterRef
 from django.db.models.functions import Now, Cast
@@ -51,33 +52,17 @@ logger = logging.getLogger(__name__)
 class SourcesMixin(object):
     @property
     def web_source(self):
-        return self.sources.get(note="web")
+        try:
+            return self.sources.get(note="web")
+        except ObjectDoesNotExist:
+            return None
 
     @property
     def api_source(self):
-        return self.sources.get(note="api")
-
-    @property
-    def api_representation(self):
         try:
-            response = timed_get(self.api_source.url)
-            response.raise_for_status()
-
-        except (LAMetroRequestTimeoutException, requests.Timeout):
-            logger.warning(f"Request to {self.api_source.url} timed out.")
+            return self.sources.get(note="api")
+        except ObjectDoesNotExist:
             return None
-
-        except requests.HTTPError:
-            logger.warning(
-                f"Request to {self.api_source.url} resulted in non-200 status code: {response.status_code}"
-            )
-            return None
-
-        except requests.ConnectionError:
-            logger.warning(f"Request to {self.api_source.url} disconnected.")
-            return None
-
-        return response.json()
 
 
 class LAMetroBillManager(models.Manager):
@@ -919,22 +904,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             return "In progress"
         else:
             return "Upcoming"
-
-    @property
-    def api_body_name(self):
-        """
-        Return the name of the meeting body, as it would have appeared in the
-        API when scraped, for comparison to the current API data. This method
-        effectively undoes transformations applied in the events scraper:
-        https://github.com/opencivicdata/scrapers-us-municipal/blob/11a1532e46953eb2feec89ed6b978de0052b9fb7/lametro/events.py#L200-L211
-        """
-        if self.name == "Regular Board Meeting":
-            return "Board of Directors - Regular Board Meeting"
-
-        elif self.name == "Special Board Meeting":
-            return "Board of Directors - Special Board Meeting"
-
-        return self.name
 
     @property
     def has_manual_broadcast(self):
