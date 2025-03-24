@@ -55,7 +55,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install pip==24.0
-        pip install setuptools==76.1.0
+        pip install --upgrade setuptools
         pip install -r requirements.txt
     - name: Test with pytest
       env:
