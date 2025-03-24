@@ -14,7 +14,7 @@ WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install pip==24.0 && \
-    pip install --upgrade setuptools && \
+    pip install setuptools==77.0.3 && \
     pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
