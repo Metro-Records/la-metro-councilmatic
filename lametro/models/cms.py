@@ -272,7 +272,27 @@ class FiscalYearCalendar(models.Model):
 class Tooltip(models.Model):
     include_in_dump = True
 
-    target = models.CharField(max_length=255, unique=True)
+    TARGET_CHOICES = [
+        ("board_report_type", "Board Report Type"),
+        ("fiscal_year", "Fiscal Year"),
+        ("geographic_administrative_location", "Geographic / Administrative Location"),
+        ("lines_ways", "Lines / Ways"),
+        ("meeting", "Meeting"),
+        ("metro_location", "Metro Location"),
+        ("motion_by", "Motion By"),
+        ("phase", "Phase"),
+        ("plan_program_or_policy", "Plan, Program, or Policy"),
+        ("project", "Project"),
+        ("significant_date", "Significant Date"),
+        ("status", "Status"),
+        ("subject", "Subject"),
+    ]
+
+    target = models.CharField(
+        max_length=255,
+        unique=True,
+        choices=TARGET_CHOICES,
+    )
     content = RichTextField(
         features=[
             "bold",
@@ -298,7 +318,10 @@ class Tooltip(models.Model):
     ]
 
     def __str__(self):
-        return self.target
+        return self.get_target_display()
+
+    def target_label(self):
+        return self.__str__
 
     def short_content(self):
         shortened = strip_tags(unescape(self.content))[:50]

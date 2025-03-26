@@ -374,6 +374,9 @@ def show_tooltip(label):
     else:
         tooltip_label = label
 
-    if Tooltip.objects.filter(target=tooltip_label).exists():
-        tooltip = Tooltip.objects.get(target=tooltip_label)
+    pattern = re.compile(r"[\W_]+")
+    tooltip_value = pattern.sub("_", tooltip_label.lower())
+
+    if Tooltip.objects.filter(target=tooltip_value).exists():
+        tooltip = Tooltip.objects.get(target=tooltip_value)
         return {"tooltip": tooltip.content} if not tooltip.disabled else None

@@ -262,9 +262,9 @@ class TooltipViewSet(SnippetViewSet):
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
-    list_display = ("target", "short_content", "is_disabled")
+    list_display = ("target_label", "short_content", "is_disabled")
     list_filter = ("disabled",)
-    search_fields = ("target", "content")
+    search_fields = ("target_label", "content")
 
     def get_queryset(self, request):
         return Tooltip.objects.filter(disabled=False)
