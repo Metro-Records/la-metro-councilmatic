@@ -42,7 +42,7 @@ def test_tooltips_display(client, disabled, should_display, bill, metro_subject)
     # Add this classification to make sure the bill is discoverable by the model manager
     test_bill = bill.build(classification=["Board Box"], subject=["Kiosks"])
     test_content = "A test tooltip for a subject!"
-    Tooltip.objects.create(target="Subject", content=test_content, disabled=disabled)
+    Tooltip.objects.create(target="subject", content=test_content, disabled=disabled)
 
     url = reverse("lametro:bill_detail", kwargs={"slug": test_bill.slug})
     response = client.get(url)
