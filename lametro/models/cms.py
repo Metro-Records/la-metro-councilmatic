@@ -314,7 +314,11 @@ class Tooltip(models.Model):
             "content",
             help_text=("The content of the tooltip."),
         ),
-        FieldPanel("disabled"),
+        FieldPanel(
+            "disabled",
+            help_text=("If checked, this tooltip will not display on the site."),
+            icon="info-circle",
+        ),
     ]
 
     def __str__(self):
