@@ -64,7 +64,6 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: 'postgis://postgres:postgres@postgres/lametro'
-      SHARED_DB: "True"
       OCD_DIVISION_CSV: '/app/lametro_divisions.csv'
     command: sh -c 'pupa update --rpm=600 lametro people && pupa update --rpm=600 lametro bills window=7 && pupa update --rpm=600 lametro events window=7'
     volumes:
