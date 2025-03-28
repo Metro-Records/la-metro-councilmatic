@@ -25,6 +25,7 @@ from lametro.models import (
     LAMetroOrganization,
     EventNotice,
     FiscalYearCalendar,
+    Tooltip,
 )
 
 
@@ -230,10 +231,50 @@ class FiscalYearCalendarViewSet(SnippetViewSet):
     )
 
 
+class TooltipFilterSet(django_filters.FilterSet):
+    DISABLED_CHOICES = (
+        ("true", "Disabled"),
+        ("all", "All Tooltips"),
+    )
+
+    disabled = django_filters.ChoiceFilter(
+        label="Disabled",
+        method="filter_disabled_tooltips",
+        choices=DISABLED_CHOICES,
+        empty_label="Not Disabled",
+    )
+
+    def filter_disabled_tooltips(self, queryset, name, value):
+        if value == "true":
+            return Tooltip.objects.filter(disabled=True)
+        elif value == "all":
+            return Tooltip.objects.all()
+        else:
+            return queryset
+
+
+class TooltipViewSet(SnippetViewSet):
+    model = Tooltip
+    base_url_path = "tooltip"
+    menu_icon = "info-circle"
+    menu_order = 203
+    filterset_class = TooltipFilterSet
+    add_to_settings_menu = False
+    exclude_from_explorer = False
+    add_to_admin_menu = True
+    list_display = ("target_label", "short_content", "is_disabled")
+    list_filter = ("disabled",)
+    search_fields = ("target_label", "content")
+
+    def get_queryset(self, request):
+        return Tooltip.objects.filter(disabled=False)
+
+
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
 register_snippet(BoardMemberDetailsViewSet)
+register_snippet(TooltipViewSet)
 
 
 class UserBarLink:

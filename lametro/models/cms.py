@@ -267,3 +267,71 @@ class FiscalYearCalendar(models.Model):
                 "Only one calendar can exist at a time. "
                 "Please edit the existing calendar object."
             )
+
+
+class Tooltip(models.Model):
+    include_in_dump = True
+
+    TARGET_CHOICES = [
+        ("board_report_type", "Board Report Type"),
+        ("fiscal_year", "Fiscal Year"),
+        ("geographic_administrative_location", "Geographic / Administrative Location"),
+        ("lines_ways", "Lines / Ways"),
+        ("meeting", "Meeting"),
+        ("metro_location", "Metro Location"),
+        ("motion_by", "Motion By"),
+        ("phase", "Phase"),
+        ("plan_program_or_policy", "Plan, Program, or Policy"),
+        ("project", "Project"),
+        ("significant_date", "Significant Date"),
+        ("status", "Status"),
+        ("subject", "Subject"),
+    ]
+
+    target = models.CharField(
+        max_length=255,
+        unique=True,
+        choices=TARGET_CHOICES,
+    )
+    content = RichTextField(
+        features=[
+            "bold",
+            "italic",
+            "link",
+        ]
+    )
+    disabled = models.BooleanField(default=False)
+
+    panels = [
+        FieldPanel(
+            "target",
+            help_text=(
+                "The name of the facet or topic category that this tooltip will "
+                "appear next to."
+            ),
+        ),
+        FieldPanel(
+            "content",
+            help_text=("The content of the tooltip."),
+        ),
+        FieldPanel(
+            "disabled",
+            help_text=("If checked, this tooltip will not display on the site."),
+            icon="info-circle",
+        ),
+    ]
+
+    def __str__(self):
+        return self.get_target_display()
+
+    def target_label(self):
+        return self.__str__
+
+    def short_content(self):
+        shortened = strip_tags(unescape(self.content))[:50]
+        if len(self.content) > 50:
+            shortened += "..."
+        return shortened
+
+    def is_disabled(self):
+        return "Yes" if self.disabled else "No"

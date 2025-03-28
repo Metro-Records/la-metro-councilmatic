@@ -191,7 +191,10 @@
                 <h3><i class="fa fa-tag" aria-hidden="true"></i> Topics</h3>
                     {% with legislation.rich_topics|group_by_classification as topics_list %}
                     {% for category, topics in topics_list %}
-                        <h4>{{ category }}</h4>
+                        <div>
+                            <h4 class="d-inline-block">{{ category }}</h4>
+                            {% show_tooltip category %}
+                        </div>
                         <ul>
                             {% for topic in topics|sort_topics %}
                             {% with topic.classification|add:":"|add:topic.name as tag_facet %}
@@ -293,5 +296,10 @@
         {% for source in legislation.sources.all %}
             console.log('source: {{source}}');
         {% endfor %}
+
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
     </script>
 {% endblock %}
