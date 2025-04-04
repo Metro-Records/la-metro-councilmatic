@@ -5,19 +5,34 @@
 {% block title %}{{ page.title }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <h1>{{ page.title }}</h1>
-</div>
-<div class="row">
-    <div class="col-lg-8">
-        {% for block in page.get_sections %}
-            {% include 'lametro/blocks/article.html' %}
-        {% endfor %}
-    </div>
-    <aside class="col-lg-4">
-        {% for block in page.get_asides %}
-            {% include 'lametro/blocks/aside.html' %}
-        {% endfor %}
-    </aside>
-</div>
+
+{% with asides=page.get_asides sections=page.get_sections %}
+    {% if asides %}
+        <div class="row">
+            <h1>{{ page.title }}</h1>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                {% for block in sections %}
+                    {% include 'lametro/blocks/article.html' %}
+                {% endfor %}
+            </div>
+            <aside class="col-lg-4">
+                {% for block in asides %}
+                    {% include 'lametro/blocks/aside.html' %}
+                {% endfor %}
+            </aside>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <h1>{{ page.title }}</h1>
+                {% for block in sections %}
+                    {% include 'lametro/blocks/article.html' %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endwith %}
+
 {% endblock %}
