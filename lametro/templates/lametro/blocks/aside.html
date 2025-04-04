@@ -1,0 +1,13 @@
+{% load wagtailcore_tags %}
+<div class="card mb-3">
+    <div class="card-body info-blurb pt-3">
+        {% if block.value.heading %}
+            <h2 class="d-inline h5">
+                <i class="fa fa-fw fa-info-circle text-dark" aria-hidden="true"></i>
+                {{ block.value.heading }}
+            </h2>
+        {% endif %}
+
+        {{ block.value.text }}
+    </div>
+</div>

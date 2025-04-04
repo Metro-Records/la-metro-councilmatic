@@ -12,7 +12,7 @@ from wagtail.fields import StreamField, RichTextField
 from wagtail.admin.panels import FieldPanel
 from wagtail.rich_text import expand_db_html
 
-from lametro.blocks import ArticleBlock
+from lametro.blocks import ArticleBlock, AsideBlock
 
 
 class AboutPage(Page):
@@ -28,6 +28,30 @@ class AboutPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("body"),
     ]
+
+
+class BoardPoliciesPage(Page):
+    include_in_dump = True
+
+    body = StreamField(
+        [
+            ("section", ArticleBlock()),
+            ("aside", AsideBlock()),
+        ],
+        use_json_field=True,
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel("body"),
+    ]
+
+    def get_sections(self):
+        sections = [b for b in self.body if b.block_type == "section"]
+        return sections
+
+    def get_asides(self):
+        asides = [b for b in self.body if b.block_type == "aside"]
+        return asides
 
 
 class BoardMemberDetails(
