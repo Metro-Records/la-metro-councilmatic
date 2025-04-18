@@ -236,9 +236,9 @@ class EventAgendaCreateView(CreateView):
 
 class EventAgendaViewSet(SnippetViewSet):
     model = EventAgenda
-    icon = "user"
+    icon = "doc-full"
     add_to_admin_menu = True
-    menu_icon = "user"
+    menu_icon = "doc-full"
     menu_order = 200
     list_display = [
         "__str__",
