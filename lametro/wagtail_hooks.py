@@ -19,6 +19,8 @@ from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, CreateView
 
+from lametro.services import EventService
+
 from lametro.models import (
     Alert,
     BoardMemberDetails,
@@ -329,9 +331,33 @@ class BoardMemberEditLink(UserBarLink):
         return "Edit this page"
 
 
+class EventAgendaLink(UserBarLink):
+    def render(self, request):
+        if href := self.get_href(request):
+            return super().render(request, href=href)
+
+    def get_href(self, request):
+        try:
+            slug = request.resolver_match.kwargs["slug"]
+        except KeyError:
+            return
+
+        event = LAMetroEvent.objects.get(slug=slug)
+
+        if (
+            not event.documents.exclude(note__icontains="manual")
+            .filter(note__icontains="agenda")
+            .exists()
+        ):
+            return EventService.get_manage_agenda_url(event)
+
+    def get_link_text(self, request):
+        return "Manage manual agenda"
+
+
 @hooks.register("construct_wagtail_userbar")
 def add_viewset_links(request, items):
-    items.append(BoardMemberEditLink())
+    items.extend([BoardMemberEditLink(), EventAgendaLink()])
     for link in (AlertViewSet, EventNoticeViewSet, FiscalYearCalendarViewSet):
         items.append(ViewSetLink(link))
     return items
