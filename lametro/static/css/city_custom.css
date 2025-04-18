@@ -824,3 +824,7 @@ caption {
     max-width: 100%;
     height: auto;
 }
+
+.tooltip p:last-of-type {
+    margin-bottom: 0px;
+}

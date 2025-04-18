@@ -1,0 +1,5 @@
+{% if tooltip %}
+    <a tabindex="0" class="hover-hand" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="{{tooltip}}" aria-label="{{tooltip|striptags}}">
+        <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+    </a>
+{% endif %}

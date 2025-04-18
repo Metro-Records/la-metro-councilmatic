@@ -48,9 +48,10 @@
 }
 
 .alert-info {
-  --r: 245;
-  --g: 122;
-  --b: 0;
+  --font-color: #000;
+  --r: 112;
+  --g: 219;
+  --b: 240;
 }
 
 .list-display-wrapper {

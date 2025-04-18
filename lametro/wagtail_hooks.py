@@ -2,6 +2,8 @@ from django import forms
 from django.contrib import admin  # noqa
 from django.templatetags.static import static
 from django.utils.html import format_html
+from django.utils import timezone
+from django.db.models import Q
 
 import django_filters
 from wagtail import hooks
@@ -29,7 +31,30 @@ from lametro.models import (
     FiscalYearCalendar,
     EventAgenda,
     LAMetroEvent,
+    Tooltip,
 )
+
+
+class AlertFilterSet(django_filters.FilterSet):
+    EXPIRED_CHOICES = (
+        ("expired", "Expired"),
+        ("all", "All Alerts"),
+    )
+
+    expired = django_filters.ChoiceFilter(
+        label="Alert Status",
+        method="filter_expired_alerts",
+        choices=EXPIRED_CHOICES,
+        empty_label="Not Expired",
+    )
+
+    def filter_expired_alerts(self, queryset, name, value):
+        if value == "expired":
+            return Alert.objects.filter(expiration__lte=timezone.now())
+        elif value == "all":
+            return Alert.objects.all()
+        else:
+            return queryset
 
 
 class AlertViewSet(SnippetViewSet):
@@ -37,15 +62,21 @@ class AlertViewSet(SnippetViewSet):
     icon = "warning"
     menu_icon = "warning"
     menu_order = 100
+    filterset_class = AlertFilterSet
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
-    list_display = ("content",)
+    list_display = ("content", "expiration")
     list_filter = ("type",)
     search_fields = (
         "type",
         "description",
     )
+
+    def get_queryset(self, request):
+        return Alert.objects.filter(
+            Q(expiration__gt=timezone.now()) | Q(expiration__isnull=True)
+        )
 
 
 BOOLEAN_CHOICES = (
@@ -253,12 +284,52 @@ class EventAgendaViewSet(SnippetViewSet):
     def get_form_class(self, *args, **kwargs):
         return EventAgendaForm
 
+      
+class TooltipFilterSet(django_filters.FilterSet):
+    DISABLED_CHOICES = (
+        ("true", "Disabled"),
+        ("all", "All Tooltips"),
+    )
+
+    disabled = django_filters.ChoiceFilter(
+        label="Disabled",
+        method="filter_disabled_tooltips",
+        choices=DISABLED_CHOICES,
+        empty_label="Not Disabled",
+    )
+
+    def filter_disabled_tooltips(self, queryset, name, value):
+        if value == "true":
+            return Tooltip.objects.filter(disabled=True)
+        elif value == "all":
+            return Tooltip.objects.all()
+        else:
+            return queryset
+
+
+class TooltipViewSet(SnippetViewSet):
+    model = Tooltip
+    base_url_path = "tooltip"
+    menu_icon = "info-circle"
+    menu_order = 203
+    filterset_class = TooltipFilterSet
+    add_to_settings_menu = False
+    exclude_from_explorer = False
+    add_to_admin_menu = True
+    list_display = ("target_label", "short_content", "is_disabled")
+    list_filter = ("disabled",)
+    search_fields = ("target_label", "content")
+
+    def get_queryset(self, request):
+        return Tooltip.objects.filter(disabled=False)
+
 
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
 register_snippet(BoardMemberDetailsViewSet)
 register_snippet(EventAgendaViewSet)
+register_snippet(TooltipViewSet)
 
 
 class UserBarLink:
