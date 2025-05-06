@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin  # noqa
 from django.templatetags.static import static
 from django.utils.html import format_html
@@ -15,9 +16,12 @@ from wagtail.admin.panels import (
     HelpPanel,
 )
 from wagtail.admin.ui.tables import UpdatedAtColumn, LiveStatusTagColumn
+from wagtail.documents.widgets import AdminDocumentChooser
 from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
-from wagtail.snippets.views.snippets import SnippetViewSet
+from wagtail.snippets.views.snippets import SnippetViewSet, CreateView
+
+from lametro.services import EventService
 
 from lametro.models import (
     Alert,
@@ -25,6 +29,8 @@ from lametro.models import (
     LAMetroOrganization,
     EventNotice,
     FiscalYearCalendar,
+    EventAgenda,
+    LAMetroEvent,
     Tooltip,
 )
 
@@ -145,6 +151,10 @@ class EventNoticeFilterSet(django_filters.FilterSet):
 class LinkedStatusTagColumn(LiveStatusTagColumn):
     cell_template_name = "snippets/related_object_status_tag.html"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sort_key = None
+
     def get_cell_context_data(self, instance, parent_context):
         context = super().get_cell_context_data(instance, parent_context)
         context["url"] = instance.get_url()
@@ -231,6 +241,50 @@ class FiscalYearCalendarViewSet(SnippetViewSet):
     )
 
 
+class EventAgendaForm(forms.ModelForm):
+    class Meta:
+        model = EventAgenda
+        fields = ("event", "url", "document")
+        widgets = {"document": AdminDocumentChooser}
+
+    def __init__(self, *args, **kwargs):
+        del kwargs["for_user"]
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["event"].widget.choices = [
+            (e.id, e) for e in LAMetroEvent.objects.all().order_by("start_date")
+        ]
+
+
+class EventAgendaCreateView(CreateView):
+    def get_form_kwargs(self, *args, **kwargs):
+        form_kwargs = super().get_form_kwargs(*args, **kwargs)
+        if event := self.request.GET.get("event"):
+            form_kwargs["instance"] = EventAgenda(
+                event=LAMetroEvent.objects.get(slug=event)
+            )
+        return form_kwargs
+
+
+class EventAgendaViewSet(SnippetViewSet):
+    model = EventAgenda
+    icon = "doc-full"
+    add_to_admin_menu = True
+    menu_icon = "doc-full"
+    menu_order = 200
+    list_display = [
+        "__str__",
+        UpdatedAtColumn(),
+        LinkedStatusTagColumn(),
+    ]
+    ordering = ("-_updated_at",)
+    add_view_class = EventAgendaCreateView
+
+    def get_form_class(self, *args, **kwargs):
+        return EventAgendaForm
+
+
 class TooltipFilterSet(django_filters.FilterSet):
     DISABLED_CHOICES = (
         ("true", "Disabled"),
@@ -274,6 +328,7 @@ register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
 register_snippet(BoardMemberDetailsViewSet)
+register_snippet(EventAgendaViewSet)
 register_snippet(TooltipViewSet)
 
 
@@ -282,11 +337,13 @@ class UserBarLink:
 
     def get_icon(self):
         return format_html(
-            f"""
-            <svg class="icon icon-{self.icon_name} w-action-icon" aria-hidden="true">'
-                <use href="#icon-{self.icon_name}"></use>
+            """
+            <svg class="icon icon-{0} w-action-icon" aria-hidden="true">
+                <use href="#icon-{0}"></use>
             </svg>
-        """
+            """.format(
+                self.icon_name
+            )
         )
 
     def render(self, request, href=None):
@@ -296,14 +353,16 @@ class UserBarLink:
         link_text = self.get_link_text(request)
 
         return format_html(
-            f"""
+            """
             <li class="w-userbar__item" role="presentation">
-                <a href="{href}" target="_parent" role="menuitem">
-                    {self.get_icon()}
-                    {link_text}
+                <a href="{0}" target="_parent" role="menuitem">
+                    {1}
+                    {2}
                 </a>
             </li>
-        """
+            """.format(
+                href, self.get_icon(), link_text
+            )
         )
 
 
@@ -343,9 +402,33 @@ class BoardMemberEditLink(UserBarLink):
         return "Edit this page"
 
 
+class EventAgendaLink(UserBarLink):
+    def render(self, request):
+        if href := self.get_href(request):
+            return super().render(request, href=href)
+
+    def get_href(self, request):
+        try:
+            slug = request.resolver_match.kwargs["slug"]
+        except KeyError:
+            return
+
+        event = LAMetroEvent.objects.get(slug=slug)
+
+        if (
+            not event.documents.exclude(note__icontains="manual")
+            .filter(note__icontains="agenda")
+            .exists()
+        ):
+            return EventService.get_manage_agenda_url(event)
+
+    def get_link_text(self, request):
+        return "Manage manual agenda"
+
+
 @hooks.register("construct_wagtail_userbar")
 def add_viewset_links(request, items):
-    items.append(BoardMemberEditLink())
+    items.extend([BoardMemberEditLink(), EventAgendaLink()])
     for link in (AlertViewSet, EventNoticeViewSet, FiscalYearCalendarViewSet):
         items.append(ViewSetLink(link))
     return items
