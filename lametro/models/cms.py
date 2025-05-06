@@ -348,7 +348,7 @@ class EventAgenda(models.Model):
     def get_url(self):
         return reverse("lametro:events", kwargs={"slug": self.event.slug})
 
-      
+
 class Tooltip(models.Model):
     include_in_dump = True
 

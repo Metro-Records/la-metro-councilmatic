@@ -284,7 +284,7 @@ class EventAgendaViewSet(SnippetViewSet):
     def get_form_class(self, *args, **kwargs):
         return EventAgendaForm
 
-      
+
 class TooltipFilterSet(django_filters.FilterSet):
     DISABLED_CHOICES = (
         ("true", "Disabled"),
