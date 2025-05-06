@@ -31,7 +31,7 @@ class EventService:
         if not event.api_source:
             return False
 
-        api_url = event.api_source.url + f"?token={TOKEN}" if TOKEN else ""
+        api_url = event.api_source.url + (f"?token={TOKEN}" if TOKEN else "")
 
         try:
             response: requests.Response = timed_get(api_url, timeout=3)

@@ -468,7 +468,7 @@ def test_delete_button_shows(
     mock_source = mocker.MagicMock()
     mock_source.url = api_source
     mocker.patch(
-        "lametro.views.LAMetroEvent.api_source",
+        "lametro.models.LAMetroEvent.api_source",
         new_callable=mocker.PropertyMock,
         return_value=mock_source,
     )
