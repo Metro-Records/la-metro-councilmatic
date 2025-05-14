@@ -150,9 +150,11 @@ Grab the values for the `AWS_ACCESS_KEY_ID` and the `AWS_SECRET_ACCESS_KEY` and 
 Now you should be able to start uploading some files!
 
 ## Review Apps
-This repo is set up to deploy review apps on Heroku, and those pull from the staging database to match the experience of deploying as closely as possible! However, note that in order to prevent unapproved model changes from effecting the staging database, migrations are prevented from running on review apps. So those will still have to be reviewed locally.
+This repo is set up to deploy review apps on Heroku, and those pull from the staging database to match the experience of deploying as closely as possible! However, note that in order to prevent unapproved model changes from effecting the staging database, migrations are prevented from running on review apps by default.
 
-### Review apps for Wagtail changes
+If a branch involves a migration, either review those changes locally, or check out the following instructions to provision and populate a database for review apps.
+
+### Review apps for Model changes
 
 1. Configure the S3 connection, as documented above.
 2. Once a release phase successfully completes, provision an Essential 0 database for your review app.
@@ -214,10 +216,6 @@ docker-compose -f docker-compose.yml -f docker-compose.locust.yml run --service-
 
 This will start the Locust web server on http://localhost:8089. For more details,
 see the [Locust documentation](https://docs.locust.io/en/stable/).
-
-## Review Apps
-
-This repo is set up to deploy review apps on Heroku, and those pull from the staging database to match the experience of deploying as closely as possible! However, note that in order to prevent unapproved model changes from effecting the staging database, migrations are prevented from running on review apps. So those will still have to be reviewed locally.
 
 ## Updating the Documentation
 

@@ -13,9 +13,10 @@ class NavigationBlock(blocks.StaticBlock):
 
         if parent_context := kwargs.get("parent_context"):
             context["navigation_items"] = {
-                section.value["heading"] or "Unnamed Section": section.value["anchor"]
+                section.value["heading"]
+                or "Unnamed Section": section.value.get("anchor")
                 for section in parent_context["page"].body
-                if section.value["anchor"]
+                if section.value.get("anchor")
             }
 
         return context
@@ -64,3 +65,12 @@ class ArticleBlock(blocks.StructBlock):
     anchor = blocks.CharBlock(
         required=False, help_text="Add anchor to enable direct links to this section"
     )
+
+
+class AsideBlock(blocks.StructBlock):
+    class Meta:
+        template = "lametro/blocks/aside.html"
+        icon = "info-circle"
+
+    heading = blocks.CharBlock(required=False)
+    text = blocks.RichTextBlock()
