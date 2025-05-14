@@ -341,8 +341,7 @@ class EventAgenda(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self):
-        if self.document:
-            self.event.documents.filter(note="Manual Agenda").delete()
+        self.event.documents.filter(note="Manual Agenda").delete()
         super().delete()
 
     def get_url(self):
