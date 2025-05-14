@@ -34,7 +34,6 @@ from lametro.views import (
     GoogleView,
     metro_login,
     metro_logout,
-    delete_submission,
     delete_event,
     manual_event_live_link,
     LAMetroArchiveSearch,
@@ -103,11 +102,6 @@ urlpatterns = [
     url(r"^metro-logout/$", metro_logout, name="metro_logout"),
     url(r"^refresh-guid/(.*)$", refresh_guid_trigger, name="refresh_guid"),
     url(r"^object-counts/(.*)$", fetch_object_counts, name="object_counts"),
-    url(
-        r"^delete-submission/(?P<event_slug>[^/]+)/$",
-        delete_submission,
-        name="delete_submission",
-    ),
     url(r"^delete-event/(?P<event_slug>[^/]+)/$", delete_event, name="delete_event"),
     url(
         r"^manual_event_link/(?P<event_slug>[^/]+)/$",

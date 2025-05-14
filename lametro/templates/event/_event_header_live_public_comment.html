@@ -1,7 +1,7 @@
 {% load wagtailcore_tags %}
 
 <section class="row">
-    {% if has_agenda and event_notices %}
+    {% if agenda.url and notices %}
     <section class="col-md-7">
     {% else %}
     <section class="col-12">
@@ -42,12 +42,12 @@
             {% endif %}
         {% endif %}
 
-        {% if web_source.url %}
+        {% if event.web_source.url %}
             <p class="small">
-                {% if not agenda_url and not uploaded_agenda_url and not uploaded_agenda_pdf %}
+                {% if not agenda.url %}
                     <span class="d-block">Not seeing an agenda? Please use this link:</span>
                 {% endif %}
-                <a href="{{web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank" aria-label="View on the {{CITY_VOCAB.SOURCE}} website - link opens in a new tab">
+                <a href="{{event.web_source.url}}" title="View on the {{CITY_VOCAB.SOURCE}} website" target="_blank" aria-label="View on the {{CITY_VOCAB.SOURCE}} website - link opens in a new tab">
                     <i class="fa fa-fw fa-external-link" aria-hidden="true"></i>
                     View on the {{CITY_VOCAB.SOURCE}} website
                 </a>
@@ -55,14 +55,14 @@
         {% endif %}
     </section>
 
-    {% if has_agenda and event_notices %}
+    {% if agenda.url and notices %}
         <article class="col-md-5">
-            {% for notice in event_notices %}
+            {% for notice in notices %}
                 {{ notice.message|richtext }}
             {% endfor %}
 
             {% if USING_ECOMMENT %}
-                {% if event_status == "ongoing" %}
+                {% if event.is_ongoing %}
                     <p>
                         <strong>On the web:</strong>
                         <a href="{{ event.ecomment_url }}" target="_blank" aria-label="Go to public comment - link opens in a new tab">
@@ -70,7 +70,7 @@
                             Go to public comment
                         </a>
                     </p>
-                {% elif event_status == "future" %}
+                {% elif not event.has_passed %}
                     <p>{{ event.UPCOMING_ECOMMENT_MESSAGE }}</p>
                 {% endif %}
             {% endif %}

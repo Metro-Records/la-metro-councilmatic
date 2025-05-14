@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.validators import URLValidator
 from django.db import models
 from django.urls import reverse
 from django import forms
@@ -7,6 +8,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from html import unescape
 
+from wagtail.documents import get_document_model
 from wagtail.models import Page, PreviewableMixin, DraftStateMixin, RevisionMixin
 from wagtail.fields import StreamField, RichTextField
 from wagtail.admin.panels import FieldPanel
@@ -291,6 +293,83 @@ class FiscalYearCalendar(models.Model):
                 "Only one calendar can exist at a time. "
                 "Please edit the existing calendar object."
             )
+
+
+class EventAgenda(models.Model):
+
+    event = models.OneToOneField(
+        "lametro.LAMetroEvent",
+        on_delete=models.CASCADE,
+        related_name="manual_agenda",
+    )
+
+    url = models.URLField(blank=True, null=True, help_text="URL to existing agenda PDF")
+
+    document = models.ForeignKey(
+        get_document_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __str__(self):
+        return f"Manual Agenda for {self.event}"
+
+    @property
+    def document_url(self):
+        return self.document.url if self.document else self.url
+
+    @property
+    def status_string(self):
+        if (
+            self.event.documents.exclude(note__icontains="manual")
+            .filter(note__icontains="agenda")
+            .exists()
+        ):
+            return "Superseded"
+        return "Live"
+
+    @property
+    def live(self):
+        return self.status_string == "Live"
+
+    def clean(self):
+        """
+        Ensure that either a URL or a file is provided, but not both or neither.
+        """
+        if bool(self.url) == bool(self.document):
+            raise ValidationError(
+                "Please provide either a URL or a file, not both or neither."
+            )
+
+        if self.url:
+            try:
+                validator = URLValidator()
+                validator(self.url)
+            except ValidationError:
+                raise ValidationError({"url": "Please enter a valid URL."})
+
+    def save(self, *args, **kwargs):
+        from opencivicdata.legislative.models import EventDocument
+
+        document_obj, _ = EventDocument.objects.get_or_create(
+            event=self.event, note="Manual Agenda"
+        )
+
+        document_url = self.document.url if self.document else self.url
+
+        document_obj.links.update_or_create(
+            document=document_obj, defaults={"url": document_url}
+        )
+
+        super().save(*args, **kwargs)
+
+    def delete(self):
+        self.event.documents.filter(note="Manual Agenda").delete()
+        super().delete()
+
+    def get_url(self):
+        return reverse("lametro:events", kwargs={"slug": self.event.slug})
 
 
 class Tooltip(models.Model):
