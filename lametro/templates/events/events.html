@@ -54,7 +54,7 @@
 
             {% if future_events %}
                 <div class="row mt-4">
-                    <div>
+                    <div class="mb-3">
                         <h2 class="d-inline" id="upcoming-meetings">
                             <span>Upcoming {{ CITY_VOCAB.EVENTS }}</span>
                         </h2>
@@ -64,9 +64,7 @@
                             </a>
                         </small>
                     </div>
-                    <p class="mt-3 mt-sm-0">
-                        {% fiscal_year_calendar %}
-                    </p>
+                    {% fiscal_year_calendars %}
                 </div>
 
                 <div class='row'>
