@@ -268,6 +268,11 @@ class EventNotice(models.Model):
 class FiscalYearCalendar(models.Model):
     include_in_dump = True
 
+    TYPE_CHOICES = [
+        ("current", "Current"),
+        ("upcoming", "Upcoming"),
+    ]
+
     title = models.CharField(max_length=256, blank=True, null=True)
     calendar = models.ForeignKey(
         "wagtaildocs.Document",
@@ -276,23 +281,36 @@ class FiscalYearCalendar(models.Model):
         on_delete=models.SET_NULL,
         related_name="+",
     )
+    cal_type = models.CharField(
+        choices=TYPE_CHOICES, max_length=20, null=True, verbose_name="Calendar Type"
+    )
 
     panels = [
         FieldPanel("title"),
         FieldPanel("calendar"),
+        FieldPanel("cal_type"),
     ]
 
     def __str__(self):
         return self.title
 
     def clean(self):
-        # Ensure that only one calendar exists at a time
+        # Ensure that only one calendar for each type exists at a time
         model = self.__class__
-        if model.objects.count() > 0 and self.id != model.objects.get().id:
+        num_types = len(self.TYPE_CHOICES)
+        is_new_cal = not model.objects.filter(id=self.id).exists()
+
+        if model.objects.count() >= num_types and is_new_cal:
             raise ValidationError(
-                "Only one calendar can exist at a time. "
-                "Please edit the existing calendar object."
+                f"Only {num_types} calendars can exist at a time. "
+                "Please edit the existing calendars."
             )
+        elif (filtered_cal := model.objects.filter(cal_type=self.cal_type)).exists():
+            if filtered_cal.first().id != self.id:
+                raise ValidationError(
+                    "Only one calendar of each type can exist at a time. "
+                    f"Please edit the existing '{self.cal_type}' calendar."
+                )
 
 
 class EventAgenda(models.Model):
