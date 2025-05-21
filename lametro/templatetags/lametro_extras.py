@@ -358,7 +358,9 @@ def bill_status_from_last_action(description):
 @register.inclusion_tag("snippets/fiscal_year_calendars.html", takes_context=True)
 def fiscal_year_calendars(context):
     return {
-        "fiscal_year_calendars": FiscalYearCalendar.objects.all(),
+        "fiscal_year_calendars": FiscalYearCalendar.objects.filter(
+            calendar__isnull=False
+        ),
         "request": context["request"],
     }
 
