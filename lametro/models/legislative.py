@@ -769,7 +769,9 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         Otherwise, return an empty queryset.
         """
-        scheduled_meetings = cls._potentially_current_meetings()
+        scheduled_meetings = cls._potentially_current_meetings().exclude(
+            name__icontains="test"
+        )
 
         if scheduled_meetings:
             streaming_meeting = cls._streaming_meeting()
@@ -929,9 +931,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         today_utc = today_la.astimezone(pytz.utc)
         tomorrow_utc = today_utc + timedelta(days=1)
 
-        return cls.objects.filter(
-            start_time__gte=today_utc, start_time__lt=tomorrow_utc
-        ).prefetch_related("broadcast", "location")
+        return (
+            cls.objects.filter(start_time__gte=today_utc, start_time__lt=tomorrow_utc)
+            .exclude(name__icontains="test")
+            .prefetch_related("broadcast", "location")
+        )
 
     @property
     def display_status(self):
