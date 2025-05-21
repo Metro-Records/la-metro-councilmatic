@@ -413,7 +413,10 @@ class EventAgendaLink(UserBarLink):
         except KeyError:
             return
 
-        event = LAMetroEvent.objects.get(slug=slug)
+        try:
+            event = LAMetroEvent.objects.get(slug=slug)
+        except LAMetroEvent.DoesNotExist:
+            return
 
         if (
             not event.documents.exclude(note__icontains="manual")
