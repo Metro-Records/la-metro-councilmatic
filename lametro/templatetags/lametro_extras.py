@@ -355,10 +355,12 @@ def bill_status_from_last_action(description):
     return None
 
 
-@register.inclusion_tag("snippets/fiscal_year_calendar.html", takes_context=True)
-def fiscal_year_calendar(context):
+@register.inclusion_tag("snippets/fiscal_year_calendars.html", takes_context=True)
+def fiscal_year_calendars(context):
     return {
-        "fiscal_year_calendar": FiscalYearCalendar.objects.first(),
+        "fiscal_year_calendars": FiscalYearCalendar.objects.filter(
+            calendar__isnull=False
+        ),
         "request": context["request"],
     }
 

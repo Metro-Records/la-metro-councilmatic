@@ -231,14 +231,11 @@ class FiscalYearCalendarViewSet(SnippetViewSet):
     base_url_path = "fiscal_year_calendar"
     menu_icon = "calendar-alt"
     menu_order = 202
-    menu_label = "Fiscal Year Calendar"
+    menu_label = "Fiscal Year Calendars"
     add_to_settings_menu = False
     exclude_from_explorer = False
     add_to_admin_menu = True
-    list_display = (
-        "title",
-        "calendar",
-    )
+    list_display = ("title", "calendar", "cal_type")
 
 
 class EventAgendaForm(forms.ModelForm):
