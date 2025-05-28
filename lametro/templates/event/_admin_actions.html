@@ -1,0 +1,104 @@
+{% load lametro_extras %}
+
+{% get_events_with_manual_broadcasts as manual_events %}
+<div class="card p-0 my-3">
+    <div class="card-header">
+        <i class= "fa fa-fw fa-wrench fa-fw" aria-hidden="true"></i>
+        Admin Actions
+    </div>
+    <ul class="list-group list-group-flush p-2">
+        <li class="list-group-item">
+            <small class="d-inline-flex align-items-center mb-2 text-secondary">
+                <span class="me-2">Legistar status:</span>
+                <span class="badge text-bg-secondary d-inline-flex align-items-center">
+                    {% if legistar_ok %}
+                    <span class="badge bg-success rounded-circle border border-light me-2">&nbsp;</span>
+                    <span>Online</span>
+                    {% else %}
+                    <span class="badge bg-danger rounded-circle border border-light me-2">&nbsp;</span>
+                    <span>Outage detected</span>
+                    {% endif %}
+                </span>
+            </small>
+            <p class="card-text fw-bold">
+                {% if legistar_ok %}
+                    Our system does not detect a Legistar outage. We advise against taking admin actions!
+                {% else %}
+                    Our system detects a Legistar outage. Proceed with taking the appropriate admin actions.
+                {% endif %}
+            </p>
+        </li>
+        {% if legistar_ok and not event_ok %}
+            <li class="list-group-item">
+                <p class="card-text">This event does not exist in Legistar. It may have been deleted from Legistar due to being a duplicate. To delete this event, click the button below.</p>
+                <p>
+                    <a href="{% url 'delete_event' event.slug %}" class='btn btn-teal' style="margin-bottom: 20px"><i class="fa fa-fw fa-times" aria-hidden="true"></i> Delete Event</a>
+                </p>
+            </li>
+        {% endif %}
+        {% if event.status != 'cancelled' %}
+            <li class="list-group-item">
+                {% if event.has_manual_broadcast and event.media.exists %}
+                    <p class="card-text">
+                        This event now has a proper broadcast link, and the previous manual broadcast can now be unpublished.
+                        Please unpublish the manual link.
+                    </p>
+                    <p>
+                        <a href="{% url 'manual_event_live_link' event.slug %}" class="btn btn-teal"><i class= "fa fa-fw fa-headphones" aria-hidden="true"></i> Unpublish Watch Live Link</a>
+                    </p>
+                {% elif event.media.all.exists %}
+                    <p class="card-text">This event has a proper broadcast link, and cannot have a manual broadcast published.</p>
+                {% elif not event.has_manual_broadcast and manual_events|length >= 1 %}
+                    <p class="card-text">
+                        Please unpublish any existing manually live links before publishing this one.
+                        The following event already has a manual broadcast at the moment:
+                    </p>
+                    <ul>
+                        {% for m_event in manual_events %}
+                            <li style="font-size:16px">
+                                <a href="/event/{{m_event.slug}}">{{m_event.name}}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <p>
+                        <button class='btn btn-teal' disabled><i class="fa fa-fw fa-headphones" aria-hidden="true"></i> Publish Watch Live Link</button>
+                    </p>
+                {% elif not event.has_manual_broadcast %}
+                    <p class="card-text">
+                        Publish a "Watch Live" link for this meeting.
+                        Once the scheduled end time has passed, you will be responsible for undoing this change.
+                    </p>
+                    <p>
+                        <a href="{% url 'manual_event_live_link' event.slug %}" class="btn btn-teal"><i class= "fa fa-fw fa-headphones" aria-hidden="true"></i> Publish Watch Live Link</a>
+                    </p>
+                {% else %}
+                    <p class="card-text">
+                        This meeting currently has a manually published "Watch Live" link.
+                        Once the scheduled end time has passed, you will be responsible for unpublishing this link.
+                    </p>
+                    <p>
+                        <a href="{% url 'manual_event_live_link' event.slug %}" class="btn btn-teal"><i class= "fa fa-fw fa-headphones" aria-hidden="true"></i> Unpublish Watch Live Link</a>
+                    </p>
+                {% endif %}
+            </li>
+            <li class="list-group-item">
+                {% if agenda.manual %}
+                    <p class="card-text">This event has a manually uploaded agenda. Not what you expect? Click the button below to update or remove it.</p>
+                    <p>
+                        <a class='btn btn-teal' href="{{ manage_agenda_url }}"><i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i> Manage Manual Agenda</a>
+                    </p>
+                {% elif agenda.url %}
+                    <p class="card-text">This event's agenda has been scraped.{% if event.manual_agenda %} This event also has a manually uploaded agenda. Click the button below to remove it.</p>
+                    <p>
+                        <a class='btn btn-teal' href="{{ manage_agenda_url }}"><i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i> Manage Manual Agenda</a>
+                    {% endif %}</p>
+                {% else %}
+                    <p class="card-text">Upload an agenda for this event.</p>
+                    <p>
+                        <a class='btn btn-teal' href="{{ manage_agenda_url }}"><i class="fa fa-fw fa-file-text-o" aria-hidden="true"></i> Upload Manual Agenda</a>
+                    </p>
+                {% endif %}
+            </li>
+        {% endif %}
+    </ul>
+</div>

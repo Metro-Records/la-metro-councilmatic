@@ -1,8 +1,3 @@
-import requests
-
-from django import forms
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
 from captcha.fields import ReCaptchaField
 from captcha.fields import ReCaptchaV3
 from haystack.backends import SQ
@@ -10,7 +5,6 @@ from haystack.inputs import Raw
 from haystack.query import EmptySearchQuerySet
 
 from councilmatic_core.views import CouncilmaticSearchForm
-from lametro.models import LAMetroPerson
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
@@ -102,82 +96,3 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
                 sqs = self._full_text_search(sqs) | self._topic_search(sqs)
 
         return sqs
-
-
-class AgendaUrlForm(forms.Form):
-    agenda = forms.CharField(
-        label="Agenda URL",
-        max_length=500,
-        error_messages={"required": "Whoops! Please provide a valid URL."},
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Enter URL...",
-                "id": "agenda_url",
-            }
-        ),
-    )
-
-    def clean_agenda(self):
-        agenda_url = self.cleaned_data["agenda"]
-
-        try:
-            r = requests.head(agenda_url)
-            if r.status_code == 200:
-                return agenda_url
-            elif r.status_code == 404:
-                raise forms.ValidationError("Broken URL! Returns a 404.")
-        except requests.exceptions.MissingSchema:
-            raise forms.ValidationError(
-                "Not a valid URL! Check your link, and resubmit."
-            )
-
-
-class AgendaPdfForm(forms.Form):
-    agenda = forms.FileField(
-        label="Agenda PDF",
-        error_messages={"required": "Oh no! Please provide a valid PDF."},
-        widget=forms.FileInput(
-            attrs={"id": "pdf-form-input", "onchange": "previewPDF(this);"}
-        ),
-    )
-
-    def clean_agenda(self):
-        agenda_pdf = self.cleaned_data["agenda"]
-
-        if isinstance(
-            agenda_pdf, InMemoryUploadedFile
-        ) and agenda_pdf.name.lower().endswith("pdf"):
-            return agenda_pdf
-        else:
-            raise forms.ValidationError("File type not supported. Please submit a PDF.")
-
-
-class PersonHeadshotForm(forms.ModelForm):
-    headshot_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
-
-    def __init__(self, *args, **kwargs):
-        super(PersonHeadshotForm, self).__init__(*args, **kwargs)
-        self.fields["headshot"].widget.attrs.update(
-            {
-                "required": "True",
-            }
-        )
-
-    class Meta:
-        model = LAMetroPerson
-        fields = ["headshot"]
-
-
-class PersonBioForm(forms.ModelForm):
-    bio_form = forms.BooleanField(widget=forms.HiddenInput, initial=True)
-
-    def __init__(self, *args, **kwargs):
-        super(PersonBioForm, self).__init__(*args, **kwargs)
-        self.fields["councilmatic_biography"].widget.attrs.update(
-            {"rows": "5", "required": "True"}
-        )
-
-    class Meta:
-        model = LAMetroPerson
-        fields = ["councilmatic_biography"]

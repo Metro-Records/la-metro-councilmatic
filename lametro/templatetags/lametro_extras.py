@@ -14,7 +14,13 @@ from councilmatic.settings_jurisdiction import (
 from councilmatic.settings import PIC_BASE_URL
 from councilmatic_core.models import Person, Bill
 
-from lametro.models import app_timezone, Alert, EventBroadcast
+from lametro.models import (
+    app_timezone,
+    Alert,
+    EventBroadcast,
+    FiscalYearCalendar,
+    Tooltip,
+)
 from lametro.utils import ExactHighlighter, format_full_text, parse_subject
 
 
@@ -332,7 +338,7 @@ def sort_topics(topics):
 
 @register.simple_tag
 def get_alerts():
-    return Alert.objects.all()
+    return Alert.objects.exclude(expiration__lt=timezone.now())
 
 
 @register.simple_tag
@@ -347,3 +353,33 @@ def bill_status_from_last_action(description):
     if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
         return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
     return None
+
+
+@register.inclusion_tag("snippets/fiscal_year_calendars.html", takes_context=True)
+def fiscal_year_calendars(context, stacked=True):
+    return {
+        "fiscal_year_calendars": FiscalYearCalendar.objects.filter(
+            calendar__isnull=False
+        ),
+        "stacked": stacked,
+        "request": context["request"],
+    }
+
+
+@register.inclusion_tag("snippets/tooltip.html")
+def show_tooltip(label):
+    if "Legislation" in label:
+        tooltip_label = "Board Report Type"
+    elif "Sponsor" in label:
+        tooltip_label = "Meeting"
+    elif "Legislative Session" in label:
+        tooltip_label = "Fiscal Year"
+    else:
+        tooltip_label = label
+
+    pattern = re.compile(r"[\W_]+")
+    tooltip_value = pattern.sub("_", tooltip_label.lower())
+
+    if Tooltip.objects.filter(target=tooltip_value).exists():
+        tooltip = Tooltip.objects.get(target=tooltip_value)
+        return {"tooltip": tooltip.content} if not tooltip.disabled else None
