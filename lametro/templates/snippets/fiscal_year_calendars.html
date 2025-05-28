@@ -7,12 +7,10 @@
 
     <div>
         {% for calendar in fiscal_year_calendars %}
-            {% if calendar.calendar %}
-                <a href="{{ calendar.calendar.url }}" target="_blank" class="btn btn-link" aria-label="{{ calendar.title }} - link opens in a new tab">
-                    <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                    {{ calendar.title }}
-                </a>
-            {% endif %}
+            <a href="{{ calendar.calendar.url }}" target="_blank" class="btn btn-link {% if stacked %}d-block{% endif %}" aria-label="{{ calendar.title }} - link opens in a new tab">
+                <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+                {{ calendar.title }}
+            </a>
         {% empty %}
             <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2025 (PDF) - link opens in a new tab">
                 <i class="fa fa-fw fa-download" aria-hidden="true"></i>
