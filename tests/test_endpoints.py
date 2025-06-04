@@ -33,6 +33,4 @@ def test_urls_accessibility(
 
     url = reverse(url_name)
     response = client.get(url)
-    assert (
-        response.status_code == 200
-    ), f"URL '{url}' returned status code {response.status_code}"
+    assert response.status_code == 200, f"{url} should return 200 status code"
