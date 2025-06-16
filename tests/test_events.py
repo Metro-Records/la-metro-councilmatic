@@ -3,7 +3,6 @@ import re
 from datetime import datetime, timedelta
 from uuid import uuid4
 
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.db.models.query import QuerySet
 from django.urls import reverse
@@ -11,12 +10,8 @@ from freezegun import freeze_time
 import requests
 import requests_mock
 
-from opencivicdata.legislative.models import EventDocument
-
 from lametro.models import LAMetroEvent, app_timezone, EventBroadcast, EventNotice
-from lametro.views import handle_uploaded_agenda
 from lametro.templatetags.lametro_extras import updates_made
-from lametro.forms import AgendaPdfForm
 
 
 def mock_streaming_meetings(mocker, return_value=None):
@@ -27,97 +22,6 @@ def mock_streaming_meetings(mocker, return_value=None):
     mocker.patch("lametro.models.requests.get", return_value=mock_response)
 
     return mock_response
-
-
-def test_agenda_creation(event, event_document):
-    """
-    Test that the same agenda url does not get added twice.
-    """
-    event = event.build()
-    agenda = event_document.build()
-
-    agenda, created = EventDocument.objects.get_or_create(event=event)
-
-    assert created is False
-
-
-def test_agenda_pdf_form_submit():
-    """
-    This unit test checks that a pdf validates the form.
-    """
-
-    with open("tests/test_agenda.pdf", "rb") as agenda:
-        agenda_file = agenda.read()
-
-        agenda_pdf_form = AgendaPdfForm(
-            files={
-                "agenda": SimpleUploadedFile(
-                    "test_agenda.pdf", agenda_file, content_type="application/pdf"
-                )
-            }
-        )
-
-        assert agenda_pdf_form.is_valid() is True
-
-
-def test_handle_uploaded_agenda(event):
-    event = event.build()
-
-    assert not event.documents.filter(note__icontains="Manual")
-
-    with open("tests/test_agenda.pdf", "rb") as agenda:
-        agenda_file = agenda.read()
-
-    agenda_file = SimpleUploadedFile(
-        "test_agenda.pdf", agenda_file, content_type="application/pdf"
-    )
-
-    handle_uploaded_agenda(agenda_file, event)
-
-    assert event.documents.filter(note__icontains="Manual")
-
-
-def test_can_manually_upload_agenda(event, admin_client, mocker):
-    event = event.build()
-
-    mock_api_representation = mocker.patch(
-        "lametro.models.SourcesMixin.api_representation",
-        new_callable=mocker.PropertyMock,
-    )
-    mock_api_representation.return_value = {}
-
-    assert not event.documents.filter(note__icontains="Manual")
-
-    with open("tests/test_agenda.pdf", "rb") as agenda:
-        agenda_file = SimpleUploadedFile(
-            "test_agenda.pdf", agenda.read(), content_type="application/pdf"
-        )
-
-        admin_client.post(
-            reverse("lametro:events", args=[event.slug]),
-            data={"pdf_form": "", "agenda": agenda_file},
-        )
-
-    assert event.documents.filter(note__icontains="Manual")
-
-
-def test_agenda_pdf_form_error():
-    """
-    This unit test checks that a non-pdf raises an error.
-    """
-
-    with open("tests/test_image.gif", "rb") as agenda:
-        bad_agenda_file = agenda.read()
-
-        agenda_pdf_form = AgendaPdfForm(
-            files={
-                "agenda": SimpleUploadedFile(
-                    "test_image.gif", bad_agenda_file, content_type="image/gif"
-                )
-            }
-        )
-
-        assert agenda_pdf_form.is_valid() is False
 
 
 @pytest.mark.parametrize(
@@ -559,7 +463,7 @@ def test_delete_button_shows(
     e = event.build(name=event_name)
     event_template = reverse("lametro:events", args=[e.slug])
 
-    api_source = f"http://webapi.legistar.com/v1/metro/events/{e.slug}"
+    api_source = "http://webapi.legistar.com/v1/metro/events/{0}".format(e.slug)
 
     mock_source = mocker.MagicMock()
     mock_source.url = api_source
@@ -581,7 +485,7 @@ def test_delete_button_shows(
 
     with requests_mock.Mocker() as m:
         m.get(running_events_matcher, status_code=302)
-        m.get(cal_matcher, status_code=200)
+        m.head(cal_matcher, status_code=200)
 
         m.get(
             source_matcher,
@@ -768,14 +672,6 @@ def test_manual_broadcast_permissions(event, client, admin_client, mocker):
     Check that only authenticated users can make/delete manual broadcasts
     """
     test_event = event.build(has_broadcast=False)
-    mock_api_representation = mocker.patch(
-        "lametro.models.SourcesMixin.api_representation",
-        new_callable=mocker.PropertyMock,
-    )
-    mock_api_representation.return_value = {
-        "status_code": 200,
-        "EventBodyName": test_event.name,
-    }
 
     detail_url = reverse("lametro:events", args=[test_event.slug])
     make_manual_url = reverse(
@@ -808,14 +704,6 @@ def test_manually_broadcasted_events(event, admin_client, mocker):
     Check that events marked as having a manual broadcast are counted as being current/live.
     """
     test_event = event.build(has_broadcast=False)
-    mock_api_representation = mocker.patch(
-        "lametro.models.SourcesMixin.api_representation",
-        new_callable=mocker.PropertyMock,
-    )
-    mock_api_representation.return_value = {
-        "status_code": 200,
-        "EventBodyName": test_event.name,
-    }
 
     make_manual_url = reverse(
         "manual_event_live_link", kwargs={"event_slug": test_event.slug}

@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ -n "${PRODUCTION}" ] || [ -n "${STAGING}" ]; then
+if [ -n "${PRODUCTION}" ] || [ -n "${STAGING}" ] || [ -n "${WAGTAIL_STAGING}" ]; then
     set -euo pipefail
 
     python manage.py migrate --noinput

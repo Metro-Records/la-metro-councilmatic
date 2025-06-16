@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static wagtailcore_tags lametro_extras %}
 {% block title %}Home{% endblock %}
 
 {% block extra_css %}
@@ -78,24 +78,8 @@
                     </div>
 
                     <div class="col-lg-7 d-flex">
-                        <div class="ms-lg-auto d-inline-block mt-2">
-                            <p class="mb-0">
-                            <div class="d-flex">
-                                <div class="mt-2">
-                                    Download event calendar:
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2025 (PDF) - link opens in a new tab">
-                                        <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                        Fiscal Year 2025 (PDF)
-                                    </a>
-                                    <a href="{% static 'pdf/fy26-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2026 (PDF) - link opens in a new tab">
-                                        <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                        Fiscal Year 2026 (PDF)
-                                    </a>
-                                </div>
-                            </div>
-                            </p>
+                        <div class="ms-lg-auto d-inline-block mt-3">
+                            {% fiscal_year_calendars %}
                         </div>
                     </div>
                 </div>
@@ -134,23 +118,8 @@
                     </div>
 
                     <div class="col-lg-7 d-flex">
-                        <div class="ms-lg-auto d-inline-block mt-2">
-                            <p class="mb-0">
-                            <div class="d-flex">
-                                <div class="mt-2">
-                                    Download event calendar:
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2025 (PDF) - link opens in a new tab">
-                                        <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                        Fiscal Year 2025 (PDF)
-                                    </a>
-                                    <a href="{% static 'pdf/fy26-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2026 (PDF) - link opens in a new tab">
-                                        <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                        Fiscal Year 2026 (PDF)
-                                    </a>
-                                </div>
-                            </div></p>
+                        <div class="ms-lg-auto d-inline-block mt-3">
+                            {% fiscal_year_calendars %}
                         </div>
                     </div>
                 </div>

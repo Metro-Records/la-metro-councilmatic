@@ -1,6 +1,6 @@
 {% extends "base_with_margins.html" %}
 
-{% load static %}
+{% load static wagtailcore_tags lametro_extras %}
 
 {% block title %}Events{% endblock %}
 
@@ -54,7 +54,7 @@
 
             {% if future_events %}
                 <div class="row mt-4">
-                    <div>
+                    <div class="mb-3">
                         <h2 class="d-inline" id="upcoming-meetings">
                             <span>Upcoming {{ CITY_VOCAB.EVENTS }}</span>
                         </h2>
@@ -64,17 +64,7 @@
                             </a>
                         </small>
                     </div>
-                    <p class="mt-3 mt-sm-0">
-                        <span>Download event calendar:</span>
-                        <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link pt-0 d-block d-sm-inline text-start" aria-label="Fiscal Year 2025 (PDF) - link opens in a new tab">
-                            <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                            Fiscal Year 2025 (PDF)
-                        </a>
-                        <a href="{% static 'pdf/fy26-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link pt-0 d-block d-sm-inline text-start" aria-label="Fiscal Year 2026 (PDF) - link opens in a new tab">
-                            <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                            Fiscal Year 2026 (PDF)
-                        </a>
-                    </p>
+                    {% fiscal_year_calendars stacked=False %}
                 </div>
 
                 <div class='row'>

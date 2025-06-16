@@ -1,0 +1,21 @@
+{% load static %}
+
+<div class="d-lg-flex">
+    <p class="mb-0 py-2">
+        <span>Download event calendar:</span>
+    </p>
+
+    <div>
+        {% for calendar in fiscal_year_calendars %}
+            <a href="{{ calendar.calendar.url }}" target="_blank" class="btn btn-link {% if stacked %}d-block{% endif %}" aria-label="{{ calendar.title }} - link opens in a new tab">
+                <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+                {{ calendar.title }}
+            </a>
+        {% empty %}
+            <a href="{% static 'pdf/fy25-committee-board-calendar.pdf' %}" target="_blank" class="btn btn-link" aria-label="Fiscal Year 2025 (PDF) - link opens in a new tab">
+                <i class="fa fa-fw fa-download" aria-hidden="true"></i>
+                Fiscal Year 2025 (PDF)
+            </a>
+        {% endfor %}
+    </div>
+</div>
