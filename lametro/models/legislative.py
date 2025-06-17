@@ -730,9 +730,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         Otherwise, return an empty queryset.
         """
-        scheduled_meetings = cls._potentially_current_meetings().exclude(
-            name__icontains="test"
-        )
+        scheduled_meetings = cls._potentially_current_meetings()
 
         if scheduled_meetings:
             streaming_meeting = cls._streaming_meeting()
