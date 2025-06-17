@@ -594,6 +594,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         meetings_in_past_two_weeks = (
             cls.objects.with_media()
+            .exclude(name__icontains="test")
             .filter(start_time__gte=two_weeks_ago)
             .order_by("-start_time")
             .prefetch_related("broadcast")
