@@ -215,7 +215,7 @@ class LAMetroEventsView(EventsView):
         )
 
         # A base queryset for non-test objects with media
-        media_events = LAMetroEvent.objects.with_media().exclude(name__icontains="test")
+        media_events = LAMetroEvent.objects.with_media()
 
         # Did the user set date boundaries?
         start_date_str = self.request.GET.get("from")

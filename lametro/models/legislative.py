@@ -470,16 +470,14 @@ class LAMetroPerson(Person, SourcesMixin):
 class LAMetroEventManager(EventManager):
     def get_queryset(self):
         """
-        If SHOW_TEST_EVENTS is False, omit them from the initial queryset.
-
         NOTE: Be sure to use LAMetroEvent, rather than the base Event class,
         when getting event querysets. If a test event slips through, it is
         likely because we used the default Event to get the queryset.
         """
-        if settings.SHOW_TEST_EVENTS:
-            return super().get_queryset()
+        return super().get_queryset().exclude(location__name__icontains="test")
 
-        return super().get_queryset().exclude(location__name="TEST")
+    def including_test_events(self):
+        return super().get_queryset()
 
     def with_media(self):
         """
@@ -594,7 +592,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
         meetings_in_past_two_weeks = (
             cls.objects.with_media()
-            .exclude(name__icontains="test")
             .filter(start_time__gte=two_weeks_ago)
             .order_by("-start_time")
             .prefetch_related("broadcast")
@@ -666,7 +663,8 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         )
 
         return (
-            cls.objects.prefetch_related("broadcast")
+            cls.objects.including_test_events()
+            .prefetch_related("broadcast")
             .filter(
                 start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
             )
@@ -795,7 +793,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
                 )
             )
             .order_by("start_time", "is_board_meeting")
-        ).exclude(name__icontains="test")
+        )
 
         if not cls.upcoming_board_meetings().exists():
             return meetings[:5]
@@ -891,11 +889,9 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         today_utc = today_la.astimezone(pytz.utc)
         tomorrow_utc = today_utc + timedelta(days=1)
 
-        return (
-            cls.objects.filter(start_time__gte=today_utc, start_time__lt=tomorrow_utc)
-            .exclude(name__icontains="test")
-            .prefetch_related("broadcast", "location")
-        )
+        return cls.objects.filter(
+            start_time__gte=today_utc, start_time__lt=tomorrow_utc
+        ).prefetch_related("broadcast", "location")
 
     @property
     def display_status(self):
