@@ -26,10 +26,6 @@
       "description": "URI for ElasticSearch instance. Provisioned in deployment by Heroku.",
       "required": true
     },
-    "SHOW_TEST_EVENTS": {
-      "description": "Whether to show test events on the website.",
-      "required": true
-    },
     "MERGE_HOST": {
       "description": "URL for S3 Bucket containing merged document packets.",
       "required": true
@@ -119,9 +115,6 @@
         },
         "API_KEY": {
           "value": "testapikey"
-        },
-        "SHOW_TEST_EVENTS": {
-          "value": "True"
         },
         "SMART_LOGIC_ENVIRONMENT": {
           "value": "d3807554-347e-4091-90ea-f107a906aaff"

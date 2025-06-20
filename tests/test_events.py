@@ -2,6 +2,7 @@ import pytest
 import re
 from datetime import datetime, timedelta
 from uuid import uuid4
+from unittest.mock import patch
 
 from django.core.management import call_command
 from django.db.models.query import QuerySet
@@ -9,6 +10,8 @@ from django.urls import reverse
 from freezegun import freeze_time
 import requests
 import requests_mock
+
+from opencivicdata.legislative.models import EventLocation
 
 from lametro.models import LAMetroEvent, app_timezone, EventBroadcast, EventNotice
 from lametro.templatetags.lametro_extras import updates_made
@@ -612,11 +615,11 @@ def test_live_comment_details_display_as_expected(
 
 
 @pytest.mark.django_db
-def test_exclude_events_with_test_in_name(event, client):
-    """
-    Check that events with 'test' in the name are not getting displayed, but that regular events are still present.
-    """
-    event_test = event.build(name="Test - Live Regular Meeting Test")
+def test_test_events_not_shown_on_event_listing(event, client, jurisdiction):
+    test_location = EventLocation.objects.create(
+        name="test test test", jurisdiction=jurisdiction
+    )
+    event_test = event.build(location=test_location)
     event_regular = event.build(name="Live Regular Meeting", id=101)
 
     # Check the events calendar
@@ -626,22 +629,55 @@ def test_exclude_events_with_test_in_name(event, client):
     assert event_test.name not in response.content.decode("utf-8")
     assert event_regular.name in response.content.decode("utf-8")
 
-    # Check the homepage for upcoming events
-    next_year = str(datetime.now().year + 1)
-    event_test = event.build(
-        name="Test - Live Regular Meeting Test",
-        id=102,
-        start_date=next_year + "-05-18 12:15",
+
+@pytest.mark.django_db
+def test_test_events_only_shown_on_homepage_when_current(event, client, jurisdiction):
+    test_location = EventLocation.objects.create(
+        name="test test test", jurisdiction=jurisdiction
     )
+
+    event_date = datetime.now() + timedelta(days=1)
+    event_date_str = (event_date + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M")
+
+    # Check the homepage for upcoming events
+    event_test = event.build(id=102, start_date=event_date_str, location=test_location)
     event_regular = event.build(
-        name="Live Regular Meeting", id=103, start_date=next_year + "-05-18 12:15"
+        name="Live Regular Meeting", id=103, start_date=event_date_str
     )
 
     url = reverse("lametro:index")
     response = client.get(url)
 
+    # Assert test event not shown in upcoming meetings
     assert event_test.name not in response.content.decode("utf-8")
     assert event_regular.name in response.content.decode("utf-8")
+
+    with freeze_time(event_date):
+        # Assert test event not shown in today's meetings
+        response = client.get(url)
+        assert event_test.name not in response.content.decode("utf-8")
+        assert event_regular.name in response.content.decode("utf-8")
+
+        streaming_test_event = LAMetroEvent.objects.including_test_events().filter(
+            id=event_test.id
+        )
+
+        with patch.object(
+            LAMetroEvent, "current_meeting", return_value=streaming_test_event
+        ):
+            # Assert test event shown in current meeting block when streaming
+            response = client.get(url)
+            assert event_test.name in response.content.decode("utf-8")
+            assert event_regular.name in response.content.decode("utf-8")
+
+    with freeze_time(event_date + timedelta(days=1)):
+        # Assert test event not shown in recent meetings
+        for e in (event_test, event_regular):
+            EventBroadcast.objects.create(event=e)
+
+        response = client.get(url)
+        assert event_test.name not in response.content.decode("utf-8")
+        assert event_regular.name in response.content.decode("utf-8")
 
 
 @pytest.mark.django_db
