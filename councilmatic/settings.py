@@ -15,7 +15,6 @@ env = environ.Env(
     COUNCILMATIC_SUPPRESS_LIVE_MEDIA=(list, []),
     DATABASE_URL=(str, "postgis://postgres:postgres@postgres:5432/lametro"),
     SEARCH_URL=(str, os.getenv("SEARCHBOX_URL", "http://elasticsearch:9200")),
-    SHOW_TEST_EVENTS=(bool, False),
     MERGE_HOST=(str, "https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/"),
     MERGE_ENDPOINT=(
         str,
@@ -51,7 +50,6 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
 
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG")
-SHOW_TEST_EVENTS = env.bool("SHOW_TEST_EVENTS")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 
 # Derive allowed origins from configured hosts
