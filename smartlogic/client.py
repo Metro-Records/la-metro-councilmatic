@@ -1,5 +1,6 @@
 from django.conf import settings
 
+# TODO: might not be needed
 try:
     assert settings.SMART_LOGIC_ENVIRONMENT
 except AssertionError:
@@ -23,8 +24,8 @@ from smartlogic.exceptions import (
 
 
 class SmartLogic(object):
-    BASE_URL = "https://cloud.smartlogic.com"
-    SERVICE_URL = f"/svc/{settings.SMART_LOGIC_ENVIRONMENT}/ses/CombinedModel"
+    BASE_URL = "https://metro.data.progress.cloud"
+    SERVICE_URL = f"/semantic/{'test' if settings.DEBUG else 'prod'}/CombinedModel"
 
     def __init__(self, api_key, authorization=None):
         self.api_key = api_key
