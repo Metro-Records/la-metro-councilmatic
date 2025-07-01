@@ -146,8 +146,15 @@
                 {% endfor %}
                 </ul>
 
-                <a href="#" class="btn btn-primary mb-5" id="more-events"><i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings</a>
-                <a href="#" class="btn btn-primary mb-5" id="fewer-events"><i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings</a>
+                {% if 'show' in request.GET and request.GET.show == 'past' %}
+                    <a href="{% url 'events' %}" class="btn btn-primary mb-5" id="fewer-events">
+                        <i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings
+                    </a>
+                {% else %}
+                    <a href="{% url 'events' %}?show=past#past-meetings" class="btn btn-primary mb-5" id="more-events">
+                        <i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings
+                    </a>
+                {% endif %}
 
             {% elif select_events %}
                 <div class="row mt-4">
