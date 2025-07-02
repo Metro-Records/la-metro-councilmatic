@@ -85,3 +85,10 @@ class SmartLogic(object):
             params=params,
             headers=self.auth_headers,
         )
+
+    def get_api_key_details(self):
+        return self.endpoint("get", "/api/account/apikey", headers=self.auth_headers)
+
+    def refresh_api_key(self):
+        """Returns a new key that expires in 90 days"""
+        return self.endpoint("put", "/api/account/apikey", headers=self.auth_headers)
