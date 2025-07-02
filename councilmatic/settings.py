@@ -361,3 +361,6 @@ REQUEST_TIMEOUT = 5
 
 WAGTAIL_SITE_NAME = "boardagendas.metro.net"
 WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL")
+
+# - Heroku (for updating config vars)
+HEROKU_KEY = env("HEROKU_KEY")
