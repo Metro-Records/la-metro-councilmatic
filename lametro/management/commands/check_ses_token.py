@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from datetime import datetime, timedelta
 
 from smartlogic.client import SmartLogic
+from lametro.exceptions import HerokuRequestError
 
 
 class Command(BaseCommand):
@@ -79,7 +80,9 @@ class Command(BaseCommand):
 
             for app in environments:
                 url = f"https://api.heroku.com/apps/la-metro-councilmatic-{app}/config-vars"
-                requests.patch(url, headers=headers, data=json.dumps(data))
+                res = requests.patch(url, headers=headers, data=json.dumps(data))
+                if res.status_code != 200:
+                    raise HerokuRequestError(response=res)
 
             self.stdout.write(
                 f"~~ Config vars updated for: {', '.join(environments)} ~~"
