@@ -10,23 +10,37 @@ from smartlogic.client import SmartLogic
 
 class Command(BaseCommand):
     """
-    Checks the expiration date on the currently used SES api key.
-    If we're two weeks away from the expiration or less, make a new key,
-    and assign it to the appropriate config variable on the production, staging,
-    and wagtail Heroku app environments.
+    Checks the expiration date on the current SES api token/key.
+    If we're two weeks away from the expiration or less, and the `--update_token` flag
+    is present, then make a new key and assign it to the appropriate config variable
+    on the relevant Heroku app environment(s).
 
     If the environment that is running this command has `DJANGO_DEBUG` set to `True`,
-    then don't make a new api key. Instead, take the existing key, and assign it
-    to a test variable set up on the wagtail app. The only environment that
-    has that debug var set to `False` should be production.
+    then this will only update config vars for staging and wagtail. If set to `False`,
+    this will only update production's config var.
+
+    Omit the `--update_token` flag to prevent this command from making a new api key.
+    Instead, this will take the existing key and assign it to a test variable
+    set up on the wagtail app. This is meant for development purposes.
     """
 
     help = (
-        "Check SES api key expiration date. "
-        + "Make a new one and swap it out if it's less than two weeks away."
+        "Check SES api key expiration date. If specified, "
+        + "make a new one and swap it out if it's less than two weeks away."
     )
 
-    def handle(self, *args, **kwargs):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--update_token",
+            action="store_true",
+            help=(
+                "Make a new token and assign its value to "
+                + "the `SMART_LOGIC_KEY` config var in Heroku."
+            ),
+        )
+
+    def handle(self, *args, **options):
+        update_token = options.get("update_token")
         smartlogic = SmartLogic(settings.SMART_LOGIC_KEY)
         smartlogic._authorization = "Bearer {}".format(
             smartlogic.token()["access_token"]
@@ -37,30 +51,39 @@ class Command(BaseCommand):
         now = datetime.now()
 
         if now >= two_weeks_before_exp:
-            # Update heroku environments with new key
-            if settings.DEBUG:
-                environments = ["wagtail"]
-                new_key = api_key
-                data = {
-                    "TEST_VAR": f'test_dt: {now}, key: {new_key["apikey"]}',
-                }
-            else:
-                environments = ["prod", "staging", "wagtail"]
-                new_key = smartlogic.refresh_api_key()
-                data = {
-                    "SMART_LOGIC_KEY": new_key["apikey"],
-                }
-
+            # Prepare to update heroku config vars
             headers = {
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.heroku+json; version=3",
                 "Authorization": f"Bearer {settings.HEROKU_KEY}",
             }
 
+            if update_token:
+                # Make a brand new key for specific environment(s)
+                new_key = smartlogic.refresh_api_key()
+                data = {
+                    "SMART_LOGIC_KEY": new_key["apikey"],
+                }
+
+                if settings.DEBUG:
+                    environments = ["wagtail", "staging"]
+                else:
+                    environments = ["prod"]
+            else:
+                # This is the dev case. Do not make a new key,
+                # and only update the test var in wagtail environment
+                environments = ["wagtail"]
+                data = {
+                    "TEST_VAR": f'test_dt: {now}, key: {api_key["apikey"]}',
+                }
+
             for app in environments:
                 url = f"https://api.heroku.com/apps/la-metro-councilmatic-{app}/config-vars"
                 requests.patch(url, headers=headers, data=json.dumps(data))
 
-            self.stdout.write("~~ Config vars updated! ~~")
+            self.stdout.write(
+                f"~~ Config vars updated for: {', '.join(environments)} ~~"
+            )
         else:
+            # There is no need to update the token yet
             self.stdout.write(f"Key does not expire until {expiration_dt}")
