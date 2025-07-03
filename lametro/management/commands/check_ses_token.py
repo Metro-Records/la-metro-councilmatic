@@ -14,7 +14,8 @@ class Command(BaseCommand):
     Checks the expiration date on the current SES api token/key.
     If we're two weeks away from the expiration or less, and the `--update_token` flag
     is present, then make a new key and assign it to the appropriate config variable
-    on the relevant Heroku app environment(s).
+    on the relevant Heroku app environment(s). Use `--force_var_update` to replace the
+    config vars on Heroku regardless of when the key expires.
 
     If the environment that is running this command has `DJANGO_DEBUG` set to `True`,
     then this will only update config vars for staging and wagtail. If set to `False`,
@@ -40,8 +41,18 @@ class Command(BaseCommand):
             ),
         )
 
+        parser.add_argument(
+            "--force_var_update",
+            action="store_true",
+            help=(
+                "Force an update to Heroku config vars "
+                + "regardless of whether the expiration date is near."
+            ),
+        )
+
     def handle(self, *args, **options):
         update_token = options.get("update_token")
+        force_var_update = options.get("force_var_update")
         smartlogic = SmartLogic(settings.SMART_LOGIC_KEY)
         smartlogic._authorization = "Bearer {}".format(
             smartlogic.token()["access_token"]
@@ -51,7 +62,7 @@ class Command(BaseCommand):
         two_weeks_before_exp = expiration_dt - timedelta(weeks=2)
         now = datetime.now()
 
-        if now >= two_weeks_before_exp:
+        if now >= two_weeks_before_exp or force_var_update:
             # Prepare to update heroku config vars
             headers = {
                 "Content-Type": "application/json",
