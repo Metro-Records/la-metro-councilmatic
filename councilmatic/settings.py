@@ -23,7 +23,6 @@ env = environ.Env(
     FLUSH_KEY=(str, "super secret junk"),
     REFRESH_KEY=(str, "something very secret"),
     API_KEY=(str, "test api key"),
-    SMART_LOGIC_ENVIRONMENT=(str, "d3807554-347e-4091-90ea-f107a906aaff"),
     SMART_LOGIC_KEY=(str, ""),
     ANALYTICS_TRACKING_CODE=(str, ""),
     SENTRY_DSN=(str, ""),
@@ -222,7 +221,6 @@ if not (RECAPTCHA_PUBLIC_KEY and RECAPTCHA_PRIVATE_KEY):
     SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
 
 SMART_LOGIC_KEY = env("SMART_LOGIC_KEY")
-SMART_LOGIC_ENVIRONMENT = env("SMART_LOGIC_ENVIRONMENT")
 
 MERGE_HOST = env("MERGE_HOST")
 MERGE_ENDPOINT = env("MERGE_ENDPOINT")

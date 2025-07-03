@@ -1,15 +1,5 @@
 from django.conf import settings
 
-# TODO: might not be needed
-try:
-    assert settings.SMART_LOGIC_ENVIRONMENT
-except AssertionError:
-    from django.core.exceptions import ImproperlyConfigured
-
-    raise ImproperlyConfigured(
-        "Please provide a value for SMART_LOGIC_ENVIRONMENT in settings.py"
-    )
-
 import json
 
 import requests
