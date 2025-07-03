@@ -46,12 +46,8 @@
       "description": "Key to access API endpoints.",
       "required": true
     },
-    "SMART_LOGIC_ENVIRONMENT": {
-      "description": "Provide GUID and API key for SmartLogic instance to enable tag classification and search autocomplete.",
-      "required": true
-    },
     "SMART_LOGIC_KEY": {
-      "description": "Provide GUID and API key for SmartLogic instance to enable tag classification and search autocomplete.",
+      "description": "Provide API key for SmartLogic instance to enable tag classification and search autocomplete.",
       "required": true
     },
     "ANALYTICS_TRACKING_CODE": {
@@ -115,9 +111,6 @@
         },
         "API_KEY": {
           "value": "testapikey"
-        },
-        "SMART_LOGIC_ENVIRONMENT": {
-          "value": "d3807554-347e-4091-90ea-f107a906aaff"
         },
         "MERGE_HOST": {
           "value": "https://datamade-metro-pdf-merger-testing.s3.amazonaws.com/"

@@ -85,12 +85,12 @@ When your logs indicate that your app is up and running, visit http://localhost:
 
 ### Optional: Populate the search index
 
-If you wish to use search in your local install, you need a SmartLogic API
+If you wish to use search in your local install, you need a Progress Data Cloud (formerly SmartLogic) API
 key and the reCAPTCHA development keys. Initiated DataMade staff may retrieve values for
-the `SMART_LOGIC_ENVIRONMENT` and `SMART_LOGIC_KEY` environment variables from Heroku:
+the `SMART_LOGIC_KEY` environment variable from Heroku. To get the test key, run the following:
 
 ```bash
-heroku config:get SMART_LOGIC_ENVIRONMENT SMART_LOGIC_KEY -a la-metro-councilmatic-staging
+heroku config:get SMART_LOGIC_KEY -a la-metro-councilmatic-staging
 ```
 
 Paste these values into your `.env.local` file.
