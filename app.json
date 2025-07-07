@@ -50,6 +50,10 @@
       "description": "Provide API key for SmartLogic instance to enable tag classification and search autocomplete.",
       "required": true
     },
+    "HEROKU_KEY": {
+      "description": "Provide Heroku API key to allow for updating SES config vars on apps.",
+      "required": true
+    },
     "ANALYTICS_TRACKING_CODE": {
       "description": "Provide ID to enable Google Analytics.",
       "required": false
@@ -120,6 +124,9 @@
         },
         "LOCAL_DOCKER": {
           "value": "False"
+        },
+        "HEROKU_KEY": {
+          "value": "placeholder"
         }
       }
     }
