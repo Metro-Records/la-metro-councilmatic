@@ -160,7 +160,7 @@ If a branch involves a migration, either review those changes locally, or check 
 2. Once a release phase successfully completes, provision an Essential 0 database for your review app.
 3. Retrieve the URI from the Credentials tab.
 4. Update the app's `DATABASE_URL` config value to the new URI.
-  4a. If your need a new SearchBox Elasticsearch instance to test your changes, provision one at the free tier and set both the `SEARCHBOX_URL` and `SEARCHBOX_SSL_URL` config values to that instance's url.
+  4a. If your need a new SearchBox Elasticsearch instance to test your changes, provision one at the free tier and set the `SEARCHBOX_URL` config value to that instance's url.
 5. On your local machine, run `DATABASE_URL=<YOUR URI HERE> make -e wagtail_db`. This will populate initial legislative data and import content from the version controlled fixture data.
 
 ## Adding a new board member
