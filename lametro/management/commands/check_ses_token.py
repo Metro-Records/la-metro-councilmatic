@@ -63,6 +63,15 @@ class Command(BaseCommand):
         now = datetime.now()
 
         if now >= two_weeks_before_exp or force_var_update:
+            if not settings.HEROKU_KEY:
+                self.stdout.write(
+                    self.style.ERROR(
+                        "HEROKU_KEY empty. "
+                        + "Please supply an api key in order to update the config vars."
+                    )
+                )
+                return
+
             # Prepare to update heroku config vars
             headers = {
                 "Content-Type": "application/json",
