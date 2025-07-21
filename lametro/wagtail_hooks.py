@@ -427,6 +427,8 @@ class EventAgendaLink(UserBarLink):
 
 
 class GoogleAnalyticsLink(UserBarLink):
+    icon_name = "plus"
+
     def get_href(self, request):
         return "/generate-tag-analytics/"
 
