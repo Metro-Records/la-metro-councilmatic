@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now
 from django.db.models import (
@@ -29,6 +30,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
     TemplateView,
+    View,
 )
 from django.http import (
     HttpResponseRedirect,
@@ -36,6 +38,7 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.core.serializers import serialize
+from django.core.management import call_command
 
 from councilmatic_core.views import (
     IndexView,
@@ -838,6 +841,15 @@ class MinutesView(EventsView):
         context["all_minutes"] = all_minutes_grouped
 
         return context
+
+
+class TagAnalyticsView(LoginRequiredMixin, View):
+    login_url = "/cms/"
+
+    def get(self, request):
+        call_command("generate_tag_analytics")
+        messages.success(request, "Google tag analytics generated!")
+        return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
 def metro_login(request):

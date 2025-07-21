@@ -426,9 +426,17 @@ class EventAgendaLink(UserBarLink):
         return "Manage manual agenda"
 
 
+class GoogleAnalyticsLink(UserBarLink):
+    def get_href(self, request):
+        return "/generate-tag-analytics/"
+
+    def get_link_text(self, request):
+        return "Generate Google tag analytics"
+
+
 @hooks.register("construct_wagtail_userbar")
 def add_viewset_links(request, items):
-    items.extend([BoardMemberEditLink(), EventAgendaLink()])
+    items.extend([BoardMemberEditLink(), EventAgendaLink(), GoogleAnalyticsLink()])
     for link in (AlertViewSet, EventNoticeViewSet, FiscalYearCalendarViewSet):
         items.append(ViewSetLink(link))
     return items
