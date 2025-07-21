@@ -433,7 +433,7 @@ class GoogleAnalyticsLink(UserBarLink):
         return "/generate-tag-analytics/"
 
     def get_link_text(self, request):
-        return "Generate Google tag analytics"
+        return "Generate tag analytics"
 
 
 @hooks.register("construct_wagtail_userbar")
