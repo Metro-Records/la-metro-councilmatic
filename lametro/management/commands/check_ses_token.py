@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
     Omit the `--update_token` flag to prevent this command from making a new api key.
     Instead, this will take the existing key and assign it to a test variable
-    set up on the wagtail app. This is meant for development purposes.
+    set up on the staging app for development purposes.
     """
 
     help = (
@@ -92,10 +92,10 @@ class Command(BaseCommand):
                     environments = ["prod"]
             else:
                 # This is the dev case. Do not make a new key,
-                # and only update the test var in wagtail environment
-                environments = ["wagtail"]
+                # and only update the test var in staging environment
+                environments = ["staging"]
                 data = {
-                    "TEST_VAR": f'test_dt: {now}, key: {api_key["apikey"]}',
+                    "HEROKU_UPDATE_TEST_VAR": f'test_dt: {now}, key: {api_key["apikey"]}',
                 }
 
             for app in environments:
