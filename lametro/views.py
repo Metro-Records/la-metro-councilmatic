@@ -3,6 +3,7 @@ import urllib
 from datetime import datetime
 from dateutil import parser
 import requests
+import logging
 
 from haystack.query import SearchQuerySet
 
@@ -77,6 +78,7 @@ from opencivicdata.legislative.models import EventDocument
 from .utils import get_list_from_csv
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
+logger = logging.getLogger(__name__)
 
 
 class LAMetroIndexView(IndexView):
@@ -847,8 +849,46 @@ class TagAnalyticsView(LoginRequiredMixin, View):
     login_url = "/cms/"
 
     def get(self, request):
-        call_command("generate_tag_analytics")
-        messages.success(request, "Google tag analytics generated!")
+        if settings.HEROKU_APP_NAME:
+            # Send the task to a background worker
+
+            # For Heroku Platform dyno creation API reference, see:
+            # https://devcenter.heroku.com/articles/platform-api-reference#dyno-create
+            url = f"https://api.heroku.com/apps/{settings.HEROKU_APP_NAME}/dynos"
+            command = "python manage.py generate_tag_analytics"
+
+            data = {
+                "command": command,
+                "attach": False,  # Start a detached (daemon) dyno
+                "type": "run",
+            }
+            headers = {
+                "Accept": "application/vnd.heroku+json; version=3",
+                "Authorization": f"Bearer {settings.HEROKU_KEY}",
+            }
+
+            logger.info(f"Sending command to Heroku: {command}")
+            response = requests.post(url, json=data, headers=headers)
+            logger.info(
+                f"Got {response.status_code} response from Heroku: {response.json()}"
+            )
+
+            try:
+                response.raise_for_status()
+            except requests.exceptions.HTTPError:
+                messages.error(
+                    request,
+                    f"Received a {response.status_code} status code from Heroku. "
+                    "Analytics not generated.",
+                )
+            else:
+                messages.info(request, "Tag analytics are being generated...")
+
+        else:
+            # Run it as is, and save analytics locally
+            call_command("generate_tag_analytics", "--local")
+            messages.success(request, "Google tag analytics generated!")
+
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
