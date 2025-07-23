@@ -38,6 +38,9 @@ class Command(BaseCommand):
         if local:
             with open(output_file_name, "wb") as f:
                 copyfileobj(csv_string, f)
+            self.stdout.write(
+                self.style.SUCCESS(f"Successfully saved locally {output_file_name}!")
+            )
 
             return
 
