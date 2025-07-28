@@ -40,6 +40,7 @@ env = environ.Env(
     GOOGLE_SERVICE_ACCT_API_KEY=(str, ""),
     GOOGLE_API_KEY=(str, ""),
     WAGTAILADMIN_BASE_URL=(str, "https://boardagendas.metro.net"),
+    HEROKU_KEY=(str, ""),
 )
 
 # Core Django Settings

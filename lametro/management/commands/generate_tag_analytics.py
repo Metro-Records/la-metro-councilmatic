@@ -7,6 +7,7 @@ from shutil import copyfileobj
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.core.mail import send_mail
 
 from googleapiclient.http import MediaIoBaseUpload
 from googleapiclient.discovery import build
@@ -27,9 +28,19 @@ class Command(BaseCommand):
             action="store_true",
             help="Output the generated CSV file to the current directory",
         )
+        parser.add_argument(
+            "--email",
+            type=str,
+            default="",
+            help=(
+                "Email address that will receive a notification email once ",
+                "this job is done. Optional",
+            ),
+        )
 
     def handle(self, *args, **options):
         local = options["local"]
+        email = options["email"]
 
         csv_string = self.generate_tag_analytics()
         date = datetime.today().strftime("%Y-%m-%d")
@@ -55,10 +66,32 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS(f"Successfully uploaded {output_file_name}!")
             )
+            if email:
+                send_mail(
+                    "Tag Analytics Generated!",
+                    (
+                        "Your google tag analytics have been generated ",
+                        "and are now available in the google drive folder.",
+                    ),
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=False,
+                )
         except UploadError as e:
             self.stdout.write(
                 self.style.ERROR(f"Unable to upload the file to Google Drive: {e}")
             )
+            if email:
+                send_mail(
+                    "Tag Analytics Job Failed",
+                    (
+                        "Oh no! We had some trouble uploading the tag analytics. ",
+                        f"Here's the error: {e}",
+                    ),
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=False,
+                )
             raise
 
     def generate_tag_analytics(self):

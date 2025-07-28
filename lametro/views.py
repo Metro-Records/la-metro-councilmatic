@@ -855,7 +855,8 @@ class TagAnalyticsView(LoginRequiredMixin, View):
             # For Heroku Platform dyno creation API reference, see:
             # https://devcenter.heroku.com/articles/platform-api-reference#dyno-create
             url = f"https://api.heroku.com/apps/{settings.HEROKU_APP_NAME}/dynos"
-            command = "python manage.py generate_tag_analytics"
+            email = request.user.email
+            command = f"python manage.py generate_tag_analytics --email {email}"
 
             data = {
                 "command": command,
