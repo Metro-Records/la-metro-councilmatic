@@ -33,8 +33,8 @@ class Command(BaseCommand):
             type=str,
             default="",
             help=(
-                "Email address that will receive a notification email once ",
-                "this job is done. Optional",
+                "Email address that will receive a notification email once "
+                + "this job is done. Optional",
             ),
         )
 
@@ -70,8 +70,8 @@ class Command(BaseCommand):
                 send_mail(
                     "Tag Analytics Generated!",
                     (
-                        "Your google tag analytics have been generated ",
-                        "and are now available in the google drive folder.",
+                        "Your google tag analytics have been generated "
+                        + "and are now available in the google drive folder."
                     ),
                     settings.DEFAULT_FROM_EMAIL,
                     [email],
