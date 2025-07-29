@@ -41,15 +41,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         local = options["local"]
         email = options["email"]
-        email_kwargs = {
-            "from_email": settings.DEFAULT_FROM_EMAIL,
-            "recipient_list": [email],
-            "fail_silently": False,
-        }
 
         csv_string = self.generate_tag_analytics()
         date = datetime.today().strftime("%Y-%m-%d")
         output_file_name = f"{date}_tag_analytics.csv"
+        email_kwargs = {
+            "from_email": getattr(settings, "DEFAULT_FROM_EMAIL", None),
+            "recipient_list": [email],
+            "fail_silently": False,
+        }
 
         if local:
             with open(output_file_name, "wb") as f:
