@@ -41,6 +41,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         local = options["local"]
         email = options["email"]
+        email_kwargs = {
+            "from_email": settings.DEFAULT_FROM_EMAIL,
+            "recipient_list": [email],
+            "fail_silently": False,
+        }
 
         csv_string = self.generate_tag_analytics()
         date = datetime.today().strftime("%Y-%m-%d")
@@ -52,6 +57,16 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS(f"Successfully saved locally {output_file_name}!")
             )
+            if email:
+                send_mail(
+                    "Tag Analytics Generated Locally!",
+                    (
+                        "Your google tag analytics have been generated "
+                        + "and are now available in the project's root directory "
+                        + "on your machine."
+                    ),
+                    **email_kwargs,
+                )
 
             return
 
@@ -73,9 +88,7 @@ class Command(BaseCommand):
                         "Your google tag analytics have been generated "
                         + "and are now available in the google drive folder."
                     ),
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
+                    **email_kwargs,
                 )
         except UploadError as e:
             self.stdout.write(
@@ -88,9 +101,7 @@ class Command(BaseCommand):
                         "Oh no! We had some trouble uploading the tag analytics. ",
                         f"Here's the error: {e}",
                     ),
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
+                    **email_kwargs,
                 )
             raise
 
