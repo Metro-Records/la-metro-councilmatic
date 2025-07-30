@@ -59,7 +59,27 @@ class Command(BaseCommand):
         now = datetime.now()
 
         if now >= two_weeks_before_exp or force_var_update:
-            if not settings.HEROKU_KEY:
+            # Ensure the heroku key is valid before making a new ses key
+            if settings.HEROKU_KEY:
+                headers = {
+                    "Content-Type": "application/json",
+                    "Accept": "application/vnd.heroku+json; version=3",
+                    "Authorization": f"Bearer {settings.HEROKU_KEY}",
+                }
+                test_res = requests.get(
+                    "https://api.heroku.com/apps/la-metro-councilmatic-staging",
+                    headers=headers,
+                )
+
+                if test_res.status_code != 200:
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f"Heroku returned a {test_res.status_code} status code. "
+                            + f"Error: {test_res.json()}"
+                        )
+                    )
+                    return
+            else:
                 self.stdout.write(
                     self.style.ERROR(
                         "HEROKU_KEY empty. "
@@ -69,12 +89,6 @@ class Command(BaseCommand):
                 return
 
             # Prepare to update heroku config vars
-            headers = {
-                "Content-Type": "application/json",
-                "Accept": "application/vnd.heroku+json; version=3",
-                "Authorization": f"Bearer {settings.HEROKU_KEY}",
-            }
-
             if update_token:
                 # Make a brand new key for all environment(s)
                 environments = ["wagtail", "staging", "prod"]
