@@ -59,7 +59,7 @@ class Command(BaseCommand):
             )
             if email:
                 send_mail(
-                    "Tag Analytics Generated Locally!",
+                    "Councilmatic: Tag Analytics Generated Locally!",
                     (
                         "Your google tag analytics have been generated "
                         + "and are now available in the project's root directory "
@@ -77,16 +77,17 @@ class Command(BaseCommand):
 
         try:
             drive_service = self.get_google_drive()
-            self.upload_file_bytes(drive_service, csv_string, file_metadata)
+            file_url = self.upload_file_bytes(drive_service, csv_string, file_metadata)
             self.stdout.write(
                 self.style.SUCCESS(f"Successfully uploaded {output_file_name}!")
             )
             if email:
                 send_mail(
-                    "Tag Analytics Generated!",
+                    "Councilmatic: Tag Analytics Generated!",
                     (
-                        "Your google tag analytics have been generated "
-                        + "and are now available in the google drive folder."
+                        "Your google tag analytics have been generated, "
+                        + "and are now available in the google drive folder. "
+                        + f"Check it out here: {file_url}"
                     ),
                     **email_kwargs,
                 )
@@ -96,7 +97,7 @@ class Command(BaseCommand):
             )
             if email:
                 send_mail(
-                    "Tag Analytics Job Failed",
+                    "Councilmatic: Tag Analytics Job Failed",
                     (
                         "Oh no! We had some trouble uploading the tag analytics. ",
                         f"Here's the error: {e}",
@@ -172,17 +173,19 @@ class Command(BaseCommand):
         return build("drive", "v3", credentials=credentials)
 
     def upload_file_bytes(self, drive, file, file_metadata):
-        """Uploads a byte stream to Google Drive."""
+        """Uploads a byte stream to Google Drive and return the URL."""
 
         media = MediaIoBaseUpload(file, mimetype="text/csv")
 
-        result = (
+        file = (
             drive.files()
             .create(body=file_metadata, media_body=media, fields="id")
             .execute()
         )
+        file_id = file.get("id")
+        file_url = f"https://drive.google.com/file/d/{file_id}/view"
 
-        if "error" in result:
-            raise UploadError(result)
+        if "error" in file:
+            raise UploadError(file)
 
-        return result
+        return file_url
