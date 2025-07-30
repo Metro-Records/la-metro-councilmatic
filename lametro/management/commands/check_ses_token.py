@@ -14,12 +14,8 @@ class Command(BaseCommand):
     Checks the expiration date on the current SES api token/key.
     If we're two weeks away from the expiration or less, and the `--update_token` flag
     is present, then make a new key and assign it to the appropriate config variable
-    on the relevant Heroku app environment(s). Use `--force_var_update` to replace the
-    config vars on Heroku regardless of when the key expires.
-
-    If the environment that is running this command has `DJANGO_DEBUG` set to `True`,
-    then this will only update config vars for staging and wagtail. If set to `False`,
-    this will only update production's config var.
+    on Heroku. Use `--force_var_update` to replace the config vars on Heroku
+    regardless of when the key expires.
 
     Omit the `--update_token` flag to prevent this command from making a new api key.
     Instead, this will take the existing key and assign it to a test variable
@@ -80,16 +76,12 @@ class Command(BaseCommand):
             }
 
             if update_token:
-                # Make a brand new key for specific environment(s)
+                # Make a brand new key for all environment(s)
+                environments = ["wagtail", "staging", "prod"]
                 new_key = smartlogic.refresh_api_key()
                 data = {
                     "SMART_LOGIC_KEY": new_key["apikey"],
                 }
-
-                if settings.DEBUG:
-                    environments = ["wagtail", "staging"]
-                else:
-                    environments = ["prod"]
             else:
                 # This is the dev case. Do not make a new key,
                 # and only update the test var in staging environment
