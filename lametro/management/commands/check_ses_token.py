@@ -58,61 +58,57 @@ class Command(BaseCommand):
         two_weeks_before_exp = expiration_dt - timedelta(weeks=2)
         now = datetime.now()
 
-        if now >= two_weeks_before_exp or force_var_update:
-            # Ensure the heroku key is valid before making a new ses key
-            if settings.HEROKU_KEY:
-                headers = {
-                    "Content-Type": "application/json",
-                    "Accept": "application/vnd.heroku+json; version=3",
-                    "Authorization": f"Bearer {settings.HEROKU_KEY}",
-                }
-                test_res = requests.get(
-                    "https://api.heroku.com/apps/la-metro-councilmatic-staging",
-                    headers=headers,
-                )
-
-                if test_res.status_code != 200:
-                    self.stdout.write(
-                        self.style.ERROR(
-                            f"Heroku returned a {test_res.status_code} status code. "
-                            + f"Error: {test_res.json()}"
-                        )
-                    )
-                    return
-            else:
-                self.stdout.write(
-                    self.style.ERROR(
-                        "HEROKU_KEY empty. "
-                        + "Please supply an api key in order to update the config vars."
-                    )
-                )
-                return
-
-            # Prepare to update heroku config vars
-            if update_token:
-                # Make a brand new key for all environment(s)
-                environments = ["wagtail", "staging", "prod"]
-                new_key = smartlogic.refresh_api_key()
-                data = {
-                    "SMART_LOGIC_KEY": new_key["apikey"],
-                }
-            else:
-                # This is the dev case. Do not make a new key,
-                # and only update the test var in staging environment
-                environments = ["staging"]
-                data = {
-                    "HEROKU_UPDATE_TEST_VAR": f'test_dt: {now}, key: {api_key["apikey"]}',
-                }
-
-            for app in environments:
-                url = f"https://api.heroku.com/apps/la-metro-councilmatic-{app}/config-vars"
-                res = requests.patch(url, headers=headers, data=json.dumps(data))
-                if res.status_code != 200:
-                    raise HerokuRequestError(response=res)
-
-            self.stdout.write(
-                f"~~ Config vars updated for: {', '.join(environments)} ~~"
-            )
-        else:
+        if not (now >= two_weeks_before_exp or force_var_update):
             # There is no need to update the token yet
             self.stdout.write(f"Key does not expire until {expiration_dt}")
+            return
+
+        if not settings.HEROKU_KEY:
+            self.stdout.write(
+                self.style.ERROR(
+                    "HEROKU_KEY empty. "
+                    + "Please supply an api key in order to update the config vars."
+                )
+            )
+            return
+
+        # Ensure the heroku key is valid before making a new ses key
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.heroku+json; version=3",
+            "Authorization": f"Bearer {settings.HEROKU_KEY}",
+        }
+        test_res = requests.get(
+            "https://api.heroku.com/apps/la-metro-councilmatic-staging",
+            headers=headers,
+        )
+        if test_res.status_code != 200:
+            # Let sentry know
+            error = HerokuRequestError(response=test_res)
+            self.stdout.write(self.style.ERROR(error))
+            raise error
+
+        # Prepare to update heroku config vars
+        if update_token:
+            # Make a brand new key for all environment(s)
+            environments = ["wagtail", "staging", "prod"]
+            new_key = smartlogic.refresh_api_key()
+            data = {
+                "SMART_LOGIC_KEY": new_key["apikey"],
+            }
+        else:
+            # This is the dev case. Do not make a new key,
+            # and only update the test var on staging
+            environments = ["staging"]
+            data = {
+                "HEROKU_UPDATE_TEST_VAR": f'test_dt: {now}, key: {api_key["apikey"]}',
+            }
+
+        for app in environments:
+            url = f"https://api.heroku.com/apps/la-metro-councilmatic-{app}/config-vars"
+            res = requests.patch(url, headers=headers, data=json.dumps(data))
+            if res.status_code != 200:
+                error = HerokuRequestError(response=res)
+                raise error
+
+        self.stdout.write(f"~~ Config vars updated for: {', '.join(environments)} ~~")
