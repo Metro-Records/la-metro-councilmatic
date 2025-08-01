@@ -109,6 +109,7 @@ class Command(BaseCommand):
             res = requests.patch(url, headers=headers, data=json.dumps(data))
             if res.status_code != 200:
                 error = HerokuRequestError(response=res)
+                self.stdout.write(self.style.ERROR(error))
                 raise error
 
         self.stdout.write(f"~~ Config vars updated for: {', '.join(environments)} ~~")
