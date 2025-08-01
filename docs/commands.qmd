@@ -56,3 +56,21 @@ python manage.py update_index --age=2
 # `noinput` tells Haystack to skips the prompts
 python manage.py update_index --noinput
 ```
+
+### Update SES api keys on Heroku
+We connect to SES (Semantic Enhancement Server) through Progress's Data Cloud service.
+This service's api keys/tokens expire on a regular basis, and must be updated on Heroku once refreshed.
+We attempt to update the token two weeks in advance of the expiration date.
+
+```bash
+# this runs on prod to create a new the token and update the config var for
+# all environments if the expiration date is close
+python manage.py check_ses_token --update_token
+
+# you can force an update to heroku config vars before the expiration window
+python manage.py check_ses_token --update_token --force_var_update
+
+# you can also just perform the check and test the connections to heroku/semaphore
+# by omitting the --update_token flag
+python manage.py check_ses_token
+```
