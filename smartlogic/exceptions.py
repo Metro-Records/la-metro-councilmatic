@@ -5,7 +5,7 @@ class RequestFailed(Exception):
     def __init__(self, response):
         try:
             self.message = f'Request failed for the following reason: {response.json()["error_description"]}'
-        except JSONDecodeError:
+        except (JSONDecodeError, KeyError):
             self.message = f"Request failed for the following reason: {response.status_code} - {response.reason}"
         self.status_code = response.status_code
         self.reason = response.reason
