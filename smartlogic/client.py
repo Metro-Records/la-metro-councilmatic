@@ -1,14 +1,5 @@
 from django.conf import settings
 
-try:
-    assert settings.SMART_LOGIC_ENVIRONMENT
-except AssertionError:
-    from django.core.exceptions import ImproperlyConfigured
-
-    raise ImproperlyConfigured(
-        "Please provide a value for SMART_LOGIC_ENVIRONMENT in settings.py"
-    )
-
 import json
 
 import requests
@@ -23,8 +14,8 @@ from smartlogic.exceptions import (
 
 
 class SmartLogic(object):
-    BASE_URL = "https://cloud.smartlogic.com"
-    SERVICE_URL = f"/svc/{settings.SMART_LOGIC_ENVIRONMENT}/ses/CombinedModel"
+    BASE_URL = "https://metro.data.progress.cloud"
+    SERVICE_URL = f"/semantic/{'test' if settings.DEBUG else 'prod'}/CombinedModel"
 
     def __init__(self, api_key, authorization=None):
         self.api_key = api_key
@@ -84,3 +75,10 @@ class SmartLogic(object):
             params=params,
             headers=self.auth_headers,
         )
+
+    def get_api_key_details(self):
+        return self.endpoint("get", "/api/account/apikey", headers=self.auth_headers)
+
+    def refresh_api_key(self):
+        """Returns a new key that expires in 90 days"""
+        return self.endpoint("put", "/api/account/apikey", headers=self.auth_headers)
