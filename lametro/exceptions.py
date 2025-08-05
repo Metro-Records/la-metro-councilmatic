@@ -22,7 +22,7 @@ class HerokuRequestError(Exception):
             self.message = (
                 f'Request failed for the following reason: {response.json()["message"]}'
             )
-        except JSONDecodeError:
+        except (JSONDecodeError, KeyError):
             self.message = (
                 "Request failed for the following reason: "
                 + f"{response.status_code} - {response.reason}"
