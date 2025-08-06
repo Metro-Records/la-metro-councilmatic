@@ -883,7 +883,11 @@ class TagAnalyticsView(LoginRequiredMixin, View):
                     "Analytics not generated.",
                 )
             else:
-                messages.info(request, "Tag analytics are being generated...")
+                messages.info(
+                    request,
+                    "Tag analytics are being generated! This will take several "
+                    "minutes. You will receive a link in your email when done.",
+                )
 
         else:
             # Run it as is, and save analytics locally
