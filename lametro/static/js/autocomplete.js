@@ -3,9 +3,9 @@ var SmartLogic = {
   getToken: async function() {
     tokenNeeded = !window.localStorage.getItem('ses_token')
 
-    msInDay = 86400000
+    msInHour = 3600000
     tokenExpired =
-      (Date.now() - window.localStorage.getItem('ses_issued')) / msInDay >= 3
+      (Date.now() - window.localStorage.getItem('ses_issued')) / msInHour >= 1
 
     if (tokenNeeded || tokenExpired) {
       return $.get('/smartlogic/token/')

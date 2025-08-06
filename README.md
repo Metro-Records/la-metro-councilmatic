@@ -85,12 +85,12 @@ When your logs indicate that your app is up and running, visit http://localhost:
 
 ### Optional: Populate the search index
 
-If you wish to use search in your local install, you need a SmartLogic API
+If you wish to use search in your local install, you need a Progress Data Cloud (formerly SmartLogic) API
 key and the reCAPTCHA development keys. Initiated DataMade staff may retrieve values for
-the `SMART_LOGIC_ENVIRONMENT` and `SMART_LOGIC_KEY` environment variables from Heroku:
+the `SMART_LOGIC_KEY` environment variable from Heroku. To get the test key, run the following:
 
 ```bash
-heroku config:get SMART_LOGIC_ENVIRONMENT SMART_LOGIC_KEY -a la-metro-councilmatic-staging
+heroku config:get SMART_LOGIC_KEY -a la-metro-councilmatic-staging
 ```
 
 Paste these values into your `.env.local` file.
@@ -160,6 +160,7 @@ If a branch involves a migration, either review those changes locally, or check 
 2. Once a release phase successfully completes, provision an Essential 0 database for your review app.
 3. Retrieve the URI from the Credentials tab.
 4. Update the app's `DATABASE_URL` config value to the new URI.
+  4a. If your need a new SearchBox Elasticsearch instance to test your changes, provision one at the free tier and set the `SEARCHBOX_URL` config value to that instance's url.
 5. On your local machine, run `DATABASE_URL=<YOUR URI HERE> make -e wagtail_db`. This will populate initial legislative data and import content from the version controlled fixture data.
 
 ## Adding a new board member

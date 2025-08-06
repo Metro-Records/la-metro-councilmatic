@@ -1,6 +1,12 @@
+from requests.exceptions import JSONDecodeError
+
+
 class RequestFailed(Exception):
     def __init__(self, response):
-        self.message = f'Request failed for the following reason: {response.json()["error_description"]}'
+        try:
+            self.message = f'Request failed for the following reason: {response.json()["error_description"]}'
+        except (JSONDecodeError, KeyError):
+            self.message = f"Request failed for the following reason: {response.status_code} - {response.reason}"
         self.status_code = response.status_code
         self.reason = response.reason
         super().__init__(self.message)
