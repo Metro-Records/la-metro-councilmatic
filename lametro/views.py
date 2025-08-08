@@ -70,6 +70,7 @@ from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
 )
 from lametro.services import EventService
+from lametro.exceptions import HerokuRequestError
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 
@@ -880,8 +881,9 @@ class TagAnalyticsView(LoginRequiredMixin, View):
                 messages.error(
                     request,
                     f"Received a {response.status_code} status code from Heroku. "
-                    "Analytics not generated.",
+                    "Analytics not generated, and administrators have been notified.",
                 )
+                raise HerokuRequestError(response=response)
             else:
                 messages.info(
                     request,
