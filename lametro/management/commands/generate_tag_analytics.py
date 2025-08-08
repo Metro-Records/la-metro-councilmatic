@@ -7,6 +7,7 @@ from shutil import copyfileobj
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.core.mail import send_mail
 
 from googleapiclient.http import MediaIoBaseUpload
 from googleapiclient.discovery import build
@@ -27,17 +28,45 @@ class Command(BaseCommand):
             action="store_true",
             help="Output the generated CSV file to the current directory",
         )
+        parser.add_argument(
+            "--email",
+            type=str,
+            default="",
+            help=(
+                "Email address that will receive a notification email once "
+                + "this job is done. Optional",
+            ),
+        )
 
     def handle(self, *args, **options):
         local = options["local"]
+        email = options["email"]
 
         csv_string = self.generate_tag_analytics()
         date = datetime.today().strftime("%Y-%m-%d")
         output_file_name = f"{date}_tag_analytics.csv"
+        email_kwargs = {
+            "from_email": getattr(settings, "DEFAULT_FROM_EMAIL", None),
+            "recipient_list": [email],
+            "fail_silently": False,
+        }
 
         if local:
             with open(output_file_name, "wb") as f:
                 copyfileobj(csv_string, f)
+            self.stdout.write(
+                self.style.SUCCESS(f"Successfully saved locally {output_file_name}!")
+            )
+            if email:
+                send_mail(
+                    "Councilmatic: Tag Analytics Generated Locally!",
+                    (
+                        "Your google tag analytics have been generated "
+                        + "and are now available in the project's root directory "
+                        + "on your machine."
+                    ),
+                    **email_kwargs,
+                )
 
             return
 
@@ -48,14 +77,33 @@ class Command(BaseCommand):
 
         try:
             drive_service = self.get_google_drive()
-            self.upload_file_bytes(drive_service, csv_string, file_metadata)
+            file_url = self.upload_file_bytes(drive_service, csv_string, file_metadata)
             self.stdout.write(
                 self.style.SUCCESS(f"Successfully uploaded {output_file_name}!")
             )
+            if email:
+                send_mail(
+                    "Councilmatic: Tag Analytics Generated!",
+                    (
+                        "Your google tag analytics have been generated, "
+                        + "and are now available in the google drive folder. "
+                        + f"Check it out here: {file_url}"
+                    ),
+                    **email_kwargs,
+                )
         except UploadError as e:
             self.stdout.write(
                 self.style.ERROR(f"Unable to upload the file to Google Drive: {e}")
             )
+            if email:
+                send_mail(
+                    "Councilmatic: Tag Analytics Job Failed",
+                    (
+                        "Oh no! We had some trouble uploading the tag analytics. ",
+                        f"Here's the error: {e}",
+                    ),
+                    **email_kwargs,
+                )
             raise
 
     def generate_tag_analytics(self):
@@ -125,17 +173,19 @@ class Command(BaseCommand):
         return build("drive", "v3", credentials=credentials)
 
     def upload_file_bytes(self, drive, file, file_metadata):
-        """Uploads a byte stream to Google Drive."""
+        """Uploads a byte stream to Google Drive and return the URL."""
 
         media = MediaIoBaseUpload(file, mimetype="text/csv")
 
-        result = (
+        file = (
             drive.files()
             .create(body=file_metadata, media_body=media, fields="id")
             .execute()
         )
+        file_id = file.get("id")
+        file_url = f"https://drive.google.com/file/d/{file_id}/view"
 
-        if "error" in result:
-            raise UploadError(result)
+        if "error" in file:
+            raise UploadError(file)
 
-        return result
+        return file_url
