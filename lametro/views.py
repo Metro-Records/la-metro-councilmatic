@@ -850,6 +850,17 @@ class TagAnalyticsView(LoginRequiredMixin, View):
     login_url = "/cms/"
 
     def get(self, request):
+        try:
+            success_url = request.META["HTTP_REFERER"]
+        except KeyError:
+            # Prevent users from starting the job when pasting a link
+            messages.error(
+                request,
+                "To generate new analytics, please use either the "
+                "link in the Reports section of the CMS, or in the Wagtail user bar.",
+            )
+            return HttpResponseRedirect(request.build_absolute_uri("/cms/"))
+
         if settings.HEROKU_APP_NAME:
             # Send the task to a background worker
 
@@ -896,7 +907,7 @@ class TagAnalyticsView(LoginRequiredMixin, View):
             call_command("generate_tag_analytics", "--local")
             messages.success(request, "Google tag analytics generated!")
 
-        return HttpResponseRedirect(request.META["HTTP_REFERER"])
+        return HttpResponseRedirect(success_url)
 
 
 def metro_login(request):
