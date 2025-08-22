@@ -40,6 +40,7 @@ from django.http import (
 )
 from django.core.serializers import serialize
 from django.core.management import call_command
+from django.core.cache import cache
 
 from councilmatic_core.views import (
     IndexView,
@@ -861,51 +862,76 @@ class TagAnalyticsView(LoginRequiredMixin, View):
             )
             return HttpResponseRedirect(request.build_absolute_uri("/cms/"))
 
-        if settings.HEROKU_APP_NAME:
-            # Send the task to a background worker
+        if not settings.HEROKU_APP_NAME:
+            # Run cmd as is, and save analytics locally
+            call_command("generate_tag_analytics", "--local")
+            messages.success(request, "Google tag analytics generated!")
+            return HttpResponseRedirect(success_url)
 
-            # For Heroku Platform dyno creation API reference, see:
-            # https://devcenter.heroku.com/articles/platform-api-reference#dyno-create
-            url = f"https://api.heroku.com/apps/{settings.HEROKU_APP_NAME}/dynos"
-            email = request.user.email
-            command = f"python manage.py generate_tag_analytics --email {email}"
+        url = f"https://api.heroku.com/apps/{settings.HEROKU_APP_NAME}/dynos"
+        headers = {
+            "Accept": "application/vnd.heroku+json; version=3",
+            "Authorization": f"Bearer {settings.HEROKU_KEY}",
+        }
 
-            data = {
-                "command": command,
-                "attach": False,  # Start a detached (daemon) dyno
-                "type": "run",
-            }
-            headers = {
-                "Accept": "application/vnd.heroku+json; version=3",
-                "Authorization": f"Bearer {settings.HEROKU_KEY}",
-            }
-
-            logger.info(f"Sending command to Heroku: {command}")
-            response = requests.post(url, json=data, headers=headers)
-            logger.info(
-                f"Got {response.status_code} response from Heroku: {response.json()}"
-            )
-
+        if worker_id := cache.get("worker_id"):
+            # Check if that worker is still running the cmd
+            response = requests.get(url + f"/{worker_id}", headers=headers)
             try:
-                response.raise_for_status()
-            except requests.exceptions.HTTPError:
+                worker_state = response.json().get("state")
+            except requests.exceptions.JSONDecodeError:
                 messages.error(
                     request,
                     f"Received a {response.status_code} status code from Heroku. "
-                    "Analytics not generated, and administrators have been notified.",
+                    "Cannot check status of recent analytics job. "
+                    "Administrators have been notified.",
                 )
                 raise HerokuRequestError(response=response)
-            else:
+
+            if worker_state in ["starting", "up"]:
                 messages.info(
                     request,
-                    "Tag analytics are being generated! This will take several "
-                    "minutes. You will receive a link in your email when done.",
+                    "The analytics you requested earlier are still processing. "
+                    "You can request another once that job is finished.",
                 )
+                return HttpResponseRedirect(success_url)
+            else:
+                # Old worker done. Clear out the id so we can start a new one.
+                cache.delete("worker_id")
 
+        # Send the task to a background worker
+        # For Heroku Platform dyno creation API reference, see:
+        # https://devcenter.heroku.com/articles/platform-api-reference#dyno-create
+        email = request.user.email
+        command = f"python manage.py generate_tag_analytics --email {email}"
+        data = {
+            "command": command,
+            "attach": False,  # Start a detached (daemon) dyno
+            "type": "run",
+        }
+
+        logger.info(f"Sending command to Heroku: {command}")
+        response = requests.post(url, json=data, headers=headers)
+        logger.info(
+            f"Got {response.status_code} response from Heroku: {response.json()}"
+        )
+
+        try:
+            response.raise_for_status()
+            cache.set("worker_id", response.json()["name"], 3600)
+        except requests.exceptions.HTTPError:
+            messages.error(
+                request,
+                f"Received a {response.status_code} status code from Heroku. "
+                "Analytics not generated, and administrators have been notified.",
+            )
+            raise HerokuRequestError(response=response)
         else:
-            # Run it as is, and save analytics locally
-            call_command("generate_tag_analytics", "--local")
-            messages.success(request, "Google tag analytics generated!")
+            messages.info(
+                request,
+                "Tag analytics are being generated! This will take several "
+                "minutes. You will receive a link in your email when done.",
+            )
 
         return HttpResponseRedirect(success_url)
 
