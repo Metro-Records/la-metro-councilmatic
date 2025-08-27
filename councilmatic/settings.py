@@ -289,6 +289,7 @@ else:
 
 # LOGGING
 SENTRY_DSN = env("SENTRY_DSN")
+HEROKU_APP_NAME = os.getenv("HEROKU_APP_NAME", None)
 
 if SENTRY_DSN:
     import logging
@@ -321,7 +322,7 @@ if SENTRY_DSN:
         # If you wish to associate users to errors (assuming you are using
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
-        release=f"{os.environ['HEROKU_RELEASE_VERSION']}-{os.environ['HEROKU_APP_NAME']}",
+        release=f"{os.environ['HEROKU_RELEASE_VERSION']}-{HEROKU_APP_NAME}",
         enable_tracing=True,
         traces_sampler=custom_sampler,
         profiles_sample_rate=0.05,

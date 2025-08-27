@@ -20,6 +20,7 @@ from wagtail.documents.widgets import AdminDocumentChooser
 from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, CreateView
+from wagtail.admin.menu import MenuItem
 
 from lametro.services import EventService
 
@@ -426,9 +427,19 @@ class EventAgendaLink(UserBarLink):
         return "Manage manual agenda"
 
 
+class GoogleAnalyticsLink(UserBarLink):
+    icon_name = "plus"
+
+    def get_href(self, request):
+        return "/generate-tag-analytics/"
+
+    def get_link_text(self, request):
+        return "Generate tag analytics"
+
+
 @hooks.register("construct_wagtail_userbar")
 def add_viewset_links(request, items):
-    items.extend([BoardMemberEditLink(), EventAgendaLink()])
+    items.extend([BoardMemberEditLink(), EventAgendaLink(), GoogleAnalyticsLink()])
     for link in (AlertViewSet, EventNoticeViewSet, FiscalYearCalendarViewSet):
         items.append(ViewSetLink(link))
     return items
@@ -443,4 +454,14 @@ def insert_custom_wagtail_javascript():
 def insert_custom_wagtail_css():
     return format_html(
         '<link rel="stylesheet" href="{}"></script>', static("css/wagtail_custom.css")
+    )
+
+
+@hooks.register("register_reports_menu_item")
+def register_analytics_menu_item():
+    return MenuItem(
+        "Generate Tag Analytics",
+        "/generate-tag-analytics/",
+        icon_name="doc-full",
+        order=10000,
     )

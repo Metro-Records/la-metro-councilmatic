@@ -3,6 +3,7 @@ import urllib
 from datetime import datetime
 from dateutil import parser
 import requests
+import logging
 
 from haystack.query import SearchQuerySet
 
@@ -13,6 +14,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now
 from django.db.models import (
@@ -29,6 +31,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
     TemplateView,
+    View,
 )
 from django.http import (
     HttpResponseRedirect,
@@ -36,6 +39,8 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.core.serializers import serialize
+from django.core.management import call_command
+from django.core.cache import cache
 
 from councilmatic_core.views import (
     IndexView,
@@ -66,6 +71,7 @@ from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
 )
 from lametro.services import EventService
+from lametro.exceptions import HerokuRequestError
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 
@@ -74,6 +80,7 @@ from opencivicdata.legislative.models import EventDocument
 from .utils import get_list_from_csv
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
+logger = logging.getLogger(__name__)
 
 
 class LAMetroIndexView(IndexView):
@@ -838,6 +845,95 @@ class MinutesView(EventsView):
         context["all_minutes"] = all_minutes_grouped
 
         return context
+
+
+class TagAnalyticsView(LoginRequiredMixin, View):
+    login_url = "/cms/"
+
+    def get(self, request):
+        try:
+            success_url = request.META["HTTP_REFERER"]
+        except KeyError:
+            # Prevent users from starting the job when pasting a link
+            messages.error(
+                request,
+                "To generate new analytics, please use either the "
+                "link in the Reports section of the CMS, or in the Wagtail user bar.",
+            )
+            return HttpResponseRedirect(request.build_absolute_uri("/cms/"))
+
+        if not settings.HEROKU_APP_NAME:
+            # Run cmd as is, and save analytics locally
+            call_command("generate_tag_analytics", "--local")
+            messages.success(request, "Google tag analytics generated!")
+            return HttpResponseRedirect(success_url)
+
+        url = f"https://api.heroku.com/apps/{settings.HEROKU_APP_NAME}/dynos"
+        headers = {
+            "Accept": "application/vnd.heroku+json; version=3",
+            "Authorization": f"Bearer {settings.HEROKU_KEY}",
+        }
+
+        if worker_id := cache.get("worker_id"):
+            # Check if that worker is still running the cmd
+            response = requests.get(url + f"/{worker_id}", headers=headers)
+            try:
+                worker_state = response.json().get("state")
+            except requests.exceptions.JSONDecodeError:
+                messages.error(
+                    request,
+                    f"Received a {response.status_code} status code from Heroku. "
+                    "Cannot check status of recent analytics job. "
+                    "Administrators have been notified.",
+                )
+                raise HerokuRequestError(response=response)
+
+            if worker_state in ["starting", "up"]:
+                messages.info(
+                    request,
+                    "The analytics you requested earlier are still processing. "
+                    "You can request another once that job is finished.",
+                )
+                return HttpResponseRedirect(success_url)
+            else:
+                # Old worker done. Clear out the id so we can start a new one.
+                cache.delete("worker_id")
+
+        # Send the task to a background worker
+        # For Heroku Platform dyno creation API reference, see:
+        # https://devcenter.heroku.com/articles/platform-api-reference#dyno-create
+        email = request.user.email
+        command = f"python manage.py generate_tag_analytics --email {email}"
+        data = {
+            "command": command,
+            "attach": False,  # Start a detached (daemon) dyno
+            "type": "run",
+        }
+
+        logger.info(f"Sending command to Heroku: {command}")
+        response = requests.post(url, json=data, headers=headers)
+        logger.info(
+            f"Got {response.status_code} response from Heroku: {response.json()}"
+        )
+
+        try:
+            response.raise_for_status()
+            cache.set("worker_id", response.json()["name"], 3600)
+        except requests.exceptions.HTTPError:
+            messages.error(
+                request,
+                f"Received a {response.status_code} status code from Heroku. "
+                "Analytics not generated, and administrators have been notified.",
+            )
+            raise HerokuRequestError(response=response)
+        else:
+            messages.info(
+                request,
+                "Tag analytics are being generated! This will take several "
+                "minutes. You will receive a link in your email when done.",
+            )
+
+        return HttpResponseRedirect(success_url)
 
 
 def metro_login(request):

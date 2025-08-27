@@ -39,6 +39,7 @@ from lametro.views import (
     LAMetroArchiveSearch,
     LAMetroContactView,
     MinutesView,
+    TagAnalyticsView,
     pong,
     test_logging,
 )
@@ -91,6 +92,11 @@ patterns = (
         url(r"^public-comment/$", PublicComment.as_view(), name="public_comment"),
         url(r"^contact/$", LAMetroContactView.as_view(), name="contact"),
         url(r"^minutes/$", MinutesView.as_view(), name="minutes"),
+        url(
+            r"^generate-tag-analytics/$",
+            TagAnalyticsView.as_view(),
+            name="generate_tag_analytics",
+        ),
     ],
     settings.APP_NAME,
 )
