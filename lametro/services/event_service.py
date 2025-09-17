@@ -20,9 +20,14 @@ TOKEN: Optional[str] = None
 try:
     from lametro.secrets import TOKEN
 except ImportError:
-    logger.warning(
-        "No API token provided. Future events may be allowed to be deleted in the UI."
-    )
+    from django.conf import settings
+
+    TOKEN = settings.LEGISTAR_TOKEN
+    if not TOKEN:
+        logger.warning(
+            "No Legsitar API token provided. "
+            "Future events may be allowed to be deleted in the UI."
+        )
 
 
 class EventService:

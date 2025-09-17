@@ -40,6 +40,7 @@ env = environ.Env(
     GOOGLE_API_KEY=(str, ""),
     WAGTAILADMIN_BASE_URL=(str, "https://boardagendas.metro.net"),
     HEROKU_KEY=(str, ""),
+    LEGISTAR_TOKEN=(str, ""),
 )
 
 # Core Django Settings
@@ -364,3 +365,5 @@ WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL")
 
 # - Heroku (for updating config vars)
 HEROKU_KEY = env("HEROKU_KEY")
+
+LEGISTAR_TOKEN = env("LEGISTAR_TOKEN")
