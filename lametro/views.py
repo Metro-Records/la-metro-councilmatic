@@ -688,9 +688,13 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                 for el in dataDict["sort_by"]:
                     if el == "date":
                         if dataDict.get("order_by") == ["asc"]:
-                            kwargs["searchqueryset"] = sqs.order_by("last_action_date")
+                            kwargs["searchqueryset"] = sqs.order_by(
+                                "last_action_date", "-score"
+                            )
                         else:
-                            kwargs["searchqueryset"] = sqs.order_by("-last_action_date")
+                            kwargs["searchqueryset"] = sqs.order_by(
+                                "-last_action_date", "-score"
+                            )
                     if el == "title":
                         if dataDict.get("order_by") == ["desc"]:
                             kwargs["searchqueryset"] = sqs.order_by("-sort_name")
