@@ -689,11 +689,11 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
                     if el == "date":
                         if dataDict.get("order_by") == ["asc"]:
                             kwargs["searchqueryset"] = sqs.order_by(
-                                "last_action_date", "-score"
+                                "last_action_date", "-_score"
                             )
                         else:
                             kwargs["searchqueryset"] = sqs.order_by(
-                                "-last_action_date", "-score"
+                                "-last_action_date", "-_score"
                             )
                     if el == "title":
                         if dataDict.get("order_by") == ["desc"]:
