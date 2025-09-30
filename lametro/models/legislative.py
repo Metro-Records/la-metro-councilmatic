@@ -11,6 +11,7 @@ from django.db.models.expressions import RawSQL
 from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.urls import reverse
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -907,6 +908,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     @property
     def has_manual_broadcast(self):
         return self.broadcast.filter(is_manually_live=True).exists()
+
+    @property
+    def event_page_url(self):
+        link = reverse("lametro:events", args=(self.slug,))
+        return link
 
 
 class EventBroadcast(models.Model):

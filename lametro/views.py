@@ -1,4 +1,5 @@
 import itertools
+import re
 import urllib
 from datetime import datetime
 from dateutil import parser
@@ -14,6 +15,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.templatetags.static import static
 from django.db.models.functions import Lower, Now
 from django.db.models import (
     Max,
@@ -27,9 +29,7 @@ from django.db.models import (
 )
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import (
-    TemplateView,
-)
+from django.views.generic import TemplateView, DetailView, ListView
 from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
@@ -38,13 +38,7 @@ from django.http import (
 from django.core.serializers import serialize
 
 from councilmatic_core.views import (
-    IndexView,
-    BillDetailView,
-    CouncilMembersView,
-    CommitteeDetailView,
-    CommitteesView,
     PersonDetailView,
-    EventDetailView,
     EventsView,
     CouncilmaticFacetedSearchView,
 )
@@ -76,47 +70,46 @@ from .utils import get_list_from_csv
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 
 
-class LAMetroIndexView(IndexView):
+class LAMetroIndexView(TemplateView):
     template_name = "index/index.html"
-
+    bill_model = LAMetroBill
     event_model = LAMetroEvent
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["upcoming_board_meetings"] = self.event_model.upcoming_board_meetings()[
-            :2
-        ]
-        context["most_recent_past_meetings"] = (
-            self.event_model.most_recent_past_meetings()
-        )
-        context["current_meeting"] = self.event_model.current_meeting()
-        context["bilingual"] = bool(
-            [e for e in context["current_meeting"] if e.bilingual]
-        )
-        context["USING_ECOMMENT"] = settings.USING_ECOMMENT
+        upcoming_meetings = list(self.event_model.upcoming_committee_meetings())
 
-        context["todays_meetings"] = self.event_model.todays_meetings().order_by(
-            "start_date"
-        )
-        context["form"] = LAMetroCouncilmaticSearchForm()
+        current_meeting = self.event_model.current_meeting()
+
+        more_context = {
+            "upcoming_committee_meetings": upcoming_meetings,
+            "upcoming_board_meetings": self.event_model.upcoming_board_meetings()[:2],
+            "most_recent_past_meetings": (self.event_model.most_recent_past_meetings()),
+            "current_meeting": current_meeting,
+            "bilingual": bool([e for e in current_meeting if e.bilingual]),
+            "USING_ECOMMENT": settings.USING_ECOMMENT,
+            "todays_meetings": self.event_model.todays_meetings().order_by(
+                "start_date"
+            ),
+            "form": LAMetroCouncilmaticSearchForm(),
+        }
+
+        context.update(more_context)
 
         return context
 
 
-class LABillDetail(BillDetailView):
+class LABillDetail(DetailView):
     model = LAMetroBill
     template_name = "legislation.html"
+    context_object_name = "legislation"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         bill = self.get_object()
-
-        context["attachments"] = bill.attachments.all().order_by(Lower("note"))
-
         actions = bill.actions.all()
         organization_lst = [action.organization for action in actions]
-        context["sponsorships"] = set(organization_lst)
 
         related_bills = (
             context["legislation"]
@@ -125,38 +118,64 @@ class LABillDetail(BillDetailView):
             .order_by("-latest_date")
         )
 
-        context["related_bills"] = related_bills
+        seo = {
+            **settings.SITE_META,
+            "site_desc": bill.listing_description,
+            "title": "%s - %s" % (bill.friendly_name, settings.SITE_META["site_name"]),
+        }
 
-        context["actions"] = bill.actions_and_agendas
+        more_context = {
+            "attachments": bill.attachments.all().order_by(Lower("note")),
+            "sponsorships": set(organization_lst),
+            "related_bills": related_bills,
+            "actions": bill.actions_and_agendas,
+            "seo": seo,
+        }
+
+        context.update(more_context)
 
         return context
 
 
-class LAMetroEventDetail(EventDetailView):
+class LAMetroEventDetail(DetailView):
     model = LAMetroEvent
     template_name = "event/event.html"
+    context_object_name = "event"
 
     def get_queryset(self):
         # Get the queryset with prefetched media_urls in proper order.
         return LAMetroEvent.objects.with_media()
 
     def get_context_data(self, **kwargs) -> dict:
-        context = super(EventDetailView, self).get_context_data(**kwargs)
-        context["USING_ECOMMENT"] = settings.USING_ECOMMENT
-
+        context = super().get_context_data(**kwargs)
         event = context["event"]
+
+        seo = {
+            **settings.SITE_META,
+            "site_desc": (
+                "Public city council event on %s/%s/%s - view event participants & agenda items"
+                % (event.start_time.month, event.start_time.day, event.start_time.year)
+            ),
+            "title": "%s Event - %s" % (event.name, settings.SITE_META["site_name"]),
+        }
+
+        more_context = {
+            "USING_ECOMMENT": settings.USING_ECOMMENT,
+            "minutes": EventService.get_minutes(event),
+            "related_board_reports": EventService.get_related_board_reports(event),
+            "agenda": EventService.get_agenda(event),
+            "manage_agenda_url": EventService.get_manage_agenda_url(event),
+            "notices": EventService.get_notices(event),
+            "seo": seo,
+        }
+
+        context.update(more_context)
 
         if self.request.user.is_authenticated:
             context["legistar_ok"] = requests.head(
                 "https://metro.legistar.com/calendar.aspx"
             ).ok
             context["event_ok"] = EventService.assert_consistent_with_api(event)
-
-        context["minutes"] = EventService.get_minutes(event)
-        context["related_board_reports"] = EventService.get_related_board_reports(event)
-        context["agenda"] = EventService.get_agenda(event)
-        context["manage_agenda_url"] = EventService.get_manage_agenda_url(event)
-        context["notices"] = EventService.get_notices(event)
 
         return context
 
@@ -196,8 +215,9 @@ def manual_event_live_link(request, event_slug):
     return HttpResponseRedirect(f"/event/{event_slug}")
 
 
-class LAMetroEventsView(EventsView):
+class LAMetroEventsView(ListView):
     template_name = "events/events.html"
+    model = LAMetroEvent
 
     def get_context_data(self, **kwargs):
         context = {}
@@ -311,8 +331,9 @@ class LAMetroEventsView(EventsView):
         return context
 
 
-class LABoardMembersView(CouncilMembersView):
+class LABoardMembersView(ListView):
     template_name = "board_members/board_members.html"
+    context_object_name = "posts"
 
     def map(self):
         maps = {
@@ -383,7 +404,7 @@ class LABoardMembersView(CouncilMembersView):
         )
 
     def get_context_data(self, *args, **kwargs):
-        context = super(CouncilMembersView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context["seo"] = self.get_seo_blob()
 
@@ -398,9 +419,15 @@ class LABoardMembersView(CouncilMembersView):
 
         return context
 
+    def get_seo_blob(self):
+        seo = {}
+        seo.update(settings.SITE_META)
+        return seo
 
-class LACommitteesView(CommitteesView):
+
+class LACommitteesView(ListView):
     template_name = "committees.html"
+    context_object_name = "committees"
 
     def get_queryset(self):
         """
@@ -430,9 +457,10 @@ class LACommitteesView(CommitteesView):
         return qs
 
 
-class LACommitteeDetailView(CommitteeDetailView):
+class LACommitteeDetailView(DetailView):
     model = LAMetroOrganization
     template_name = "committee.html"
+    context_object_name = "committee"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -443,8 +471,19 @@ class LACommitteeDetailView(CommitteeDetailView):
             description = settings.COMMITTEE_DESCRIPTIONS.get(committee.slug)
             context["committee_description"] = description
 
-        ceo = LAMetroPerson.ceo()
+        description = None
 
+        seo = {
+            **settings.SITE_META,
+            "title": f"{committee.name} - {settings.SITE_META['site_name']}",
+            "site_desc": (
+                description
+                if description
+                else f"See what {settings.CITY_COUNCIL_NAME}'s {committee.name} has been up to!"
+            ),
+        }
+
+        ceo = LAMetroPerson.ceo()
         non_ceos = (
             committee.all_members.annotate(
                 index=Case(
@@ -462,15 +501,18 @@ class LACommitteeDetailView(CommitteeDetailView):
         )
 
         context["non_ceos"] = non_ceos
+        context["memberships"] = committee.memberships.all()
 
         context["ceo"] = ceo
+        context["seo"] = seo
 
         return context
 
 
 class LAPersonDetailView(PersonDetailView):
-    template_name = "person/person.html"
     model = LAMetroPerson
+    template_name = "person/person.html"
+    context_object_name = "person"
 
     def dispatch(self, request, *args, **kwargs):
         slug = self.kwargs["slug"]
@@ -535,6 +577,42 @@ class LAPersonDetailView(PersonDetailView):
                 context["map_geojson"] = None
         except AttributeError:
             context["map_geojson"] = None
+
+        title = ""
+        if person.current_council_seat:
+            title = "%s %s" % (
+                person.current_council_seat,
+                settings.CITY_VOCAB["COUNCIL_MEMBER"],
+            )
+        elif person.latest_council_seat:
+            title = "Former %s, %s" % (
+                settings.CITY_VOCAB["COUNCIL_MEMBER"],
+                person.latest_council_seat,
+            )
+        elif getattr(settings, "EXTRA_TITLES") and person.slug in settings.EXTRA_TITLES:
+            title = settings.EXTRA_TITLES[person.slug]
+        context["title"] = title
+
+        seo = {**settings.SITE_META}
+        if person.current_council_seat:
+            short_name = re.sub(r",.*", "", person.name)
+            seo["site_desc"] = (
+                "%s - %s representative in %s. See what %s has been up to!"
+                % (
+                    person.name,
+                    person.current_council_seat,
+                    settings.CITY_COUNCIL_NAME,
+                    short_name,
+                )
+            )
+        else:
+            seo["site_desc"] = "Details on %s, %s" % (
+                person.name,
+                settings.CITY_COUNCIL_NAME,
+            )
+        seo["title"] = "%s - %s" % (person.name, settings.SITE_META["site_name"])
+        seo["image"] = static(person.headshot.url)
+        context["seo"] = seo
 
         if person.committee_sponsorships:
             context["sponsored_legislation"] = person.committee_sponsorships
@@ -700,7 +778,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         return self.form_class(data, **kwargs)
 
 
-class GoogleView(IndexView):
+class GoogleView(LAMetroIndexView):
     template_name = "google66b34bb6957ad66c.html"
 
 
@@ -708,7 +786,7 @@ class LAMetroArchiveSearch(TemplateView):
     template_name = "archive_search.html"
 
 
-class LAMetroContactView(IndexView):
+class LAMetroContactView(LAMetroIndexView):
     template_name = "contact.html"
 
 

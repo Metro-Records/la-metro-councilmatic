@@ -45,6 +45,8 @@ env = environ.Env(
 # Core Django Settings
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+APP_NAME = "lametro"
+
 # Take missing environment variables from .env.local file
 environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
 
