@@ -40,7 +40,7 @@ Since hooks are run locally, you can modify which scripts are run before each co
 
 ### Get the Legistar API key
 
-There should be an entry in the DataMade LastPass account called 'LA Metro - secrets.py.' Copy its contents into a file called `secrets.py` and place it in `lametro/`.
+There should be an entry in the DataMade Bitwarden account called `LA Metro Legistar API Token`. Copy its contents into a file called `secrets.py` and place it in `lametro/`.
 
 ### Install OS level dependencies:
 

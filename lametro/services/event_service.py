@@ -6,6 +6,7 @@ import requests
 from django.db.models.functions import Cast
 from django.db.models import Prefetch, Case, When, IntegerField, QuerySet
 from django.urls import reverse
+from django.conf import settings
 from wagtail.admin.admin_url_finder import AdminURLFinder
 
 from opencivicdata.legislative.models import BillVersion, EventDocument
@@ -16,12 +17,11 @@ from lametro.utils import timed_get, LAMetroRequestTimeoutException
 logger = logging.getLogger(__name__)
 
 TOKEN: Optional[str] = None
-
-try:
-    from lametro.secrets import TOKEN
-except ImportError:
+TOKEN = settings.LEGISTAR_TOKEN
+if not TOKEN:
     logger.warning(
-        "No API token provided. Future events may be allowed to be deleted in the UI."
+        "No Legsitar API token provided. "
+        "Future events may be allowed to be deleted in the UI."
     )
 
 
