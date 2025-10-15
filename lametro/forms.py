@@ -17,6 +17,7 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
         self.result_type = kwargs.pop("result_type", None)
 
         super(LAMetroCouncilmaticSearchForm, self).__init__(*args, **kwargs)
+        self.load_all = False
 
     def clean_q(self):
         q = self.cleaned_data["q"]
