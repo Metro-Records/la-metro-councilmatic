@@ -12,7 +12,7 @@ from councilmatic.settings_jurisdiction import (
     BILL_STATUS_DESCRIPTIONS,
 )
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic_core.models import Person, Bill
+from councilmatic_core.models import Person
 
 from lametro.models import (
     app_timezone,
@@ -205,15 +205,9 @@ def find_agenda_url(all_documents):
 
 
 @register.simple_tag(takes_context=True)
-def get_highlighted_attachment_text(context, id):
-    bill = Bill.objects.get(id=id)
-    attachment_text = " ".join(
-        d.extras["full_text"] for d in bill.documents.all() if d.extras.get("full_text")
-    )
-
+def get_highlighted_attachment_text(context, bill):
     highlight = ExactHighlighter(context["query"])
-
-    return highlight.highlight(attachment_text)
+    return highlight.highlight(bill.attachment_text)
 
 
 @register.filter

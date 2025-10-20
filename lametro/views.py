@@ -576,11 +576,10 @@ class LAPersonDetailView(PersonDetailView):
 
 
 class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
-    load_all = False
-
     def __init__(self, *args, **kwargs):
         kwargs["form_class"] = LAMetroCouncilmaticSearchForm
         super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
+        self.load_all = False
 
     def extra_context(self):
         # Raise an error if Councilmatic cannot connect to the search engine.

@@ -16,7 +16,7 @@
                 {% if r.highlighted.text.0 %}
                     {{ r.highlighted.text.0|safe }}
                 {% else %}
-                    {% get_highlighted_attachment_text r.id as highlighted_text %}
+                    {% get_highlighted_attachment_text r as highlighted_text %}
                     {{ highlighted_text|safe}}
                 {% endif %}
             </p>
