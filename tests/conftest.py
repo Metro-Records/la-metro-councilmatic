@@ -36,7 +36,6 @@ def get_uid_chunk(uid=None):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def bill(db, legislative_session):
     class BillFactory:
         def build(self, **kwargs):
@@ -62,7 +61,6 @@ def bill(db, legislative_session):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def bill_action(db, bill, metro_organization):
     class BillActionFactory:
         def build(self, **kwargs):
@@ -86,7 +84,6 @@ def bill_action(db, bill, metro_organization):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def division(db):
     division_info = {
         "id": "ocd-division/country:us/state:ca/county:los_angeles",
@@ -99,7 +96,6 @@ def division(db):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def jurisdiction(db, division):
     jurisdiction_info = {
         "id": "ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority",
@@ -112,7 +108,6 @@ def jurisdiction(db, division):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def legislative_session(db, jurisdiction):
     session_info = {
         "identifier": "2017",
@@ -126,7 +121,6 @@ def legislative_session(db, jurisdiction):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def event(db, jurisdiction):
     class EventFactory:
         def build(self, has_broadcast=True, **kwargs):
@@ -157,7 +151,6 @@ def event(db, jurisdiction):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def event_agenda_item(db, event):
     class EventAgendaItemFactory:
         def build(self, **kwargs):
@@ -178,7 +171,6 @@ def event_agenda_item(db, event):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def event_related_entity(db, event_agenda_item):
     class EventRelatedEntityFactory:
         def build(self, **kwargs):
@@ -199,7 +191,6 @@ def event_related_entity(db, event_agenda_item):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def event_document(db):
     class EventDocumentFactory:
         def build(self, **kwargs):
@@ -221,7 +212,6 @@ def event_document(db):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def metro_person(db):
     class LAMetroPersonFactory:
         def build(self, **kwargs):
@@ -243,7 +233,6 @@ def metro_person(db):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def metro_organization(db):
     class LAMetroOrganizationFactory:
         def build(self, **kwargs):
@@ -265,7 +254,6 @@ def metro_organization(db):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def membership(db, metro_organization, metro_person):
     class MembershipFactory:
         def build(self, **kwargs):
@@ -290,7 +278,6 @@ def membership(db, metro_organization, metro_person):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def metro_subject(db):
     class LAMetroSubjectFactory:
         def build(self, **kwargs):
@@ -319,7 +306,6 @@ def metro_subject(db):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def alert(db):
     """
     An alert builder. The expiration can be entered as either a timezone aware
@@ -375,7 +361,6 @@ def concurrent_current_meetings(event):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def event_location(db, jurisdiction):
     class EventLocationFactory:
         def build(self, **kwargs):
