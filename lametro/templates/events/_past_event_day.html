@@ -1,7 +1,7 @@
 {% load lametro_extras %}
 
 <h3 class="text-default m-0 h5">
-    <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{date | date:"D m/d/Y"}}
+    <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{date | date:"l m/d/Y"}}
 </h3>
 <div class="divider" aria-hidden="true"></div>
 
@@ -9,6 +9,7 @@
 
   {% if not forloop.first %}
     <hr class="events-line mt-0" aria-hidden="true"/>
+    <p class="screenreader">Next Meeting</p>
   {% endif %}
 
   <div class="row">
