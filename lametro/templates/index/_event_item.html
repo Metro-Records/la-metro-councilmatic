@@ -1,5 +1,16 @@
 <div class="row mt-4">
   <div class="col-6 col-md-4">
+    <p>
+      {% if event.status == 'cancelled' %}
+        <del>{{ event.link_html | safe }}</del>
+        <small><span class="label label-stale text-light rounded">Cancelled</span></small>
+      {% else %}
+        {{ event.link_html | safe }}
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="col-6 col-md-8">
     {% if event.status == 'cancelled' %}
       <del>
     {% endif %}
@@ -24,16 +35,5 @@
     {% if event.status == 'cancelled' %}
       </del>
     {% endif %}
-  </div>
-
-  <div class="col-6 col-md-8">
-    <p>
-      {% if event.status == 'cancelled' %}
-        <del>{{ event.link_html | safe }}</del>
-        <small><span class="label label-stale text-light rounded">Cancelled</span></small>
-      {% else %}
-        {{ event.link_html | safe }}
-      {% endif %}
-    </p>
   </div>
 </div>

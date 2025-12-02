@@ -1,5 +1,16 @@
 <div class="row mt-4">
   <div class="col-6 col-md-4">
+    <p>
+      {% if event.status == 'cancelled' %}
+        <del>{{ event.link_html | safe }}</del>
+        <small><span class="label label-stale text-light rounded">Cancelled</span></small>
+      {% else %}
+        {{ event.link_html | safe }}
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="col-6 col-md-8">
     {% if event.status == 'cancelled' %}
       <del>
     {% endif %}
@@ -26,33 +37,21 @@
     {% endif %}
   </div>
 
-  <div class="col-6 col-md-8">
+  {% if event.status != 'cancelled' and event.media %}
     <p>
-      {% if event.status == 'cancelled' %}
-        <del>{{ event.link_html | safe }}</del>
-        <small><span class="label label-stale text-light rounded">Cancelled</span></small>
-      {% else %}
-        {{ event.link_html | safe }}
-
-        {% if event.media %}
-          {% for media in event.media.all %}
-            <p>
-              {% if media.note == 'Audio (SAP)' %}
-                <a lang="es" class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Ver en Español - enlace se abre en una pestaña nueva">
-                  <i class="fa fa-headphones" aria-hidden="true"></i>
-                  Ver en Español
-                </a>
-              {% else %}
-                <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Watch in English - link opens in a new tab">
-                  <i class="fa fa-headphones" aria-hidden="true"></i>
-                  Watch in English
-                </a>
-              {% endif %}
-            </p>
-          {% endfor %}
+    {% for media in event.media.all %}
+        {% if media.note == 'Audio (SAP)' %}
+          <a lang="es" class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Ver en Español - enlace se abre en una pestaña nueva">
+            <i class="fa fa-headphones" aria-hidden="true"></i>
+            Ver en Español
+          </a>
+        {% else %}
+          <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Watch in English - link opens in a new tab">
+            <i class="fa fa-headphones" aria-hidden="true"></i>
+            Watch in English
+          </a>
         {% endif %}
-
-      {% endif %}
+    {% endfor %}
     </p>
-  </div>
+  {% endif %}
 </div>
