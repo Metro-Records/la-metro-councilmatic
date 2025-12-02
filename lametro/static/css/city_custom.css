@@ -587,10 +587,6 @@ input[type=radio][name=options] {
     background-color: #3279B7;
 }
 
-.last-hr hr:last-of-type{
-    display: none;
-}
-
 .fa-info-circle {
     color: #eb6864
 }

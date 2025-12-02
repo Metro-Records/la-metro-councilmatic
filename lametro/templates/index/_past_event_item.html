@@ -6,7 +6,7 @@
         <div class="d-inline-block small">
           <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i>
           <span class="non-mobile-only">
-            {{ event.start_time | date:"D" }}
+            {{ event.start_time | date:"l" }}
           </span>
           {{ event.start_time | date:"m/d" }}
         </div>
@@ -56,4 +56,3 @@
     </p>
   </div>
 </div>
-<hr aria-hidden="true">
