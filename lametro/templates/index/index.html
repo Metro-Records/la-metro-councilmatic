@@ -91,7 +91,7 @@
                                 {% include "index/_event_item.html" %}
                                 {% if not forloop.last %}
                                     <hr aria-hidden="true">
-                                    <p class="visually-hidden">Next Meeting</p>
+                                    <p class="screenreader">Next Meeting</p>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
@@ -134,7 +134,7 @@
                             {% include "index/_past_event_item.html" %}
                             {% if not forloop.last %}
                                 <hr aria-hidden="true">
-                                <p class="visually-hidden">Next Meeting</p>
+                                <p class="screenreader">Next Meeting</p>
                             {% endif %}
                         {% endfor %}
                     {% else %}

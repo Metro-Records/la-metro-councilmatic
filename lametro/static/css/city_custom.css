@@ -824,3 +824,8 @@ caption {
 .tooltip p:last-of-type {
     margin-bottom: 0px;
 }
+
+.screenreader {
+  position: absolute;
+  left: -9999px;
+}
