@@ -38,24 +38,22 @@
   </div>
 
   {% if event.status != 'cancelled' and event.media %}
-    <p>
     {% for media in event.media.all %}
-        {% if media.note == 'Audio (SAP)' %}
-          <div class="d-inline-block w-auto ps-2">
-            <a lang="es" class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Ver en Español - enlace se abre en una pestaña nueva">
-              <i class="fa fa-headphones" aria-hidden="true"></i>
-              Ver en Español
-            </a>
-          </div>
-        {% else %}
-          <div class="d-inline-block w-auto pe-2">
-            <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Watch in English - link opens in a new tab">
-              <i class="fa fa-headphones" aria-hidden="true"></i>
-              Watch in English
-            </a>
-          </div>
-        {% endif %}
+      {% if media.note == 'Audio (SAP)' %}
+        <div class="d-inline-block w-auto ps-2">
+          <a lang="es" class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Ver en Español - enlace se abre en una pestaña nueva">
+            <i class="fa fa-headphones" aria-hidden="true"></i>
+            Ver en Español
+          </a>
+        </div>
+      {% else %}
+        <div class="d-inline-block w-auto pe-2">
+          <a class="btn btn-sm btn-primary" href="{{ media.links.all.0.url }}" target="_blank" aria-label="Watch in English - link opens in a new tab">
+            <i class="fa fa-headphones" aria-hidden="true"></i>
+            Watch in English
+          </a>
+        </div>
+      {% endif %}
     {% endfor %}
-    </p>
   {% endif %}
 </div>
