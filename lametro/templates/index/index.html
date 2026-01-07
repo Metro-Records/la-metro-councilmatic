@@ -84,11 +84,15 @@
                     </div>
                 </div>
 
-                <div class="last-hr mb-3">
+                <div class="mb-3">
                     {% if upcoming_committee_meetings %}
                         {% if upcoming_committee_meetings %}
                             {% for event in upcoming_committee_meetings %}
                                 {% include "index/_event_item.html" %}
+                                {% if not forloop.last %}
+                                    <hr aria-hidden="true">
+                                    <p class="screenreader">Next Meeting</p>
+                                {% endif %}
                             {% endfor %}
                         {% endif %}
                     {% else %}
@@ -124,10 +128,14 @@
                     </div>
                 </div>
 
-                <div class="last-hr">
+                <div class="mb-4">
                     {% if most_recent_past_meetings %}
                         {% for event in most_recent_past_meetings %}
                             {% include "index/_past_event_item.html" %}
+                            {% if not forloop.last %}
+                                <hr aria-hidden="true">
+                                <p class="screenreader">Next Meeting</p>
+                            {% endif %}
                         {% endfor %}
                     {% else %}
                         <p><em>No meetings in the past two weeks.</em></p>

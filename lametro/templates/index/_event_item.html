@@ -1,12 +1,23 @@
 <div class="row mt-4">
   <div class="col-6 col-md-4">
+    <p>
+      {% if event.status == 'cancelled' %}
+        <del>{{ event.link_html | safe }}</del>
+        <small><span class="label label-stale text-light rounded">Cancelled</span></small>
+      {% else %}
+        {{ event.link_html | safe }}
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="col-6 col-md-8">
     {% if event.status == 'cancelled' %}
       <del>
     {% endif %}
         <div class="d-inline-block small">
           <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i>
           <span class="non-mobile-only">
-            {{event.start_time | date:"D"}}
+            {{event.start_time | date:"l"}}
           </span>
           {{event.start_time | date:"m/d"}}
         </div>
@@ -25,16 +36,4 @@
       </del>
     {% endif %}
   </div>
-
-  <div class="col-6 col-md-8">
-    <p>
-      {% if event.status == 'cancelled' %}
-        <del>{{ event.link_html | safe }}</del>
-        <small><span class="label label-stale text-light rounded">Cancelled</span></small>
-      {% else %}
-        {{ event.link_html | safe }}
-      {% endif %}
-    </p>
-  </div>
 </div>
-<hr aria-hidden="true">
