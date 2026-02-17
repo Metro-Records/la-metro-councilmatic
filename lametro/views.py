@@ -427,7 +427,6 @@ class LACommitteesView(CommitteesView):
             LAMetroOrganization.objects.filter(classification="committee")
             .filter(memberships__in=memberships)
             .distinct()
-            .exclude(name__icontains="Measure M ")
         )
 
         qs = qs.prefetch_related(
