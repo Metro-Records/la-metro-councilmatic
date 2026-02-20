@@ -390,6 +390,22 @@ class LAMetroPerson(Person, SourcesMixin):
         return None
 
     @property
+    def latest_committee_membership(self):
+        return (
+            self.memberships.exclude(organization__name=settings.OCD_CITY_COUNCIL_NAME)
+            .order_by("-end_date")
+            .first()
+        )
+
+    @property
+    def current_committee_seat(self):
+        m = self.latest_committee_membership
+        if m and m.end_date_dt > timezone.now():
+            return m
+
+        return None
+
+    @property
     def current_district(self):
         m = self.latest_council_membership
         if m and m.post:

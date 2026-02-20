@@ -16,9 +16,11 @@
             <h1 class="d-inline-block me-1">{{ person.name }}</h1>
             <div class="d-inline-block">
                 <div class="text-secondary d-inline-block fw-normal h4">
-                    {% if person.current_council_seat %}
+                    {% if person.details.title %}
+                        {{ person.details.title }}
+                    {% elif person.current_council_seat %}
                         {{ person.current_council_seat.role }}
-                    {% elif person.latest_council_membership.role %}
+                    {% elif person.latest_council_membership.role and not person.current_committee_seat %}
                         Former {{ person.latest_council_membership.role }}
                     {% endif %}
                 </div>
