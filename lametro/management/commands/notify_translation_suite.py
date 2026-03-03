@@ -63,7 +63,7 @@ class Command(BaseCommand):
             logger.warning("qs_entity_type must be either 'bill' or 'event'")
             return
 
-        logger.info(f"Sending notification for {len(qs)} {qs_entity_type}s...")
+        logger.info(f"Processing {len(qs)} {qs_entity_type}s...")
         if qs_entity_type == "bill":
             response = BillService.send_bills_notification(qs)
         else:
@@ -81,22 +81,16 @@ class Command(BaseCommand):
             logger.warning(f"Failed: {response.json()}")
 
         now = datetime.now()
-        notifications_to_create = []
         for entity in qs:
             data_kwargs = {
-                "entity_type": qs_entity_type,
-                "date_last_sent": now,
-                "was_successful": was_successful,
-                # Populate either the 'bill' or 'event' field
+                # Populate either the 'bill' or 'event' field with this entity
                 qs_entity_type: entity,
+                "defaults": {
+                    "entity_type": qs_entity_type,
+                    "date_last_sent": now,
+                    "was_successful": was_successful,
+                },
             }
-            notifications_to_create.append(TranslationNotification(**data_kwargs))
-
-        TranslationNotification.objects.bulk_create(
-            notifications_to_create,
-            update_conflicts=True,
-            unique_fields=[qs_entity_type],  # The specific 'bill' or 'event'
-            update_fields=["entity_type", "date_last_sent"],
-        )
+            TranslationNotification.objects.update_or_create(**data_kwargs)
 
         logger.info(f"Finished {qs_entity_type}s notification")
