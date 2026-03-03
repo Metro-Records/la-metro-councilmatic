@@ -193,6 +193,7 @@ class EventService:
                     }
                 )
 
+        logger.info(f"Agendas found: {len(data['documents'])}")
         if not data["documents"]:
             return None
 

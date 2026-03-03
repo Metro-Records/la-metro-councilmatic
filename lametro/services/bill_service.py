@@ -41,6 +41,7 @@ class BillService:
                     }
                 )
 
+        logger.info(f"Board reports found: {len(data['documents'])}")
         if not data["documents"]:
             return None
 

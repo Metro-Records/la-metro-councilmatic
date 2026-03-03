@@ -69,6 +69,12 @@ class Command(BaseCommand):
         else:
             response = EventService.send_events_notification(qs)
 
+        if not response:
+            logger.info(
+                f"No related documents found for the selected {qs_entity_type}s"
+            )
+            return
+
         logger.info(
             f"{qs_entity_type.title()}s notification returned status code: "
             f"{response.status_code}"
