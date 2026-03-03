@@ -1210,6 +1210,7 @@ class TranslationNotification(models.Model):
     date_last_sent = models.DateTimeField(
         help_text="The most recent time this notification was sent."
     )
+    was_successful = models.BooleanField()
     bill = models.OneToOneField(
         LAMetroBill,
         null=True,
