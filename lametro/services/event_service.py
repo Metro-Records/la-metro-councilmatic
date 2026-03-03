@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union, List
 import logging
 
 import requests
@@ -11,7 +11,7 @@ from wagtail.admin.admin_url_finder import AdminURLFinder
 
 from opencivicdata.legislative.models import BillVersion, EventDocument
 
-from lametro.models import LAMetroBill, EventAgenda, EventNotice
+from lametro.models import LAMetroBill, EventAgenda, EventNotice, LAMetroEvent
 from lametro.utils import timed_get, LAMetroRequestTimeoutException
 
 logger = logging.getLogger(__name__)
@@ -119,6 +119,7 @@ class EventService:
                 "url": agenda.links.get().url,
                 "timestamp": agenda.date,
                 "manual": "manual" in agenda.note.lower(),
+                "pk": agenda.pk,
             }
 
         return None
@@ -161,3 +162,41 @@ class EventService:
                 )
 
         return notices_by_comment.filter(broadcast_conditions__contains=["future"])
+
+    @staticmethod
+    def send_events_notification(
+        events: Union[QuerySet, List[LAMetroEvent]]
+    ) -> requests.Response | None:
+        """
+        Send a notification to the Translation Suite with details
+        on event documents that need to be ocr'd.
+
+        :return response: The response from the suite with a status code
+        """
+
+        url = f"https://{settings.TRANSLATION_SUITE_URL}/api/update-documents/"
+        data = {"api_key": settings.TRANSLATION_API_KEY, "documents": []}
+        date_format = "%Y-%m-%d %H:%M:%S"
+
+        for e in events:
+            if agenda := EventService.get_agenda(e):
+                data["documents"].append(
+                    {
+                        "title": f"{e.name} - {e.start_time.date()}",
+                        "source_url": agenda["url"],
+                        "created_at": e.created_at.strftime(date_format),
+                        "updated_at": e.updated_at.strftime(date_format),
+                        "document_type": "event_document",
+                        "document_id": str(agenda["pk"]),
+                        "entity_type": "event",
+                        "entity_id": e.pk,
+                    }
+                )
+
+        if not data["documents"]:
+            return None
+
+        res = requests.post(
+            url, json=data, headers={"Content-type": "application/json"}
+        )
+        return res
