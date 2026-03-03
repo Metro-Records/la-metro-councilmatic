@@ -1197,3 +1197,45 @@ class LAMetroSubject(models.Model):
 
         else:
             return self.name
+
+
+class TranslationNotification(models.Model):
+    """
+    Tracks notifications sent to the Translation Suite
+    """
+
+    ENTITY_CHOICES = [("bill", "bill"), ("event", "event")]
+
+    entity_type = models.CharField(choices=ENTITY_CHOICES, max_length=32)
+    date_last_sent = models.DateTimeField(
+        help_text="The most recent time this notification was sent."
+    )
+    bill = models.OneToOneField(
+        LAMetroBill,
+        null=True,
+        blank=True,
+        related_name="notification",
+        on_delete=models.PROTECT,
+    )
+    event = models.OneToOneField(
+        LAMetroEvent,
+        null=True,
+        blank=True,
+        related_name="notification",
+        on_delete=models.PROTECT,
+    )
+
+    @property
+    def entity_updated_at(self):
+        entity = getattr(self, self.entity_type)
+        return entity.updated_at
+
+    class Meta:
+        constraints = [
+            # Ensure only one of the related entity types is assigned
+            models.CheckConstraint(
+                check=(Q(bill__isnull=False) & Q(event__isnull=True))
+                | (Q(bill__isnull=True) & Q(event__isnull=False)),
+                name="only_one_entity",
+            )
+        ]
