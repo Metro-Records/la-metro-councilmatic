@@ -164,23 +164,22 @@ class EventService:
         return notices_by_comment.filter(broadcast_conditions__contains=["future"])
 
     @staticmethod
-    def send_events_notification(
+    def build_events_notification(
         events: Union[QuerySet, List[LAMetroEvent]]
     ) -> requests.Response | None:
         """
-        Send a notification to the Translation Suite with details
-        on event documents that need to be ocr'd.
+        Return details on event documents that need to be ocr'd,
+        in order to send a notification to the Translation Suite.
 
-        :return response: The response from the suite with a status code
+        :return details: A list of dicts with document details
         """
 
-        url = f"https://{settings.TRANSLATION_SUITE_URL}/api/update-documents/"
-        data = {"api_key": settings.TRANSLATION_API_KEY, "documents": []}
         date_format = "%Y-%m-%d %H:%M:%S"
+        details = []
 
         for e in events:
             if agenda := EventService.get_agenda(e):
-                data["documents"].append(
+                details.append(
                     {
                         "title": f"{e.name} - {e.start_time.date()}",
                         "source_url": agenda["url"],
@@ -193,11 +192,5 @@ class EventService:
                     }
                 )
 
-        logger.info(f"Agendas found: {len(data['documents'])}")
-        if not data["documents"]:
-            return None
-
-        res = requests.post(
-            url, json=data, headers={"Content-type": "application/json"}
-        )
-        return res
+        logger.info(f"Agendas found: {len(details)}")
+        return details

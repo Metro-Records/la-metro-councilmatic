@@ -1,8 +1,10 @@
 import logging
+import requests
 from datetime import datetime
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q, F
+from django.conf import settings
 
 from lametro.models.legislative import (
     LAMetroEvent,
@@ -42,61 +44,51 @@ class Command(BaseCommand):
         )
         bills = LAMetroBill.objects.filter(filter_by_notification)
         events = LAMetroEvent.objects.filter(filter_by_notification)
+        logger.info(f"Checking {len(bills)} bills and {len(events)} events...")
 
         if not bills and not events:
             logger.info("All documents up to date!")
             return
 
-        # Notify suite and upsert notification objects for each entity
-        if bills:
-            self.notify(qs=bills, qs_entity_type="bill")
-        if events:
-            self.notify(qs=events, qs_entity_type="event")
-
-    def notify(self, qs, qs_entity_type):
-        """
-        Notify suite of documents for each entity in a queryset
-        and upsert notifications.
-        """
-
-        if qs_entity_type not in ["bill", "event"]:
-            logger.warning("qs_entity_type must be either 'bill' or 'event'")
+        # Build document details as a single list of dicts
+        document_details = BillService.build_bills_notification(
+            bills
+        ) + EventService.build_events_notification(events)
+        if not document_details:
+            logger.info("No related documents found for selected bills or events")
             return
 
-        logger.info(f"Processing {len(qs)} {qs_entity_type}s...")
-        if qs_entity_type == "bill":
-            response = BillService.send_bills_notification(qs)
-        else:
-            response = EventService.send_events_notification(qs)
+        # Notify suite
+        logger.info(f"Notifying about {len(document_details)} total documents...")
+        url = f"https://{settings.TRANSLATION_SUITE_URL}/api/update-documents/"
+        data = {"api_key": settings.TRANSLATION_API_KEY, "documents": document_details}
 
-        if not response:
-            logger.info(
-                f"No related documents found for the selected {qs_entity_type}s"
-            )
-            return
-
-        logger.info(
-            f"{qs_entity_type.title()}s notification returned status code: "
-            f"{response.status_code}"
+        response = requests.post(
+            url, json=data, headers={"Content-type": "application/json"}
         )
-        if str(response.status_code).startswith("20"):
-            was_successful = True
+        logger.info(f"Translation suite returned status code: {response.status_code}")
+
+        was_successful = str(response.status_code).startswith("20")
+        if was_successful:
             logger.info(f"Success: {response.json()}")
         else:
-            was_successful = False
             logger.warning(f"Failed: {response.json()}")
 
+        # Upsert notification objects for each entity
         now = datetime.now()
-        for entity in qs:
+        self.upsert_notifications(bills, "bill", was_successful, now)
+        self.upsert_notifications(events, "event", was_successful, now)
+        logger.info("Finished processing notification")
+
+    def upsert_notifications(self, entities, type, was_successful, now):
+        for entity in entities:
             data_kwargs = {
                 # Populate either the 'bill' or 'event' field with this entity
-                qs_entity_type: entity,
+                type: entity,
                 "defaults": {
-                    "entity_type": qs_entity_type,
+                    "entity_type": type,
                     "date_last_sent": now,
                     "was_successful": was_successful,
                 },
             }
             TranslationNotification.objects.update_or_create(**data_kwargs)
-
-        logger.info(f"Finished {qs_entity_type}s notification")
