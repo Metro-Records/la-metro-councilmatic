@@ -1,6 +1,6 @@
 import logging
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q, F
@@ -31,19 +31,21 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        Send notifications for bills and events if the entity:
+        Send notifications for bills and events recently created/updated if the entity:
         - has not yet had a notification sent
         - has been updated more recently than its last notification
         - does not have a successful notification
         """
 
-        filter_by_notification = (
+        now = datetime.now()
+        cutoff_date = now - timedelta(weeks=12)  # 3 months ago
+        filters = Q(updated_at__gte=cutoff_date) & (
             Q(notification__isnull=True)
             | Q(notification__date_last_sent__lt=F("updated_at"))
             | Q(notification__was_successful=False)
         )
-        bills = LAMetroBill.objects.filter(filter_by_notification)
-        events = LAMetroEvent.objects.filter(filter_by_notification)
+        bills = LAMetroBill.objects.filter(filters)
+        events = LAMetroEvent.objects.filter(filters)
         logger.info(f"Checking {len(bills)} bills and {len(events)} events...")
 
         if not bills and not events:
@@ -75,7 +77,6 @@ class Command(BaseCommand):
             logger.warning(f"Failed: {response.json()}")
 
         # Upsert notification objects for each entity
-        now = datetime.now()
         self.upsert_notifications(bills, "bill", was_successful, now)
         self.upsert_notifications(events, "event", was_successful, now)
         logger.info("Finished processing notification")
