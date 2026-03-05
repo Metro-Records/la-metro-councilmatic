@@ -20,6 +20,8 @@
                         {{ person.details.title }}
                     {% elif person.current_council_seat %}
                         {{ person.current_council_seat.role }}
+                    {% elif person.current_committee_seat %}
+                        Committee Member
                     {% elif person.latest_council_membership.role and not person.current_committee_seat %}
                         Former {{ person.latest_council_membership.role }}
                     {% endif %}
