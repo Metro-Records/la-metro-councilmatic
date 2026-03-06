@@ -52,13 +52,13 @@ class Command(BaseCommand):
             logger.info("All documents up to date!")
             return
 
-        # Build document details as a single list of dicts
-        document_details = BillService.build_bills_notification(
-            bills
-        ) + EventService.build_events_notification(events)
-        if not document_details:
+        # Check for document details, then aggregate as single list of dicts
+        bills_details = BillService.build_bills_notification(bills)
+        events_details = EventService.build_events_notification(events)
+        if not bills_details and not events_details:
             logger.info("No related documents found for selected bills or events")
             return
+        document_details = bills_details + events_details
 
         # Notify suite
         logger.info(f"Notifying about {len(document_details)} total documents...")
@@ -70,8 +70,7 @@ class Command(BaseCommand):
         )
         logger.info(f"Translation suite returned status code: {response.status_code}")
 
-        was_successful = str(response.status_code).startswith("20")
-        if was_successful:
+        if was_successful := str(response.status_code).startswith("20"):
             logger.info(f"Success: {response.json()}")
         else:
             logger.warning(f"Failed: {response.json()}")
