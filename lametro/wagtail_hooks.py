@@ -193,6 +193,7 @@ class BoardMemberDetailsViewSet(SnippetViewSet):
                     "on the live page.</p>"
                 )
             ),
+            FieldPanel("title"),
             MultiFieldPanel(
                 [
                     FieldPanel("headshot", heading="Image"),

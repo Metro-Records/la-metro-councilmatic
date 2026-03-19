@@ -78,6 +78,12 @@ class BoardMemberDetails(
         max_length=256, blank=True, null=True, default="Metro"
     )
     bio = RichTextField(blank=True, null=True)
+    title = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        help_text="The position that will show up on this person's detail page e.g. Board Member",
+    )
     _revisions = GenericRelation(
         "wagtailcore.Revision", related_query_name="member_details"
     )
