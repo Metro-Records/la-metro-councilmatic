@@ -80,11 +80,11 @@ class Command(BaseCommand):
         self.upsert_notifications(events, "event", was_successful, now)
         logger.info("Finished processing notification")
 
-    def upsert_notifications(self, entities, type, was_successful, now):
+    def upsert_notifications(self, entities, entity_type, was_successful, now):
         for entity in entities:
             data_kwargs = {
-                # Populate either the 'bill' or 'event' field with this entity
-                type: entity,
+                # Populate either the 'bill' or 'event' type field with this entity
+                entity_type: entity,
                 "defaults": {
                     "entity_type": type,
                     "date_last_sent": now,
