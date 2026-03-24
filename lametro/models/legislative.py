@@ -41,7 +41,6 @@ from lametro.utils import (
     parse_subject,
     timed_get,
     LAMetroRequestTimeoutException,
-    get_alternate_files,
 )
 from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
 
@@ -292,10 +291,6 @@ class LAMetroBill(Bill, SourcesMixin):
         )
 
         return sorted_data
-
-    @property
-    def alternate_files(self):
-        return get_alternate_files(self, "bill", self.friendly_name)
 
 
 class RelatedBillManager(models.Manager):
@@ -928,11 +923,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     @property
     def has_manual_broadcast(self):
         return self.broadcast.filter(is_manually_live=True).exists()
-
-    @property
-    def alternate_files(self):
-        friendly_name = f"{self.name} - {self.start_time.date()}"
-        return get_alternate_files(self, "event", friendly_name)
 
 
 class EventBroadcast(models.Model):
