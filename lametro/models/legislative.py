@@ -1207,29 +1207,24 @@ class TranslationNotification(models.Model):
     ENTITY_CHOICES = [("bill", "bill"), ("event", "event")]
 
     entity_type = models.CharField(choices=ENTITY_CHOICES, max_length=32)
-    date_last_sent = models.DateTimeField(
-        help_text="The most recent time this notification was sent."
+    date_sent = models.DateTimeField(
+        help_text="The date/time this notification was sent."
     )
     was_successful = models.BooleanField()
-    bill = models.OneToOneField(
+    bill = models.ForeignKey(
         LAMetroBill,
         null=True,
         blank=True,
-        related_name="notification",
+        related_name="notifications",
         on_delete=models.PROTECT,
     )
-    event = models.OneToOneField(
+    event = models.ForeignKey(
         LAMetroEvent,
         null=True,
         blank=True,
-        related_name="notification",
+        related_name="notifications",
         on_delete=models.PROTECT,
     )
-
-    @property
-    def entity_updated_at(self):
-        entity = getattr(self, self.entity_type)
-        return entity.updated_at
 
     class Meta:
         constraints = [
