@@ -1,4 +1,4 @@
-from typing import Optional, Union, List
+from typing import Optional
 import logging
 
 import requests
@@ -164,33 +164,27 @@ class EventService:
         return notices_by_comment.filter(broadcast_conditions__contains=["future"])
 
     @staticmethod
-    def build_events_notification(
-        events: Union[QuerySet, List[LAMetroEvent]]
-    ) -> requests.Response | None:
+    def build_event_notification(event: LAMetroEvent) -> dict:
         """
-        Return details on event documents that need to be ocr'd,
+        Return details on an event's document that needs to be ocr'd,
         in order to send a notification to the Translation Suite.
 
-        :return details: A list of dicts with document details
+        :return details: A dict with document details if available
         """
 
         date_format = "%Y-%m-%d %H:%M:%S"
-        details = []
+        details = {}
 
-        for e in events:
-            if agenda := EventService.get_agenda(e):
-                details.append(
-                    {
-                        "title": f"{e.name} - {e.start_time.date()}",
-                        "source_url": agenda["url"],
-                        "created_at": e.created_at.strftime(date_format),
-                        "updated_at": e.updated_at.strftime(date_format),
-                        "document_type": "event_document",
-                        "document_id": str(agenda["pk"]),
-                        "entity_type": "event",
-                        "entity_id": e.pk,
-                    }
-                )
+        if agenda := EventService.get_agenda(event):
+            details = {
+                "title": f"{event.name} - {event.start_time.date()}",
+                "source_url": agenda["url"],
+                "created_at": event.created_at.strftime(date_format),
+                "updated_at": event.updated_at.strftime(date_format),
+                "document_type": "event_document",
+                "document_id": str(agenda["pk"]),
+                "entity_type": "event",
+                "entity_id": event.pk,
+            }
 
-        logger.info(f"Agendas found: {len(details)}")
         return details

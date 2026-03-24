@@ -52,9 +52,9 @@ class Command(BaseCommand):
             logger.info("All documents up to date!")
             return
 
-        # Check for document details, then aggregate as single list of dicts
-        bills_details = BillService.build_bills_notification(bills)
-        events_details = EventService.build_events_notification(events)
+        # Get document detail dicts, exclude empty results, and collate into one list
+        bills_details = self.get_details(bills)
+        events_details = self.get_details(bills)
         if not bills_details and not events_details:
             logger.info("No related documents found for selected bills or events")
             return
@@ -92,3 +92,15 @@ class Command(BaseCommand):
                 },
             }
             TranslationNotification.objects.update_or_create(**data_kwargs)
+
+    def get_details(self, qs):
+        """
+        Create a list of dicts containing document details for each entity
+        in the queryset, while filtering out any empty results.
+        """
+        if type(qs[0]) == LAMetroBill:
+            details = [BillService.build_bill_notification(bill) for bill in qs]
+        else:
+            details = [EventService.build_event_notification(event) for event in qs]
+
+        return [d for d in details if d]
