@@ -164,7 +164,7 @@ class EventService:
         return notices_by_comment.filter(broadcast_conditions__contains=["future"])
 
     @staticmethod
-    def build_event_notification(event: LAMetroEvent) -> dict:
+    def build_event_document_details(event: LAMetroEvent) -> dict:
         """
         Return details on an event's document that needs to be ocr'd,
         in order to send a notification to the Translation Suite.

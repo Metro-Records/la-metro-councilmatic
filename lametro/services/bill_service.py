@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class BillService:
     @staticmethod
-    def build_bill_notification(bill: LAMetroBill) -> dict:
+    def build_bill_document_details(bill: LAMetroBill) -> dict:
         """
         Return details on a bill's document that needs to be ocr'd,
         in order to send a notification to the Translation Suite.

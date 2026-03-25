@@ -1205,25 +1205,31 @@ class TranslationNotification(models.Model):
     """
 
     ENTITY_CHOICES = [("bill", "bill"), ("event", "event")]
+    STATUS_CHOICES = [
+        ("waiting", "waiting"),
+        ("delivered", "delivered"),
+        ("failed", "failed"),
+    ]
 
     entity_type = models.CharField(choices=ENTITY_CHOICES, max_length=32)
-    date_sent = models.DateTimeField(
-        help_text="The date/time this notification was sent."
-    )
-    was_successful = models.BooleanField()
+    status = models.CharField(choices=STATUS_CHOICES, default="waiting", max_length=32)
+    created_at = models.DateTimeField(auto_now_add=True)
     bill = models.ForeignKey(
         LAMetroBill,
         null=True,
         blank=True,
         related_name="notifications",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
     )
     event = models.ForeignKey(
         LAMetroEvent,
         null=True,
         blank=True,
         related_name="notifications",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
+    )
+    data = models.JSONField(
+        help_text="The entity's data that will be sent to the translation suite"
     )
 
     class Meta:
