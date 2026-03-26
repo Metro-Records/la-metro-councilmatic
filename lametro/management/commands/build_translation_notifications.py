@@ -115,7 +115,7 @@ class Command(BaseCommand):
         # Determine which entity type this queryset is for, and choose the right builder
         if not qs:
             return
-        elif type(qs[0]) == LAMetroBill:
+        elif type(qs[0]) is LAMetroBill:
             entity_type = "bill"
             detail_builder = BillService.build_bill_document_details
         else:
