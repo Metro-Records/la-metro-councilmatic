@@ -49,7 +49,7 @@
                             </a>
                             <ul class="dropdown-menu shadow rounded-bottom">
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:council_members' %}">Board of Directors</a></li>
-                                <li><a class="dropdown-item dropdown-size" href="{% url 'committees' %}">Committees</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:committees' %}">Committees</a></li>
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:contact' %}">Contact Us</a></li>
                                 <li><a class="dropdown-item dropdown-size" href="{% slugurl 'about' %}">About Us</a></li>
                                 {% slugurl 'board-policies' as bp_url %}
@@ -72,7 +72,8 @@
                                 Meetings
                             </a>
                             <ul class="dropdown-menu shadow rounded-bottom">
-                                <li><a class="dropdown-item dropdown-size" href="{% url 'events' %}">{{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:event' %}">{{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></li>
+    # url(r"", include("councilmatic_core.urls")),
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:minutes' %}">Minutes</a></li>
                             </ul>
                         </li>
