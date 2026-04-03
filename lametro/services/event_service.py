@@ -185,6 +185,7 @@ class EventService:
                 "document_id": str(agenda["pk"]),
                 "entity_type": "event",
                 "entity_id": event.pk,
+                "entity_slug": event.slug,
             }
 
         return details

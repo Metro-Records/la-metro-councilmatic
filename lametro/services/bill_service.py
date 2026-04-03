@@ -28,6 +28,7 @@ class BillService:
                 "document_id": str(board_report.pk),
                 "entity_type": "bill",
                 "entity_id": bill.pk,
+                "entity_slug": bill.slug,
             }
 
         return details
