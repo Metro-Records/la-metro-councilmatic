@@ -97,10 +97,10 @@ class Command(BaseCommand):
             TranslationNotification.objects.bulk_update(notifications, ["status"])
 
             # Clean up failed notifications for related entities
-            filters = Q(status="failed") & (
+            failed_filters = Q(status="failed") & (
                 Q(bill__pk__in=related_bill_pks) | Q(event__pk__in=related_event_pks)
             )
-            TranslationNotification.objects.filter(filters).delete()
+            TranslationNotification.objects.filter(failed_filters).delete()
             logger.info("~~ Notifications delivered and updated! ~~")
         else:
             for notif in notifications:
