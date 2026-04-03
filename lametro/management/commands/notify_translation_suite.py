@@ -3,7 +3,6 @@ import requests
 from time import sleep
 
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 from django.conf import settings
 
 from lametro.models.legislative import TranslationNotification
@@ -14,32 +13,29 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     """
-    Send all waiting notifications to the translation suite with information
-    on each document that needs extraction/translation,
-    then clean up failed notifications.
+    Send all waiting or failed notifications to the translation suite with
+    information on each document that needs extraction/translation.
     """
 
     help = (
-        "Send all waiting notifications to the translation suite with information "
-        "on each document that needs extraction/translation, "
-        "then clean up failed notifications."
+        "Send all waiting or failed notifications to the translation suite with "
+        "information on each document that needs extraction/translation."
     )
 
     def handle(self, *args, **options):
         """
-        Send all waiting notifications and update their statuses.
+        Send all waiting or failed notifications and update their statuses.
 
-        On success, mark as delivered and delete all previously failed notifications
-        for related entities.
+        On success, mark as "delivered".
 
         On failure, retry a set number of times, ultimately marking them as "failed"
-        if we exceed our retry limit. The `build_translation_notifications` command
-        will make new "waiting" notifications for these entities next time it runs.
+        if we exceed our retry limit. The `build_translation_notification` command will
+        clean up any failed notifications and make new ones next time it runs.
         """
 
         notifications = TranslationNotification.objects.select_related(
             "bill", "event"
-        ).filter(status="waiting")
+        ).filter(status__in=["waiting", "failed"])
 
         if not notifications:
             logger.info("~~ No notifications are waiting to be delivered ~~")
@@ -82,28 +78,12 @@ class Command(BaseCommand):
 
         # Update notifications
         if was_successful:
-            related_bill_pks = set()
-            related_event_pks = set()
             for notif in notifications:
                 notif.status = "delivered"
-
-                entity = notif.bill if notif.bill else notif.event
-                (
-                    related_bill_pks.add(entity.pk)
-                    if notif.bill
-                    else related_event_pks.add(entity.pk)
-                )
-
-            TranslationNotification.objects.bulk_update(notifications, ["status"])
-
-            # Clean up failed notifications for related entities
-            failed_filters = Q(status="failed") & (
-                Q(bill__pk__in=related_bill_pks) | Q(event__pk__in=related_event_pks)
-            )
-            TranslationNotification.objects.filter(failed_filters).delete()
             logger.info("~~ Notifications delivered and updated! ~~")
         else:
             for notif in notifications:
                 notif.status = "failed"
-            TranslationNotification.objects.bulk_update(notifications, ["status"])
             logger.warning(f"~~ Notifications failed after {attempt_limit} attempts ~~")
+
+        TranslationNotification.objects.bulk_update(notifications, ["status"])

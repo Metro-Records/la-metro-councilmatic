@@ -103,6 +103,15 @@ class Command(BaseCommand):
             f"Created notifications for {len(bill_notifications)} bills "
             f"and {len(event_notifications)} events"
         )
+
+        # Clean up previously failed notifications for these entities
+        bills_pks = set([b.pk for b in bills])
+        events_pks = set([e.pk for e in events])
+        related_failed_notifs = TranslationNotification.objects.filter(
+            Q(status="failed") & (Q(bill__in=bills_pks) | Q(event__in=events_pks))
+        )
+        related_failed_notifs.delete()
+
         logger.info("~~ Finished building notifications! ~~")
 
     def create_notifications(self, qs):
