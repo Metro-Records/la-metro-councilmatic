@@ -31,6 +31,7 @@ env = environ.Env(
     AWS_S3_ACCESS_KEY_ID=(str, ""),
     AWS_S3_SECRET_ACCESS_KEY=(str, ""),
     AWS_STORAGE_BUCKET_NAME=(str, ""),
+    AWS_TRANSLATION_BUCKET_NAME=(str, ""),
     # Test keys from:
     # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha.-what-should-i-do
     RECAPTCHA_PUBLIC_KEY=(str, "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"),
@@ -41,6 +42,8 @@ env = environ.Env(
     WAGTAILADMIN_BASE_URL=(str, "https://boardagendas.metro.net"),
     HEROKU_KEY=(str, ""),
     LEGISTAR_TOKEN=(str, ""),
+    TRANSLATION_SUITE_URL=(str, ""),
+    TRANSLATION_API_KEY=(str, ""),
 )
 
 # Core Django Settings
@@ -252,6 +255,7 @@ GOOGLE_API_KEY = env("GOOGLE_API_KEY")
 AWS_S3_ACCESS_KEY_ID = env("AWS_S3_ACCESS_KEY_ID")
 AWS_S3_SECRET_ACCESS_KEY = env("AWS_S3_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+AWS_TRANSLATION_BUCKET_NAME = env("AWS_TRANSLATION_BUCKET_NAME")
 
 if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
     print(
@@ -367,3 +371,7 @@ WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL")
 HEROKU_KEY = env("HEROKU_KEY")
 
 LEGISTAR_TOKEN = env("LEGISTAR_TOKEN")
+
+# For notifying suite of new/updated documents
+TRANSLATION_SUITE_URL = env("TRANSLATION_SUITE_URL")
+TRANSLATION_API_KEY = env("TRANSLATION_API_KEY")

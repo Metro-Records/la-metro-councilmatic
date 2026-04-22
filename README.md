@@ -156,11 +156,11 @@ If a branch involves a migration, either review those changes locally, or check 
 
 ### Review apps for Model changes
 
-1. Configure the S3 connection, as documented above.
-2. Once a release phase successfully completes, provision an Essential 0 database for your review app.
-3. Retrieve the URI from the Credentials tab.
-4. Update the app's `DATABASE_URL` config value to the new URI.
-  4a. If your need a new SearchBox Elasticsearch instance to test your changes, provision one at the free tier and set the `SEARCHBOX_URL` config value to that instance's url.
+1. Once a release phase successfully completes, provision an Essential 0 database for your review app.
+2. Retrieve the URI from the Credentials tab.
+3. Update the review app's `DATABASE_URL` config value to the new URI.
+  - If you need a new SearchBox Elasticsearch instance to test your changes, provision one at the free tier and set the `SEARCHBOX_URL` config value to that instance's url.
+4. In your local environment, ensure that the value of the `SMART_LOGIC_KEY` config var is the same as that on staging.
 5. On your local machine, run `DATABASE_URL=<YOUR URI HERE> make -e wagtail_db`. This will populate initial legislative data and import content from the version controlled fixture data.
 
 ## Adding a new board member

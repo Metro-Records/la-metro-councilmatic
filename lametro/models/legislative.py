@@ -1197,3 +1197,47 @@ class LAMetroSubject(models.Model):
 
         else:
             return self.name
+
+
+class TranslationNotification(models.Model):
+    """
+    Tracks notifications sent to the Translation Suite
+    """
+
+    ENTITY_CHOICES = [("bill", "bill"), ("event", "event")]
+    STATUS_CHOICES = [
+        ("waiting", "waiting"),
+        ("delivered", "delivered"),
+        ("failed", "failed"),
+    ]
+
+    entity_type = models.CharField(choices=ENTITY_CHOICES, max_length=32)
+    status = models.CharField(choices=STATUS_CHOICES, default="waiting", max_length=32)
+    created_at = models.DateTimeField(auto_now_add=True)
+    bill = models.ForeignKey(
+        LAMetroBill,
+        null=True,
+        blank=True,
+        related_name="notifications",
+        on_delete=models.CASCADE,
+    )
+    event = models.ForeignKey(
+        LAMetroEvent,
+        null=True,
+        blank=True,
+        related_name="notifications",
+        on_delete=models.CASCADE,
+    )
+    data = models.JSONField(
+        help_text="The entity's data that will be sent to the translation suite"
+    )
+
+    class Meta:
+        constraints = [
+            # Ensure only one of the related entity types is assigned
+            models.CheckConstraint(
+                check=(Q(bill__isnull=False) & Q(event__isnull=True))
+                | (Q(bill__isnull=True) & Q(event__isnull=False)),
+                name="only_one_entity",
+            )
+        ]

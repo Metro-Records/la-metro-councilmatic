@@ -11,7 +11,7 @@ from wagtail.admin.admin_url_finder import AdminURLFinder
 
 from opencivicdata.legislative.models import BillVersion, EventDocument
 
-from lametro.models import LAMetroBill, EventAgenda, EventNotice
+from lametro.models import LAMetroBill, EventAgenda, EventNotice, LAMetroEvent
 from lametro.utils import timed_get, LAMetroRequestTimeoutException
 
 logger = logging.getLogger(__name__)
@@ -119,6 +119,7 @@ class EventService:
                 "url": agenda.links.get().url,
                 "timestamp": agenda.date,
                 "manual": "manual" in agenda.note.lower(),
+                "pk": agenda.pk,
             }
 
         return None
@@ -161,3 +162,30 @@ class EventService:
                 )
 
         return notices_by_comment.filter(broadcast_conditions__contains=["future"])
+
+    @staticmethod
+    def build_event_document_details(event: LAMetroEvent) -> dict:
+        """
+        Return details on an event's document that needs to be ocr'd,
+        in order to send a notification to the Translation Suite.
+
+        :return details: A dict with document details if available
+        """
+
+        date_format = "%Y-%m-%d %H:%M:%S"
+        details = {}
+
+        if agenda := EventService.get_agenda(event):
+            details = {
+                "title": f"{event.name} - {event.start_time.date()}",
+                "source_url": agenda["url"],
+                "created_at": event.created_at.strftime(date_format),
+                "updated_at": event.updated_at.strftime(date_format),
+                "document_type": "event_document",
+                "document_id": str(agenda["pk"]),
+                "entity_type": "event",
+                "entity_id": event.pk,
+                "entity_slug": event.slug,
+            }
+
+        return details
