@@ -72,9 +72,9 @@ class Command(BaseCommand):
                 logger.warning(f"Failed: {response.reason}")
 
             if attempt_num < attempt_limit:
-                delay_seconds *= attempt_num
                 logger.warning(f"Trying again in {delay_seconds} seconds...")
-                sleep(delay_seconds * attempt_num)
+                sleep(delay_seconds)
+                delay_seconds *= 2
 
         # Update notifications
         if was_successful:

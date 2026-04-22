@@ -105,8 +105,8 @@ class Command(BaseCommand):
         )
 
         # Clean up previously failed notifications for these entities
-        bills_pks = set([b.pk for b in bills])
-        events_pks = set([e.pk for e in events])
+        bills_pks = {b.pk for b in bills}
+        events_pks = {e.pk for e in events}
         related_failed_notifs = TranslationNotification.objects.filter(
             Q(status="failed") & (Q(bill__in=bills_pks) | Q(event__in=events_pks))
         )
@@ -124,7 +124,7 @@ class Command(BaseCommand):
         # Determine which entity type this queryset is for, and choose the right builder
         if not qs:
             return
-        elif type(qs[0]) is LAMetroBill:
+        elif qs.model is LAMetroBill:
             entity_type = "bill"
             detail_builder = BillService.build_bill_document_details
         else:
