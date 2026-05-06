@@ -1,0 +1,50 @@
+name: Run translation ETL
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        type: choice
+        default: staging
+        options:
+          - staging
+          - production
+
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+
+env:
+  TRANSLATION_SUITE_URL: ${{ secrets.TRANSLATION_SUITE_URL }}
+  TRANSLATION_API_KEY: ${{ secrets.TRANSLATION_API_KEY }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+jobs:
+  build-notifications:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    container:
+      image: ghcr.io/metro-records/la-metro-councilmatic:${{ inputs.environment == 'production' && 'deploy' || 'main' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Build notifications
+        run: python manage.py build_translation_notifications
+
+  send-notifications:
+    needs: build-notifications
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    container:
+      image: ghcr.io/metro-records/la-metro-councilmatic:${{ inputs.environment == 'production' && 'deploy' || 'main' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Send notifications
+        run: python manage.py notify_translation_suite
