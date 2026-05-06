@@ -1,0 +1,19 @@
+name: Daily translation notifications dispatcher
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 23 * * *" # Runs every day an hour before midnight UTC
+
+jobs:
+  staging:
+    uses: ./.github/workflows/notify_translations.yml
+    with:
+      environment: staging
+    secrets: inherit
+
+  # production:
+  #   uses: ./.github/workflows/run_translation.yml
+  #   with:
+  #     environment: production
+  #   secrets: inherit
