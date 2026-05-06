@@ -610,15 +610,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             cls.objects.with_media()
             .filter(start_time__gte=two_weeks_ago)
             .order_by("-start_time")
-            .prefetch_related("broadcast")
+            .exclude(name__icontains="test")
+            .exclude(status="cancelled")
         )
 
-        # since has_passed is a property of LAMetroEvent rather than
-        # a model attribute, we have to make sure returned meetings
-        # have concluded separately from the above Queryset filter
-        past_meetings = list(filter(lambda m: m.has_passed, meetings_in_past_two_weeks))
-
-        return past_meetings
+        return meetings_in_past_two_weeks
 
     @classmethod
     def upcoming_board_meetings(cls):
