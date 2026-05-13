@@ -100,8 +100,8 @@ class Command(BaseCommand):
             return
 
         logger.info(
-            f"Created notifications for {len(bill_notifications)} bills "
-            f"and {len(event_notifications)} events"
+            f"Created notifications for {len(bill_notifications or [])} bills "
+            f"and {len(event_notifications or [])} events."
         )
 
         # Clean up previously failed notifications for these entities
