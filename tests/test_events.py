@@ -369,22 +369,37 @@ def test_event_is_upcoming(event, mocker):
         assert not test_event.is_upcoming
 
 
-@freeze_time("2021-02-07 10:00:00")
+@freeze_time("2021-02-07 20:00:00")
 def test_most_recent_past_meetings(event):
     three_weeks_ago = LAMetroEvent._time_ago(days=21).strftime("%Y-%m-%d %H:%M")
-    five_days_ago = LAMetroEvent._time_ago(days=5).strftime("%Y-%m-%d %H:%M")
-    four_days_ago = LAMetroEvent._time_ago(days=4).strftime("%Y-%m-%d %H:%M")
-
-    earlier_today = LAMetroEvent._time_ago(minutes=120).strftime("%Y-%m-%d %H:%M")
+    ten_days_ago_last_month = LAMetroEvent._time_ago(days=10).strftime("%Y-%m-%d %H:%M")
+    five_days_ago_this_month = LAMetroEvent._time_ago(days=5).strftime("%Y-%m-%d %H:%M")
+    four_days_ago_this_month = LAMetroEvent._time_ago(days=5).strftime("%Y-%m-%d %H:%M")
+    more_than_six_hours_ago_today = LAMetroEvent._time_ago(hours=7).strftime(
+        "%Y-%m-%d %H:%M"
+    )
+    potentially_current_today = LAMetroEvent._time_ago(minutes=120).strftime(
+        "%Y-%m-%d %H:%M"
+    )
     one_hour_from_now = LAMetroEvent._time_from_now(minutes=60).strftime(
         "%Y-%m-%d %H:%M"
     )
     one_week_from_now = LAMetroEvent._time_from_now(days=7).strftime("%Y-%m-%d %H:%M")
 
-    # Events that shouldn't be returned
+    # Events that should NOT be returned
     event_older_than_two_weeks = event.build(
         name="Board Meeting",
         start_date=three_weeks_ago,
+        id=get_event_id(),
+    )
+    event_ten_days_ago_last_month = event.build(
+        name="Board Meeting",
+        start_date=ten_days_ago_last_month,
+        id=get_event_id(),
+    )
+    event_potentially_current_today = event.build(
+        name="Board Meeting",
+        start_date=potentially_current_today,
         id=get_event_id(),
     )
     event_later_today = event.build(
@@ -395,20 +410,21 @@ def test_most_recent_past_meetings(event):
     )
 
     # Events that should be returned
-    event_earlier_today = event.build(
+    event_more_than_six_hours_ago_today = event.build(
         name="Board Meeting",
-        start_date=earlier_today,
+        start_date=more_than_six_hours_ago_today,
         id=get_event_id(),
     )
-    event_four_days_ago = event.build(
+    event_five_days_ago_this_month = event.build(
         name="Board Meeting",
-        start_date=four_days_ago,
+        start_date=five_days_ago_this_month,
         id=get_event_id(),
     )
-    event_five_days_ago = event.build(
+    event_four_days_ago_this_month_no_broadcast = event.build(
         name="Board Meeting",
-        start_date=five_days_ago,
+        start_date=four_days_ago_this_month,
         id=get_event_id(),
+        has_broadcast=False,
     )
 
     recent_past_meetings = LAMetroEvent.most_recent_past_meetings()
@@ -416,12 +432,14 @@ def test_most_recent_past_meetings(event):
     assert len(recent_past_meetings) == 3
 
     assert event_older_than_two_weeks not in recent_past_meetings
+    assert event_ten_days_ago_last_month not in recent_past_meetings
+    assert event_potentially_current_today not in recent_past_meetings
     assert event_later_today not in recent_past_meetings
     assert event_one_week_from_now not in recent_past_meetings
 
-    assert event_four_days_ago in recent_past_meetings
-    assert event_five_days_ago in recent_past_meetings
-    assert event_earlier_today in recent_past_meetings
+    assert event_four_days_ago_this_month_no_broadcast in recent_past_meetings
+    assert event_five_days_ago_this_month in recent_past_meetings
+    assert event_more_than_six_hours_ago_today in recent_past_meetings
 
 
 @freeze_time("2021-02-07 12:00:00")
