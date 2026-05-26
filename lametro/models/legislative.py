@@ -609,21 +609,18 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     @classmethod
     def most_recent_past_meetings(cls):
         """
-        Returns meetings in the current month that have occured in the past
-        two weeks.
+        Returns meetings that have occured in the past two weeks.
 
         Don't check with has_passed cached property because some past
         meetings may not have had a live broadcast (see issue #1296)
         """
 
-        current_month = timezone.now().month
         two_weeks_ago = timezone.now() - timedelta(weeks=2)
         current_window_start = timezone.now() - timedelta(
             hours=cls.CURRENT_MEETING_WINDOW_IN_HOURS
         )
         meetings_in_past_two_weeks = (
             cls.objects.with_media()
-            .filter(start_time__month=current_month)
             .filter(start_time__gte=two_weeks_ago)
             .filter(start_time__lte=current_window_start)
             .order_by("-start_time")
