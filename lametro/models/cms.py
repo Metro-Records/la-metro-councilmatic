@@ -396,6 +396,50 @@ class EventAgenda(models.Model):
         return reverse("lametro:events", kwargs={"slug": self.event.slug})
 
 
+class CommitteeDisplaySettings(models.Model):
+    """
+    Allowlist of committees to display on the website. Committees are sourced
+    from scraper data; admins select which ones to surface. If no committees
+    are selected, the site falls back to showing all committees with current
+    members.
+    """
+
+    include_in_dump = True
+
+    visible_committees = models.ManyToManyField(
+        "lametro.LAMetroOrganization",
+        blank=True,
+        related_name="+",
+        limit_choices_to={"classification": "committee"},
+        help_text=(
+            "Select which committees to display on the website. "
+            "If none are selected, all committees with current members are shown."
+        ),
+    )
+
+    panels = [
+        FieldPanel(
+            "visible_committees",
+            widget=forms.CheckboxSelectMultiple,
+        ),
+    ]
+
+    def __str__(self):
+        return "Committee Display Settings"
+
+    def clean(self):
+        if not self.__class__.objects.filter(pk=self.pk).exists():
+            if self.__class__.objects.exists():
+                raise ValidationError(
+                    "Only one Committee Display Settings instance can exist. "
+                    "Please edit the existing one."
+                )
+
+    class Meta:
+        verbose_name = "Committee Display Settings"
+        verbose_name_plural = "Committee Display Settings"
+
+
 class Tooltip(models.Model):
     include_in_dump = True
 

@@ -27,6 +27,7 @@ from lametro.services import EventService
 from lametro.models import (
     Alert,
     BoardMemberDetails,
+    CommitteeDisplaySettings,
     LAMetroOrganization,
     EventNotice,
     FiscalYearCalendar,
@@ -323,12 +324,23 @@ class TooltipViewSet(SnippetViewSet):
         return Tooltip.objects.filter(disabled=False)
 
 
+class CommitteeDisplaySettingsViewSet(SnippetViewSet):
+    model = CommitteeDisplaySettings
+    icon = "list-ul"
+    menu_icon = "list-ul"
+    menu_order = 700
+    add_to_settings_menu = False
+    add_to_admin_menu = True
+    list_display = ("__str__",)
+
+
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
 register_snippet(BoardMemberDetailsViewSet)
 register_snippet(EventAgendaViewSet)
 register_snippet(TooltipViewSet)
+register_snippet(CommitteeDisplaySettingsViewSet)
 
 
 class UserBarLink:

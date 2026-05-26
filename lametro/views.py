@@ -66,6 +66,7 @@ from lametro.models import (
     LAMetroSubject,
     EventBroadcast,
     BoardMemberDetails,
+    CommitteeDisplaySettings,
 )
 from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
@@ -428,6 +429,10 @@ class LACommitteesView(CommitteesView):
             .filter(memberships__in=memberships)
             .distinct()
         )
+
+        config = CommitteeDisplaySettings.objects.first()
+        if config and config.visible_committees.exists():
+            qs = qs.filter(id__in=config.visible_committees.all())
 
         qs = qs.prefetch_related(
             Prefetch("memberships", memberships, to_attr="current_members")
