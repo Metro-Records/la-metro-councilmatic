@@ -1009,6 +1009,20 @@ class LAMetroOrganization(Organization, SourcesMixin):
         else:
             return []
 
+    @classmethod
+    def committees_with_current_members(cls):
+        ceo = LAMetroPerson.ceo()
+        current_memberships = Membership.objects.exclude(person=ceo).filter(
+            start_date_dt__lte=Now(),
+            end_date_dt__gt=Now(),
+            organization__classification="committee",
+        )
+        return (
+            cls.objects.filter(classification="committee")
+            .filter(memberships__in=current_memberships)
+            .distinct()
+        )
+
 
 class Membership(CoreMembership):
     class Meta:

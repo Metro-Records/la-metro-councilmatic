@@ -424,11 +424,7 @@ class LACommitteesView(CommitteesView):
             organization__classification="committee",
         )
 
-        qs = (
-            LAMetroOrganization.objects.filter(classification="committee")
-            .filter(memberships__in=memberships)
-            .distinct()
-        )
+        qs = LAMetroOrganization.committees_with_current_members()
 
         config = CommitteeDisplaySettings.objects.first()
         if config and config.visible_committees.exists():

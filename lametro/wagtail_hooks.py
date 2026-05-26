@@ -4,7 +4,6 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils import timezone
 from django.db.models import Q
-from django.db.models.functions import Now
 
 import django_filters
 from wagtail import hooks
@@ -23,8 +22,6 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, CreateView
 from wagtail.admin.menu import MenuItem
 
-from councilmatic_core.models import Membership
-
 from lametro.services import EventService
 
 from lametro.models import (
@@ -32,7 +29,6 @@ from lametro.models import (
     BoardMemberDetails,
     CommitteeDisplaySettings,
     LAMetroOrganization,
-    LAMetroPerson,
     EventNotice,
     FiscalYearCalendar,
     EventAgenda,
@@ -328,20 +324,6 @@ class TooltipViewSet(SnippetViewSet):
         return Tooltip.objects.filter(disabled=False)
 
 
-def _committees_with_members():
-    ceo = LAMetroPerson.ceo()
-    current_memberships = Membership.objects.exclude(person=ceo).filter(
-        start_date_dt__lte=Now(),
-        end_date_dt__gt=Now(),
-        organization__classification="committee",
-    )
-    return (
-        LAMetroOrganization.objects.filter(classification="committee")
-        .filter(memberships__in=current_memberships)
-        .distinct()
-    )
-
-
 class CommitteeDisplaySettingsForm(forms.ModelForm):
     class Meta:
         model = CommitteeDisplaySettings
@@ -352,7 +334,7 @@ class CommitteeDisplaySettingsForm(forms.ModelForm):
         kwargs.pop("for_user", None)
         super().__init__(*args, **kwargs)
 
-        committees = _committees_with_members()
+        committees = LAMetroOrganization.committees_with_current_members()
         self.fields["visible_committees"].queryset = committees
 
         if not self.instance.pk:
