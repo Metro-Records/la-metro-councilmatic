@@ -413,6 +413,7 @@ class CommitteeDisplaySettings(models.Model):
         limit_choices_to={"classification": "committee"},
         help_text=(
             "Select which committees to display on the website. "
+            "Only committees with at least one current member are listed. "
             "If none are selected, all committees with current members are shown."
         ),
     )
