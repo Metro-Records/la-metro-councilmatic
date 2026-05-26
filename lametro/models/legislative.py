@@ -616,13 +616,10 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         """
 
         two_weeks_ago = timezone.now() - timedelta(weeks=2)
-        current_window_start = timezone.now() - timedelta(
-            hours=cls.CURRENT_MEETING_WINDOW_IN_HOURS
-        )
         meetings_in_past_two_weeks = (
             cls.objects.with_media()
             .filter(start_time__gte=two_weeks_ago)
-            .filter(start_time__lte=current_window_start)
+            .filter(start_time__lte=timezone.now())
             .order_by("-start_time")
             .exclude(status="cancelled")
         )
