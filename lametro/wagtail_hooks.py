@@ -341,17 +341,7 @@ class CommitteeDisplaySettingsForm(forms.ModelForm):
             self.initial["visible_committees"] = committees
 
 
-class CommitteeDisplaySettingsViewSet(SnippetViewSet):
-    model = CommitteeDisplaySettings
-    icon = "list-ul"
-    menu_icon = "list-ul"
-    menu_order = 700
-    add_to_settings_menu = False
-    add_to_admin_menu = True
-    list_display = ("__str__",)
-
-    def get_form_class(self, *args, **kwargs):
-        return CommitteeDisplaySettingsForm
+CommitteeDisplaySettings.base_form_class = CommitteeDisplaySettingsForm
 
 
 register_snippet(AlertViewSet)
@@ -360,7 +350,6 @@ register_snippet(FiscalYearCalendarViewSet)
 register_snippet(BoardMemberDetailsViewSet)
 register_snippet(EventAgendaViewSet)
 register_snippet(TooltipViewSet)
-register_snippet(CommitteeDisplaySettingsViewSet)
 
 
 class UserBarLink:

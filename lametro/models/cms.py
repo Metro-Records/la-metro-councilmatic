@@ -8,6 +8,8 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from html import unescape
 
+from wagtail.contrib.settings.models import BaseGenericSetting
+from wagtail.contrib.settings.registry import register_setting
 from wagtail.documents import get_document_model
 from wagtail.models import Page, PreviewableMixin, DraftStateMixin, RevisionMixin
 from wagtail.fields import StreamField, RichTextField
@@ -396,7 +398,8 @@ class EventAgenda(models.Model):
         return reverse("lametro:events", kwargs={"slug": self.event.slug})
 
 
-class CommitteeDisplaySettings(models.Model):
+@register_setting(icon="list-ul")
+class CommitteeDisplaySettings(BaseGenericSetting):
     """
     Allowlist of committees to display on the website. Committees are sourced
     from scraper data; admins select which ones to surface. If no committees
@@ -419,22 +422,11 @@ class CommitteeDisplaySettings(models.Model):
     )
 
     panels = [
-        FieldPanel(
-            "visible_committees",
-            widget=forms.CheckboxSelectMultiple,
-        ),
+        FieldPanel("visible_committees"),
     ]
 
     def __str__(self):
         return "Committee Display Settings"
-
-    def clean(self):
-        if not self.__class__.objects.filter(pk=self.pk).exists():
-            if self.__class__.objects.exists():
-                raise ValidationError(
-                    "Only one Committee Display Settings instance can exist. "
-                    "Please edit the existing one."
-                )
 
     class Meta:
         verbose_name = "Committee Display Settings"
