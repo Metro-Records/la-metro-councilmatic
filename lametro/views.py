@@ -427,8 +427,8 @@ class LACommitteesView(CommitteesView):
         qs = LAMetroOrganization.committees_with_current_members()
 
         config = CommitteeDisplaySettings.objects.first()
-        if config and config.visible_committees.exists():
-            qs = qs.filter(id__in=config.visible_committees.all())
+        if config and config.hidden_committees.exists():
+            qs = qs.exclude(id__in=config.hidden_committees.all())
 
         qs = qs.prefetch_related(
             Prefetch("memberships", memberships, to_attr="current_members")

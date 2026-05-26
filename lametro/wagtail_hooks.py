@@ -327,18 +327,16 @@ class TooltipViewSet(SnippetViewSet):
 class CommitteeDisplaySettingsForm(forms.ModelForm):
     class Meta:
         model = CommitteeDisplaySettings
-        fields = ("visible_committees",)
-        widgets = {"visible_committees": forms.CheckboxSelectMultiple}
+        fields = ("hidden_committees",)
+        widgets = {"hidden_committees": forms.CheckboxSelectMultiple}
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("for_user", None)
         super().__init__(*args, **kwargs)
 
-        committees = LAMetroOrganization.committees_with_current_members()
-        self.fields["visible_committees"].queryset = committees
-
-        if not self.instance.pk:
-            self.initial["visible_committees"] = committees
+        self.fields["hidden_committees"].queryset = (
+            LAMetroOrganization.committees_with_current_members()
+        )
 
 
 CommitteeDisplaySettings.base_form_class = CommitteeDisplaySettingsForm

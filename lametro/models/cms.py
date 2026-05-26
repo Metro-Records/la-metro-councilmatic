@@ -409,20 +409,20 @@ class CommitteeDisplaySettings(BaseGenericSetting):
 
     include_in_dump = True
 
-    visible_committees = models.ManyToManyField(
+    hidden_committees = models.ManyToManyField(
         "lametro.LAMetroOrganization",
         blank=True,
         related_name="+",
         limit_choices_to={"classification": "committee"},
         help_text=(
-            "Select which committees to display on the website. "
+            "Select which committees to hide from the website. "
             "Only committees with at least one current member are listed. "
             "If none are selected, all committees with current members are shown."
         ),
     )
 
     panels = [
-        FieldPanel("visible_committees"),
+        FieldPanel("hidden_committees"),
     ]
 
     def __str__(self):

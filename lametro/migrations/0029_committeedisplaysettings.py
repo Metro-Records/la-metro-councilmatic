@@ -23,12 +23,12 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "visible_committees",
+                    "hidden_committees",
                     models.ManyToManyField(
                         blank=True,
-                        help_text="Select which committees to display on the website. If none are selected, all committees with current members are shown.",
+                        help_text="Select which committees to hide from the website. If none are selected, all committees with current members are shown.",
                         limit_choices_to={"classification": "committee"},
-                        related_name="_lametro_committeedisplaysettings_visible_committees_+",
+                        related_name="_lametro_committeedisplaysettings_hidden_committees_+",
                         to="lametro.LAMetroOrganization",
                     ),
                 ),
