@@ -593,6 +593,14 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     PASSED_ECOMMENT_MESSAGE = "Online public comment for this meeting has closed."
 
+    """
+    Fun fact: The longest Metro meeting on record is 5.38 hours
+    long (see issue #251). Hence, when looking for "current" meeting,
+    we check for meetings scheduled to begin up to six hours ago.
+    """
+
+    CURRENT_MEETING_WINDOW_IN_HOURS = 6
+
     objects = LAMetroEventManager()
 
     class Meta:
@@ -601,24 +609,22 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     @classmethod
     def most_recent_past_meetings(cls):
         """
-        Returns meetings in the current month that have occured in the past
-        two weeks.
-        """
-        two_weeks_ago = timezone.now() - timedelta(weeks=2)
+        Returns meetings that have occured in the past two weeks.
 
+        Don't check with has_passed cached property because some past
+        meetings may not have had a live broadcast (see issue #1296)
+        """
+
+        two_weeks_ago = timezone.now() - timedelta(weeks=2)
         meetings_in_past_two_weeks = (
             cls.objects.with_media()
             .filter(start_time__gte=two_weeks_ago)
+            .filter(start_time__lte=timezone.now())
             .order_by("-start_time")
-            .prefetch_related("broadcast")
+            .exclude(status="cancelled")
         )
 
-        # since has_passed is a property of LAMetroEvent rather than
-        # a model attribute, we have to make sure returned meetings
-        # have concluded separately from the above Queryset filter
-        past_meetings = list(filter(lambda m: m.has_passed, meetings_in_past_two_weeks))
-
-        return past_meetings
+        return meetings_in_past_two_weeks
 
     @classmethod
     def upcoming_board_meetings(cls):
@@ -661,16 +667,9 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     @classmethod
     def _potentially_current_meetings(cls):
         """
-        Return meetings that could be "current" – that is, meetings that are
-        scheduled to start in the last six hours, or in the next five minutes.
-
-        Fun fact: The longest Metro meeting on record is 5.38 hours long (see
-        issue #251). Hence, we check for meetings scheduled to begin up to six
-        hours ago.
-
         Used to determine whether to check Granicus for streaming meetings.
         """
-        six_hours_ago = cls._time_ago(hours=6)
+        current_window_start = cls._time_ago(hours=cls.CURRENT_MEETING_WINDOW_IN_HOURS)
         five_minutes_from_now = cls._time_from_now(minutes=5)
 
         was_cancelled = Q(status="cancelled")
@@ -682,7 +681,8 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             cls.objects.including_test_events()
             .prefetch_related("broadcast")
             .filter(
-                start_time__gte=six_hours_ago, start_time__lte=five_minutes_from_now
+                start_time__gte=current_window_start,
+                start_time__lte=five_minutes_from_now,
             )
             .exclude(was_cancelled | has_passed)
         )
