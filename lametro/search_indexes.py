@@ -65,6 +65,13 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         )
 
     def prepare_legislative_session(self, obj):
+        """
+        Returns a fiscal year string for a given bill based on latest
+        action or agenda date.
+
+        If a bill doesn't have more than one of either, then use the
+        legislative session as fallback value.
+        """
         aa = sorted(obj.actions_and_agendas, key=lambda i: i["date"], reverse=True)
         agendas = [a for a in aa if a["description"] == "SCHEDULED"]
         if len(aa) > 1:
@@ -86,6 +93,11 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         )
 
     def prepare_last_action_date(self, obj):
+        """
+        Use creation date to provide a last action date for board
+        correspondence, which otherwise don't usually have any
+        associated actions.
+        """
         if obj.last_action_date:
             return obj.last_action_date
         if obj.bill_type in ("Board Correspondence", "Board Box"):
