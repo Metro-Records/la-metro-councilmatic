@@ -85,6 +85,13 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
             start_year=start_year, end_year=end_year
         )
 
+    def prepare_last_action_date(self, obj):
+        if obj.last_action_date:
+            return obj.last_action_date
+        if obj.bill_type in ("Board Correspondence", "Board Box"):
+            return obj.created_at
+        return None
+
     def prepare_topics(self, obj):
         return self._topics_from_classification(obj, "topics_exact")
 
