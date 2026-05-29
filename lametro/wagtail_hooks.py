@@ -3,6 +3,7 @@ from django.contrib import admin  # noqa
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils import timezone
+from django.urls import reverse
 from django.db.models import Q
 
 import django_filters
@@ -340,6 +341,16 @@ class CommitteeDisplaySettingsForm(forms.ModelForm):
 
 
 CommitteeDisplaySettings.base_form_class = CommitteeDisplaySettingsForm
+
+
+@hooks.register("register_admin_menu_item")
+def register_committee_display_settings_menu_item():
+    return MenuItem(
+        "Committee Display Settings",
+        reverse("wagtailsetting:edit", args=["lametro", "committeedisplaysettings"]),
+        icon_name="list-ul",
+        order=204,
+    )
 
 
 register_snippet(AlertViewSet)
