@@ -428,10 +428,6 @@ class CommitteeDisplaySettings(BaseGenericSetting):
     def __str__(self):
         return "Committee Display Settings"
 
-    class Meta:
-        verbose_name = "Committee Display Settings"
-        verbose_name_plural = "Committee Display Settings"
-
 
 class Tooltip(models.Model):
     include_in_dump = True
