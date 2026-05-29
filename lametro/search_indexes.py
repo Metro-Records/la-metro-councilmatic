@@ -74,19 +74,22 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         """
         aa = sorted(obj.actions_and_agendas, key=lambda i: i["date"], reverse=True)
         agendas = [a for a in aa if a["description"] == "SCHEDULED"]
+        start_year = None
+        end_year = None
+
         if len(aa) > 1:
             action_date = agendas[0]["date"] if agendas else aa[0]["date"]
-        elif obj.legislative_session and obj.legislative_session.start_date:
-            action_date = obj.legislative_session.start_date
+            if action_date.month <= 6:
+                start_year = action_date.year - 1
+                end_year = action_date.year
+            else:
+                start_year = action_date.year
+                end_year = action_date.year + 1
+        elif session := obj.legislative_session:
+            start_year = session.start_date.split("-")[0]
+            end_year = session.end_date.split("-")[0]
         else:
             return None
-
-        if action_date.month <= 6:
-            start_year = action_date.year - 1
-            end_year = action_date.year
-        else:
-            start_year = action_date.year
-            end_year = action_date.year + 1
 
         return "7/1/{start_year} to 6/30/{end_year}".format(
             start_year=start_year, end_year=end_year
@@ -101,7 +104,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         if obj.last_action_date:
             return obj.last_action_date
         if obj.bill_type in ("Board Correspondence", "Board Box"):
-            return obj.created_at
+            return obj.leg
         return None
 
     def prepare_topics(self, obj):
