@@ -343,16 +343,6 @@ class CommitteeDisplaySettingsForm(forms.ModelForm):
 CommitteeDisplaySettings.base_form_class = CommitteeDisplaySettingsForm
 
 
-@hooks.register("register_admin_menu_item")
-def register_committee_display_settings_menu_item():
-    return MenuItem(
-        "Committee Display Settings",
-        reverse("wagtailsetting:edit", args=["lametro", "committeedisplaysettings"]),
-        icon_name="list-ul",
-        order=204,
-    )
-
-
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
@@ -495,4 +485,22 @@ def register_analytics_menu_item():
         "/generate-tag-analytics/",
         icon_name="doc-full",
         order=10000,
+    )
+
+
+# Construct settings menu without Committee Display Settings, then add it to main menu
+@hooks.register("construct_settings_menu")
+def hide_user_menu_item(request, menu_items):
+    menu_items[:] = [
+        item for item in menu_items if item.name != "committee-display-settings"
+    ]
+
+
+@hooks.register("register_admin_menu_item")
+def register_committee_display_settings_menu_item():
+    return MenuItem(
+        "Committee Display Settings",
+        reverse("wagtailsettings:edit", args=["lametro", "committeedisplaysettings"]),
+        icon_name="list-ul",
+        order=204,
     )
