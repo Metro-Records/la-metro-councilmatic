@@ -398,7 +398,7 @@ class EventAgenda(models.Model):
         return reverse("lametro:events", kwargs={"slug": self.event.slug})
 
 
-@register_setting(icon="list-ul", add_to_settings_menu=False)
+@register_setting(add_to_settings_menu=False)
 class CommitteeDisplaySettings(BaseGenericSetting):
     """
     Allowlist of committees to display on the website. Committees are sourced
