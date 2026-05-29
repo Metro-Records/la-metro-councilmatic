@@ -104,7 +104,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         if obj.last_action_date:
             return obj.last_action_date
         if obj.bill_type in ("Board Correspondence", "Board Box"):
-            return obj.leg
+            return obj.created_at
         return None
 
     def prepare_topics(self, obj):
