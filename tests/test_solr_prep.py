@@ -97,6 +97,41 @@ def test_legislative_session(bill, metro_organization, event, mocker, month):
 
     assert indexed_data["legislative_session"] == expected_value
 
+
+def test_legislative_session_fallback(
+    bill, legislative_session, metro_organization, event, mocker
+):
+    bill = bill.build()
+    event = event.build()
+    org = metro_organization.build()
+    session = bill.legislative_session
+
+    now = datetime.now()
+
+    single_action = {
+        "date": datetime(now.year, 7, 1),
+        "description": "action descripton",
+        "event": event,
+        "organization": org,
+    }
+
+    mock_actions_and_agendas = mocker.PropertyMock(return_value=[single_action])
+
+    mocker.patch(
+        "lametro.models.LAMetroBill.actions_and_agendas",
+        new_callable=mock_actions_and_agendas,
+    )
+
+    index = LAMetroBillIndex()
+    indexed_data = index.prepare(bill)
+
+    expected_fmt = "7/1/{0} to 6/30/{1}"
+    expected_value = expected_fmt.format(
+        session.start_date.split("-")[0], session.end_date.split("-")[0]
+    )
+
+    assert indexed_data["legislative_session"] == expected_value
+
     # Test indexed value when there are neither actions nor agendas
     mock_actions_and_agendas = mocker.PropertyMock(return_value=[])
 
@@ -107,7 +142,7 @@ def test_legislative_session(bill, metro_organization, event, mocker, month):
 
     indexed_data = index.prepare(bill)
 
-    assert not indexed_data["legislative_session"]
+    assert indexed_data["legislative_session"] == expected_value
 
 
 def test_sponsorships(bill, metro_organization, event, event_related_entity, mocker):
