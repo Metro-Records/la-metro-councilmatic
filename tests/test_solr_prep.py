@@ -70,7 +70,7 @@ def test_legislative_session(bill, metro_organization, event, mocker, month):
 
     patch_aa(mocker, [recent_action, older_action, recent_agenda, older_agenda])
     indexed_data = index.prepare(bill)
-    expected_value = date_to_fy_string(recent_agenda.date)
+    expected_value = date_to_fy_string(recent_agenda["date"])
 
     assert indexed_data["legislative_session"] == expected_value
 
@@ -78,7 +78,7 @@ def test_legislative_session(bill, metro_organization, event, mocker, month):
 
     patch_aa(mocker, [recent_action, older_action])
     indexed_data = index.prepare(bill)
-    expected_value = date_to_fy_string(recent_action.date)
+    expected_value = date_to_fy_string(recent_action["date"])
 
     assert indexed_data["legislative_session"] == expected_value
 
