@@ -8,6 +8,8 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from html import unescape
 
+from wagtail.contrib.settings.models import BaseGenericSetting
+from wagtail.contrib.settings.registry import register_setting
 from wagtail.documents import get_document_model
 from wagtail.models import Page, PreviewableMixin, DraftStateMixin, RevisionMixin
 from wagtail.fields import StreamField, RichTextField
@@ -394,6 +396,37 @@ class EventAgenda(models.Model):
 
     def get_url(self):
         return reverse("lametro:events", kwargs={"slug": self.event.slug})
+
+
+@register_setting
+class CommitteeDisplaySettings(BaseGenericSetting):
+    """
+    Allowlist of committees to display on the website. Committees are sourced
+    from scraper data; admins select which ones to surface. If no committees
+    are selected, the site falls back to showing all committees with current
+    members.
+    """
+
+    include_in_dump = True
+
+    hidden_committees = models.ManyToManyField(
+        "lametro.LAMetroOrganization",
+        blank=True,
+        related_name="+",
+        limit_choices_to={"classification": "committee"},
+        help_text=(
+            "Select which committees to hide from the website. "
+            "Only committees with at least one current member are listed. "
+            "If none are selected, all committees with current members are shown."
+        ),
+    )
+
+    panels = [
+        FieldPanel("hidden_committees"),
+    ]
+
+    def __str__(self):
+        return "Committee Display Settings"
 
 
 class Tooltip(models.Model):

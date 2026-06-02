@@ -3,6 +3,7 @@ from django.contrib import admin  # noqa
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils import timezone
+from django.urls import reverse
 from django.db.models import Q
 
 import django_filters
@@ -27,6 +28,7 @@ from lametro.services import EventService
 from lametro.models import (
     Alert,
     BoardMemberDetails,
+    CommitteeDisplaySettings,
     LAMetroOrganization,
     EventNotice,
     FiscalYearCalendar,
@@ -323,6 +325,24 @@ class TooltipViewSet(SnippetViewSet):
         return Tooltip.objects.filter(disabled=False)
 
 
+class CommitteeDisplaySettingsForm(forms.ModelForm):
+    class Meta:
+        model = CommitteeDisplaySettings
+        fields = ("hidden_committees",)
+        widgets = {"hidden_committees": forms.CheckboxSelectMultiple}
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("for_user", None)
+        super().__init__(*args, **kwargs)
+
+        self.fields["hidden_committees"].queryset = (
+            LAMetroOrganization.committees_with_current_members()
+        )
+
+
+CommitteeDisplaySettings.base_form_class = CommitteeDisplaySettingsForm
+
+
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
@@ -465,4 +485,22 @@ def register_analytics_menu_item():
         "/generate-tag-analytics/",
         icon_name="doc-full",
         order=10000,
+    )
+
+
+# Construct settings menu without Committee Display Settings, then add it to main menu
+@hooks.register("construct_settings_menu")
+def hide_user_menu_item(request, menu_items):
+    menu_items[:] = [
+        item for item in menu_items if item.name != "committee-display-settings"
+    ]
+
+
+@hooks.register("register_admin_menu_item")
+def register_committee_display_settings_menu_item():
+    return MenuItem(
+        "Committee Display Settings",
+        reverse("wagtailsettings:edit", args=["lametro", "committeedisplaysettings"]),
+        icon_name="list-ul",
+        order=204,
     )
