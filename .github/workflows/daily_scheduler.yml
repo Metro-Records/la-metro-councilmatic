@@ -1,6 +1,8 @@
 name: Daily translation notifications dispatcher
 
 on:
+  # TODO: remove pull_request after testing
+  pull_request:
   workflow_dispatch:
   schedule:
     - cron: "0 23 * * *" # Runs every day an hour before midnight UTC
