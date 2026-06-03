@@ -653,7 +653,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
         sqs = (
             SearchQuerySet()
             .facet("bill_type")
-            .facet("sponsorships")
+            .facet("controlling_body")
             .facet("legislative_session")
             .facet("inferred_status")
             .facet("topics")

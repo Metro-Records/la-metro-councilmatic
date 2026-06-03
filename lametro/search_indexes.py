@@ -29,15 +29,11 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     # Preloaded fields for display
     listing_description = indexes.CharField(indexed=False)
     last_action_description = indexes.CharField(indexed=False)
-    primary_sponsor = indexes.CharField(indexed=False)
     rich_topics = indexes.CharField(indexed=False)
     pseudo_topics = indexes.CharField(indexed=False)
 
     def get_model(self):
         return LAMetroBill
-
-    def prepare_controlling_body(self, obj):
-        return None
 
     def prepare_sponsorships(self, obj):
         orgs_list = [action["organization"].name for action in obj.actions_and_agendas]
@@ -132,10 +128,6 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     def prepare_last_action_description(self, obj):
         if obj.current_action:
             return obj.current_action.description
-
-    def prepare_primary_sponsor(self, obj):
-        if obj.primary_sponsor:
-            return obj.primary_sponsor.name
 
     def prepare_rich_topics(self, obj):
         if rich_topics := list(obj.rich_topics.values("name", "classification")):
