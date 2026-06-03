@@ -12,8 +12,8 @@ jobs:
       environment: staging
     secrets: inherit
 
-  # production:
-  #   uses: ./.github/workflows/run_translation.yml
-  #   with:
-  #     environment: production
-  #   secrets: inherit
+  production:
+    uses: ./.github/workflows/notify_translations.yml
+    with:
+      environment: production
+    secrets: inherit
