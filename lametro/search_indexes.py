@@ -39,6 +39,9 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         orgs_list = [action["organization"].name for action in obj.actions_and_agendas]
         return set(orgs_list)
 
+    def prepare_controlling_body(self, obj):
+        return obj.controlling_body.name
+
     def prepare_actions(self, obj):
         return [str(action) for action in obj.actions.all()]
 
