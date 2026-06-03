@@ -40,7 +40,8 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
         return set(orgs_list)
 
     def prepare_controlling_body(self, obj):
-        return obj.controlling_body.name
+        if obj.controlling_body:
+            return obj.controlling_body.name
 
     def prepare_actions(self, obj):
         return [str(action) for action in obj.actions.all()]
