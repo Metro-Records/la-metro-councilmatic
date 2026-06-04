@@ -1,0 +1,1633 @@
+---
+title: "lametro.AboutPage"
+date: 2026-06-04
+date-modified: last-modified
+---
+
+
+## Model Info
+
+| Key | Value |
+|---|-----|
+| Model Name | AboutPage |
+| Verbose Name | about page |
+| Verbose Name Plural | about pages |
+| Docstring | <p>AboutPage(id, path, depth, numchild, translation\_key, locale, latest\_revision, live, has\_unpublished\_changes, first\_published\_at, last\_published\_at, live\_revision, go\_live\_at, expire\_at, expired, locked, locked\_at, locked\_by, title, draft\_title, slug, content\_type, url\_path, owner, seo\_title, show\_in\_menus, search\_description, latest\_revision\_created\_at, alias\_of, page\_ptr, body)</p> |
+| Is Abstract | False |
+| Is Proxy | False |
+| Is Managed | True |
+| Ordering | [] |
+| Permissions | [] |
+| Default Permissions | ('add', 'change', 'delete', 'view') |
+| Indexes | [] |
+| Constraints | [] |
+| Database Table | lametro_aboutpage |
+| Base Manager | None |
+| Default Manager | None |
+| File | /app/lametro/models/cms.py |
+| Starting Line Number | 22 |
+| Method Resolution Order | (<class 'lametro.models.cms.AboutPage'>, <class 'wagtail.models.Page'>, <class 'wagtail.models.AbstractPage'>, <class 'wagtail.models.WorkflowMixin'>, <class 'wagtail.models.PreviewableMixin'>, <class 'wagtail.models.DraftStateMixin'>, <class 'wagtail.models.LockableMixin'>, <class 'wagtail.models.RevisionMixin'>, <class 'wagtail.models.i18n.TranslatableMixin'>, <class 'wagtail.models.specific.SpecificMixin'>, <class 'treebeard.mp_tree.MP_Node'>, <class 'treebeard.models.Node'>, <class 'wagtail.search.index.Indexed'>, <class 'modelcluster.models.ClusterableModel'>, <class 'django.db.models.base.Model'>, <class 'object'>) |
+
+## Fields
+
+| Field Name | Field Type | Database Column | Database Type | Verbose Name |
+|----------|----------|---------------|-------------|------------|
+| `+` | ManyToOneRel |  | integer |  |
+| `_revisions` | GenericRelation | None | None |  revisions |
+| `_specific_workflow_states` | GenericRelation | None | None |  specific workflow states |
+| `_workflow_states` | GenericRelation | None | None |  workflow states |
+| `alias_of` | ForeignKey | alias_of_id | integer | alias of |
+| `aliases` | ManyToOneRel |  | integer |  |
+| `body` | StreamField | body | jsonb | body |
+| `content_type` | ForeignKey | content_type_id | integer | content type |
+| `depth` | PositiveIntegerField | depth | integer | depth |
+| `draft_title` | CharField | draft_title | varchar(255) | draft title |
+| `expire_at` | DateTimeField | expire_at | timestamp with time zone | expiry date/time |
+| `expired` | BooleanField | expired | boolean | expired |
+| `first_published_at` | DateTimeField | first_published_at | timestamp with time zone | first published at |
+| `formsubmission` | ManyToOneRel |  | integer |  |
+| `go_live_at` | DateTimeField | go_live_at | timestamp with time zone | go live date/time |
+| `group_permissions` | ManyToOneRel |  | integer |  |
+| `has_unpublished_changes` | BooleanField | has_unpublished_changes | boolean | has unpublished changes |
+| `id (pk)` | AutoField | id | serial | ID |
+| `index_entries` | TextIDGenericRelation | None | None | index entries |
+| `last_published_at` | DateTimeField | last_published_at | timestamp with time zone | last published at |
+| `latest_revision` | ForeignKey | latest_revision_id | integer | latest revision |
+| `latest_revision_created_at` | DateTimeField | latest_revision_created_at | timestamp with time zone | latest revision created at |
+| `live` | BooleanField | live | boolean | live |
+| `live_revision` | ForeignKey | live_revision_id | integer | live revision |
+| `locale` | ForeignKey | locale_id | integer | locale |
+| `locked` | BooleanField | locked | boolean | locked |
+| `locked_at` | DateTimeField | locked_at | timestamp with time zone | locked at |
+| `locked_by` | ForeignKey | locked_by_id | integer | locked by |
+| `numchild` | PositiveIntegerField | numchild | integer | numchild |
+| `owner` | ForeignKey | owner_id | integer | owner |
+| `page_ptr (pk)` | OneToOneField | page_ptr_id | integer | page ptr |
+| `path` | CharField | path | varchar(255) | path |
+| `redirect` | ManyToOneRel |  | integer |  |
+| `search_description` | TextField | search_description | text | meta description |
+| `seo_title` | CharField | seo_title | varchar(255) | title tag |
+| `show_in_menus` | BooleanField | show_in_menus | boolean | show in menus |
+| `sites_rooted_here` | ManyToOneRel |  | integer |  |
+| `slug` | SlugField | slug | varchar(255) | slug |
+| `subscribers` | ManyToOneRel |  | integer |  |
+| `title` | CharField | title | varchar(255) | title |
+| `translation_key` | UUIDField | translation_key | uuid | translation key |
+| `url_path` | TextField | url_path | text | URL path |
+| `view_restrictions` | ManyToOneRel |  | integer |  |
+| `wagtail_admin_comments` | ManyToOneRel |  | integer |  |
+| `workflowpage` | OneToOneRel |  | integer |  |
+
+## Relations
+
+| Field Name | Field Type | Database Column | Database Type | Related Model | Related Name |
+|----------|----------|---------------|-------------|-------------|------------|
+| `_revisions` | GenericRelation | None | None | wagtailcore.Revision | + |
+| `_specific_workflow_states` | GenericRelation | None | None | wagtailcore.WorkflowState | + |
+| `_workflow_states` | GenericRelation | None | None | wagtailcore.WorkflowState | + |
+| `alias_of` | ForeignKey | alias_of_id | integer | wagtailcore.Page | aliases |
+| `content_type` | ForeignKey | content_type_id | integer | contenttypes.ContentType | pages |
+| `index_entries` | TextIDGenericRelation | None | None | wagtailsearch.IndexEntry | + |
+| `latest_revision` | ForeignKey | latest_revision_id | integer | wagtailcore.Revision | + |
+| `live_revision` | ForeignKey | live_revision_id | integer | wagtailcore.Revision | + |
+| `locale` | ForeignKey | locale_id | integer | wagtailcore.Locale | + |
+| `locked_by` | ForeignKey | locked_by_id | integer | auth.User | locked_pages |
+| `owner` | ForeignKey | owner_id | integer | auth.User | owned_pages |
+| `page_ptr (pk)` | OneToOneField | page_ptr_id | integer | wagtailcore.Page | aboutpage_set |
+
+fields_reverse_relation=[FieldReverseRelation(name='aboutpage_set', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailforms.FormSubmission', field_name_on_related_model='page', field_type_on_related_model='ForeignKey'), FieldReverseRelation(name='aboutpage_set', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailredirects.Redirect', field_name_on_related_model='redirect_page', field_type_on_related_model='ForeignKey'), FieldReverseRelation(name='sites_rooted_here', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailcore.Site', field_name_on_related_model='root_page', field_type_on_related_model='ForeignKey'), FieldReverseRelation(name='aliases', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailcore.Page', field_name_on_related_model='alias_of', field_type_on_related_model='ForeignKey'), FieldReverseRelation(name='group_permissions', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailcore.GroupPagePermission', field_name_on_related_model='page', field_type_on_related_model='ForeignKey'), FieldReverseRelation(name='view_restrictions', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailcore.PageViewRestriction', field_name_on_related_model='page', field_type_on_related_model='ForeignKey'), FieldReverseRelation(name='aboutpage_set', field_type='OneToOneRel', field_db_type='integer', related_model='wagtailcore.WorkflowPage', field_name_on_related_model='page', field_type_on_related_model='OneToOneField'), FieldReverseRelation(name='+ (no reverse relation allowed)', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailcore.PageLogEntry', field_name_on_related_model='page', field_type_on_related_model='ForeignKey'), FieldReverseRelation(name='wagtail_admin_comments', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailcore.Comment', field_name_on_related_model='page', field_type_on_related_model='ParentalKey'), FieldReverseRelation(name='subscribers', field_type='ManyToOneRel', field_db_type='integer', related_model='wagtailcore.PageSubscription', field_name_on_related_model='page', field_type_on_related_model='ForeignKey')]
+
+## Reverse Relations
+
+| Field Name | Field Type | Database Type | Related Model | Field Name on Related Model | Field Type on Related Model |
+|----------|----------|-------------|-------------|---------------------------|---------------------------|
+| `+ (no reverse relation allowed)` | ManyToOneRel | integer | wagtailcore.PageLogEntry | page | ForeignKey |
+| `aboutpage_set` | ManyToOneRel | integer | wagtailforms.FormSubmission | page | ForeignKey |
+| `aboutpage_set` | ManyToOneRel | integer | wagtailredirects.Redirect | redirect_page | ForeignKey |
+| `aboutpage_set` | OneToOneRel | integer | wagtailcore.WorkflowPage | page | OneToOneField |
+| `aliases` | ManyToOneRel | integer | wagtailcore.Page | alias_of | ForeignKey |
+| `group_permissions` | ManyToOneRel | integer | wagtailcore.GroupPagePermission | page | ForeignKey |
+| `sites_rooted_here` | ManyToOneRel | integer | wagtailcore.Site | root_page | ForeignKey |
+| `subscribers` | ManyToOneRel | integer | wagtailcore.PageSubscription | page | ForeignKey |
+| `view_restrictions` | ManyToOneRel | integer | wagtailcore.PageViewRestriction | page | ForeignKey |
+| `wagtail_admin_comments` | ManyToOneRel | integer | wagtailcore.Comment | page | ParentalKey |
+
+## Methods
+
+### Other Methods
+
+| Method Name | Signature | Docstring | File | Line Number |
+|-----------|---------|---------|----|-----------|
+| `add_child` | `(self, **kwargs)` | <p>Adds a child to the node.</p><p>This method saves the node in database. The object is populated as if via:</p><p>\```<br>obj = self.\_\_class\_\_(\*\*kwargs)<br>\```</p><p>:raise PathOverflow: when no more child nodes can be added</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1079 |
+| `add_root` | `(**kwargs)` | <p>Adds a root node to the tree.</p><p>This method saves the node in database. The object is populated as if via:</p><p>\```<br>obj = cls(\*\*kwargs)<br>\```</p><p>:raise PathOverflow: when no more root objects can be added</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 610 |
+| `add_sibling` | `(self, pos=None, **kwargs)` | <p>Adds a new node as a sibling to the current node object.</p><p>This method saves the node in database. The object is populated as if via:</p><p>\```<br>obj = self.\_\_class\_\_(\*\*kwargs)<br>\```</p><p>:raise PathOverflow: when the library can't make room for the<br>   node's new position</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1093 |
+| `allowed_parent_page_models` | `()` | <p>Returns the list of page types that this page type can be a subpage of,<br>as a list of model classes</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2187 |
+| `allowed_subpage_models` | `()` | <p>Returns the list of page types that this page type can have as subpages,<br>as a list of model classes</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2199 |
+| `base_form_class` | `(data=None, files=None, parent_page=None, subscription=None, *args, **kwargs)` | <p>An extension to `django.forms.Form` to accept an optional `for\_user` keyword argument<br>indicating the user the form will be presented to.</p><p>Any fields named in the `field\_permissions` dict in Meta will apply a permission test on the<br>named permission using `User.has\_perm`; if the user lacks that permission, the field will be<br>omitted from the form.</p> | python3.10/site-packages/wagtail/admin/forms/pages.py | 132 |
+| `can_create_at` | `(parent)` | <p>Checks if this page type can be created as a subpage under a parent<br>page instance.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2233 |
+| `can_exist_under` | `(parent)` | <p>Checks if this page type can exist as a subpage under a parent page<br>instance.</p><p>See also: :func:`Page.can\_create\_at` and :func:`Page.can\_move\_to`</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2223 |
+| `can_move_to` | `(self, parent)` | <p>Checks if this page instance can be moved to be a subpage of a parent<br>page instance.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2252 |
+| `clean_parent_page_models` | `()` | <p>Returns the list of parent page types, normalised as model classes.<br>Throws ValueError if any entry in parent\_page\_types cannot be recognised as a model name,<br>or LookupError if a model does not exist (or is not a Page subclass).</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2162 |
+| `clean_subpage_models` | `()` | <p>Returns the list of subpage types, normalised as model classes.<br>Throws ValueError if any entry in subpage\_types cannot be recognised as a model name,<br>or LookupError if a model does not exist (or is not a Page subclass).</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2138 |
+| `copy` | `(self, recursive=False, to=None, update_attrs=None, copy_revisions=True, keep_live=True, user=None, process_child_object=None, exclude_fields=None, log_action='wagtail.copy', reset_translation_key=True)` | <p>Copies a given page<br>:param log\_action flag for logging the action. Pass None to skip logging.<br>    Can be passed an action string. Defaults to 'wagtail.copy'</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2316 |
+| `copy_all_child_relations` | `(self, target, exclude=None, commit=False, append=False)` | <p>Copies all of the objects in all child relations to the target object.</p><p>This will overwrite all of the child relations on the target object.</p><p>Set exclude to a list of child relation accessor names that shouldn't be copied.</p><p>This method returns a dictionary mapping the child\_relation/primary key on the source object to the new object created for the<br>target object.</p> | local/lib/python3.10/site-packages/modelcluster/models.py | 339 |
+| `copy_child_relation` | `(self, child_relation, target, commit=False, append=False)` | <p>Copies all of the objects in the accessor\_name to the target object.</p><p>For example, say we have an event with speakers (my\_event) and we need to copy these to another event (my\_other\_event):</p><p>    my\_event.copy\_child\_relation('speakers', my\_other\_event)</p><p>By default, this copies the child objects without saving them. Set the commit paremter to True to save the objects<br>but note that this would cause an exception if the target object is not saved.</p><p>This will overwrite the child relation on the target object. This is to avoid any issues with unique keys<br>and/or sort\_order. If you want it to append. set the `append` parameter to True.</p><p>This method returns a dictionary mapping the child relation/primary key on the source object to the new object created for the<br>target object.</p> | /usr/local/lib/python3.10/contextlib.py | 280 |
+| `copy_cluster` | `(self, exclude_fields=None)` | <p>Makes a copy of this object and all child relations.</p><p>Includes all field data including child relations and parental many to many fields.</p><p>Doesn't include non-parental many to many.</p><p>The result of this method is unsaved.</p> | local/lib/python3.10/site-packages/modelcluster/models.py | 361 |
+| `copy_for_translation` | `(self, locale, copy_parents=False, alias=False, exclude_fields=None)` | <p>Creates a copy of this page in the specified locale.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2376 |
+| `creatable_subpage_models` | `()` | <p>Returns the list of page types that may be created under this page type,<br>as a list of model classes</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2211 |
+| `create_alias` | `(self, *, recursive=False, parent=None, update_slug=None, update_locale=None, user=None, log_action='wagtail.create_alias', reset_translation_key=True, _mpnode_attrs=None)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 2350 |
+| `dump_bulk` | `(parent=None, keep_ids=True)` | <p>Dumps a tree branch to a python data structure.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 625 |
+| `find_problems` | `()` | <p>Checks for problems in the tree structure, problems can occur when:</p><p>   1. your code breaks and you get incomplete transactions (always<br>      use transactions!)<br>   2. changing the ``steplen`` value in a model (you must<br>      :meth:`dump\_bulk` first, change ``steplen`` and then<br>      :meth:`load\_bulk`</p><p>:returns: A tuple of five lists:</p><p>          1. a list of ids of nodes with characters not found in the<br>             ``alphabet``<br>          2. a list of ids of nodes when a wrong ``path`` length<br>             according to ``steplen``<br>          3. a list of ids of orphaned nodes<br>          4. a list of ids of nodes with the wrong depth value for<br>             their path<br>          5. a list of ids nodes that report a wrong number of children</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 668 |
+| `fix_tree` | `(destructive=False, fix_paths=False)` | <p>Solves some problems that can appear when transactions are not used and<br>a piece of code breaks, leaving the tree in an inconsistent state.</p><p>The problems this method solves are:</p><p>   1. Nodes with an incorrect ``depth`` or ``numchild`` values due to<br>      incorrect code and lack of database transactions.<br>   2. "Holes" in the tree. This is normal if you move/delete nodes a<br>      lot. Holes in a tree don't affect performance,<br>   3. Incorrect ordering of nodes when ``node\_order\_by`` is enabled.<br>      Ordering is enforced on \*node insertion\*, so if an attribute in<br>      ``node\_order\_by`` is modified after the node is inserted, the<br>      tree ordering will be inconsistent.</p><p>:param fix\_paths:</p><p>    A boolean value. If True, a slower, more complex fix\_tree method<br>    will be attempted. If False (the default), it will use a safe (and<br>    fast!) fix approach, but it will only solve the ``depth`` and<br>    ``numchild`` nodes, it won't fix the tree holes or broken path<br>    ordering.</p><p>:param destructive:</p><p>    Deprecated; alias for ``fix\_paths``.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 728 |
+| `from_json` | `(json_data, check_fks=True, strict_fks=False)` |  | local/lib/python3.10/site-packages/modelcluster/models.py | 276 |
+| `from_serializable_data` | `(data, check_fks=True, strict_fks=False)` | <p>Build an instance of this model from the JSON-like structure passed in,<br>recursing into related objects as required.<br>If check\_fks is true, it will check whether referenced foreign keys still<br>exist in the database.<br>- dangling foreign keys on related objects are dealt with by either nullifying the key or<br>dropping the related object, according to the 'on\_delete' setting.<br>- dangling foreign keys on the base object will be nullified, unless strict\_fks is true,<br>in which case any dangling foreign keys with on\_delete=CASCADE will cause None to be<br>returned for the entire object.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 323 |
+| `get_admin_display_title` | `(self)` | <p>Return the title for this page as it should appear in the admin backend;<br>override this if you wish to display extra contextual information about the page,<br>such as language. By default, returns ``draft\_title``.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1621 |
+| `get_ancestors` | `(self, inclusive=False)` | <p>Returns a queryset of the current page's ancestors, starting at the root page<br>and descending to the parent, or to the current page itself if ``inclusive`` is true.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2475 |
+| `get_annotated_list` | `(parent=None, max_depth=None)` | <p>Gets an annotated list from a tree branch.</p><p>:param parent:</p><p>    The node whose descendants will be annotated. The node itself<br>    will be included in the list. If not given, the entire tree<br>    will be annotated.</p><p>:param max\_depth:</p><p>    Optionally limit to specified depth</p> | local/lib/python3.10/site-packages/treebeard/models.py | 593 |
+| `get_annotated_list_qs` | `(qs)` | <p>Gets an annotated list from a queryset.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 572 |
+| `get_autocomplete_search_fields` | `()` |  | lib/python3.10/site-packages/wagtail/search/index.py | 65 |
+| `get_base_content_type` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1296 |
+| `get_cache_key_components` | `(self)` | <p>The components of a :class:`Page` which make up the :attr:`cache\_key`. Any change to a<br>page should be reflected in a change to at least one of these components.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2437 |
+| `get_cached_paths` | `(self)` | <p>This returns a list of paths to invalidate in a frontend cache</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2431 |
+| `get_children` | `(self)` | <p>:returns: A queryset of all the node's children</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1004 |
+| `get_children_count` | `(self)` | <p>:returns: The number the node's children, calculated in the most<br>efficient possible way.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1044 |
+| `get_content_type` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1302 |
+| `get_context` | `(self, request, *args, **kwargs)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1903 |
+| `get_database_vendor` | `(action)` | <p>returns the supported database vendor used by a treebeard model when<br>performing read (select) or write (update, insert, delete) operations.</p><p>:param action:</p><p>    `read` or `write`</p><p>:returns: postgresql, mysql or sqlite</p> | local/lib/python3.10/site-packages/treebeard/models.py | 637 |
+| `get_default_locale` | `(self)` | <p>Finds the default locale to use for this page.</p><p>This will be called just before the initial save.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1353 |
+| `get_default_workflow` | `()` | <p>Returns the active workflow assigned to the model.</p><p>For non-``Page`` models, workflows are assigned to the model's content type,<br>thus shared across all instances instead of being assigned to individual<br>instances (unless :meth:`~WorkflowMixin.get\_workflow` is overridden).</p><p>This method is used to determine the workflow to use when creating new<br>instances of the model. On ``Page`` models, this method is unused as the<br>workflow can be determined from the parent page's workflow.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 936 |
+| `get_depth` | `(self)` | <p>:returns: the depth (level) of the node</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 983 |
+| `get_descendant_count` | `(self)` | <p>:returns: the number of descendants of a node.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 253 |
+| `get_descendants` | `(self, inclusive=False)` | <p>Returns a queryset of all pages underneath the current page, any number of levels deep.<br>If ``inclusive`` is true, the current page itself is included in the queryset.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2482 |
+| `get_descendants_group_count` | `(parent=None)` | <p>Helper for a very common case: get a group of siblings and the number<br>of \*descendants\* in every sibling.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 914 |
+| `get_edit_handler` | `(cls)` | <p>Get the panel to use in the Wagtail admin when editing this page type.</p> |  | 51 |
+| `get_filterable_search_fields` | `()` |  | lib/python3.10/site-packages/wagtail/search/index.py | 73 |
+| `get_first_child` | `(self)` | <p>:returns:</p><p>    The leftmost node's child, or None if it has no children.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 257 |
+| `get_first_root_node` | `()` | <p>:returns:</p><p>    The first root node in the tree or ``None`` if it is empty.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 151 |
+| `get_first_sibling` | `(self)` | <p>:returns:</p><p>    The leftmost node's sibling, can return the node itself if<br>    it was the leftmost sibling.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 279 |
+| `get_foreign_keys` | `()` | <p>Get foreign keys and models they refer to, so we can pre-process<br>the data for load\_bulk</p> | local/lib/python3.10/site-packages/treebeard/models.py | 38 |
+| `get_full_url` | `(self, request=None)` | <p>Return the full URL (including protocol / domain) to this page, or None if it is not routable</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2040 |
+| `get_indexed_instance` | `(self)` | <p>If the indexed model uses multi table inheritance, override this method<br>to return the instance in its most specific class so it reindexes properly.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2128 |
+| `get_indexed_objects` | `()` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 2123 |
+| `get_last_child` | `(self)` | <p>:returns:</p><p>    The rightmost node's child, or None if it has no children.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 268 |
+| `get_last_root_node` | `()` | <p>:returns:</p><p>    The last root node in the tree or ``None`` if it is empty.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 163 |
+| `get_last_sibling` | `(self)` | <p>:returns:</p><p>    The rightmost node's sibling, can return the node itself if<br>    it was the rightmost sibling.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 288 |
+| `get_latest_revision` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 304 |
+| `get_latest_revision_as_object` | `(self)` | <p>Returns the latest revision of the object as an instance of the model.<br>If no latest revision exists, returns the object itself.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1737 |
+| `get_lock` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1067 |
+| `get_next_sibling` | `(self)` | <p>:returns: The next node's sibling, or None if it was the rightmost<br>    sibling.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1015 |
+| `get_next_siblings` | `(self, inclusive=False)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 2496 |
+| `get_page_description` | `()` | <p>Returns a page description if it's set. For example "A multi-purpose web page".</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2274 |
+| `get_parent` | `(self, update=False)` | <p>:returns: the parent node of the current node object.<br>    Caches the result in the object itself to help in loops.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1136 |
+| `get_prev_sibling` | `(self)` | <p>:returns: The previous node's sibling, or None if it was the leftmost<br>    sibling.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1034 |
+| `get_prev_siblings` | `(self, inclusive=False)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 2499 |
+| `get_preview_context` | `(self, request, mode_name)` | <p>Returns a context dictionary for use in templates for previewing this object.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1915 |
+| `get_preview_template` | `(self, request, mode_name)` | <p>Returns a template to be used when previewing this object.</p><p>Subclasses of ``PreviewableMixin`` must override this method to return the<br>template name to be used in the preview. Alternatively, subclasses can also<br>override the ``serve\_preview`` method to completely customise the preview<br>rendering logic.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1924 |
+| `get_root` | `(self)` | <p>:returns: the root node for the current node object.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1108 |
+| `get_root_nodes` | `()` | <p>:returns: A queryset containing the root nodes in the tree.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 909 |
+| `get_route_paths` | `(self)` | <p>Returns a list of paths that this page can be viewed at.</p><p>These values are combined with the dynamic portion of the page URL to<br>automatically create redirects when the page's URL changes.</p><p>.. note::</p><p>    If using ``RoutablePageMixin``, you may want to override this method<br>    to include the paths of popualar routes.</p><p>.. note::</p><p>    Redirect paths are 'normalized' to apply consistent ordering to GET parameters,<br>    so you don't need to include every variation. Fragment identifiers are discarded<br>    too, so should be avoided.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2411 |
+| `get_scheduled_revision_as_object` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 611 |
+| `get_search_fields` | `()` |  | lib/python3.10/site-packages/wagtail/search/index.py | 50 |
+| `get_searchable_search_fields` | `()` |  | lib/python3.10/site-packages/wagtail/search/index.py | 59 |
+| `get_siblings` | `(self, inclusive=True)` | <p>Returns a queryset of all other pages with the same parent as the current page.<br>If ``inclusive`` is true, the current page itself is included in the queryset.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2489 |
+| `get_site` | `(self)` | <p>Return the Site object that this page belongs to.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2108 |
+| `get_sitemap_urls` | `(self, request=None)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 2465 |
+| `get_sorted_pos_queryset` | `(self, siblings, newobj)` | <p>:returns:</p><p>    A queryset of the nodes that must be moved to the right.<br>    Called only for Node models with :attr:`node\_order\_by`</p><p>This function is based on \_insertion\_target\_filters from django-mptt<br>(BSD licensed) by Jonathan Buchanan:<br>https://github.com/django-mptt/django-mptt/blob/0.3.0/mptt/signals.py</p> | local/lib/python3.10/site-packages/treebeard/models.py | 548 |
+| `get_specific` | `(self, deferred=False, copy_attrs=None, copy_attrs_exclude=None)` | <p>Return this object in its most specific subclassed form.</p><p>By default, a database query is made to fetch all field values for the<br>specific object. If you only require access to custom methods or other<br>non-field attributes on the specific object, you can use<br>``deferred=True`` to avoid this query. However, any attempts to access<br>specific field values from the returned object will trigger additional<br>database queries.</p><p>By default, references to all non-field attribute values are copied<br>from current object to the returned one. This includes:</p><p>\* Values set by a queryset, for example: annotations, or values set as<br>  a result of using ``select\_related()`` or ``prefetch\_related()``.<br>\* Any ``cached\_property`` values that have been evaluated.<br>\* Attributes set elsewhere in Python code.</p><p>For fine-grained control over which non-field values are copied to the<br>returned object, you can use ``copy\_attrs`` to specify a complete list<br>of attribute names to include. Alternatively, you can use<br>``copy\_attrs\_exclude`` to specify a list of attribute names to exclude.</p><p>If called on an object that is already an instance of the most specific<br>class, the object will be returned as is, and no database queries or<br>other operations will be triggered.</p><p>If the object was originally created using a model that has since<br>been removed from the codebase, an instance of the base class will be<br>returned (without any custom field values or other functionality<br>present on the original class). Usually, deleting these objects is the<br>best course of action, but there is currently no safe way for Wagtail<br>to do that at migration time.</p> | lib/python3.10/site-packages/wagtail/models/specific.py | 13 |
+| `get_streamfield_names` | `()` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1305 |
+| `get_template` | `(self, request, *args, **kwargs)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1918 |
+| `get_translation` | `(self, locale)` | <p>Finds the translation in the specified locale.</p><p>If there is no translation in that locale, this raises a ``model.DoesNotExist`` exception.</p> | lib/python3.10/site-packages/wagtail/models/i18n.py | 269 |
+| `get_translation_model` | `()` | <p>Returns this model's "Translation model".</p><p>The "Translation model" is the model that has the ``locale`` and<br>``translation\_key`` fields.<br>Typically this would be the current model, but it may be a<br>super-class if multi-table inheritance is in use (as is the case<br>for ``wagtailcore.Page``).</p> | lib/python3.10/site-packages/wagtail/models/i18n.py | 335 |
+| `get_translation_or_none` | `(self, locale)` | <p>Finds the translation in the specified locale.</p><p>If there is no translation in that locale, this returns None.</p> | lib/python3.10/site-packages/wagtail/models/i18n.py | 277 |
+| `get_translations` | `(self, inclusive=False)` | <p>Returns a queryset containing the translations of this instance.</p> | lib/python3.10/site-packages/wagtail/models/i18n.py | 256 |
+| `get_tree` | `(parent=None)` | <p>:returns:</p><p>    A \*queryset\* of nodes ordered as DFS, including the parent.<br>    If no parent is given, the entire tree is returned.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 887 |
+| `get_url` | `(self, request=None, current_site=None)` | <p>Return the 'most appropriate' URL for referring to this page from the pages we serve,<br>within the Wagtail backend and actual website templates;<br>this is the local URL (starting with '/') if we're only running a single site<br>(i.e. we know that whatever the current page is being served from, this link will be on the<br>same domain), and the full URL (with domain) if not.<br>Return None if the page is not routable.</p><p>Accepts an optional but recommended ``request`` keyword argument that, if provided, will<br>be used to cache site-level URL information (thereby avoiding repeated database / cache<br>lookups) and, via the ``Site.find\_for\_request()`` function, determine whether a relative<br>or full URL is most appropriate.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2054 |
+| `get_url_parts` | `(self, request=None)` | <p>Determine the URL for this page and return it as a tuple of<br>``(site\_id, site\_root\_url, page\_url\_relative\_to\_site\_root)``.<br>Return None if the page is not routable.</p><p>This is used internally by the ``full\_url``, ``url``, ``relative\_url``<br>and ``get\_site`` properties and methods; pages with custom URL routing<br>should override this method in order to have those operations return<br>the custom URLs.</p><p>Accepts an optional keyword argument ``request``, which may be used<br>to avoid repeated database / cache lookups. Typically, a page model<br>that overrides ``get\_url\_parts`` should not need to deal with<br>``request`` directly, and should just pass it to the original method<br>when calling ``super``.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1967 |
+| `get_verbose_name` | `()` | <p>Returns the human-readable "verbose name" of this page model e.g "Blog page".</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2265 |
+| `get_view_restrictions` | `(self)` | <p>Return a query set of all page view restrictions that apply to this page.</p><p>This checks the current page and all ancestor pages for page view restrictions.</p><p>If any of those pages are aliases, it will resolve them to their source pages<br>before querying PageViewRestrictions so alias pages use the same view restrictions<br>as their source page and they cannot have their own.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2504 |
+| `get_workflow` | `(self)` | <p>Returns the active workflow assigned to the page or its nearest ancestor</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2648 |
+| `has_translation` | `(self, locale)` | <p>Returns True if a translation exists in the specified locale.</p> | lib/python3.10/site-packages/wagtail/models/i18n.py | 288 |
+| `has_unpublished_subtree` | `(self)` | <p>An awkwardly-defined flag used in determining whether unprivileged editors have<br>permission to delete this article. Returns true if and only if this page is non-live,<br>and it has no live children.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2299 |
+| `indexed_get_content_type` | `()` |  | lib/python3.10/site-packages/wagtail/search/index.py | 27 |
+| `indexed_get_parent` | `(require_model=True)` |  | lib/python3.10/site-packages/wagtail/search/index.py | 19 |
+| `indexed_get_toplevel_content_type` | `()` |  | lib/python3.10/site-packages/wagtail/search/index.py | 40 |
+| `is_child_of` | `(self, node)` | <p>:returns: ``True`` is the node if a child of another node given as an<br>    argument, else, returns ``False``</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1064 |
+| `is_descendant_of` | `(self, node)` | <p>:returns: ``True`` if the node is a descendant of another node given<br>    as an argument, else, returns ``False``</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1072 |
+| `is_leaf` | `(self)` | <p>:returns: True if the node is a leaf node (else, returns False)</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1117 |
+| `is_navigable` | `(self)` | <p>Return true if it's meaningful to browse subpages of this page -<br>i.e. it currently has subpages,<br>or it's at the top level (this rule necessary for empty out-of-the-box sites to have working navigation)</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1936 |
+| `is_previewable` | `(self)` | <p>Returns True if at least one preview mode is specified</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2397 |
+| `is_root` | `(self)` | <p>:returns: True if the node is a root node (else, returns False)</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1113 |
+| `is_sibling_of` | `(self, node)` | <p>:returns: ``True`` if the node is a sibling of another node given as an<br>    argument, else, returns ``False``</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1051 |
+| `is_site_root` | `(self)` | <p>Returns True if this page is the root of any site.</p><p>This includes translations of site root pages as well.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1404 |
+| `load_bulk` | `(bulk_data, parent=None, keep_ids=False)` | <p>Loads a list/dictionary structure to the tree.</p><p><br>:param bulk\_data:</p><p>    The data that will be loaded, the structure is a list of<br>    dictionaries with 2 keys:</p><p>    - ``data``: will store arguments that will be passed for object<br>      creation, and</p><p>    - ``children``: a list of dictionaries, each one has it's own<br>      ``data`` and ``children`` keys (a recursive structure)</p><p><br>:param parent:</p><p>    The node that will receive the structure as children, if not<br>    specified the first level of the structure will be loaded as root<br>    nodes</p><p><br>:param keep\_ids:</p><p>    If enabled, loads the nodes with the same primary keys that are<br>    given in the structure. Will error if there are nodes without<br>    primary key info or if the primary keys are already used.</p><p><br>:returns: A list of the added node ids.</p> | local/lib/python3.10/site-packages/treebeard/models.py | 63 |
+| `make_preview_request` | `(self, original_request=None, preview_mode=None, extra_request_attrs=None)` | <p>Simulate a request to this object, by constructing a fake HttpRequest object that is (as far<br>as possible) representative of a real request to this object's front-end URL, and invoking<br>serve\_preview with that request (and the given preview\_mode).</p><p>Used for previewing / moderation and any other place where we<br>want to display a view of this object in the admin interface without going through the regular<br>page routing logic.</p><p>If you pass in a real request object as original\_request, additional information (e.g. client IP, cookies)<br>will be included in the dummy request.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 635 |
+| `move` | `(self, target, pos=None, user=None)` | <p>Extension to the treebeard 'move' method to ensure that url\_path is updated,<br>and to emit a 'pre\_page\_move' and 'post\_page\_move' signals.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2309 |
+| `numconv_obj` | `()` |  | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 604 |
+| `permissions_for_user` | `(self, user)` | <p>Return a PagePermissionsTester object defining what actions the user can perform on this page</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2391 |
+| `publish` | `(self, revision, user=None, changed=True, log_action=True, previous_revision=None, skip_permission_checks=False)` | <p>Publish a revision of the object by applying the changes in the revision to the live object.</p><p>:param revision: Revision to publish.<br>:type revision: Revision<br>:param user: The publishing user.<br>:param changed: Indicated whether content has changed.<br>:param log\_action: Flag for the logging action, pass ``False`` to skip logging.<br>:param previous\_revision: Indicates a revision reversal. Should be set to the previous revision instance.<br>:type previous\_revision: Revision</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1875 |
+| `relative_url` | `(self, current_site, request=None)` | <p>Return the 'most appropriate' URL for this page taking into account the site we're currently on;<br>a local URL if the site matches, or a fully qualified one otherwise.<br>Return None if the page is not routable.</p><p>Accepts an optional but recommended ``request`` keyword argument that, if provided, will<br>be used to cache site-level URL information (thereby avoiding repeated database / cache<br>lookups).</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2096 |
+| `route` | `(self, request, path_components)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1601 |
+| `save_revision` | `(self, user=None, submitted_for_moderation=False, approved_go_live_at=None, changed=True, log_action=False, previous_revision=None, clean=True)` | <p>Creates and saves a revision.</p><p>:param user: The user performing the action.<br>:param submitted\_for\_moderation: \*\*Deprecated\*\* – Indicates whether the object was submitted for moderation.<br>:param approved\_go\_live\_at: The date and time the revision is approved to go live.<br>:param changed: Indicates whether there were any content changes.<br>:param log\_action: Flag for logging the action. Pass ``True`` to also create a log entry. Can be passed an action string.<br>    Defaults to ``"wagtail.edit"`` when no ``previous\_revision`` param is passed, otherwise ``"wagtail.revert"``.<br>:param previous\_revision: Indicates a revision reversal. Should be set to the previous revision instance.<br>:type previous\_revision: Revision<br>:param clean: Set this to ``False`` to skip cleaning object content before saving this revision.<br>:return: The newly created revision.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1631 |
+| `serializable_data` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 317 |
+| `serve` | `(self, request, *args, **kwargs)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1927 |
+| `serve_password_required_response` | `(self, request, form, action_url)` | <p>Serve a response indicating that the user has been denied access to view this page,<br>and must supply a password.<br>form = a Django form object containing the password input<br>    (and zero or more hidden fields that also need to be output on the template)<br>action\_url = URL that this form should be POSTed to</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2536 |
+| `serve_preview` | `(self, request, mode_name)` | <p>Returns an HTTP response for use in object previews.</p><p>This method can be overridden to implement custom rendering and/or<br>routing logic.</p><p>Any templates rendered during this process should use the ``request``<br>object passed here - this ensures that ``request.user`` and other<br>properties are set appropriately for the wagtail user bar to be<br>displayed/hidden. This request will always be a GET.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 787 |
+| `set_url_path` | `(self, parent)` | <p>Populate the url\_path field based on this page's slug and the specified parent page.<br>(We pass a parent in here, rather than retrieving it via get\_parent, so that we can give<br>new unsaved pages a meaningful URL when previewing them; at that point the page has not<br>been assigned a position in the tree, as far as treebeard is concerned.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1309 |
+| `to_json` | `(self)` |  | local/lib/python3.10/site-packages/modelcluster/models.py | 229 |
+| `unpublish` | `(self, set_expired=False, commit=True, user=None, log_action=True)` | <p>Unpublish the live object.</p><p>:param set\_expired: Mark the object as expired.<br>:param commit: Commit the changes to the database.<br>:param user: The unpublishing user.<br>:param log\_action: Flag for the logging action, pass ``False`` to skip logging.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1892 |
+| `update_aliases` | `(self, *, revision=None, _content=None, _updated_ids=None)` | <p>Publishes all aliases that follow this page with the latest content from this page.</p><p>This is called by Wagtail whenever a page with aliases is published.</p><p>:param revision: The revision of the original page that we are updating to (used for logging purposes)<br>:type revision: PageRevision, optional</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1754 |
+| `with_content_json` | `(self, content)` | <p>Returns a new version of the page with field values updated to reflect changes<br>in the provided ``content`` (which usually comes from a previously-saved<br>page revision).</p><p>Certain field values are preserved in order to prevent errors if the returned<br>page is saved, such as ``id``, ``content\_type`` and some tree-related values.<br>The following field values are also preserved, as they are considered to be<br>meaningful to the page as a whole, rather than to a specific revision:</p><p>\* ``draft\_title``<br>\* ``live``<br>\* ``has\_unpublished\_changes``<br>\* ``owner``<br>\* ``locked``<br>\* ``locked\_by``<br>\* ``locked\_at``<br>\* ``latest\_revision``<br>\* ``latest\_revision\_created\_at``<br>\* ``first\_published\_at``<br>\* ``alias\_of``<br>\* ``wagtail\_admin\_comments`` (COMMENTS\_RELATION\_NAME)</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 2549 |
+
+
+### Private Methods
+
+| Method Name | Signature | Docstring | File | Line Number |
+|-----------|---------|---------|----|-----------|
+| `_check_draftstate_and_revision_mixins` | `()` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 910 |
+| `_check_revision_mixin` | `()` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 487 |
+| `_check_search_fields` | `(**kwargs)` |  | lib/python3.10/site-packages/wagtail/search/index.py | 111 |
+| `_get_autogenerated_slug` | `(self, base_slug)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1341 |
+| `_get_basepath` | `(path, depth)` | <p>:returns: The base path of another path up to a given depth</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1166 |
+| `_get_children_path_interval` | `(path)` | <p>:returns: An interval of all possible children paths for a node.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1213 |
+| `_get_database_connection` | `(action)` |  | local/lib/python3.10/site-packages/treebeard/models.py | 630 |
+| `_get_database_cursor` | `(action)` |  | local/lib/python3.10/site-packages/treebeard/models.py | 651 |
+| `_get_dummy_header_url` | `(self, original_request=None)` | <p>Return the URL that \_get\_dummy\_headers() should use to set META headers<br>for the faked HttpRequest.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 747 |
+| `_get_dummy_headers` | `(self, original_request=None)` | <p>Return a dict of META information to be included in a faked HttpRequest object to pass to<br>serve\_preview.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 680 |
+| `_get_lastpos_in_path` | `(self)` | <p>:returns: The integer value of the last step in a path.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1202 |
+| `_get_parent_path_from_path` | `(path)` | <p>:returns: The parent path for a given path</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1206 |
+| `_get_path` | `(path, depth, newstep)` | <p>Builds a path given some values</p><p>:param path: the base path<br>:param depth: the depth of the  node<br>:param newstep: the value (integer) of the new step</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1173 |
+| `_get_relevant_site_root_paths` | `(self, cache_object=None)` | <p>Returns a tuple of root paths for all sites this page belongs to.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1957 |
+| `_get_serializable_model` | `()` | <p>Returns a model with a valid \_meta.local\_fields (serializable).</p><p>Basically, this means the original model, not a proxied model.</p><p>(this is a workaround for a bug in django)</p> | local/lib/python3.10/site-packages/treebeard/models.py | 616 |
+| `_get_site_root_paths` | `(self, request=None)` | <p>Return ``Site.get\_site\_root\_paths()``, using the cached copy on the<br>request object if available.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1944 |
+| `_has_field` | `(name)` |  | lib/python3.10/site-packages/wagtail/search/index.py | 97 |
+| `_inc_path` | `(self)` | <p>:returns: The path of the next sibling of a given node path.</p> | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 1190 |
+| `_int2str` | `(num)` |  | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 596 |
+| `_prepare_pos_var` | `(self, pos, method_name, valid_pos, valid_sorted_pos)` |  | local/lib/python3.10/site-packages/treebeard/models.py | 509 |
+| `_prepare_pos_var_for_add_sibling` | `(self, pos)` |  | local/lib/python3.10/site-packages/treebeard/models.py | 529 |
+| `_prepare_pos_var_for_move` | `(self, pos)` |  | local/lib/python3.10/site-packages/treebeard/models.py | 541 |
+| `_process_foreign_keys` | `(foreign_keys, node_data)` | <p>For each foreign key try to load the actual object so load\_bulk<br>doesn't fail trying to load an int where django expects a<br>model instance</p> | local/lib/python3.10/site-packages/treebeard/models.py | 52 |
+| `_rewrite_node_path` | `(old_path, new_path)` |  | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 878 |
+| `_slug_is_available` | `(slug, parent_page, page=None)` | <p>Determine whether the given slug is available for use on a child page of<br>parent\_page. If 'page' is passed, the slug is intended for use on that page<br>(and so it will be excluded from the duplicate check).</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1324 |
+| `_str2int` | `(num)` |  | local/lib/python3.10/site-packages/treebeard/mp_tree.py | 600 |
+| `_update_descendant_url_paths` | `(self, old_url_path, new_url_path)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1580 |
+| `_update_from_revision` | `(self, revision, changed=True)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 615 |
+
+
+### Dunder Methods
+
+| Method Name | Signature | Docstring | File | Line Number |
+|-----------|---------|---------|----|-----------|
+| `__class__` | `(name, bases, dct)` | <p>Metaclass for Page</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 221 |
+| `__delattr__` | `(self, name, /)` | <p>Implement delattr(self, name).</p> |  |  |
+| `__dir__` | `(self, /)` | <p>Default dir() implementation.</p> |  |  |
+| `__eq__` | `(self, other)` | <p>Return self==value.</p> | python3.10/site-packages/django/db/models/base.py | 526 |
+| `__format__` | `(self, format_spec, /)` | <p>Default object formatter.</p> |  |  |
+| `__ge__` | `(self, value, /)` | <p>Return self>=value.</p> |  |  |
+| `__getattribute__` | `(self, name, /)` | <p>Return getattr(self, name).</p> |  |  |
+| `__getstate__` | `(self)` | <p>Hook to allow choosing the attributes to pickle.</p> | python3.10/site-packages/django/db/models/base.py | 547 |
+| `__gt__` | `(self, value, /)` | <p>Return self>value.</p> |  |  |
+| `__hash__` | `(self)` | <p>Return hash(self).</p> | python3.10/site-packages/django/db/models/base.py | 536 |
+| `__init__` | `(self, *args, **kwargs)` | <p>Initialize self.  See help(type(self)) for accurate signature.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1274 |
+| `__init_subclass__` | `No signature found` | <p>This method is called when a class is subclassed.</p><p>The default implementation does nothing. It may be<br>overridden to extend subclasses.</p> |  |  |
+| `__le__` | `(self, value, /)` | <p>Return self<=value.</p> |  |  |
+| `__lt__` | `(self, value, /)` | <p>Return self<value.</p> |  |  |
+| `__ne__` | `(self, value, /)` | <p>Return self!=value.</p> |  |  |
+| `__new__` | `(*args, **kwargs)` | <p>Create and return a new object.  See help(type) for accurate signature.</p> |  |  |
+| `__reduce__` | `(self)` | <p>Helper for pickle.</p> | python3.10/site-packages/django/db/models/base.py | 541 |
+| `__reduce_ex__` | `(self, protocol, /)` | <p>Helper for pickle.</p> |  |  |
+| `__repr__` | `(self)` | <p>Return repr(self).</p> | python3.10/site-packages/django/db/models/base.py | 520 |
+| `__setattr__` | `(self, name, value, /)` | <p>Implement setattr(self, name, value).</p> |  |  |
+| `__setstate__` | `(self, state)` |  | python3.10/site-packages/django/db/models/base.py | 564 |
+| `__sizeof__` | `(self, /)` | <p>Size of object in memory, in bytes.</p> |  |  |
+| `__str__` | `(self)` | <p>Return str(self).</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1287 |
+| `__subclasshook__` | `No signature found` | <p>Abstract classes can override this to customize issubclass().</p><p>This is invoked early on by abc.ABCMeta.\_\_subclasscheck\_\_().<br>It should return True, False or NotImplemented.  If it returns<br>NotImplemented, the normal algorithm is used.  Otherwise, it<br>overrides the normal algorithm (and the outcome is cached).</p> |  |  |
+
+
+### Common Django Methods
+
+| Method Name | Signature | Docstring | File | Line Number |
+|-----------|---------|---------|----|-----------|
+| `_check_column_name_clashes` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1506 |
+| `_check_constraints` | `(databases)` |  | python3.10/site-packages/django/db/models/base.py | 1975 |
+| `_check_default_pk` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1311 |
+| `_check_field_name_clashes` | `()` | <p>Forbid field shadowing in multi-table inheritance.</p> | python3.10/site-packages/django/db/models/base.py | 1449 |
+| `_check_fields` | `(**kwargs)` | <p>Perform all field checks.</p> | python3.10/site-packages/django/db/models/base.py | 1390 |
+| `_check_id_field` | `()` | <p>Check if `id` field is a primary key.</p> | python3.10/site-packages/django/db/models/base.py | 1432 |
+| `_check_index_together` | `()` | <p>Check the value of "index\_together" option.</p> | python3.10/site-packages/django/db/models/base.py | 1589 |
+| `_check_indexes` | `(databases)` | <p>Check fields, names, and conditions of indexes.</p> | python3.10/site-packages/django/db/models/base.py | 1643 |
+| `_check_local_fields` | `(fields, option)` |  | python3.10/site-packages/django/db/models/base.py | 1732 |
+| `_check_long_column_names` | `(databases)` | <p>Check that any auto-generated column names are shorter than the limits<br>for each database in which the model will be created.</p> | python3.10/site-packages/django/db/models/base.py | 1884 |
+| `_check_m2m_through_same_relationship` | `()` | <p>Check if no relationship model is used by more than one m2m field.<br>        </p> | python3.10/site-packages/django/db/models/base.py | 1400 |
+| `_check_managers` | `(**kwargs)` | <p>Perform all manager checks.</p> | python3.10/site-packages/django/db/models/base.py | 1382 |
+| `_check_model` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1369 |
+| `_check_model_name_db_lookup_clashes` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1531 |
+| `_check_ordering` | `()` | <p>Check "ordering" option -- is it a list of strings and do all fields<br>exist?</p> | python3.10/site-packages/django/db/models/base.py | 1782 |
+| `_check_property_name_related_field_accessor_clashes` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1555 |
+| `_check_single_primary_key` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1575 |
+| `_check_swappable` | `()` | <p>Check if the swapped model exists.</p> | python3.10/site-packages/django/db/models/base.py | 1342 |
+| `_check_unique_together` | `()` | <p>Check the value of "unique\_together" option.</p> | python3.10/site-packages/django/db/models/base.py | 1616 |
+| `_do_insert` | `(self, manager, using, fields, returning_fields, raw)` | <p>Do an INSERT. If returning\_fields is defined then this method should<br>return the newly created data for the model.</p> | python3.10/site-packages/django/db/models/base.py | 914 |
+| `_do_update` | `(self, base_qs, using, pk_val, values, update_fields, forced_update)` | <p>Try to update the model. Return True if the model was updated (if an<br>update query was done and a matching row was found in the DB).</p> | python3.10/site-packages/django/db/models/base.py | 887 |
+| `_get_FIELD_display` | `(self, field)` |  | python3.10/site-packages/django/db/models/base.py | 971 |
+| `_get_expr_references` | `(expr)` |  | python3.10/site-packages/django/db/models/base.py | 1959 |
+| `_get_next_or_previous_by_FIELD` | `(self, field, is_next, **kwargs)` |  | python3.10/site-packages/django/db/models/base.py | 977 |
+| `_get_next_or_previous_in_order` | `(self, is_next)` |  | python3.10/site-packages/django/db/models/base.py | 993 |
+| `_get_pk_val` | `(self, meta=None)` |  | python3.10/site-packages/django/db/models/base.py | 586 |
+| `_get_unique_checks` | `(self, exclude=None)` | <p>Return a list of checks to perform. Since validate\_unique() could be<br>called from a ModelForm, some fields may have been excluded; we can't<br>perform a unique check on a model that is missing fields involved<br>in that check. Fields that did not validate should also be excluded,<br>but they need to be passed in via the exclude argument.</p> | python3.10/site-packages/django/db/models/base.py | 1038 |
+| `_perform_date_checks` | `(self, date_checks)` |  | python3.10/site-packages/django/db/models/base.py | 1141 |
+| `_perform_unique_checks` | `(self, unique_checks)` |  | python3.10/site-packages/django/db/models/base.py | 1096 |
+| `_prepare_related_fields_for_save` | `(self, operation_name)` |  | python3.10/site-packages/django/db/models/base.py | 924 |
+| `_save_parents` | `(self, cls, using, update_fields)` | <p>Save all the parents of cls using values from self.</p> | python3.10/site-packages/django/db/models/base.py | 794 |
+| `_save_table` | `(self, raw=False, cls=None, force_insert=False, force_update=False, using=None, update_fields=None)` | <p>Do the heavy-lifting involved in saving. Update or insert the data<br>for a single table.</p> | python3.10/site-packages/django/db/models/base.py | 822 |
+| `_set_pk_val` | `(self, value)` |  | python3.10/site-packages/django/db/models/base.py | 590 |
+| `check` | `(**kwargs)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 1515 |
+| `clean` | `(self)` | <p>Hook for doing any extra model-wide validation after clean() has been<br>called on every field by self.clean\_fields. Any ValidationError raised<br>by this method will not be associated with a particular field; it will<br>have a special-case association with the field defined by NON\_FIELD\_ERRORS.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1391 |
+| `clean_fields` | `(self, exclude=None)` | <p>Clean all fields and raise a ValidationError containing a dict<br>of all validation errors if any occur.</p> | python3.10/site-packages/django/db/models/base.py | 1253 |
+| `date_error_message` | `(self, lookup_type, field_name, unique_for)` |  | python3.10/site-packages/django/db/models/base.py | 1170 |
+| `delete` | `(self, *args, **kwargs)` | <p>Removes a node and all it's descendants.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1511 |
+| `from_db` | `(db, field_names, values)` |  | python3.10/site-packages/django/db/models/base.py | 507 |
+| `full_clean` | `(self, *args, **kwargs)` | <p>Call clean\_fields(), clean(), and validate\_unique() on the model.<br>Raise a ValidationError for any errors that occur.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 1370 |
+| `get_deferred_fields` | `(self)` | <p>Return a set containing names of deferred fields for this instance.</p> | python3.10/site-packages/django/db/models/base.py | 598 |
+| `prepare_database_save` | `(self, field)` |  | python3.10/site-packages/django/db/models/base.py | 1008 |
+| `refresh_from_db` | `(self, using=None, fields=None)` | <p>Reload field values from the database.</p><p>By default, the reloading happens from the database this instance was<br>loaded from, or by the read router if this instance wasn't loaded from<br>any database. The using parameter will override the default.</p><p>Fields can be used to specify which fields to reload. The fields<br>should be an iterable of field attnames. If fields is None, then<br>all non-deferred fields are reloaded.</p><p>When accessing deferred fields of an instance, the deferred loading<br>of the field will call this method.</p> | python3.10/site-packages/django/db/models/base.py | 607 |
+| `save` | `(self, clean=True, user=None, log_action=False, **kwargs)` | <p>Overrides default method behaviour to make additional updates unique to pages,<br>such as updating the ``url\_path`` value of descendant page to reflect changes<br>to this page's slug.</p><p>New pages should generally be saved via the `add\_child() <https://django-treebeard.readthedocs.io/en/latest/mp\_tree.html#treebeard.mp\_tree.MP\_Node.add\_child>`\_ or `add\_sibling() <https://django-treebeard.readthedocs.io/en/latest/mp\_tree.html#treebeard.mp\_tree.MP\_Node.add\_sibling>`\_<br>method of an existing page, which will correctly set the ``path`` and ``depth``<br>fields on the new page before saving it.</p><p>By default, pages are validated using ``full\_clean()`` before attempting to<br>save changes to the database, which helps to preserve validity when restoring<br>pages from historic revisions (which might not necessarily reflect the current<br>model state). This validation step can be bypassed by calling the method with<br>``clean=False``.</p> | /usr/local/lib/python3.10/contextlib.py | 1419 |
+| `save_base` | `(self, raw=False, force_insert=False, force_update=False, using=None, update_fields=None)` | <p>Handle the parts of saving which should be done only once per save,<br>yet need to be done in raw saves, too. This includes some sanity<br>checks and signal sending.</p><p>The 'raw' argument is telling save\_base not to save any parent<br>models and not to do any changes to the values before save. This<br>is used by fixture loading.</p> | python3.10/site-packages/django/db/models/base.py | 743 |
+| `serializable_value` | `(self, field_name)` | <p>Return the value of the field name for this instance. If the field is<br>a foreign key, return the id value instead of the object. If there's<br>no Field object with this name on the model, return the model<br>attribute's value.</p><p>Used to serialize a field's value (in the serializer, or form output,<br>for example). Normally, you would just access the attribute directly<br>and not use this method.</p> | python3.10/site-packages/django/db/models/base.py | 668 |
+| `unique_error_message` | `(self, model_class, unique_check)` |  | python3.10/site-packages/django/db/models/base.py | 1187 |
+| `validate_unique` | `(self, exclude=None)` | <p>Check unique constraints on the model and raise ValidationError if any<br>failed.</p> | python3.10/site-packages/django/db/models/base.py | 1022 |
+
+
+## Custom Managers
+
+### default
+
+**Class:** `BasePageManagerFromPageQuerySet`
+
+**Module:** `django.db.models.manager`
+
+#### Custom Methods
+
+##### `ancestor_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are ancestors of the specified page.
+
+If inclusive is set to True, it will also include the specified page.*
+
+##### `ancestor_of_q(self, *args, **kwargs)`
+
+
+##### `annotate_approved_schedule(self, *args, **kwargs)`
+
+*Performance optimisation for listing pages.
+Annotates each page with the existence of an approved go live time.
+Used by `approved_schedule` property on `wagtailcore.models.Page`.*
+
+##### `annotate_site_root_state(self, *args, **kwargs)`
+
+*Performance optimisation for listing pages.
+Annotates each object with whether it is a root page of any site.
+Used by `is_site_root` method on `wagtailcore.models.Page`.*
+
+##### `autocomplete(self, *args, **kwargs)`
+
+*This runs an autocomplete query on all the items in the QuerySet*
+
+##### `child_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are direct children of the specified page.*
+
+##### `child_of_q(self, *args, **kwargs)`
+
+
+##### `defer_streamfields(self, *args, **kwargs)`
+
+*Apply to a queryset to prevent fetching/decoding of StreamField values on
+evaluation. Useful when working with potentially large numbers of results,
+where StreamField values are unlikely to be needed. For example, when
+generating a sitemap or a long list of page links.*
+
+##### `descendant_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that descend from the specified page.
+
+If inclusive is set to True, it will also contain the page itself (instead of just its descendants).*
+
+##### `descendant_of_q(self, *args, **kwargs)`
+
+
+##### `exact_type(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are an instance of the specified model(s)
+(matching the model exactly, not subclasses).*
+
+##### `exact_type_q(self, *args, **kwargs)`
+
+
+##### `first_common_ancestor(self, *args, **kwargs)`
+
+*Find the first ancestor that all pages in this queryset have in common.
+For example, consider a page hierarchy like::
+
+    - Home/
+        - Foo Event Index/
+            - Foo Event Page 1/
+            - Foo Event Page 2/
+        - Bar Event Index/
+            - Bar Event Page 1/
+            - Bar Event Page 2/
+
+The common ancestors for some queries would be:
+
+.. code-block:: python
+
+    >>> Page.objects\
+    ...     .type(EventPage)\
+    ...     .first_common_ancestor()
+    <Page: Home>
+    >>> Page.objects\
+    ...     .type(EventPage)\
+    ...     .filter(title__contains='Foo')\
+    ...     .first_common_ancestor()
+    <Page: Foo Event Index>
+
+This method tries to be efficient, but if you have millions of pages
+scattered across your page tree, it will be slow.
+
+If `include_self` is True, the ancestor can be one of the pages in the
+queryset:
+
+.. code-block:: python
+
+    >>> Page.objects\
+    ...     .filter(title__contains='Foo')\
+    ...     .first_common_ancestor()
+    <Page: Foo Event Index>
+    >>> Page.objects\
+    ...     .filter(title__exact='Bar Event Index')\
+    ...     .first_common_ancestor()
+    <Page: Bar Event Index>
+
+A few invalid cases exist: when the queryset is empty, when the root
+Page is in the queryset and ``include_self`` is False, and when there
+are multiple page trees with no common root (a case Wagtail does not
+support). If ``strict`` is False (the default), then the first root
+node is returned in these cases. If ``strict`` is True, then a
+``ObjectDoesNotExist`` is raised.*
+
+##### `first_common_ancestor_of(self, pages, include_self=False, strict=False)`
+
+*This is similar to `PageQuerySet.first_common_ancestor` but works
+for a list of pages instead of a queryset.*
+
+##### `in_menu(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are in the menus.*
+
+##### `in_menu_q(self, *args, **kwargs)`
+
+
+##### `in_site(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages within the specified site.*
+
+##### `live(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain published pages.*
+
+##### `live_q(self, *args, **kwargs)`
+
+
+##### `not_ancestor_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to not contain any pages that are ancestors of the specified page.
+
+If inclusive is set to True, it will also exclude the specified page.*
+
+##### `not_child_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to not contain any pages that are direct children of the specified page.*
+
+##### `not_descendant_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to not contain any pages that descend from the specified page.
+
+If inclusive is set to True, it will also exclude the specified page.*
+
+##### `not_exact_type(self, *args, **kwargs)`
+
+*This filters the QuerySet to exclude any pages which are an instance of the specified model(s)
+(matching the model exactly, not subclasses).*
+
+##### `not_in_menu(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are not in the menus.*
+
+##### `not_live(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain unpublished pages.*
+
+##### `not_page(self, *args, **kwargs)`
+
+*This filters the QuerySet so it doesn't contain the specified page.*
+
+##### `not_parent_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to exclude the parent of the specified page.*
+
+##### `not_public(self, *args, **kwargs)`
+
+*Filters the QuerySet to only contain pages that are in a private
+section and their descendants.*
+
+##### `not_sibling_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to not contain any pages that are siblings of the specified page.
+
+By default, inclusive is set to True so it will exclude the specified page from the results.
+
+If inclusive is set to False, the page will be included in the results.*
+
+##### `not_translation_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are not translations of the specified page.
+
+Note, this will include the page itself as the page is technically not a translation of itself.
+If inclusive is True, we consider the page to be a translation of itself so this excludes the page
+from the results.*
+
+##### `not_type(self, *args, **kwargs)`
+
+*This filters the QuerySet to exclude any pages which are an instance of the specified model(s).*
+
+##### `page(self, *args, **kwargs)`
+
+*This filters the QuerySet so it only contains the specified page.*
+
+##### `page_q(self, *args, **kwargs)`
+
+
+##### `parent_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain the parent of the specified page.*
+
+##### `parent_of_q(self, *args, **kwargs)`
+
+
+##### `prefetch_workflow_states(self, *args, **kwargs)`
+
+*Performance optimisation for listing pages.
+Prefetches the active workflow states on each page in this queryset.
+Used by `workflow_in_progress` and `current_workflow_progress` properties on
+`wagtailcore.models.Page`.*
+
+##### `private(self, *args, **kwargs)`
+
+*Filters the QuerySet to only contain pages that are in a private
+section and their descendants.*
+
+##### `private_q(self, *args, **kwargs)`
+
+
+##### `public(self, *args, **kwargs)`
+
+*Filters the QuerySet to only contain pages that are not in a private
+section and their descendants.*
+
+##### `search(self, *args, **kwargs)`
+
+*This runs a search query on all the items in the QuerySet*
+
+##### `sibling_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are siblings of the specified page.
+
+By default, inclusive is set to True so it will include the specified page in the results.
+
+If inclusive is set to False, the page will be excluded from the results.*
+
+##### `sibling_of_q(self, *args, **kwargs)`
+
+
+##### `specific(self, *args, **kwargs)`
+
+*This efficiently gets all the specific items for the queryset, using
+the minimum number of queries.
+
+When the "defer" keyword argument is set to True, only generic
+field values will be loaded and all specific fields will be deferred.*
+
+##### `translation_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are translations of the specified page.
+
+If inclusive is True, the page itself is returned.*
+
+##### `translation_of_q(self, *args, **kwargs)`
+
+
+##### `type(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are an instance
+of the specified model(s) (including subclasses).*
+
+##### `type_q(self, *args, **kwargs)`
+
+
+##### `unpublish(self, *args, **kwargs)`
+
+*This unpublishes all live pages in the QuerySet.*
+
+#### Custom QuerySet
+
+**Class:** `PageQuerySet`
+
+**Module:** `wagtail.query`
+
+*Extends Treebeard's MP_NodeQuerySet with additional useful tree-related operations.*
+
+##### Custom Methods
+
+###### `ancestor_of(self, other, inclusive=False)`
+
+*This filters the QuerySet to only contain pages that are ancestors of the specified page.
+
+If inclusive is set to True, it will also include the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`80`
+
+###### `ancestor_of_q(self, other, inclusive=False)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`68`
+
+###### `annotate_approved_schedule(self)`
+
+*Performance optimisation for listing pages.
+Annotates each page with the existence of an approved go live time.
+Used by `approved_schedule` property on `wagtailcore.models.Page`.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`480`
+
+###### `annotate_site_root_state(self)`
+
+*Performance optimisation for listing pages.
+Annotates each object with whether it is a root page of any site.
+Used by `is_site_root` method on `wagtailcore.models.Page`.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`496`
+
+###### `autocomplete(self, query, fields=None, operator=None, order_by_relevance=True, backend='default')`
+
+*This runs an autocomplete query on all the items in the QuerySet*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/search/queryset.py`:`27`
+
+###### `child_of(self, other)`
+
+*This filters the QuerySet to only contain pages that are direct children of the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`56`
+
+###### `child_of_q(self, other)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`53`
+
+###### `defer_streamfields(self)`
+
+*Apply to a queryset to prevent fetching/decoding of StreamField values on
+evaluation. Useful when working with potentially large numbers of results,
+where StreamField values are unlikely to be needed. For example, when
+generating a sitemap or a long list of page links.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`409`
+
+###### `descendant_of(self, other, inclusive=False)`
+
+*This filters the QuerySet to only contain pages that descend from the specified page.
+
+If inclusive is set to True, it will also contain the page itself (instead of just its descendants).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`37`
+
+###### `descendant_of_q(self, other, inclusive=False)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`29`
+
+###### `exact_type(self, *types)`
+
+*This filters the QuerySet to only contain pages that are an instance of the specified model(s)
+(matching the model exactly, not subclasses).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`251`
+
+###### `exact_type_q(self, *types)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`247`
+
+###### `first_common_ancestor(self, include_self=False, strict=False)`
+
+*Find the first ancestor that all pages in this queryset have in common.
+For example, consider a page hierarchy like::
+
+    - Home/
+        - Foo Event Index/
+            - Foo Event Page 1/
+            - Foo Event Page 2/
+        - Bar Event Index/
+            - Bar Event Page 1/
+            - Bar Event Page 2/
+
+The common ancestors for some queries would be:
+
+.. code-block:: python
+
+    >>> Page.objects\
+    ...     .type(EventPage)\
+    ...     .first_common_ancestor()
+    <Page: Home>
+    >>> Page.objects\
+    ...     .type(EventPage)\
+    ...     .filter(title__contains='Foo')\
+    ...     .first_common_ancestor()
+    <Page: Foo Event Index>
+
+This method tries to be efficient, but if you have millions of pages
+scattered across your page tree, it will be slow.
+
+If `include_self` is True, the ancestor can be one of the pages in the
+queryset:
+
+.. code-block:: python
+
+    >>> Page.objects\
+    ...     .filter(title__contains='Foo')\
+    ...     .first_common_ancestor()
+    <Page: Foo Event Index>
+    >>> Page.objects\
+    ...     .filter(title__exact='Bar Event Index')\
+    ...     .first_common_ancestor()
+    <Page: Bar Event Index>
+
+A few invalid cases exist: when the queryset is empty, when the root
+Page is in the queryset and ``include_self`` is False, and when there
+are multiple page trees with no common root (a case Wagtail does not
+support). If ``strict`` is False (the default), then the first root
+node is returned in these cases. If ``strict`` is True, then a
+``ObjectDoesNotExist`` is raised.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`296`
+
+###### `in_menu(self)`
+
+*This filters the QuerySet to only contain pages that are in the menus.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`200`
+
+###### `in_menu_q(self)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`197`
+
+###### `in_site(self, site)`
+
+*This filters the QuerySet to only contain pages within the specified site.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`423`
+
+###### `live(self)`
+
+*This filters the QuerySet to only contain published pages.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`185`
+
+###### `live_q(self)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`182`
+
+###### `not_ancestor_of(self, other, inclusive=False)`
+
+*This filters the QuerySet to not contain any pages that are ancestors of the specified page.
+
+If inclusive is set to True, it will also exclude the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`88`
+
+###### `not_child_of(self, other)`
+
+*This filters the QuerySet to not contain any pages that are direct children of the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`62`
+
+###### `not_descendant_of(self, other, inclusive=False)`
+
+*This filters the QuerySet to not contain any pages that descend from the specified page.
+
+If inclusive is set to True, it will also exclude the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`45`
+
+###### `not_exact_type(self, *types)`
+
+*This filters the QuerySet to exclude any pages which are an instance of the specified model(s)
+(matching the model exactly, not subclasses).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`258`
+
+###### `not_in_menu(self)`
+
+*This filters the QuerySet to only contain pages that are not in the menus.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`206`
+
+###### `not_live(self)`
+
+*This filters the QuerySet to only contain unpublished pages.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`191`
+
+###### `not_page(self, other)`
+
+*This filters the QuerySet so it doesn't contain the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`221`
+
+###### `not_parent_of(self, other)`
+
+*This filters the QuerySet to exclude the parent of the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`105`
+
+###### `not_public(self)`
+
+*Filters the QuerySet to only contain pages that are in a private
+section and their descendants.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`282`
+
+###### `not_sibling_of(self, other, inclusive=True)`
+
+*This filters the QuerySet to not contain any pages that are siblings of the specified page.
+
+By default, inclusive is set to True so it will exclude the specified page from the results.
+
+If inclusive is set to False, the page will be included in the results.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`131`
+
+###### `not_translation_of(self, page, inclusive=False)`
+
+*This filters the QuerySet to only contain pages that are not translations of the specified page.
+
+Note, this will include the page itself as the page is technically not a translation of itself.
+If inclusive is True, we consider the page to be a translation of itself so this excludes the page
+from the results.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`445`
+
+###### `not_type(self, *types)`
+
+*This filters the QuerySet to exclude any pages which are an instance of the specified model(s).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`241`
+
+###### `page(self, other)`
+
+*This filters the QuerySet so it only contains the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`215`
+
+###### `page_q(self, other)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`212`
+
+###### `parent_of(self, other)`
+
+*This filters the QuerySet to only contain the parent of the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`99`
+
+###### `parent_of_q(self, other)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`96`
+
+###### `prefetch_workflow_states(self)`
+
+*Performance optimisation for listing pages.
+Prefetches the active workflow states on each page in this queryset.
+Used by `workflow_in_progress` and `current_workflow_progress` properties on
+`wagtailcore.models.Page`.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`455`
+
+###### `private(self)`
+
+*Filters the QuerySet to only contain pages that are in a private
+section and their descendants.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`289`
+
+###### `private_q(self)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`265`
+
+###### `public(self)`
+
+*Filters the QuerySet to only contain pages that are not in a private
+section and their descendants.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`275`
+
+###### `search(self, query, fields=None, operator=None, order_by_relevance=True, partial_match=None, backend='default')`
+
+*This runs a search query on all the items in the QuerySet*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/search/queryset.py`:`5`
+
+###### `sibling_of(self, other, inclusive=True)`
+
+*This filters the QuerySet to only contain pages that are siblings of the specified page.
+
+By default, inclusive is set to True so it will include the specified page in the results.
+
+If inclusive is set to False, the page will be excluded from the results.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`121`
+
+###### `sibling_of_q(self, other, inclusive=True)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`111`
+
+###### `specific(self, defer=False)`
+
+*This efficiently gets all the specific items for the queryset, using
+the minimum number of queries.
+
+When the "defer" keyword argument is set to True, only generic
+field values will be loaded and all specific fields will be deferred.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`155`
+
+###### `translation_of(self, page, inclusive=False)`
+
+*This filters the QuerySet to only contain pages that are translations of the specified page.
+
+If inclusive is True, the page itself is returned.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`437`
+
+###### `translation_of_q(self, page, inclusive)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`429`
+
+###### `type(self, *types)`
+
+*This filters the QuerySet to only contain pages that are an instance
+of the specified model(s) (including subclasses).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`234`
+
+###### `type_q(self, *types)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`227`
+
+###### `unpublish(self)`
+
+*This unpublishes all live pages in the QuerySet.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`402`
+
+### objects
+
+**Class:** `BasePageManagerFromPageQuerySet`
+
+**Module:** `django.db.models.manager`
+
+#### Custom Methods
+
+##### `ancestor_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are ancestors of the specified page.
+
+If inclusive is set to True, it will also include the specified page.*
+
+##### `ancestor_of_q(self, *args, **kwargs)`
+
+
+##### `annotate_approved_schedule(self, *args, **kwargs)`
+
+*Performance optimisation for listing pages.
+Annotates each page with the existence of an approved go live time.
+Used by `approved_schedule` property on `wagtailcore.models.Page`.*
+
+##### `annotate_site_root_state(self, *args, **kwargs)`
+
+*Performance optimisation for listing pages.
+Annotates each object with whether it is a root page of any site.
+Used by `is_site_root` method on `wagtailcore.models.Page`.*
+
+##### `autocomplete(self, *args, **kwargs)`
+
+*This runs an autocomplete query on all the items in the QuerySet*
+
+##### `child_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are direct children of the specified page.*
+
+##### `child_of_q(self, *args, **kwargs)`
+
+
+##### `defer_streamfields(self, *args, **kwargs)`
+
+*Apply to a queryset to prevent fetching/decoding of StreamField values on
+evaluation. Useful when working with potentially large numbers of results,
+where StreamField values are unlikely to be needed. For example, when
+generating a sitemap or a long list of page links.*
+
+##### `descendant_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that descend from the specified page.
+
+If inclusive is set to True, it will also contain the page itself (instead of just its descendants).*
+
+##### `descendant_of_q(self, *args, **kwargs)`
+
+
+##### `exact_type(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are an instance of the specified model(s)
+(matching the model exactly, not subclasses).*
+
+##### `exact_type_q(self, *args, **kwargs)`
+
+
+##### `first_common_ancestor(self, *args, **kwargs)`
+
+*Find the first ancestor that all pages in this queryset have in common.
+For example, consider a page hierarchy like::
+
+    - Home/
+        - Foo Event Index/
+            - Foo Event Page 1/
+            - Foo Event Page 2/
+        - Bar Event Index/
+            - Bar Event Page 1/
+            - Bar Event Page 2/
+
+The common ancestors for some queries would be:
+
+.. code-block:: python
+
+    >>> Page.objects\
+    ...     .type(EventPage)\
+    ...     .first_common_ancestor()
+    <Page: Home>
+    >>> Page.objects\
+    ...     .type(EventPage)\
+    ...     .filter(title__contains='Foo')\
+    ...     .first_common_ancestor()
+    <Page: Foo Event Index>
+
+This method tries to be efficient, but if you have millions of pages
+scattered across your page tree, it will be slow.
+
+If `include_self` is True, the ancestor can be one of the pages in the
+queryset:
+
+.. code-block:: python
+
+    >>> Page.objects\
+    ...     .filter(title__contains='Foo')\
+    ...     .first_common_ancestor()
+    <Page: Foo Event Index>
+    >>> Page.objects\
+    ...     .filter(title__exact='Bar Event Index')\
+    ...     .first_common_ancestor()
+    <Page: Bar Event Index>
+
+A few invalid cases exist: when the queryset is empty, when the root
+Page is in the queryset and ``include_self`` is False, and when there
+are multiple page trees with no common root (a case Wagtail does not
+support). If ``strict`` is False (the default), then the first root
+node is returned in these cases. If ``strict`` is True, then a
+``ObjectDoesNotExist`` is raised.*
+
+##### `first_common_ancestor_of(self, pages, include_self=False, strict=False)`
+
+*This is similar to `PageQuerySet.first_common_ancestor` but works
+for a list of pages instead of a queryset.*
+
+##### `in_menu(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are in the menus.*
+
+##### `in_menu_q(self, *args, **kwargs)`
+
+
+##### `in_site(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages within the specified site.*
+
+##### `live(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain published pages.*
+
+##### `live_q(self, *args, **kwargs)`
+
+
+##### `not_ancestor_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to not contain any pages that are ancestors of the specified page.
+
+If inclusive is set to True, it will also exclude the specified page.*
+
+##### `not_child_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to not contain any pages that are direct children of the specified page.*
+
+##### `not_descendant_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to not contain any pages that descend from the specified page.
+
+If inclusive is set to True, it will also exclude the specified page.*
+
+##### `not_exact_type(self, *args, **kwargs)`
+
+*This filters the QuerySet to exclude any pages which are an instance of the specified model(s)
+(matching the model exactly, not subclasses).*
+
+##### `not_in_menu(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are not in the menus.*
+
+##### `not_live(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain unpublished pages.*
+
+##### `not_page(self, *args, **kwargs)`
+
+*This filters the QuerySet so it doesn't contain the specified page.*
+
+##### `not_parent_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to exclude the parent of the specified page.*
+
+##### `not_public(self, *args, **kwargs)`
+
+*Filters the QuerySet to only contain pages that are in a private
+section and their descendants.*
+
+##### `not_sibling_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to not contain any pages that are siblings of the specified page.
+
+By default, inclusive is set to True so it will exclude the specified page from the results.
+
+If inclusive is set to False, the page will be included in the results.*
+
+##### `not_translation_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are not translations of the specified page.
+
+Note, this will include the page itself as the page is technically not a translation of itself.
+If inclusive is True, we consider the page to be a translation of itself so this excludes the page
+from the results.*
+
+##### `not_type(self, *args, **kwargs)`
+
+*This filters the QuerySet to exclude any pages which are an instance of the specified model(s).*
+
+##### `page(self, *args, **kwargs)`
+
+*This filters the QuerySet so it only contains the specified page.*
+
+##### `page_q(self, *args, **kwargs)`
+
+
+##### `parent_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain the parent of the specified page.*
+
+##### `parent_of_q(self, *args, **kwargs)`
+
+
+##### `prefetch_workflow_states(self, *args, **kwargs)`
+
+*Performance optimisation for listing pages.
+Prefetches the active workflow states on each page in this queryset.
+Used by `workflow_in_progress` and `current_workflow_progress` properties on
+`wagtailcore.models.Page`.*
+
+##### `private(self, *args, **kwargs)`
+
+*Filters the QuerySet to only contain pages that are in a private
+section and their descendants.*
+
+##### `private_q(self, *args, **kwargs)`
+
+
+##### `public(self, *args, **kwargs)`
+
+*Filters the QuerySet to only contain pages that are not in a private
+section and their descendants.*
+
+##### `search(self, *args, **kwargs)`
+
+*This runs a search query on all the items in the QuerySet*
+
+##### `sibling_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are siblings of the specified page.
+
+By default, inclusive is set to True so it will include the specified page in the results.
+
+If inclusive is set to False, the page will be excluded from the results.*
+
+##### `sibling_of_q(self, *args, **kwargs)`
+
+
+##### `specific(self, *args, **kwargs)`
+
+*This efficiently gets all the specific items for the queryset, using
+the minimum number of queries.
+
+When the "defer" keyword argument is set to True, only generic
+field values will be loaded and all specific fields will be deferred.*
+
+##### `translation_of(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are translations of the specified page.
+
+If inclusive is True, the page itself is returned.*
+
+##### `translation_of_q(self, *args, **kwargs)`
+
+
+##### `type(self, *args, **kwargs)`
+
+*This filters the QuerySet to only contain pages that are an instance
+of the specified model(s) (including subclasses).*
+
+##### `type_q(self, *args, **kwargs)`
+
+
+##### `unpublish(self, *args, **kwargs)`
+
+*This unpublishes all live pages in the QuerySet.*
+
+#### Custom QuerySet
+
+**Class:** `PageQuerySet`
+
+**Module:** `wagtail.query`
+
+*Extends Treebeard's MP_NodeQuerySet with additional useful tree-related operations.*
+
+##### Custom Methods
+
+###### `ancestor_of(self, other, inclusive=False)`
+
+*This filters the QuerySet to only contain pages that are ancestors of the specified page.
+
+If inclusive is set to True, it will also include the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`80`
+
+###### `ancestor_of_q(self, other, inclusive=False)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`68`
+
+###### `annotate_approved_schedule(self)`
+
+*Performance optimisation for listing pages.
+Annotates each page with the existence of an approved go live time.
+Used by `approved_schedule` property on `wagtailcore.models.Page`.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`480`
+
+###### `annotate_site_root_state(self)`
+
+*Performance optimisation for listing pages.
+Annotates each object with whether it is a root page of any site.
+Used by `is_site_root` method on `wagtailcore.models.Page`.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`496`
+
+###### `autocomplete(self, query, fields=None, operator=None, order_by_relevance=True, backend='default')`
+
+*This runs an autocomplete query on all the items in the QuerySet*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/search/queryset.py`:`27`
+
+###### `child_of(self, other)`
+
+*This filters the QuerySet to only contain pages that are direct children of the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`56`
+
+###### `child_of_q(self, other)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`53`
+
+###### `defer_streamfields(self)`
+
+*Apply to a queryset to prevent fetching/decoding of StreamField values on
+evaluation. Useful when working with potentially large numbers of results,
+where StreamField values are unlikely to be needed. For example, when
+generating a sitemap or a long list of page links.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`409`
+
+###### `descendant_of(self, other, inclusive=False)`
+
+*This filters the QuerySet to only contain pages that descend from the specified page.
+
+If inclusive is set to True, it will also contain the page itself (instead of just its descendants).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`37`
+
+###### `descendant_of_q(self, other, inclusive=False)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`29`
+
+###### `exact_type(self, *types)`
+
+*This filters the QuerySet to only contain pages that are an instance of the specified model(s)
+(matching the model exactly, not subclasses).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`251`
+
+###### `exact_type_q(self, *types)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`247`
+
+###### `first_common_ancestor(self, include_self=False, strict=False)`
+
+*Find the first ancestor that all pages in this queryset have in common.
+For example, consider a page hierarchy like::
+
+    - Home/
+        - Foo Event Index/
+            - Foo Event Page 1/
+            - Foo Event Page 2/
+        - Bar Event Index/
+            - Bar Event Page 1/
+            - Bar Event Page 2/
+
+The common ancestors for some queries would be:
+
+.. code-block:: python
+
+    >>> Page.objects\
+    ...     .type(EventPage)\
+    ...     .first_common_ancestor()
+    <Page: Home>
+    >>> Page.objects\
+    ...     .type(EventPage)\
+    ...     .filter(title__contains='Foo')\
+    ...     .first_common_ancestor()
+    <Page: Foo Event Index>
+
+This method tries to be efficient, but if you have millions of pages
+scattered across your page tree, it will be slow.
+
+If `include_self` is True, the ancestor can be one of the pages in the
+queryset:
+
+.. code-block:: python
+
+    >>> Page.objects\
+    ...     .filter(title__contains='Foo')\
+    ...     .first_common_ancestor()
+    <Page: Foo Event Index>
+    >>> Page.objects\
+    ...     .filter(title__exact='Bar Event Index')\
+    ...     .first_common_ancestor()
+    <Page: Bar Event Index>
+
+A few invalid cases exist: when the queryset is empty, when the root
+Page is in the queryset and ``include_self`` is False, and when there
+are multiple page trees with no common root (a case Wagtail does not
+support). If ``strict`` is False (the default), then the first root
+node is returned in these cases. If ``strict`` is True, then a
+``ObjectDoesNotExist`` is raised.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`296`
+
+###### `in_menu(self)`
+
+*This filters the QuerySet to only contain pages that are in the menus.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`200`
+
+###### `in_menu_q(self)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`197`
+
+###### `in_site(self, site)`
+
+*This filters the QuerySet to only contain pages within the specified site.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`423`
+
+###### `live(self)`
+
+*This filters the QuerySet to only contain published pages.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`185`
+
+###### `live_q(self)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`182`
+
+###### `not_ancestor_of(self, other, inclusive=False)`
+
+*This filters the QuerySet to not contain any pages that are ancestors of the specified page.
+
+If inclusive is set to True, it will also exclude the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`88`
+
+###### `not_child_of(self, other)`
+
+*This filters the QuerySet to not contain any pages that are direct children of the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`62`
+
+###### `not_descendant_of(self, other, inclusive=False)`
+
+*This filters the QuerySet to not contain any pages that descend from the specified page.
+
+If inclusive is set to True, it will also exclude the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`45`
+
+###### `not_exact_type(self, *types)`
+
+*This filters the QuerySet to exclude any pages which are an instance of the specified model(s)
+(matching the model exactly, not subclasses).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`258`
+
+###### `not_in_menu(self)`
+
+*This filters the QuerySet to only contain pages that are not in the menus.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`206`
+
+###### `not_live(self)`
+
+*This filters the QuerySet to only contain unpublished pages.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`191`
+
+###### `not_page(self, other)`
+
+*This filters the QuerySet so it doesn't contain the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`221`
+
+###### `not_parent_of(self, other)`
+
+*This filters the QuerySet to exclude the parent of the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`105`
+
+###### `not_public(self)`
+
+*Filters the QuerySet to only contain pages that are in a private
+section and their descendants.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`282`
+
+###### `not_sibling_of(self, other, inclusive=True)`
+
+*This filters the QuerySet to not contain any pages that are siblings of the specified page.
+
+By default, inclusive is set to True so it will exclude the specified page from the results.
+
+If inclusive is set to False, the page will be included in the results.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`131`
+
+###### `not_translation_of(self, page, inclusive=False)`
+
+*This filters the QuerySet to only contain pages that are not translations of the specified page.
+
+Note, this will include the page itself as the page is technically not a translation of itself.
+If inclusive is True, we consider the page to be a translation of itself so this excludes the page
+from the results.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`445`
+
+###### `not_type(self, *types)`
+
+*This filters the QuerySet to exclude any pages which are an instance of the specified model(s).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`241`
+
+###### `page(self, other)`
+
+*This filters the QuerySet so it only contains the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`215`
+
+###### `page_q(self, other)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`212`
+
+###### `parent_of(self, other)`
+
+*This filters the QuerySet to only contain the parent of the specified page.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`99`
+
+###### `parent_of_q(self, other)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`96`
+
+###### `prefetch_workflow_states(self)`
+
+*Performance optimisation for listing pages.
+Prefetches the active workflow states on each page in this queryset.
+Used by `workflow_in_progress` and `current_workflow_progress` properties on
+`wagtailcore.models.Page`.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`455`
+
+###### `private(self)`
+
+*Filters the QuerySet to only contain pages that are in a private
+section and their descendants.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`289`
+
+###### `private_q(self)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`265`
+
+###### `public(self)`
+
+*Filters the QuerySet to only contain pages that are not in a private
+section and their descendants.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`275`
+
+###### `search(self, query, fields=None, operator=None, order_by_relevance=True, partial_match=None, backend='default')`
+
+*This runs a search query on all the items in the QuerySet*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/search/queryset.py`:`5`
+
+###### `sibling_of(self, other, inclusive=True)`
+
+*This filters the QuerySet to only contain pages that are siblings of the specified page.
+
+By default, inclusive is set to True so it will include the specified page in the results.
+
+If inclusive is set to False, the page will be excluded from the results.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`121`
+
+###### `sibling_of_q(self, other, inclusive=True)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`111`
+
+###### `specific(self, defer=False)`
+
+*This efficiently gets all the specific items for the queryset, using
+the minimum number of queries.
+
+When the "defer" keyword argument is set to True, only generic
+field values will be loaded and all specific fields will be deferred.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`155`
+
+###### `translation_of(self, page, inclusive=False)`
+
+*This filters the QuerySet to only contain pages that are translations of the specified page.
+
+If inclusive is True, the page itself is returned.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`437`
+
+###### `translation_of_q(self, page, inclusive)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`429`
+
+###### `type(self, *types)`
+
+*This filters the QuerySet to only contain pages that are an instance
+of the specified model(s) (including subclasses).*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`234`
+
+###### `type_q(self, *types)`
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`227`
+
+###### `unpublish(self)`
+
+*This unpublishes all live pages in the QuerySet.*
+
+Defined in: `/usr/local/lib/python3.10/site-packages/wagtail/query.py`:`402`
+
+
+---

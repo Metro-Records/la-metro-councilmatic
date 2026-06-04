@@ -1,0 +1,185 @@
+---
+title: "lametro.BoardMemberDetails"
+date: 2026-06-04
+date-modified: last-modified
+---
+
+
+## Model Info
+
+| Key | Value |
+|---|-----|
+| Model Name | BoardMemberDetails |
+| Verbose Name | board member details |
+| Verbose Name Plural | Board Member Details |
+| Docstring | <p>BoardMemberDetails(id, latest\_revision, live, has\_unpublished\_changes, first\_published\_at, last\_published\_at, live\_revision, go\_live\_at, expire\_at, expired, person, headshot, headshot\_source, bio, title)</p> |
+| Is Abstract | False |
+| Is Proxy | False |
+| Is Managed | True |
+| Ordering | [] |
+| Permissions | [] |
+| Default Permissions | ('add', 'change', 'delete', 'view') |
+| Indexes | [] |
+| Constraints | [] |
+| Database Table | lametro_boardmemberdetails |
+| Base Manager | None |
+| Default Manager | None |
+| File | /app/lametro/models/cms.py |
+| Starting Line Number | 61 |
+| Method Resolution Order | (<class 'lametro.models.cms.BoardMemberDetails'>, <class 'wagtail.models.DraftStateMixin'>, <class 'wagtail.models.RevisionMixin'>, <class 'wagtail.models.PreviewableMixin'>, <class 'django.db.models.base.Model'>, <class 'object'>) |
+
+## Fields
+
+| Field Name | Field Type | Database Column | Database Type | Verbose Name |
+|----------|----------|---------------|-------------|------------|
+| `_revisions` | GenericRelation | None | None |  revisions |
+| `bio` | RichTextField | bio | text | bio |
+| `expire_at` | DateTimeField | expire_at | timestamp with time zone | expiry date/time |
+| `expired` | BooleanField | expired | boolean | expired |
+| `first_published_at` | DateTimeField | first_published_at | timestamp with time zone | first published at |
+| `go_live_at` | DateTimeField | go_live_at | timestamp with time zone | go live date/time |
+| `has_unpublished_changes` | BooleanField | has_unpublished_changes | boolean | has unpublished changes |
+| `headshot` | ForeignKey | headshot_id | integer | headshot |
+| `headshot_source` | CharField | headshot_source | varchar(256) | headshot source |
+| `id (pk)` | AutoField | id | serial | ID |
+| `last_published_at` | DateTimeField | last_published_at | timestamp with time zone | last published at |
+| `latest_revision` | ForeignKey | latest_revision_id | integer | latest revision |
+| `live` | BooleanField | live | boolean | live |
+| `live_revision` | ForeignKey | live_revision_id | integer | live revision |
+| `person` | OneToOneField | person_id | varchar(47) | person |
+| `title` | CharField | title | varchar(64) | title |
+
+## Relations
+
+| Field Name | Field Type | Database Column | Database Type | Related Model | Related Name |
+|----------|----------|---------------|-------------|-------------|------------|
+| `_revisions` | GenericRelation | None | None | wagtailcore.Revision | member_details |
+| `headshot` | ForeignKey | headshot_id | integer | wagtailimages.Image | + |
+| `latest_revision` | ForeignKey | latest_revision_id | integer | wagtailcore.Revision | + |
+| `live_revision` | ForeignKey | live_revision_id | integer | wagtailcore.Revision | + |
+| `person` | OneToOneField | person_id | varchar(47) | lametro.LAMetroPerson | details |
+
+fields_reverse_relation=[]
+
+## Methods
+
+### Other Methods
+
+| Method Name | Signature | Docstring | File | Line Number |
+|-----------|---------|---------|----|-----------|
+| `from_serializable_data` | `(data, check_fks=True, strict_fks=False)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 323 |
+| `get_base_content_type` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 289 |
+| `get_content_type` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 301 |
+| `get_full_url` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 754 |
+| `get_latest_revision` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 304 |
+| `get_latest_revision_as_object` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 590 |
+| `get_lock` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 625 |
+| `get_preview_context` | `(self, request, mode_name)` | <p>Returns a context dictionary for use in templates for previewing this object.</p> | /app/lametro/models/cms.py | 109 |
+| `get_preview_template` | `(self, request, mode_name)` | <p>Returns a template to be used when previewing this object.</p><p>Subclasses of ``PreviewableMixin`` must override this method to return the<br>template name to be used in the preview. Alternatively, subclasses can also<br>override the ``serve\_preview`` method to completely customise the preview<br>rendering logic.</p> | /app/lametro/models/cms.py | 121 |
+| `get_scheduled_revision_as_object` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 611 |
+| `get_url` | `(self)` |  | /app/lametro/models/cms.py | 97 |
+| `is_previewable` | `(self)` | <p>Returns ``True`` if at least one preview mode is specified in ``preview\_modes``.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 783 |
+| `make_preview_request` | `(self, original_request=None, preview_mode=None, extra_request_attrs=None)` | <p>Simulate a request to this object, by constructing a fake HttpRequest object that is (as far<br>as possible) representative of a real request to this object's front-end URL, and invoking<br>serve\_preview with that request (and the given preview\_mode).</p><p>Used for previewing / moderation and any other place where we<br>want to display a view of this object in the admin interface without going through the regular<br>page routing logic.</p><p>If you pass in a real request object as original\_request, additional information (e.g. client IP, cookies)<br>will be included in the dummy request.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 635 |
+| `publish` | `(self, revision, user=None, changed=True, log_action=True, previous_revision=None, skip_permission_checks=False)` | <p>Publish a revision of the object by applying the changes in the revision to the live object.</p><p>:param revision: Revision to publish.<br>:type revision: Revision<br>:param user: The publishing user.<br>:param changed: Indicated whether content has changed.<br>:param log\_action: Flag for the logging action, pass ``False`` to skip logging.<br>:param previous\_revision: Indicates a revision reversal. Should be set to the previous revision instance.<br>:type previous\_revision: Revision</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 526 |
+| `save_revision` | `(self, user=None, submitted_for_moderation=False, approved_go_live_at=None, changed=True, log_action=False, previous_revision=None, clean=True)` | <p>Creates and saves a revision.</p><p>:param user: The user performing the action.<br>:param submitted\_for\_moderation: \*\*Deprecated\*\* – Indicates whether the object was submitted for moderation.<br>:param approved\_go\_live\_at: The date and time the revision is approved to go live.<br>:param changed: Indicates whether there were any content changes.<br>:param log\_action: Flag for logging the action. Pass ``True`` to also create a log entry. Can be passed an action string.<br>    Defaults to ``"wagtail.edit"`` when no ``previous\_revision`` param is passed, otherwise ``"wagtail.revert"``.<br>:param previous\_revision: Indicates a revision reversal. Should be set to the previous revision instance.<br>:type previous\_revision: Revision<br>:param clean: Set this to ``False`` to skip cleaning object content before saving this revision.<br>:return: The newly created revision.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 369 |
+| `serializable_data` | `(self)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 317 |
+| `serve_preview` | `(self, request, mode_name)` | <p>Returns an HTTP response for use in object previews.</p><p>This method can be overridden to implement custom rendering and/or<br>routing logic.</p><p>Any templates rendered during this process should use the ``request``<br>object passed here - this ensures that ``request.user`` and other<br>properties are set appropriately for the wagtail user bar to be<br>displayed/hidden. This request will always be a GET.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 787 |
+| `unpublish` | `(self, set_expired=False, commit=True, user=None, log_action=True)` | <p>Unpublish the live object.</p><p>:param set\_expired: Mark the object as expired.<br>:param commit: Commit the changes to the database.<br>:param user: The unpublishing user.<br>:param log\_action: Flag for the logging action, pass ``False`` to skip logging.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 554 |
+| `with_content_json` | `(self, content)` | <p>Similar to :meth:`RevisionMixin.with\_content\_json`,<br>but with the following fields also preserved:</p><p>\* ``live``<br>\* ``has\_unpublished\_changes``<br>\* ``first\_published\_at``</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 571 |
+
+
+### Private Methods
+
+| Method Name | Signature | Docstring | File | Line Number |
+|-----------|---------|---------|----|-----------|
+| `_check_revision_mixin` | `()` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 487 |
+| `_get_dummy_header_url` | `(self, original_request=None)` | <p>Return the URL that \_get\_dummy\_headers() should use to set META headers<br>for the faked HttpRequest.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 747 |
+| `_get_dummy_headers` | `(self, original_request=None)` | <p>Return a dict of META information to be included in a faked HttpRequest object to pass to<br>serve\_preview.</p> | lib/python3.10/site-packages/wagtail/models/__init__.py | 680 |
+| `_update_from_revision` | `(self, revision, changed=True)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 615 |
+
+
+### Dunder Methods
+
+| Method Name | Signature | Docstring | File | Line Number |
+|-----------|---------|---------|----|-----------|
+| `__class__` | `(name, bases, attrs, **kwargs)` | <p>Metaclass for all models.</p> | python3.10/site-packages/django/db/models/base.py | 72 |
+| `__delattr__` | `(self, name, /)` | <p>Implement delattr(self, name).</p> |  |  |
+| `__dir__` | `(self, /)` | <p>Default dir() implementation.</p> |  |  |
+| `__eq__` | `(self, other)` | <p>Return self==value.</p> | python3.10/site-packages/django/db/models/base.py | 526 |
+| `__format__` | `(self, format_spec, /)` | <p>Default object formatter.</p> |  |  |
+| `__ge__` | `(self, value, /)` | <p>Return self>=value.</p> |  |  |
+| `__getattribute__` | `(self, name, /)` | <p>Return getattr(self, name).</p> |  |  |
+| `__getstate__` | `(self)` | <p>Hook to allow choosing the attributes to pickle.</p> | python3.10/site-packages/django/db/models/base.py | 547 |
+| `__gt__` | `(self, value, /)` | <p>Return self>value.</p> |  |  |
+| `__hash__` | `(self)` | <p>Return hash(self).</p> | python3.10/site-packages/django/db/models/base.py | 536 |
+| `__init__` | `(self, *args, **kwargs)` | <p>Initialize self.  See help(type(self)) for accurate signature.</p> | python3.10/site-packages/django/db/models/base.py | 406 |
+| `__init_subclass__` | `No signature found` | <p>This method is called when a class is subclassed.</p><p>The default implementation does nothing. It may be<br>overridden to extend subclasses.</p> |  |  |
+| `__le__` | `(self, value, /)` | <p>Return self<=value.</p> |  |  |
+| `__lt__` | `(self, value, /)` | <p>Return self<value.</p> |  |  |
+| `__ne__` | `(self, value, /)` | <p>Return self!=value.</p> |  |  |
+| `__new__` | `(*args, **kwargs)` | <p>Create and return a new object.  See help(type) for accurate signature.</p> |  |  |
+| `__reduce__` | `(self)` | <p>Helper for pickle.</p> | python3.10/site-packages/django/db/models/base.py | 541 |
+| `__reduce_ex__` | `(self, protocol, /)` | <p>Helper for pickle.</p> |  |  |
+| `__repr__` | `(self)` | <p>Return repr(self).</p> | python3.10/site-packages/django/db/models/base.py | 520 |
+| `__setattr__` | `(self, name, value, /)` | <p>Implement setattr(self, name, value).</p> |  |  |
+| `__setstate__` | `(self, state)` |  | python3.10/site-packages/django/db/models/base.py | 564 |
+| `__sizeof__` | `(self, /)` | <p>Size of object in memory, in bytes.</p> |  |  |
+| `__str__` | `(self)` | <p>Return str(self).</p> | /app/lametro/models/cms.py | 100 |
+| `__subclasshook__` | `No signature found` | <p>Abstract classes can override this to customize issubclass().</p><p>This is invoked early on by abc.ABCMeta.\_\_subclasscheck\_\_().<br>It should return True, False or NotImplemented.  If it returns<br>NotImplemented, the normal algorithm is used.  Otherwise, it<br>overrides the normal algorithm (and the outcome is cached).</p> |  |  |
+
+
+### Common Django Methods
+
+| Method Name | Signature | Docstring | File | Line Number |
+|-----------|---------|---------|----|-----------|
+| `_check_column_name_clashes` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1506 |
+| `_check_constraints` | `(databases)` |  | python3.10/site-packages/django/db/models/base.py | 1975 |
+| `_check_default_pk` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1311 |
+| `_check_field_name_clashes` | `()` | <p>Forbid field shadowing in multi-table inheritance.</p> | python3.10/site-packages/django/db/models/base.py | 1449 |
+| `_check_fields` | `(**kwargs)` | <p>Perform all field checks.</p> | python3.10/site-packages/django/db/models/base.py | 1390 |
+| `_check_id_field` | `()` | <p>Check if `id` field is a primary key.</p> | python3.10/site-packages/django/db/models/base.py | 1432 |
+| `_check_index_together` | `()` | <p>Check the value of "index\_together" option.</p> | python3.10/site-packages/django/db/models/base.py | 1589 |
+| `_check_indexes` | `(databases)` | <p>Check fields, names, and conditions of indexes.</p> | python3.10/site-packages/django/db/models/base.py | 1643 |
+| `_check_local_fields` | `(fields, option)` |  | python3.10/site-packages/django/db/models/base.py | 1732 |
+| `_check_long_column_names` | `(databases)` | <p>Check that any auto-generated column names are shorter than the limits<br>for each database in which the model will be created.</p> | python3.10/site-packages/django/db/models/base.py | 1884 |
+| `_check_m2m_through_same_relationship` | `()` | <p>Check if no relationship model is used by more than one m2m field.<br>        </p> | python3.10/site-packages/django/db/models/base.py | 1400 |
+| `_check_managers` | `(**kwargs)` | <p>Perform all manager checks.</p> | python3.10/site-packages/django/db/models/base.py | 1382 |
+| `_check_model` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1369 |
+| `_check_model_name_db_lookup_clashes` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1531 |
+| `_check_ordering` | `()` | <p>Check "ordering" option -- is it a list of strings and do all fields<br>exist?</p> | python3.10/site-packages/django/db/models/base.py | 1782 |
+| `_check_property_name_related_field_accessor_clashes` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1555 |
+| `_check_single_primary_key` | `()` |  | python3.10/site-packages/django/db/models/base.py | 1575 |
+| `_check_swappable` | `()` | <p>Check if the swapped model exists.</p> | python3.10/site-packages/django/db/models/base.py | 1342 |
+| `_check_unique_together` | `()` | <p>Check the value of "unique\_together" option.</p> | python3.10/site-packages/django/db/models/base.py | 1616 |
+| `_do_insert` | `(self, manager, using, fields, returning_fields, raw)` | <p>Do an INSERT. If returning\_fields is defined then this method should<br>return the newly created data for the model.</p> | python3.10/site-packages/django/db/models/base.py | 914 |
+| `_do_update` | `(self, base_qs, using, pk_val, values, update_fields, forced_update)` | <p>Try to update the model. Return True if the model was updated (if an<br>update query was done and a matching row was found in the DB).</p> | python3.10/site-packages/django/db/models/base.py | 887 |
+| `_get_FIELD_display` | `(self, field)` |  | python3.10/site-packages/django/db/models/base.py | 971 |
+| `_get_expr_references` | `(expr)` |  | python3.10/site-packages/django/db/models/base.py | 1959 |
+| `_get_next_or_previous_by_FIELD` | `(self, field, is_next, **kwargs)` |  | python3.10/site-packages/django/db/models/base.py | 977 |
+| `_get_next_or_previous_in_order` | `(self, is_next)` |  | python3.10/site-packages/django/db/models/base.py | 993 |
+| `_get_pk_val` | `(self, meta=None)` |  | python3.10/site-packages/django/db/models/base.py | 586 |
+| `_get_unique_checks` | `(self, exclude=None)` | <p>Return a list of checks to perform. Since validate\_unique() could be<br>called from a ModelForm, some fields may have been excluded; we can't<br>perform a unique check on a model that is missing fields involved<br>in that check. Fields that did not validate should also be excluded,<br>but they need to be passed in via the exclude argument.</p> | python3.10/site-packages/django/db/models/base.py | 1038 |
+| `_perform_date_checks` | `(self, date_checks)` |  | python3.10/site-packages/django/db/models/base.py | 1141 |
+| `_perform_unique_checks` | `(self, unique_checks)` |  | python3.10/site-packages/django/db/models/base.py | 1096 |
+| `_prepare_related_fields_for_save` | `(self, operation_name)` |  | python3.10/site-packages/django/db/models/base.py | 924 |
+| `_save_parents` | `(self, cls, using, update_fields)` | <p>Save all the parents of cls using values from self.</p> | python3.10/site-packages/django/db/models/base.py | 794 |
+| `_save_table` | `(self, raw=False, cls=None, force_insert=False, force_update=False, using=None, update_fields=None)` | <p>Do the heavy-lifting involved in saving. Update or insert the data<br>for a single table.</p> | python3.10/site-packages/django/db/models/base.py | 822 |
+| `_set_pk_val` | `(self, value)` |  | python3.10/site-packages/django/db/models/base.py | 590 |
+| `check` | `(**kwargs)` |  | lib/python3.10/site-packages/wagtail/models/__init__.py | 480 |
+| `clean` | `(self)` | <p>Hook for doing any extra model-wide validation after clean() has been<br>called on every field by self.clean\_fields. Any ValidationError raised<br>by this method will not be associated with a particular field; it will<br>have a special-case association with the field defined by NON\_FIELD\_ERRORS.</p> | python3.10/site-packages/django/db/models/base.py | 1013 |
+| `clean_fields` | `(self, exclude=None)` | <p>Clean all fields and raise a ValidationError containing a dict<br>of all validation errors if any occur.</p> | python3.10/site-packages/django/db/models/base.py | 1253 |
+| `date_error_message` | `(self, lookup_type, field_name, unique_for)` |  | python3.10/site-packages/django/db/models/base.py | 1170 |
+| `delete` | `(self, using=None, keep_parents=False)` |  | python3.10/site-packages/django/db/models/base.py | 958 |
+| `from_db` | `(db, field_names, values)` |  | python3.10/site-packages/django/db/models/base.py | 507 |
+| `full_clean` | `(self, exclude=None, validate_unique=True)` | <p>Call clean\_fields(), clean(), and validate\_unique() on the model.<br>Raise a ValidationError for any errors that occur.</p> | python3.10/site-packages/django/db/models/base.py | 1217 |
+| `get_deferred_fields` | `(self)` | <p>Return a set containing names of deferred fields for this instance.</p> | python3.10/site-packages/django/db/models/base.py | 598 |
+| `prepare_database_save` | `(self, field)` |  | python3.10/site-packages/django/db/models/base.py | 1008 |
+| `refresh_from_db` | `(self, using=None, fields=None)` | <p>Reload field values from the database.</p><p>By default, the reloading happens from the database this instance was<br>loaded from, or by the read router if this instance wasn't loaded from<br>any database. The using parameter will override the default.</p><p>Fields can be used to specify which fields to reload. The fields<br>should be an iterable of field attnames. If fields is None, then<br>all non-deferred fields are reloaded.</p><p>When accessing deferred fields of an instance, the deferred loading<br>of the field will call this method.</p> | python3.10/site-packages/django/db/models/base.py | 607 |
+| `save` | `(self, force_insert=False, force_update=False, using=None, update_fields=None)` | <p>Save the current instance. Override this in a subclass if you want to<br>control the saving process.</p><p>The 'force\_insert' and 'force\_update' parameters can be used to insist<br>that the "save" must be an SQL insert or update (or equivalent for<br>non-SQL backends), respectively. Normally, they should not be set.</p> | python3.10/site-packages/django/db/models/base.py | 685 |
+| `save_base` | `(self, raw=False, force_insert=False, force_update=False, using=None, update_fields=None)` | <p>Handle the parts of saving which should be done only once per save,<br>yet need to be done in raw saves, too. This includes some sanity<br>checks and signal sending.</p><p>The 'raw' argument is telling save\_base not to save any parent<br>models and not to do any changes to the values before save. This<br>is used by fixture loading.</p> | python3.10/site-packages/django/db/models/base.py | 743 |
+| `serializable_value` | `(self, field_name)` | <p>Return the value of the field name for this instance. If the field is<br>a foreign key, return the id value instead of the object. If there's<br>no Field object with this name on the model, return the model<br>attribute's value.</p><p>Used to serialize a field's value (in the serializer, or form output,<br>for example). Normally, you would just access the attribute directly<br>and not use this method.</p> | python3.10/site-packages/django/db/models/base.py | 668 |
+| `unique_error_message` | `(self, model_class, unique_check)` |  | python3.10/site-packages/django/db/models/base.py | 1187 |
+| `validate_unique` | `(self, exclude=None)` | <p>Check unique constraints on the model and raise ValidationError if any<br>failed.</p> | python3.10/site-packages/django/db/models/base.py | 1022 |
+
+
+---
