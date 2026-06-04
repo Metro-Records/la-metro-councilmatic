@@ -154,6 +154,7 @@ INSTALLED_APPS = (
     "wagtail",
     "modelcluster",
     "taggit",
+    "django-extensions",
 )
 
 try:

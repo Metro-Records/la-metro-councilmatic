@@ -21,6 +21,7 @@ whitenoise
 python-dotenv==0.20.0
 esprima==4.0.1
 wagtail>=5.2,<5.3
+django-extensions
 
 # Development
 django-debug-toolbar
@@ -32,3 +33,6 @@ requests-mock==1.8.0
 freezegun==1.0.0
 locust==2.5.0
 pytest-dotenv
+pygraphviz
+pyparsing
+pydot

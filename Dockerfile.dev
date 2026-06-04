@@ -1,7 +1,7 @@
 FROM ghcr.io/metro-records/la-metro-councilmatic:main
 
 RUN apt-get update && \
-    apt-get install -y git
+    apt-get install -y git graphviz graphviz-dev
 
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install pip==24.0 && \
