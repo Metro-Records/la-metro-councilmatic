@@ -166,24 +166,74 @@ class LAMetroBill(Bill, SourcesMixin):
 
         return "{0} - {1}".format(self.identifier, title.upper())
 
-    # LA METRO CUSTOMIZATION
-    @property
-    def inferred_status(self):
-        # Get most recent action.
-        action = self.actions.last()
-
-        # Get description of that action.
-        if action:
-            description = action.description
-        else:
-            description = ""
-
-        return self._status(description)
-
     def _status(self, description):
         if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
             return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
         return None
+
+    @property
+    def actions_by_org_id(self):
+        """
+        Returns a dict with lists of actions keyed by organization ID
+        """
+        actions_by_org_id = {}
+        actions = self.actions.all()
+        for action in actions:
+            actions_by_org_id.setdefault(action.organization_id, []).append(action)
+        return actions_by_org_id
+
+    # LA METRO CUSTOMIZATION
+    @property
+    def inferred_status(self):
+        """
+        Infer the status of a bill for tagging on Bill Detail and Search views.
+
+        Depends on how many different meetings the bill shows up in, see:
+        https://github.com/Metro-Records/la-metro-councilmatic/issues/1278#issuecomment-3549489723
+        """
+
+        # Find the latest action and action description
+        latest = self.current_action
+        if not latest:
+            return ""
+        status = self._status(latest.description)
+
+        # If more than one org involved, see if one is the Board of Directors
+        actions_by_org_id = self.actions_by_org_id
+
+        if len(actions_by_org_id) > 1:
+
+            try:
+                board_org = Organization.objects.get(name="Board of Directors")
+            except Organization.DoesNotExist:
+                raise ValueError(
+                    "Board of Directors organization not found in database"
+                )
+
+            # If one is the board, use its latest action
+            if board_org.id in actions_by_org_id:
+                latest = max(actions_by_org_id[board_org.id], key=lambda a: a.date)
+
+                # Check if agenda is approved for that meeting
+                try:
+                    LAMetroEvent.objects.get(
+                        participants__entity_type="organization",
+                        participants__organization=board_org.id,
+                        start_time__date=latest.date,
+                        extras__approved_minutes=True,
+                    )
+                    # If board agenda approved, return status from the Board Meeting
+                    return self._status(latest.description)
+
+                # If board agenda not approved, fall through
+                except LAMetroEvent.DoesNotExist:
+                    pass
+
+            # If board is not one of the orgs, only Active tag allowed
+            return status if status == "Active" else ""
+
+        # Only one org involved just return latest status
+        return status
 
     # LA METRO CUSTOMIZATION
     @property
