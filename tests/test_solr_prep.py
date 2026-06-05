@@ -6,6 +6,15 @@ from opencivicdata.legislative.models import EventParticipant
 from lametro.search_indexes import LAMetroBillIndex
 
 
+# Helper function
+def patch_aa(mocker, return_value):
+    mocker.patch(
+        "lametro.models.LAMetroBill.actions_and_agendas",
+        new_callable=mocker.PropertyMock,
+        return_value=return_value,
+    )
+
+
 @pytest.mark.parametrize("month", [6, 7])
 def test_legislative_session(bill, metro_organization, event, mocker, month):
     """
@@ -16,11 +25,12 @@ def test_legislative_session(bill, metro_organization, event, mocker, month):
     which returns a dict of prepped data.
     https://github.com/django-haystack/django-haystack/blob/4910ccb01c31d12bf22dcb000894eece6c26f74b/haystack/indexes.py#L198
     """
+    # Set up
+    now = datetime.now()
     org = metro_organization.build()
     event = event.build()
     bill = bill.build()
-
-    now = datetime.now()
+    index = LAMetroBillIndex()
 
     # Create test actions and agendas
     recent_action = {
@@ -48,66 +58,62 @@ def test_legislative_session(bill, metro_organization, event, mocker, month):
         "organization": org,
     }
 
+    def date_to_fy_string(date):
+        """
+        Return the correct fiscal year for a given date, June (6) being the last month of the year.
+        """
+        start_year = date.year - 1 if date.month <= 6 else date.year
+        end_year = date.year if date.month <= 6 else date.year + 1
+        return "7/1/{0} to 6/30/{1}".format(start_year, end_year)
+
     # Test indexed value when there are both actions and agendas
-    mock_actions_and_agendas = mocker.PropertyMock(
-        return_value=[recent_action, older_action, recent_agenda, older_agenda]
-    )
 
-    mocker.patch(
-        "lametro.models.LAMetroBill.actions_and_agendas",
-        new_callable=mock_actions_and_agendas,
-    )
-
-    index = LAMetroBillIndex()
-    expected_fmt = "7/1/{0} to 6/30/{1}"
-
+    patch_aa(mocker, [recent_action, older_action, recent_agenda, older_agenda])
     indexed_data = index.prepare(bill)
-
-    if month <= 6:
-        expected_value = expected_fmt.format(
-            recent_agenda["date"].year - 1, recent_agenda["date"].year
-        )
-    else:
-        expected_value = expected_fmt.format(
-            recent_agenda["date"].year, recent_agenda["date"].year + 1
-        )
+    expected_value = date_to_fy_string(recent_agenda["date"])
 
     assert indexed_data["legislative_session"] == expected_value
 
     # Test indexed value when there are just actions
-    mock_actions_and_agendas = mocker.PropertyMock(
-        return_value=[recent_action, older_action]
-    )
 
-    mocker.patch(
-        "lametro.models.LAMetroBill.actions_and_agendas",
-        new_callable=mock_actions_and_agendas,
-    )
+    patch_aa(mocker, [recent_action, older_action])
+    indexed_data = index.prepare(bill)
+    expected_value = date_to_fy_string(recent_action["date"])
+
+    assert indexed_data["legislative_session"] == expected_value
+
+
+def test_legislative_session_fallback(bill, metro_organization, event, mocker):
+    bill = bill.build()
+    event = event.build()
+    org = metro_organization.build()
+    session = bill.legislative_session
+    index = LAMetroBillIndex()
+    now = datetime.now()
+
+    single_action = {
+        "date": datetime(now.year, 7, 1),
+        "description": "action descripton",
+        "event": event,
+        "organization": org,
+    }
+
+    patch_aa(mocker, [single_action])
 
     indexed_data = index.prepare(bill)
-
-    if month <= 6:
-        expected_value = expected_fmt.format(
-            recent_action["date"].year - 1, recent_action["date"].year
-        )
-    else:
-        expected_value = expected_fmt.format(
-            recent_action["date"].year, recent_action["date"].year + 1
-        )
+    expected_fmt = "7/1/{0} to 6/30/{1}"
+    expected_value = expected_fmt.format(
+        session.start_date.split("-")[0], session.end_date.split("-")[0]
+    )
 
     assert indexed_data["legislative_session"] == expected_value
 
     # Test indexed value when there are neither actions nor agendas
-    mock_actions_and_agendas = mocker.PropertyMock(return_value=[])
 
-    mocker.patch(
-        "lametro.models.LAMetroBill.actions_and_agendas",
-        new_callable=mock_actions_and_agendas,
-    )
-
+    patch_aa(mocker, [])
     indexed_data = index.prepare(bill)
 
-    assert not indexed_data["legislative_session"]
+    assert indexed_data["legislative_session"] == expected_value
 
 
 def test_sponsorships(bill, metro_organization, event, event_related_entity, mocker):

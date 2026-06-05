@@ -113,6 +113,8 @@ def legislative_session(db, jurisdiction):
         "identifier": "2017",
         "jurisdiction_id": "ocd-jurisdiction/country:us/state:ca/county:los_angeles/transit_authority",
         "name": "2017 Legislative Session",
+        "start_date": "2017-07-01",
+        "end_date": "2018-06-30",
     }
 
     session = LegislativeSession.objects.create(**session_info)
