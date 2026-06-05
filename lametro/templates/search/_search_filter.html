@@ -1,7 +1,7 @@
 {% load extras %}
 {% load lametro_extras %}
 
-{% if facet_label != 'Controlling Body' and item_list|length > 0 %}
+{% if item_list|length > 0 %}
 
     <div class="accordion-item">
         <h3 class="accordion-header">
@@ -9,7 +9,7 @@
                 Filter by
                 {% if 'Legislation' in facet_label %}
                     Board Report Type
-                {% elif 'Sponsor' in facet_label %}
+                {% elif 'Controlling' in facet_label %}
                     Meeting
                 {% elif 'Legislative Session' in facet_label %}
                     Fiscal Year

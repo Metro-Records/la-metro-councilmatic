@@ -45,8 +45,8 @@
         <div class="accordion mb-4" id="report-details">
 
             <!-- Meetings -->
-            {% if facets.fields.sponsorships %}
-                {% with facet_name='sponsorships' facet_label='Meeting' item_list=facets.fields.sponsorships selected_list=selected_facets.sponsorships %}
+            {% if facets.fields.controlling_body %}
+                {% with facet_name='controlling_body' facet_label='Meeting' item_list=facets.fields.controlling_body selected_list=selected_facets.controlling_body %}
                     {% include 'search/_search_filter.html' %}
                 {% endwith %}
             {% endif %}
