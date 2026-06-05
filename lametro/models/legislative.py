@@ -131,16 +131,25 @@ class LAMetroBillManager(models.Manager):
 
         return qs
 
-    def with_latest_actions(self):
-        latest_action = BillAction.objects.filter(bill=OuterRef("pk")).order_by(
-            "-order"
-        )
+    def with_event_action_description(self, event):
+        """
+        Annotate each bill with the action description for the given event.
+        """
 
-        qs = self.annotate(
-            last_action_description=Subquery(latest_action.values("description")[:1])
-        )
+        date = event.start_date.date()
+        org = event.participants.filter(entity_type="organization").values(
+            "organization_id"
+        )[:1]
 
-        return qs
+        action = BillAction.objects.filter(
+            bill=OuterRef("pk"),
+            organization_id=Subquery(org),
+            date=date,
+        ).order_by("-order")
+
+        return self.annotate(
+            event_action_description=Subquery(action.values("description")[:1])
+        )
 
 
 class LAMetroBill(Bill, SourcesMixin):

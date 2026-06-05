@@ -74,7 +74,7 @@ class EventService:
     @staticmethod
     def get_related_board_reports(event) -> QuerySet:
         related_bills = (
-            LAMetroBill.objects.with_latest_actions()
+            LAMetroBill.objects.with_event_action_description(event)
             .defer("extras")
             .filter(eventrelatedentity__agenda_item__event=event)
             .prefetch_related(
