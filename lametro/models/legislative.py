@@ -180,17 +180,6 @@ class LAMetroBill(Bill, SourcesMixin):
             return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
         return None
 
-    @property
-    def actions_by_org_id(self):
-        """
-        Returns a dict with lists of actions keyed by organization ID
-        """
-        actions_by_org_id = {}
-        actions = self.actions.all()
-        for action in actions:
-            actions_by_org_id.setdefault(action.organization_id, []).append(action)
-        return actions_by_org_id
-
     # LA METRO CUSTOMIZATION
     @property
     def inferred_status(self):
@@ -207,10 +196,11 @@ class LAMetroBill(Bill, SourcesMixin):
             return ""
         status = self._status(latest.description)
 
-        # If more than one org involved, see if one is the Board of Directors
-        actions_by_org_id = self.actions_by_org_id
+        # If on the agenda of more than one org, see if one is the Board of Directors
+        aa = self.actions_and_agendas
+        unique_orgs = {a["organization"] for a in aa if "organization" in a}
 
-        if len(actions_by_org_id) > 1:
+        if len(unique_orgs) > 1:
 
             try:
                 board_org = Organization.objects.get(name="Board of Directors")
@@ -220,10 +210,8 @@ class LAMetroBill(Bill, SourcesMixin):
                 )
 
             # If one is the board, use its latest action
-            if board_org.id in actions_by_org_id:
-                latest = max(actions_by_org_id[board_org.id], key=lambda a: a.date)
-
-                # Check if agenda is approved for that meeting
+            if board_org in unique_orgs:
+                # If board agenda approved, return status from the Board Meeting
                 try:
                     LAMetroEvent.objects.get(
                         participants__entity_type="organization",
@@ -231,8 +219,9 @@ class LAMetroBill(Bill, SourcesMixin):
                         start_time__date=latest.date,
                         extras__approved_minutes=True,
                     )
-                    # If board agenda approved, return status from the Board Meeting
-                    return self._status(latest.description)
+                    for a in reversed(aa):
+                        if a.get("organization") == board_org:
+                            return self._status(a["description"])
 
                 # If board agenda not approved, fall through
                 except LAMetroEvent.DoesNotExist:
