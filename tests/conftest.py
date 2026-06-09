@@ -8,6 +8,7 @@ from opencivicdata.legislative.models import (
     LegislativeSession,
     EventAgendaItem,
     EventRelatedEntity,
+    EventParticipant,
 )
 from opencivicdata.core.models import Jurisdiction, Division
 from opencivicdata.legislative.models import EventDocument, BillAction, EventLocation
@@ -253,6 +254,27 @@ def metro_organization(db):
             return organization
 
     return LAMetroOrganizationFactory()
+
+
+@pytest.fixture
+def event_participant(db, event, metro_organization):
+    class EventParticipantFactory:
+        def build(self, **kwargs):
+
+            if not kwargs.get("event"):
+                kwargs["event"] = event.build()
+
+            if not kwargs.get("organization"):
+                kwargs["organization"] = metro_organization.build()
+
+            event_participant = EventParticipant.objects.create(
+                entity_type="organization",
+                **kwargs,
+            )
+
+            return event_participant
+
+    return EventParticipantFactory()
 
 
 @pytest.fixture
