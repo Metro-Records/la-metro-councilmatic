@@ -189,7 +189,7 @@ def test_inferred_status_two_orgs_including_approved_board_no_board_action(
         date=second_event_date,
         description="withdrawn",
     )
-
+    assert len(some_bill.actions_and_agendas) == 3
     assert some_bill.inferred_status == ""
 
 
