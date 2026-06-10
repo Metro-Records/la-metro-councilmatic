@@ -8,6 +8,7 @@ def test_inferred_status_no_agendas_or_actions(bill):
     """
     some_bill = bill.build()
 
+    assert len(some_bill.actions_and_agendas) == 0
     assert some_bill.inferred_status == ""
 
 
@@ -21,6 +22,7 @@ def test_inferred_status_one_agenda_no_actions(
     some_bill = bill.build()
     event_related_entity.build(agenda_item=first_agenda_item, bill=some_bill)
 
+    assert len(some_bill.actions_and_agendas) == 1
     assert some_bill.inferred_status == ""
 
 
@@ -57,6 +59,7 @@ def test_inferred_status_one_org_agenda_actions(
         description="carried over",
     )
 
+    assert len(some_bill.actions_and_agendas) == 3
     assert some_bill.inferred_status == "Active"
 
 
@@ -71,6 +74,7 @@ def test_inferred_status_two_agendas_no_actions(
     event_related_entity.build(agenda_item=first_agenda_item, bill=some_bill)
     event_related_entity.build(agenda_item=second_agenda_item, bill=some_bill)
 
+    assert len(some_bill.actions_and_agendas) == 2
     assert some_bill.inferred_status == ""
 
 
@@ -122,6 +126,7 @@ def test_inferred_status_two_orgs_no_board(
         order=2,
     )
 
+    assert len(some_bill.actions_and_agendas) == 4
     assert some_bill.inferred_status == expected
 
 
@@ -161,6 +166,7 @@ def test_inferred_status_two_orgs_including_unapproved_board(
         description=description,
     )
 
+    assert len(some_bill.actions_and_agendas) == 3
     assert some_bill.inferred_status == expected
 
 
@@ -189,6 +195,7 @@ def test_inferred_status_two_orgs_including_approved_board_no_board_action(
         date=second_event_date,
         description="withdrawn",
     )
+
     assert len(some_bill.actions_and_agendas) == 3
     assert some_bill.inferred_status == ""
 
@@ -206,9 +213,10 @@ def test_inferred_status_two_orgs_including_approved_board_yes_board_action(
     board_org,
 ):
     """
-    Test inferred status returns board action status when board meeting minutes are approved
-    and there is a board action.
+    Test inferred status returns last board action status (not overall last
+    action status) when board agenda approved and there is a board action.
     """
+
     some_bill = bill.build()
     event_related_entity.build(agenda_item=second_agenda_item, bill=some_bill)
     event_related_entity.build(agenda_item=approved_board_agenda_item, bill=some_bill)
@@ -226,4 +234,5 @@ def test_inferred_status_two_orgs_including_approved_board_yes_board_action(
         organization=second_org,
     )
 
+    assert len(some_bill.actions_and_agendas) == 4
     assert some_bill.inferred_status == "Approved"
