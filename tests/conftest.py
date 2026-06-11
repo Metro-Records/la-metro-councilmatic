@@ -50,7 +50,7 @@ def bill(db, legislative_session):
                 "created_at": "2017-06-09 13:06:21.10075-05",
                 "updated_at": "2017-06-09 13:06:21.10075-05",
                 "identifier": "2017-0686",
-                "slug": "2017-0686",
+                "slug": get_uid_chunk(uid),
                 "classification": ["Report"],
                 "legislative_session": legislative_session,
                 "extras": {"restrict_view": False},
