@@ -136,7 +136,7 @@ class LAMetroBillManager(models.Manager):
         Annotate each bill with the action description for the given event.
         """
 
-        date = event.start_date.date()
+        date = datetime.strptime(event.start_date[:10], "%Y-%m-%d").date()
         org = event.participants.filter(entity_type="organization").values(
             "organization_id"
         )[:1]
