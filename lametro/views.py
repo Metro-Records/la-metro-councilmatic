@@ -78,11 +78,7 @@ from councilmatic.settings_jurisdiction import MEMBER_BIOS
 
 from opencivicdata.legislative.models import EventDocument
 
-from .utils import (
-    get_list_from_csv,
-    timed_get,
-    LAMetroRequestTimeoutException,
-)
+from .utils import get_list_from_csv, check_translations
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 logger = logging.getLogger(__name__)
@@ -123,35 +119,14 @@ class LAMetroIndexView(IndexView):
         context["agenda_pdfs"] = {}
         context["agenda_rtfs"] = {}
 
-        # Loop through since there may be multiple meetings returned
-        # TODO: consider refactoring when done
+        # There may be multiple meetings returned
         for event in meetings_to_check:
             if not (agenda := EventService.get_agenda(event)):
                 continue
 
-            api_url = f"http://{settings.TRANSLATION_SUITE_URL}/api/document-files/"
-            data = {
-                "api_key": settings.TRANSLATION_API_KEY,
-                "document_id": agenda["pk"],
-                "entity_type": "event",
-            }
-
-            try:
-                response: requests.Response = timed_get(api_url, params=data, timeout=3)
-                response.raise_for_status()
-            except (
-                LAMetroRequestTimeoutException,
-                requests.Timeout,
-                requests.ConnectionError,
-            ):
-                logger.warning(f"Request to {api_url} timed out.")
-            except requests.HTTPError:
-                logger.warning(
-                    f"Request to {api_url} resulted in non-200 status code: {response.status_code}"
-                )
-            else:
-                context["agenda_pdfs"][event.id] = response.json()["pdf"]
-                context["agenda_rtfs"][event.id] = response.json()["rtf"]
+            response = check_translations(agenda["pk"], "event")
+            context["agenda_pdfs"][event.id] = response["pdf"]
+            context["agenda_rtfs"][event.id] = response["rtf"]
 
         return context
 
@@ -180,8 +155,13 @@ class LABillDetail(BillDetailView):
         context["related_bills"] = related_bills
 
         context["actions"] = bill.actions_and_agendas
-        # TODO: show translation suite files here
 
+        if not (board_report := bill.board_report):
+            return context
+
+        response = check_translations(str(board_report.pk), "bill")
+        context["board_report_pdfs"] = response["pdf"]
+        context["board_report_rtfs"] = response["rtf"]
         return context
 
 
@@ -215,29 +195,9 @@ class LAMetroEventDetail(EventDetailView):
             return context
 
         # Check for translated/converted files in the translation suite
-        api_url = f"http://{settings.TRANSLATION_SUITE_URL}/api/document-files/"
-        data = {
-            "api_key": settings.TRANSLATION_API_KEY,
-            "document_id": context["agenda"]["pk"],
-            "entity_type": "event",
-        }
-
-        try:
-            response: requests.Response = timed_get(api_url, params=data, timeout=3)
-            response.raise_for_status()
-        except (
-            LAMetroRequestTimeoutException,
-            requests.Timeout,
-            requests.ConnectionError,
-        ):
-            logger.warning(f"Request to {api_url} timed out.")
-        except requests.HTTPError:
-            logger.warning(
-                f"Request to {api_url} resulted in non-200 status code: {response.status_code}"
-            )
-        else:
-            context["agenda_pdfs"] = response.json()["pdf"]
-            context["agenda_rtfs"] = response.json()["rtf"]
+        response = check_translations(context["agenda"]["pk"], "event")
+        context["agenda_pdfs"][event.id] = response["pdf"]
+        context["agenda_rtfs"][event.id] = response["rtf"]
 
         return context
 

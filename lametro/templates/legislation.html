@@ -57,11 +57,26 @@
                     To access embedded hyperlinks, please download the report PDF by clicking "Download Board Report".
                 </p>
 
-                <p>
-                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}' class="fw-bold fs-6" aria-label="Download Board Report - link opens in a new tab">
-                        <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Board Report
-                    </a>
-                </p>
+                <div class="mb-2">
+                    <h3 class="h5 mt-3 mb-0">PDF</h3>
+                    <div>
+                        <strong><a href='{{board_report.url}}' target="_blank"> Download Board Report (English)</a></strong>
+                        {% for pdf in board_report_pdfs %}
+                            <span class="mx-1">|</span>
+                            <strong><a href="{{pdf.url}}" target="_blank">{{pdf.link_text}}</a></strong>
+                        {% endfor %}
+                    </div>
+
+                    {% if board_report_rtfs %}
+                        <h3 class="h5 mt-3 mb-0">RTF</h3>
+                        <div>
+                            {% for rtf in board_report_rtfs %}
+                                <strong><a href="{{rtf.url}}" target="_blank">{{rtf.link_text}}</a></strong>
+                                {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
 
                 {% if legislation.packet.is_ready and attachments%}
                     <p>
