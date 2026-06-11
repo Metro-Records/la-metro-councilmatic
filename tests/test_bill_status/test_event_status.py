@@ -1,5 +1,4 @@
 import pytest
-from django.utils import timezone
 
 from lametro.services import EventService
 from opencivicdata.legislative.models import BillVersion
@@ -94,16 +93,7 @@ def test_only_annotates_events_with_actions(
         note="Board Report",
         date=first_event_date,
     )
-    bill_info = {
-        "id": "ocd-bill/2436c8c9-564f-4cdd-a2ce-bcfe082de2c2",
-        "title": "A unique bill",
-        "created_at": timezone.now(),
-        "updated_at": timezone.now(),
-        "identifier": "2019-0686",
-        "slug": "2019-0686",
-    }
-
-    bill_with_no_action = bill.build(**bill_info)
+    bill_with_no_action = bill.build()
     BillVersion.objects.create(
         bill=bill_with_no_action,
         note="Board Report",
