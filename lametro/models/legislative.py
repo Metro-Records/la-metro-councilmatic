@@ -131,16 +131,25 @@ class LAMetroBillManager(models.Manager):
 
         return qs
 
-    def with_latest_actions(self):
-        latest_action = BillAction.objects.filter(bill=OuterRef("pk")).order_by(
-            "-order"
-        )
+    def with_event_action_description(self, event):
+        """
+        Annotate each bill with the action description for the given event.
+        """
 
-        qs = self.annotate(
-            last_action_description=Subquery(latest_action.values("description")[:1])
-        )
+        date = datetime.strptime(event.start_date[:10], "%Y-%m-%d").date()
+        org = event.participants.filter(entity_type="organization").values(
+            "organization_id"
+        )[:1]
 
-        return qs
+        action = BillAction.objects.filter(
+            bill=OuterRef("pk"),
+            organization_id=Subquery(org),
+            date=date,
+        ).order_by("-order")
+
+        return self.annotate(
+            event_action_description=Subquery(action.values("description")[:1])
+        )
 
 
 class LAMetroBill(Bill, SourcesMixin):
@@ -166,24 +175,63 @@ class LAMetroBill(Bill, SourcesMixin):
 
         return "{0} - {1}".format(self.identifier, title.upper())
 
-    # LA METRO CUSTOMIZATION
-    @property
-    def inferred_status(self):
-        # Get most recent action.
-        action = self.actions.last()
-
-        # Get description of that action.
-        if action:
-            description = action.description
-        else:
-            description = ""
-
-        return self._status(description)
-
     def _status(self, description):
         if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
             return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
         return None
+
+    # LA METRO CUSTOMIZATION
+    @property
+    def inferred_status(self):
+        """
+        Infer the status of a bill for tagging on Bill Detail and Search views.
+
+        Depends on how many different meetings the bill shows up in, see:
+        https://github.com/Metro-Records/la-metro-councilmatic/issues/1278#issuecomment-3549489723
+        """
+
+        # Find the latest action and action description
+        latest = self.current_action
+        if not latest:
+            return ""
+        status = self._status(latest.description)
+
+        # If on the agenda of more than one org, see if one is the Board of Directors
+        aa = self.actions_and_agendas
+        unique_orgs = {a["organization"] for a in aa if "organization" in a}
+
+        if len(unique_orgs) > 1:
+
+            try:
+                board_org = Organization.objects.get(name="Board of Directors")
+            except Organization.DoesNotExist:
+                raise ValueError(
+                    "Board of Directors organization not found in database"
+                )
+
+            # If one is the board, use its latest action
+            if board_org in unique_orgs:
+                # If board agenda approved, return status from the Board Meeting
+                try:
+                    LAMetroEvent.objects.get(
+                        participants__entity_type="organization",
+                        participants__organization=board_org.id,
+                        start_time__date=latest.date,
+                        extras__approved_minutes=True,
+                    )
+                    for a in reversed(aa):
+                        if a.get("organization") == board_org:
+                            return self._status(a["description"])
+
+                # If board agenda not approved, fall through
+                except LAMetroEvent.DoesNotExist:
+                    pass
+
+            # If board is not one of the orgs, only Active tag allowed
+            return status if status == "Active" else ""
+
+        # Only one org involved just return latest status
+        return status
 
     # LA METRO CUSTOMIZATION
     @property
