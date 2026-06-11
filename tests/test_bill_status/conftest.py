@@ -120,7 +120,7 @@ def first_agenda_item(
 
 
 @pytest.fixture
-def another_first_agenda_item(
+def first_agenda_item_order_2(
     event_agenda_item,
     first_org,
     first_event,

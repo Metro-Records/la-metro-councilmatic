@@ -76,7 +76,7 @@ def test_only_annotates_events_with_actions(
     first_org,
     first_event_date,
     first_agenda_item,
-    another_first_agenda_item,
+    first_agenda_item_order_2,
     bill,
     bill_action,
     event_related_entity,
@@ -85,6 +85,10 @@ def test_only_annotates_events_with_actions(
     Test that LABillManager.with_event_action_description() only
     annotates bills with actions, and returns None for bills with no
     actions, as called by EventService.get_related_board_reports(event).
+
+    This incidentally also tests that agenda items are returned in the
+    right order as we access the returned agenda_items by index and
+    they are in the order we expect.
     """
 
     bill_with_action = bill.build()
@@ -109,7 +113,7 @@ def test_only_annotates_events_with_actions(
     )
 
     agenda_item_with_bill_action = first_agenda_item
-    agenda_item_with_no_bill_action = another_first_agenda_item
+    agenda_item_with_no_bill_action = first_agenda_item_order_2
 
     event_related_entity.build(
         agenda_item=agenda_item_with_bill_action, bill=bill_with_action
