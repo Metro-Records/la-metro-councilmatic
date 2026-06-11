@@ -39,9 +39,13 @@ def get_uid_chunk(uid=None):
 @pytest.fixture
 def bill(db, legislative_session):
     class BillFactory:
+
         def build(self, **kwargs):
+
+            uid = str(uuid4())
+
             bill_info = {
-                "id": "ocd-bill/2436c8c9-564f-4cdd-a2ce-bcfe082de2c1",
+                "id": "ocd-bill/" + uid,
                 "title": "APPROVE the policy for a Measure M Early Project Delivery Strategy",
                 "created_at": "2017-06-09 13:06:21.10075-05",
                 "updated_at": "2017-06-09 13:06:21.10075-05",
@@ -64,6 +68,7 @@ def bill(db, legislative_session):
 @pytest.fixture
 def bill_action(db, bill, metro_organization):
     class BillActionFactory:
+
         def build(self, **kwargs):
             bill_action_info = {
                 "organization": metro_organization.build(),
