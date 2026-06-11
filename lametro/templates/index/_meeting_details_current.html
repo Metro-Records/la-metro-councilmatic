@@ -20,12 +20,17 @@
 
                     <div class="col-6 text-center">
                         {% if meeting.documents.all %}
-                            <p>
-                                <a class="btn btn-teal" id="pdf-download-link" href="{{ meeting.documents.all|find_agenda_url }}">
-                                    <i class="fa fa-fw fa-download" aria-hidden="true"></i>
-                                    Get Agenda PDF
-                                </a>
-                            </p>
+                        {% with agenda_url=meeting.documents.all|find_agenda_url meeting_id=meeting.id %}
+                            <div class="mb-1">
+                                {% include "common/_get_pdf_accordion.html" %}
+                            </div>
+
+                            {% if agenda_rtfs %}
+                                <div class="mb-1">
+                                    {% include "common/_get_rtf_accordion.html" %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
                         {% endif %}
 
                         {% if meeting.is_ongoing and USING_ECOMMENT %}
@@ -104,14 +109,27 @@
                         Go to public comment
                     </a>
                 {% endif %}
-
-                {% if current_meeting.first.documents.all %}
-                    <a class="btn btn-sm btn-teal current-meeting-info" id="pdf-download-link" target='_blank' href='{{ current_meeting.first.documents.all|find_agenda_url }}' aria-label="Get Agenda PDF - link opens in a new tab">
-                        <i class='fa fa-fw fa-download' aria-hidden="true"></i>
-                        Get Agenda PDF
-                    </a>
-                {% endif %}
             </div>
         </div>
+
+        {% if current_meeting.first.documents.all %}
+        {% with agenda_url=current_meeting.first.documents.all|find_agenda_url meeting_id=current_meeting.first.id meeting=current_meeting.first %}
+            <div class="row my-2">
+                <div class="col-xl-6 mb-2 mb-xl-0">
+                    <div>
+                        {% include "common/_get_pdf_accordion.html" %}
+                    </div>
+                </div>
+
+                {% if agenda_rtfs %}
+                    <div class="col-xl-6">
+                        <div class="mb-1">
+                            {% include "common/_get_rtf_accordion.html" %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endwith %}
+        {% endif %}
     {% endif %}
 </div>

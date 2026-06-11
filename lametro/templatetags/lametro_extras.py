@@ -377,3 +377,8 @@ def show_tooltip(label):
     if Tooltip.objects.filter(target=tooltip_value).exists():
         tooltip = Tooltip.objects.get(target=tooltip_value)
         return {"tooltip": tooltip.content} if not tooltip.disabled else None
+
+
+@register.filter
+def keyvalue(dict, key):
+    return dict[key]

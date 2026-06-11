@@ -113,6 +113,46 @@ class LAMetroIndexView(IndexView):
         )
         context["form"] = LAMetroCouncilmaticSearchForm()
 
+        if not context["current_meeting"] and not context["upcoming_board_meetings"]:
+            return context
+
+        # Check for translated/converted files in the translation suite
+        meetings_to_check = (
+            context["current_meeting"] or context["upcoming_board_meetings"]
+        )
+        context["agenda_pdfs"] = {}
+        context["agenda_rtfs"] = {}
+
+        # Loop through since there may be multiple meetings returned
+        # TODO: consider refactoring when done
+        for event in meetings_to_check:
+            if not (agenda := EventService.get_agenda(event)):
+                continue
+
+            api_url = f"http://{settings.TRANSLATION_SUITE_URL}/api/document-files/"
+            data = {
+                "api_key": settings.TRANSLATION_API_KEY,
+                "document_id": agenda["pk"],
+                "entity_type": "event",
+            }
+
+            try:
+                response: requests.Response = timed_get(api_url, params=data, timeout=3)
+                response.raise_for_status()
+            except (
+                LAMetroRequestTimeoutException,
+                requests.Timeout,
+                requests.ConnectionError,
+            ):
+                logger.warning(f"Request to {api_url} timed out.")
+            except requests.HTTPError:
+                logger.warning(
+                    f"Request to {api_url} resulted in non-200 status code: {response.status_code}"
+                )
+            else:
+                context["agenda_pdfs"][event.id] = response.json()["pdf"]
+                context["agenda_rtfs"][event.id] = response.json()["rtf"]
+
         return context
 
 
@@ -140,6 +180,7 @@ class LABillDetail(BillDetailView):
         context["related_bills"] = related_bills
 
         context["actions"] = bill.actions_and_agendas
+        # TODO: show translation suite files here
 
         return context
 
