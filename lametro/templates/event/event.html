@@ -89,16 +89,30 @@
                         <div class="row">
                             <div class="col-sm-8">
                                 <h2 class="h4">Agenda</h2>
-                                <p class="mb-1">
-                                    <a id="pdf-download-link" class="fw-bold fs-6" target="_blank" href='{{agenda.url}}' aria-label="Download Agenda - link opens in a new tab">
-                                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                                        Download Agenda
-                                    </a>
-                                </p>
+                                <h3 class="h5 mt-3 mb-0">PDF</h3>
+                                <div>
+                                    <strong><a href='{{agenda.url}}' target="_blank"> Download Agenda (English)</a></strong>
+                                    {% for pdf in agenda_pdfs %}
+                                        <span class="mx-1">|</span>
+                                        <strong><a href="{{pdf.url}}" target="_blank">{{pdf.link_text}}</a></strong>
+                                    {% endfor %}
+                                </div>
+
+                                {% if agenda_rtfs %}
+                                    <h3 class="h5 mt-3 mb-0">RTF</h3>
+                                    <div>
+                                        {% for rtf in agenda_rtfs %}
+                                            <strong><a href="{{rtf.url}}" target="_blank">{{rtf.link_text}}</a></strong>
+                                            {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
                                 {% if event.packet.is_ready %}
+                                    <h2 class="h4 mt-3 mb-1">Agenda and Attachments</h2>
                                     <p class="mb-1">
                                         <a href="{{event.packet.url}}" class="fw-bold fs-6"><i class="fa fa-files-o" aria-hidden="true"></i>
-                                            Download Agenda and Attachments
+                                            Download Agenda and Attachments (English)
                                         </a>
                                     </p>
                                 {% endif %}

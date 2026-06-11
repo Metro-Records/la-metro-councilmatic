@@ -78,7 +78,11 @@ from councilmatic.settings_jurisdiction import MEMBER_BIOS
 
 from opencivicdata.legislative.models import EventDocument
 
-from .utils import get_list_from_csv
+from .utils import (
+    get_list_from_csv,
+    timed_get,
+    LAMetroRequestTimeoutException,
+)
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 logger = logging.getLogger(__name__)
@@ -165,6 +169,34 @@ class LAMetroEventDetail(EventDetailView):
         context["agenda"] = EventService.get_agenda(event)
         context["manage_agenda_url"] = EventService.get_manage_agenda_url(event)
         context["notices"] = EventService.get_notices(event)
+
+        if not context["agenda"]:
+            return context
+
+        # Check for translated/converted files in the translation suite
+        api_url = f"http://{settings.TRANSLATION_SUITE_URL}/api/document-files/"
+        data = {
+            "api_key": settings.TRANSLATION_API_KEY,
+            "document_id": context["agenda"]["pk"],
+            "entity_type": "event",
+        }
+
+        try:
+            response: requests.Response = timed_get(api_url, params=data, timeout=3)
+            response.raise_for_status()
+        except (
+            LAMetroRequestTimeoutException,
+            requests.Timeout,
+            requests.ConnectionError,
+        ):
+            logger.warning(f"Request to {api_url} timed out.")
+        except requests.HTTPError:
+            logger.warning(
+                f"Request to {api_url} resulted in non-200 status code: {response.status_code}"
+            )
+        else:
+            context["agenda_pdfs"] = response.json()["pdf"]
+            context["agenda_rtfs"] = response.json()["rtf"]
 
         return context
 
