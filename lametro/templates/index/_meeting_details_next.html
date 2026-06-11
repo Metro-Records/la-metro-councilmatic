@@ -1,57 +1,118 @@
 {% load lametro_extras static %}
 
-<div class="row">
-  <div class="col-lg-6 mb-2 current-meeting-img">
-    <img src="{% static 'images/Gateway03RT.jpg' %}" class="img-fluid rounded" title="Los Angeles Gateway Plaza" alt="Los Angeles Gateway Plaza">
-  </div>
-  <div class="col-lg-6">
-    <div class="row">
-      {% for meeting in upcoming_board_meetings %}
-      <div class="col-12">
-        <!-- Meeting name -->
-        <div>
-          {% if meeting.status == 'cancelled' %}
-            <h3 class="d-inline h4"><del>{{  meeting.link_html | safe }}</del></h3>
-            <small><span class="label label-stale text-light rounded">Cancelled</span></small>
-          {% else %}
-            <h3 class="h4">{{  meeting.link_html | safe }}</h3>
-          {% endif%}
-          <span class="small text-muted">{{ meeting.description }}</span>
-        </div>
+{% if upcoming_board_meetings|length > 1 %}
+ <div class="col-md-12">
+  <p>There are <strong>{{ upcoming_board_meetings|length }}</strong> upcoming meetings this month:</p>
 
-        <!-- Meeting info -->
-        <p class="small text-muted">
-          {% if meeting.status == 'cancelled' %}
-            <del>
+  {% for meeting in upcoming_board_meetings %}
+      <div class="row">
+          <div class="col-6">
+            <!-- Meeting name -->
+            {% if meeting.status == 'cancelled' %}
+              <h3 class="d-inline h4"><del>{{  meeting.link_html | safe }}</del></h3>
+              <small><span class="label label-stale text-light rounded">Cancelled</span></small>
+            {% else %}
+              <h3 class="h4">{{  meeting.link_html | safe }}</h3>
+            {% endif%}
+            <span class="d-block small text-muted">{{ meeting.description }}</span>
+
+            <!-- Meeting info -->
+            <p class="small text-muted">
+              {% if meeting.status == 'cancelled' %}
+                <del>
+                  <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
+                  <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
+                </del>
+              {% else %}
+                <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
+                <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
+                <i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ meeting.location.name }}<br>
+              {% endif %}
+            </p>
+          </div>
+
+          <div class="col-6 text-center">
+            <!-- Supplementary links -->
+            {% with agenda_url=meeting.documents.all|find_agenda_url meeting_id=meeting.id %}
+            {% if agenda_url %}
+                <div class="mb-1">
+                    {% include "common/_get_pdf_accordion.html" %}
+                </div>
+
+                {% if agenda_rtfs %}
+                    <div class="mb-1">
+                      {% include "common/_get_rtf_accordion.html" %}
+                    </div>
+                {% endif %}
+            {% endif %}
+            {% endwith %}
+          </div>
+      </div>
+      <hr aria-hidden="true">
+  {% endfor %}
+</div>
+
+{% else %}
+
+  {% with meeting=upcoming_board_meetings.0 %}
+  <!-- Display meeting details and image side by side -->
+  <div class="row">
+    <div class="col-lg-6 mb-2 current-meeting-img">
+      <img src="{% static 'images/Gateway03RT.jpg' %}" class="img-fluid rounded" title="Los Angeles Gateway Plaza" alt="Los Angeles Gateway Plaza">
+    </div>
+
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-12">
+          <!-- Meeting name -->
+          <div>
+            {% if meeting.status == 'cancelled' %}
+              <h3 class="d-inline h4"><del>{{  meeting.link_html | safe }}</del></h3>
+              <small><span class="label label-stale text-light rounded">Cancelled</span></small>
+            {% else %}
+              <h3 class="h4">{{  meeting.link_html | safe }}</h3>
+            {% endif%}
+            <span class="small text-muted">{{ meeting.description }}</span>
+          </div>
+
+          <!-- Meeting info -->
+          <p class="small text-muted">
+            {% if meeting.status == 'cancelled' %}
+              <del>
+                <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
+                <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
+              </del>
+            {% else %}
               <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
               <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
-            </del>
-          {% else %}
-            <i class="fa fa-fw fa-calendar-o" aria-hidden="true"></i> {{ meeting.start_time | date:"D n/d/Y" }}<br>
-            <i class="fa fa-fw fa-clock-o" aria-hidden="true"></i> {{ meeting.start_time | date:"g:i a" }}<br>
-            <i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ meeting.location.name }}<br>
-          {% endif %}
-        </p>
-
-        <!-- Supplementary links -->
-        {% with agenda_url=meeting.documents.all|find_agenda_url %}
-          {% if agenda_url %}
-            <div class="row">
-              <div class="col-7">
-                <a class="btn btn-teal" id="pdf-download-link" target='_blank' href='{{ agenda_url }}' aria-label="Get Agenda PDF - link opens in a new tab">
-                  <i class='fa fa-fw fa-download' aria-hidden="true"></i>
-                  Get Agenda PDF
-                </a>
-              </div>
-            </div>
-          {% endif %}
-        {% endwith %}
-
+              <i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> {{ meeting.location.name }}<br>
+            {% endif %}
+          </p>
+        </div>
       </div>
-      {% endfor %}
+    </div>
+
+    <div class="col-12">
+      <!-- Supplementary links -->
+      {% with agenda_url=meeting.documents.all|find_agenda_url meeting_id=meeting.id %}
+      {% if agenda_url %}
+        <div class="row my-2">
+          <div class="col-xl-6 mb-2 mb-xl-0">
+              {% include "common/_get_pdf_accordion.html" %}
+          </div>
+
+          {% if agenda_rtfs %}
+              <div class="col-xl-6 mb-2 mb-xl-0">
+                {% include "common/_get_rtf_accordion.html" %}
+              </div>
+          {% endif %}
+        </div>
+      {% endif %}
+      {% endwith %}
     </div>
   </div>
-</div>
+{% endwith %}
+{% endif %}
 
 <div class="row">
   <div class="col-12">
