@@ -189,3 +189,59 @@ def test_annotates_latest_action_when_multiple_actions_with_the_same_date(
         agenda_items[0].related_entities.all()[0].bill.event_action_description
         == "Pick me"
     )
+
+
+@pytest.mark.django_db
+def test_annotates_latest_action_from_selected_event_only(
+    first_org,
+    first_event,
+    first_event_date,
+    first_agenda_item,
+    second_org,
+    second_event,
+    second_event_date,
+    second_agenda_item,
+    bill,
+    bill_action,
+    event_related_entity,
+):
+    """
+    Test that annotation doesn't touch other events, only the one calling
+    for related bills.
+    """
+
+    bill = bill.build()
+
+    BillVersion.objects.create(
+        bill=bill,
+        note="Board Report",
+        date=first_event_date,
+    )
+
+    bill_action.build(
+        bill=bill,
+        organization=first_org,
+        date=first_event_date,
+        order=1,
+        description="Pick me",
+    )
+
+    event_related_entity.build(agenda_item=first_agenda_item, bill=bill)
+
+    bill_action.build(
+        bill=bill,
+        organization=second_org,
+        date=second_event_date,
+        order=2,
+        description="Don't pick me",
+    )
+
+    event_related_entity.build(agenda_item=second_agenda_item, bill=bill)
+
+    qs = EventService.get_related_board_reports(first_event)
+    agenda_items = list(qs)
+
+    assert (
+        agenda_items[0].related_entities.all()[0].bill.event_action_description
+        == "Pick me"
+    )
