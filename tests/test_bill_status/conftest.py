@@ -72,6 +72,15 @@ def second_event(event, second_event_date, second_org):
 
 
 @pytest.fixture
+def another_first_event(event, second_event_date, first_org):
+    return event.build(
+        name=first_org.name,
+        start_date="{} 12:00".format(second_event_date),
+        id="ocd-event/another-" + first_org.slug,
+    )
+
+
+@pytest.fixture
 def approved_board_event(event, board_event_date, board_org):
     return event.build(
         name=board_org.name,
