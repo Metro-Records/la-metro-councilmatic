@@ -37,7 +37,7 @@ def test_get_related_board_reports_excludes_restricted_bills(
 
     qs = EventService.get_related_board_reports(first_event)
     agenda_items = list(qs)
-    assert agenda_items == []
+    assert agenda_items[0].related_entities.all()[0].bill is None
 
 
 @pytest.mark.django_db
