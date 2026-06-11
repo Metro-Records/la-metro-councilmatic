@@ -59,6 +59,7 @@ def first_event(event, first_event_date, first_org):
         name=first_org.name,
         start_date="{} 12:00".format(first_event_date),
         id="ocd-event/" + first_org.slug,
+        status="passed",
     )
 
 
@@ -116,6 +117,16 @@ def first_agenda_item(
 
     event_participant.build(event=first_event, organization=first_org)
     return event_agenda_item.build(event=first_event)
+
+
+@pytest.fixture
+def another_first_agenda_item(
+    event_agenda_item,
+    first_org,
+    first_event,
+):
+
+    return event_agenda_item.build(event=first_event, order=2)
 
 
 @pytest.fixture
