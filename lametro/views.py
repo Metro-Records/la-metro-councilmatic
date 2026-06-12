@@ -194,6 +194,9 @@ class LAMetroEventDetail(EventDetailView):
         if not context["agenda"]:
             return context
 
+        context["agenda_pdfs"] = {}
+        context["agenda_rtfs"] = {}
+
         # Check for translated/converted files in the translation suite
         response = check_translations(context["agenda"]["pk"], "event")
         context["agenda_pdfs"][event.id] = response["pdf"]

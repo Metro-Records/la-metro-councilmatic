@@ -597,7 +597,7 @@ def test_accepts_live_comment(
     "event_name,expected_live_comment_value", LIVE_COMMENT_PARAMETERS
 )
 def test_live_comment_details_display_as_expected(
-    client, event, event_document, event_name, expected_live_comment_value
+    client, event, event_document, event_name, expected_live_comment_value, mocker
 ):
     in_an_hour = LAMetroEvent._time_from_now(hours=1).strftime("%Y-%m-%d %H:%M")
     test_event = event.build(name=event_name, start_date=in_an_hour)
@@ -613,6 +613,11 @@ def test_live_comment_details_display_as_expected(
         message=live_comment_signature,
     )
     notice.save()
+
+    mocker.patch(
+        "lametro.views.check_translations",
+        return_value={"pdf": [], "rtf": []},
+    )
 
     url = reverse("lametro:events", args=[test_event.slug])
     response = client.get(url)
