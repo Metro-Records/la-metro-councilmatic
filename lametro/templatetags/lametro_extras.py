@@ -385,4 +385,4 @@ def keyvalue(dict, key):
     Convenience method to search for an item in a dict using a key stored in a variable.
     Used as : dict_to_search|keyvalue:some_var_with_key
     """
-    return dict[key]
+    return dict.get(key)
