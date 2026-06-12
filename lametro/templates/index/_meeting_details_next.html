@@ -35,15 +35,15 @@
             <!-- Supplementary links -->
             {% with agenda_url=meeting.documents.all|find_agenda_url meeting_id=meeting.id %}
             {% if agenda_url %}
-                <div class="mb-1">
-                    {% include "common/_get_pdf_accordion.html" %}
-                </div>
+              <div class="mb-1">
+                {% include "index/_get_files_accordion.html" with files=agenda_pdfs file_format="PDF" %}
+              </div>
 
-                {% if agenda_rtfs %}
-                    <div class="mb-1">
-                      {% include "common/_get_rtf_accordion.html" %}
-                    </div>
-                {% endif %}
+              {% if agenda_rtfs %}
+                <div class="mb-1">
+                  {% include "index/_get_files_accordion.html" with files=agenda_rtfs file_format="RTF" %}
+                </div>
+              {% endif %}
             {% endif %}
             {% endwith %}
           </div>
@@ -98,13 +98,13 @@
       {% if agenda_url %}
         <div class="row my-2">
           <div class="col-xl-6 mb-2 mb-xl-0">
-              {% include "common/_get_pdf_accordion.html" %}
+            {% include "index/_get_files_accordion.html" with files=agenda_pdfs file_format="PDF" %}
           </div>
 
           {% if agenda_rtfs %}
-              <div class="col-xl-6 mb-2 mb-xl-0">
-                {% include "common/_get_rtf_accordion.html" %}
-              </div>
+            <div class="col-xl-6 mb-2 mb-xl-0">
+              {% include "index/_get_files_accordion.html" with files=agenda_rtfs file_format="RTF" %}
+            </div>
           {% endif %}
         </div>
       {% endif %}
