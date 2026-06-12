@@ -157,11 +157,12 @@ class LABillDetail(BillDetailView):
         context["actions"] = bill.actions_and_agendas
 
         if not (board_report := bill.board_report):
-            return context
+            pass
+        elif response := check_translations(str(board_report.pk), "bill"):
+            # Check for translated/converted files in the translation suite
+            context["board_report_pdfs"] = response["pdf"]
+            context["board_report_rtfs"] = response["rtf"]
 
-        response = check_translations(str(board_report.pk), "bill")
-        context["board_report_pdfs"] = response["pdf"]
-        context["board_report_rtfs"] = response["rtf"]
         return context
 
 
@@ -192,15 +193,11 @@ class LAMetroEventDetail(EventDetailView):
         context["notices"] = EventService.get_notices(event)
 
         if not context["agenda"]:
-            return context
-
-        context["agenda_pdfs"] = {}
-        context["agenda_rtfs"] = {}
-
-        # Check for translated/converted files in the translation suite
-        response = check_translations(context["agenda"]["pk"], "event")
-        context["agenda_pdfs"][event.id] = response["pdf"]
-        context["agenda_rtfs"][event.id] = response["rtf"]
+            pass
+        elif response := check_translations(context["agenda"]["pk"], "event"):
+            # Check for translated/converted files in the translation suite
+            context["agenda_pdfs"] = response["pdf"]
+            context["agenda_rtfs"] = response["rtf"]
 
         return context
 
