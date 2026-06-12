@@ -97,25 +97,18 @@
                                     </strong>
                                 </div>
 
-                                {% if agenda_pdfs %}
-                                    <div>
-                                        <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (PDF)</h3>
-                                        {% for pdf in agenda_pdfs %}
-                                            <a href="{{pdf.url}}" target="_blank">{{pdf.link_text}}</a>
-                                            {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
+                                <div id="checking-message" class="mt-2">
+                                    <p><em>Checking for translations for this agenda...</em></p>
+                                </div>
 
-                                {% if agenda_rtfs %}
-                                    <div>
-                                        <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (RTF)</h3>
-                                        {% for rtf in agenda_rtfs %}
-                                            <a href="{{rtf.url}}" target="_blank">{{rtf.link_text}}</a>
-                                            {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
+                                <div id="agenda-pdf-display" class="d-none">
+                                    <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (PDF)</h3>
+                                    <section id="agenda-pdfs"></section>
+                                </div>
+                                <div id="agenda-rtf-display" class="d-none">
+                                    <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (RTF)</h3>
+                                    <section id="agenda-rtfs"></section>
+                                </div>
 
                                 {% if event.packet.is_ready %}
                                     <hr aria-hidden="true">
@@ -193,7 +186,23 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script>
+<script>
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function renderTranslationLinks(linksArr, file_format) {
+        if (linksArr.length > 0) {
+            const file_links = linksArr.map(file => {
+                return `<a href="${file.url}" target="_blank">${file.link_text}</a>`
+            })
+            $(`#agenda-${file_format}s`).html(file_links.join(`<span class="mx-1">|</span>`))
+            $(`#agenda-${file_format}-display`).removeClass("d-none")
+        }
+    }
+
     $(document).ready(function() {
         if (window.innerWidth > 768){
             const agendaUrl =  "{% if agenda.manual %}{{ agenda.url }}{% else %}/pdfviewer/?{{agenda.url|full_text_doc_url}}{% endif %}"
@@ -203,9 +212,26 @@
             $('#pdf-embed-agenda').hide()
         }
 
+        const agenda_id = "{{ agenda.pk }}"
+        const response = fetch(`/api/translations/${agenda_id}/`, {
+            headers: { "X-CSRFToken": getCookie("csrftoken"), "Content-Type": "application/x-www-form-urlencoded" },
+            method: "POST",
+            body: new URLSearchParams({ "entity_type": "event" }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.document_pdfs.length == 0 && data.document_rtfs.length == 0) {
+                $("#checking-message").html(`<p><em>No translations found for this agenda.</em></p>`)
+            } else {
+                $("#checking-message").addClass("d-none")
+                renderTranslationLinks(data.document_pdfs, "pdf")
+                renderTranslationLinks(data.document_rtfs, "rtf")
+            }
+        })
+
         {% for source in event.sources.all %}
             console.log('source: {{source}}');
         {% endfor %}
     })
-    </script>
+</script>
 {% endblock %}

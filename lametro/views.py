@@ -37,6 +37,7 @@ from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
     HttpResponseNotFound,
+    JsonResponse,
 )
 from django.core.serializers import serialize
 from django.core.management import call_command
@@ -109,6 +110,7 @@ class LAMetroIndexView(IndexView):
         )
         context["form"] = LAMetroCouncilmaticSearchForm()
 
+        # TODO: move this logic out of here and into separate view
         if not context["current_meeting"] and not context["upcoming_board_meetings"]:
             return context
 
@@ -155,6 +157,7 @@ class LABillDetail(BillDetailView):
 
         context["actions"] = bill.actions_and_agendas
 
+        # TODO: move this logic out of here and into separate view
         if not (board_report := bill.board_report):
             pass
         elif response := check_translations(str(board_report.pk), "bill"):
@@ -190,13 +193,6 @@ class LAMetroEventDetail(EventDetailView):
         context["agenda"] = EventService.get_agenda(event)
         context["manage_agenda_url"] = EventService.get_manage_agenda_url(event)
         context["notices"] = EventService.get_notices(event)
-
-        if not context["agenda"]:
-            pass
-        elif response := check_translations(context["agenda"]["pk"], "event"):
-            # Check for translated/converted files in the translation suite
-            context["agenda_pdfs"] = response["pdf"]
-            context["agenda_rtfs"] = response["rtf"]
 
         return context
 
@@ -969,6 +965,24 @@ class TagAnalyticsView(LoginRequiredMixin, View):
             )
 
         return HttpResponseRedirect(success_url)
+
+
+class TranslationFilesView(View):
+    def post(self, request, document_id):
+        entity_type = request.POST.get("entity_type")
+        print(entity_type)
+        if entity_type not in ("event", "bill"):
+            return JsonResponse({"error": "invalid entity_type"}, status=400)
+
+        response = check_translations(document_id, entity_type)
+        result = {"document_pdfs": [], "document_rtfs": []}
+        if response:
+            result = {
+                "document_pdfs": response["pdf"],
+                "document_rtfs": response["rtf"],
+            }
+
+        return JsonResponse(result)
 
 
 def metro_login(request):

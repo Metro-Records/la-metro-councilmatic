@@ -161,7 +161,7 @@ def check_translations(document_id, entity_type):
     }
 
     try:
-        response: requests.Response = timed_get(api_url, params=data, timeout=3)
+        response: requests.Response = timed_get(api_url, params=data, timeout=5)
         response.raise_for_status()
     except (
         LAMetroRequestTimeoutException,
