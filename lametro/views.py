@@ -123,10 +123,9 @@ class LAMetroIndexView(IndexView):
         for event in meetings_to_check:
             if not (agenda := EventService.get_agenda(event)):
                 continue
-
-            response = check_translations(agenda["pk"], "event")
-            context["agenda_pdfs"][event.id] = response["pdf"]
-            context["agenda_rtfs"][event.id] = response["rtf"]
+            elif response := check_translations(agenda["pk"], "event"):
+                context["agenda_pdfs"][event.id] = response["pdf"]
+                context["agenda_rtfs"][event.id] = response["rtf"]
 
         return context
 
