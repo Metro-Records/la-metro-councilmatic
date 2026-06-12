@@ -153,7 +153,7 @@ def check_translations(document_id, entity_type):
     """
     Checks translation suite for alternate files to display on this app
     """
-    api_url = f"http://{settings.TRANSLATION_SUITE_URL}/api/document-files/"
+    api_url = f"https://{settings.TRANSLATION_SUITE_URL}/api/document-files/"
     data = {
         "api_key": settings.TRANSLATION_API_KEY,
         "document_id": document_id,
