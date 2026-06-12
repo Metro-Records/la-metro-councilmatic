@@ -87,28 +87,39 @@
                     <!-- Check that the database has an agenda to display -->
                     {% if agenda.url %}
                         <div class="row">
-                            <div class="col-sm-8">
+                            <div class="{% if minutes %}col-sm-8{% endif %}">
                                 <h2 class="h4">Agenda</h2>
-                                <h3 class="h5 mt-3 mb-0">PDF</h3>
                                 <div>
-                                    <strong><a href='{{agenda.url}}' target="_blank"> Download Agenda (English)</a></strong>
-                                    {% for pdf in agenda_pdfs %}
-                                        <span class="mx-1">|</span>
-                                        <strong><a href="{{pdf.url}}" target="_blank">{{pdf.link_text}}</a></strong>
-                                    {% endfor %}
+                                    <strong>
+                                        <a href='{{agenda.url}}' target="_blank">
+                                            <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda (English)
+                                        </a>
+                                    </strong>
                                 </div>
 
-                                {% if agenda_rtfs %}
-                                    <h3 class="h5 mt-3 mb-0">RTF</h3>
+                                {% if agenda_pdfs %}
                                     <div>
+                                        <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (PDF)</h3>
+                                        {% for pdf in agenda_pdfs %}
+                                            <a href="{{pdf.url}}" target="_blank">{{pdf.link_text}}</a>
+                                            {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                {% if agenda_rtfs %}
+                                    <div>
+                                        <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (RTF)</h3>
                                         {% for rtf in agenda_rtfs %}
-                                            <strong><a href="{{rtf.url}}" target="_blank">{{rtf.link_text}}</a></strong>
+                                            <a href="{{rtf.url}}" target="_blank">{{rtf.link_text}}</a>
                                             {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
                                         {% endfor %}
                                     </div>
                                 {% endif %}
 
                                 {% if event.packet.is_ready %}
+                                    <hr aria-hidden="true">
+
                                     <h2 class="h4 mt-3 mb-1">Agenda and Attachments</h2>
                                     <p class="mb-1">
                                         <a href="{{event.packet.url}}" class="fw-bold fs-6"><i class="fa fa-files-o" aria-hidden="true"></i>
@@ -117,11 +128,11 @@
                                     </p>
                                 {% endif %}
                             </div>
-                            <div class="col-sm-4">
-                                {% if event.start_time|compare_time %}
-                                    {% if minutes %}
-                                        <h2 class="h4">Minutes</h2>
 
+                            {% if minutes %}
+                                <div class="col-sm-4">
+                                    {% if event.start_time|compare_time %}
+                                        <h2 class="h4">Minutes</h2>
                                         {% for m in minutes %}
                                             <p>
                                                 <a href="{{ m.links.get.url }}"><i class="fa fa-calendar" aria-hidden="true"></i>
@@ -129,10 +140,9 @@
                                                 </a>
                                             </p>
                                         {% endfor %}
-
                                     {% endif %}
-                                {% endif %}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
 
                         <p class="d-none d-md-block">

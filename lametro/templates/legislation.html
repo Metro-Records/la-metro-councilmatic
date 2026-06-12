@@ -57,26 +57,37 @@
                     To access embedded hyperlinks, please download the report PDF by clicking "Download Board Report".
                 </p>
 
+                <div>
+                    <strong>
+                        <a href='{{board_report.url}}' target="_blank">
+                            <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Board Report (English)
+                        </a>
+                    </strong>
+                </div>
+
+                {% if board_report_pdfs or board_report_rtfs %}
                 <div class="mb-2">
-                    <h3 class="h5 mt-3 mb-0">PDF</h3>
-                    <div>
-                        <strong><a href='{{board_report.url}}' target="_blank"> Download Board Report (English)</a></strong>
-                        {% for pdf in board_report_pdfs %}
-                            <span class="mx-1">|</span>
-                            <strong><a href="{{pdf.url}}" target="_blank">{{pdf.link_text}}</a></strong>
-                        {% endfor %}
-                    </div>
+                    {% if board_report_pdfs %}
+                        <div>
+                            <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (PDF)</h3>
+                            {% for pdf in board_report_pdfs %}
+                                <a href="{{pdf.url}}" target="_blank">{{pdf.link_text}}</a>
+                                {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
                     {% if board_report_rtfs %}
-                        <h3 class="h5 mt-3 mb-0">RTF</h3>
                         <div>
+                            <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (RTF)</h3>
                             {% for rtf in board_report_rtfs %}
-                                <strong><a href="{{rtf.url}}" target="_blank">{{rtf.link_text}}</a></strong>
+                                <a href="{{rtf.url}}" target="_blank">{{rtf.link_text}}</a>
                                 {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
                             {% endfor %}
                         </div>
                     {% endif %}
                 </div>
+                {% endif %}
 
                 {% if legislation.packet.is_ready and attachments%}
                     <p>
