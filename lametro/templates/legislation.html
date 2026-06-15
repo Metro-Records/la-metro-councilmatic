@@ -278,10 +278,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    {% if legislation.board_report %}
-        {% include 'common/detail_translation_check.html' with document_id=legislation.board_report.pk entity_type="bill"%}
-    {% endif %}
-
     <script src="{% static 'js/lib/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'js/lib/jquery.dataTables.sorting.js' %}"></script>
     <script src="{% static 'js/lib/dataTables.bootstrap.js' %}"></script>
@@ -320,4 +316,12 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     </script>
+
+    {% if legislation.board_report %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                DetailPageTranslationUtils.findTranslations("{{ legislation.board_report.pk }}", "bill")
+            })
+        </script>
+    {% endif %}
 {% endblock %}

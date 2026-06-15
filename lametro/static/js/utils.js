@@ -21,8 +21,89 @@ function previewPDF(input) {
 };
 
 function getCookie(name) {
-    // Gets value of a cookie by name
+    // Get value of a cookie by name
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+class IndexTranslationUtils {
+    static renderLinks(linksArr, file_format, meeting_id) {
+        if (linksArr.length > 0) {
+            const agendaList = document.getElementById(`agenda-${file_format}-list-${meeting_id}`)
+            const agendaDisplay = document.getElementById(`agenda-${file_format}s-display-${meeting_id}`)
+
+            const fileLinks = linksArr.map(file => {
+                const linkEl = document.createElement("li")
+                linkEl.classList.add("list-group-item")
+                linkEl.innerHTML = `<a href="${file.url}" target="_blank">${file.link_text}</a>`
+                agendaList.appendChild(linkEl)
+            })
+            agendaDisplay.classList.remove("d-none")
+        }
+    }
+
+    static findTranslations(document_id, meeting_id) {
+        const response = fetch(`/api/translations/${document_id}/`, {
+            headers: { "X-CSRFToken": getCookie("csrftoken"), "Content-Type": "application/x-www-form-urlencoded" },
+            method: "POST",
+            body: new URLSearchParams({ "entity_type": "event" }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            const messageEl = document.getElementById(`checking-message-${meeting_id}`)
+            if (data.document_pdfs.length == 0 && data.document_rtfs.length == 0) {
+                messageEl.innerHTML = `<p><em>No translations found for this agenda.</em></p>`
+            } else {
+                messageEl.classList.add("d-none")
+                this.renderLinks(data.document_pdfs, "pdf", meeting_id)
+                this.renderLinks(data.document_rtfs, "rtf", meeting_id)
+            }
+        })
+    }
+}
+
+class DetailPageTranslationUtils {
+    static renderLinks(linksArr, file_format, document_type) {
+        if (linksArr.length > 0) {
+            const translationList = document.getElementById(`${document_type}-${file_format}s`)
+            const translationDisplay = document.getElementById(`${document_type}-${file_format}-display`)
+            const separator = document.createElement("span")
+            separator.classList.add("mx-1")
+            separator.innerHTML = "|"
+
+            linksArr.map((file, index, array) => {
+                const linkEl = document.createElement("a")
+                linkEl.href = file.url
+                linkEl.target = "_blank"
+                linkEl.innerHTML = file.link_text
+                translationList.appendChild(linkEl)
+                if (index < array.length - 1) {
+                    translationList.appendChild(separator.cloneNode(true))
+                }
+            })
+
+            translationDisplay.classList.remove("d-none")
+        }
+    }
+
+    static findTranslations(document_id, entity_type) {
+        const document_type = entity_type == "event" ? "agenda" : "board-report"
+        const response = fetch(`/api/translations/${document_id}/`, {
+            headers: { "X-CSRFToken": getCookie("csrftoken"), "Content-Type": "application/x-www-form-urlencoded" },
+            method: "POST",
+            body: new URLSearchParams({ "entity_type": entity_type }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            const messageEl = document.getElementById(`checking-message`)
+            if (data.document_pdfs.length == 0 && data.document_rtfs.length == 0) {
+                messageEl.innerHTML = `<p><em>No translations found for this ${document_type}.</em></p>`
+            } else {
+                messageEl.classList.add("d-none")
+                this.renderLinks(data.document_pdfs, "pdf", document_type)
+                this.renderLinks(data.document_rtfs, "rtf", document_type)
+            }
+        })
+    }
 }

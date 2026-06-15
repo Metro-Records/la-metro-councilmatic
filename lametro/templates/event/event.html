@@ -188,7 +188,11 @@
 {% block extra_js %}
 
 {% if agenda.url %}
-    {% include 'common/detail_translation_check.html' with document_id=agenda.pk entity_type="event" %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            DetailPageTranslationUtils.findTranslations("{{ agenda.pk }}", "event")
+        })
+    </script>
 {% endif %}
 
 <script>

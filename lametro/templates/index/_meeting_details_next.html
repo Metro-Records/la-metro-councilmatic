@@ -144,7 +144,11 @@
 {% for meeting in upcoming_board_meetings %}
   {% with document_id=meeting|get_agenda_pk %}
   {% if document_id %}
-    {% include 'index/_index_translation_check.html' %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        IndexTranslationUtils.findTranslations("{{ document_id }}", "{{ meeting.id }}")
+      })
+    </script>
   {% endif %}
   {% endwith %}
 {% endfor %}
