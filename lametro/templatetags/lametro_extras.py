@@ -22,6 +22,7 @@ from lametro.models import (
     Tooltip,
 )
 from lametro.utils import ExactHighlighter, format_full_text, parse_subject
+from lametro.services import EventService
 
 
 register = template.Library()
@@ -202,6 +203,17 @@ def find_agenda_url(all_documents):
         agenda_url = None
 
     return agenda_url
+
+
+@register.filter
+def get_agenda_pk(event):
+    """
+    Get an agenda's pk for a given event.
+    """
+    result = None
+    if agenda := EventService.get_agenda(event):
+        result = agenda["pk"]
+    return result
 
 
 @register.simple_tag(takes_context=True)

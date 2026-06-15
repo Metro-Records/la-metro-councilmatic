@@ -279,7 +279,7 @@
 
 {% block extra_js %}
     {% if legislation.board_report %}
-        {% include 'common/translation_check.html' with document_id=legislation.board_report.pk entity_type="bill"%}
+        {% include 'common/detail_translation_check.html' with document_id=legislation.board_report.pk entity_type="bill"%}
     {% endif %}
 
     <script src="{% static 'js/lib/jquery.dataTables.min.js' %}"></script>

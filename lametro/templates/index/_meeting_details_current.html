@@ -21,15 +21,17 @@
                     <div class="col-6 text-center">
                         {% if meeting.documents.all %}
                         {% with meeting_id=meeting.id %}
-                            <div class="mb-1">
-                                {% include "index/_get_files_accordion.html" with files=agenda_pdfs file_format="PDF" original_pdf_url=meeting.documents.all|find_agenda_url %}
+                            <div class="mt-2" id="checking-message-{{ meeting_id }}">
+                                <p><em>Checking for translations for this agenda...</em></p>
                             </div>
 
-                            {% if agenda_rtfs %}
-                                <div class="mb-1">
-                                    {% include "index/_get_files_accordion.html" with files=agenda_rtfs file_format="RTF" %}
-                                </div>
-                            {% endif %}
+                            <div class="mb-1 d-none" id="agenda-pdfs-display-{{ meeting_id }}">
+                                {% include "index/_get_files_accordion.html" with file_format="pdf" original_pdf_url=meeting.documents.all|find_agenda_url %}
+                            </div>
+
+                            <div class="mb-1 d-none" id="agenda-rtfs-display-{{ meeting_id }}">
+                                {% include "index/_get_files_accordion.html" with file_format="rtf" %}
+                            </div>
                         {% endwith %}
                         {% endif %}
 
@@ -114,22 +116,36 @@
 
         {% if current_meeting.first.documents.all %}
         {% with meeting_id=current_meeting.first.id %}
+            <div  class="mt-2" id="checking-message-{{ meeting_id }}">
+                <p><em>Checking for translations for this agenda...</em></p>
+            </div>
+
             <div class="row my-2">
-                <div class="col-xl-6 mb-2 mb-xl-0">
+                <div class="col-xl-6 mb-2 mb-xl-0 d-none" id="agenda-pdfs-display-{{ meeting_id }}">
                     <div class="mb-1">
-                        {% include "index/_get_files_accordion.html" with files=agenda_pdfs file_format="PDF" original_pdf_url=current_meeting.first.documents.all|find_agenda_url %}
+                        {% include "index/_get_files_accordion.html" with file_format="pdf" original_pdf_url=current_meeting.first.documents.all|find_agenda_url %}
                     </div>
                 </div>
 
-                {% if agenda_rtfs %}
-                    <div class="col-xl-6">
-                        <div class="mb-1">
-                            {% include "index/_get_files_accordion.html" with files=agenda_rtfs file_format="RTF" %}
-                        </div>
+                <div class="col-xl-6 d-none" id="agenda-rtfs-display-{{ meeting_id }}">
+                    <div class="mb-1">
+                        {% include "index/_get_files_accordion.html" with file_format="rtf" %}
                     </div>
-                {% endif %}
+                </div>
             </div>
         {% endwith %}
         {% endif %}
     {% endif %}
 </div>
+
+{% block extra_js %}
+
+{% for meeting in current_meeting %}
+    {% with document_id=meeting|get_agenda_pk %}
+    {% if document_id %}
+        {% include 'index/_index_translation_check.html' %}
+    {% endif %}
+    {% endwith %}
+{% endfor %}
+
+{% endblock %}

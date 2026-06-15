@@ -3,7 +3,7 @@ function full_text_doc_url_js(url, base_url) {
     encoded_url = encodeURIComponent(url)
     doc_url = base_url + '?filename=agenda&document_url=' + encoded_url
 
-    return doc_url 
+    return doc_url
 };
 
 function previewPDF(input) {
@@ -19,3 +19,10 @@ function previewPDF(input) {
         reader.readAsDataURL(input.files[0]);
     }
 };
+
+function getCookie(name) {
+    // Gets value of a cookie by name
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}

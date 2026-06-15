@@ -110,25 +110,6 @@ class LAMetroIndexView(IndexView):
         )
         context["form"] = LAMetroCouncilmaticSearchForm()
 
-        # TODO: move this logic out of here and into separate view
-        if not context["current_meeting"] and not context["upcoming_board_meetings"]:
-            return context
-
-        # Check for translated/converted files in the translation suite
-        meetings_to_check = (
-            context["current_meeting"] or context["upcoming_board_meetings"]
-        )
-        context["agenda_pdfs"] = {}
-        context["agenda_rtfs"] = {}
-
-        # There may be multiple meetings returned
-        for event in meetings_to_check:
-            if not (agenda := EventService.get_agenda(event)):
-                continue
-            elif response := check_translations(agenda["pk"], "event"):
-                context["agenda_pdfs"][event.id] = response["pdf"]
-                context["agenda_rtfs"][event.id] = response["rtf"]
-
         return context
 
 
