@@ -157,14 +157,6 @@ class LABillDetail(BillDetailView):
 
         context["actions"] = bill.actions_and_agendas
 
-        # TODO: move this logic out of here and into separate view
-        if not (board_report := bill.board_report):
-            pass
-        elif response := check_translations(str(board_report.pk), "bill"):
-            # Check for translated/converted files in the translation suite
-            context["board_report_pdfs"] = response["pdf"]
-            context["board_report_rtfs"] = response["rtf"]
-
         return context
 
 

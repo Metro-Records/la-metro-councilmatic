@@ -65,29 +65,18 @@
                     </strong>
                 </div>
 
-                {% if board_report_pdfs or board_report_rtfs %}
-                <div class="mb-2">
-                    {% if board_report_pdfs %}
-                        <div>
-                            <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (PDF)</h3>
-                            {% for pdf in board_report_pdfs %}
-                                <a href="{{pdf.url}}" target="_blank">{{pdf.link_text}}</a>
-                                {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
-                    {% if board_report_rtfs %}
-                        <div>
-                            <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (RTF)</h3>
-                            {% for rtf in board_report_rtfs %}
-                                <a href="{{rtf.url}}" target="_blank">{{rtf.link_text}}</a>
-                                {% if not forloop.last %}<span class="mx-1">|</span>{% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                <div id="checking-message" class="mt-2">
+                    <p><em>Checking for translations for this board report...</em></p>
                 </div>
-                {% endif %}
+
+                <div id="board-report-pdf-display" class="d-none">
+                    <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (PDF)</h3>
+                    <section id="board-report-pdfs"></section>
+                </div>
+                <div id="board-report-rtf-display" class="d-none">
+                    <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (RTF)</h3>
+                    <section id="board-report-rtfs"></section>
+                </div>
 
                 {% if legislation.packet.is_ready and attachments%}
                     <p>
@@ -289,6 +278,10 @@
 {% endblock %}
 
 {% block extra_js %}
+    {% if legislation.board_report %}
+        {% include 'common/translation_check.html' with document_id=legislation.board_report.pk entity_type="bill"%}
+    {% endif %}
+
     <script src="{% static 'js/lib/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'js/lib/jquery.dataTables.sorting.js' %}"></script>
     <script src="{% static 'js/lib/dataTables.bootstrap.js' %}"></script>
