@@ -128,7 +128,6 @@ urlpatterns = [
     path("cms/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("", include(wagtail_urls)),
-    url(r"", include("councilmatic_core.urls")),
     url(r"^test-logging/$", test_logging, name="test_logging"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
