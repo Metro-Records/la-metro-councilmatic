@@ -57,14 +57,29 @@
                     To access embedded hyperlinks, please download the report PDF by clicking "Download Board Report".
                 </p>
 
-                <p>
-                    <a id="pdf-download-link" target='_blank' href='{{board_report.url}}' class="fw-bold fs-6" aria-label="Download Board Report - link opens in a new tab">
-                        <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Board Report
-                    </a>
-                </p>
+                <div>
+                    <strong>
+                        <a href='{{board_report.url}}' target="_blank">
+                            <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Board Report (English)
+                        </a>
+                    </strong>
+                </div>
+
+                <div id="checking-message" class="mt-2">
+                    <p><em>Checking for translations for this board report...</em></p>
+                </div>
+
+                <div id="board-report-pdf-display" class="d-none">
+                    <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (PDF)</h3>
+                    <section id="board-report-pdfs"></section>
+                </div>
+                <div id="board-report-rtf-display" class="d-none">
+                    <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (RTF)</h3>
+                    <section id="board-report-rtfs"></section>
+                </div>
 
                 {% if legislation.packet.is_ready and attachments%}
-                    <p>
+                    <p class="mt-2">
                         <a href="{{legislation.packet.url}}" class="fw-bold fs-6"><i class="fa fa-files-o" aria-hidden="true"></i> Download Board Report and Attachments</a>
                     </p>
                 {% endif %}
@@ -290,7 +305,6 @@
         }
         else{
             $('#pdf-embed-agenda').hide()
-            $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link' aria-label='Opens in a new tab.'></i> View PDF")
         }
 
         {% for source in legislation.sources.all %}
@@ -302,4 +316,12 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     </script>
+
+    {% if legislation.board_report %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                DetailPageTranslationUtils.findTranslations("{{ legislation.board_report.pk }}", "bill")
+            })
+        </script>
+    {% endif %}
 {% endblock %}

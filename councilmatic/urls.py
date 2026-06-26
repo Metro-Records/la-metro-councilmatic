@@ -40,6 +40,7 @@ from lametro.views import (
     LAMetroContactView,
     MinutesView,
     TagAnalyticsView,
+    TranslationFilesView,
     pong,
     test_logging,
 )
@@ -124,6 +125,11 @@ urlpatterns = [
         name="lametro_ses_endpoint",
     ),
     path("smartlogic/", include("smartlogic.urls", namespace="smartlogic")),
+    path(
+        "api/translations/<str:document_id>/",
+        TranslationFilesView.as_view(),
+        name="translation",
+    ),
     url(r"^pdfviewer/$", pdfviewer, name="pdfviewer"),
     path("cms/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),

@@ -87,27 +87,45 @@
                     <!-- Check that the database has an agenda to display -->
                     {% if agenda.url %}
                         <div class="row">
-                            <div class="col-sm-8">
+                            <div class="{% if minutes %}col-sm-8{% endif %}">
                                 <h2 class="h4">Agenda</h2>
-                                <p class="mb-1">
-                                    <a id="pdf-download-link" class="fw-bold fs-6" target="_blank" href='{{agenda.url}}' aria-label="Download Agenda - link opens in a new tab">
-                                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                                        Download Agenda
-                                    </a>
-                                </p>
+                                <div>
+                                    <strong>
+                                        <a href='{{agenda.url}}' target="_blank">
+                                            <i class="fa fa-file-text-o" aria-hidden="true"></i> Download Agenda (English)
+                                        </a>
+                                    </strong>
+                                </div>
+
+                                <div id="checking-message" class="mt-2">
+                                    <p><em>Checking for translations for this agenda...</em></p>
+                                </div>
+
+                                <div id="agenda-pdf-display" class="d-none">
+                                    <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (PDF)</h3>
+                                    <section id="agenda-pdfs"></section>
+                                </div>
+                                <div id="agenda-rtf-display" class="d-none">
+                                    <h3 class="h6 mt-3 mb-0"><i class="fa fa-globe me-2" aria-hidden="true"></i>Available Translations (RTF)</h3>
+                                    <section id="agenda-rtfs"></section>
+                                </div>
+
                                 {% if event.packet.is_ready %}
+                                    <hr aria-hidden="true">
+
+                                    <h2 class="h4 mt-3 mb-1">Agenda and Attachments</h2>
                                     <p class="mb-1">
                                         <a href="{{event.packet.url}}" class="fw-bold fs-6"><i class="fa fa-files-o" aria-hidden="true"></i>
-                                            Download Agenda and Attachments
+                                            Download Agenda and Attachments (English)
                                         </a>
                                     </p>
                                 {% endif %}
                             </div>
-                            <div class="col-sm-4">
-                                {% if event.start_time|compare_time %}
-                                    {% if minutes %}
-                                        <h2 class="h4">Minutes</h2>
 
+                            {% if minutes %}
+                                <div class="col-sm-4">
+                                    {% if event.start_time|compare_time %}
+                                        <h2 class="h4">Minutes</h2>
                                         {% for m in minutes %}
                                             <p>
                                                 <a href="{{ m.links.get.url }}"><i class="fa fa-calendar" aria-hidden="true"></i>
@@ -115,10 +133,9 @@
                                                 </a>
                                             </p>
                                         {% endfor %}
-
                                     {% endif %}
-                                {% endif %}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
 
                         <p class="d-none d-md-block">
@@ -169,7 +186,17 @@
 {% endblock %}
 
 {% block extra_js %}
+
+{% if agenda.url %}
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            DetailPageTranslationUtils.findTranslations("{{ agenda.pk }}", "event")
+        })
+    </script>
+{% endif %}
+
+<script>
+
     $(document).ready(function() {
         if (window.innerWidth > 768){
             const agendaUrl =  "{% if agenda.manual %}{{ agenda.url }}{% else %}/pdfviewer/?{{agenda.url|full_text_doc_url}}{% endif %}"
@@ -177,12 +204,11 @@
         }
         else{
             $('#pdf-embed-agenda').hide()
-            $('#pdf-download-link').html("<i class='fa fa-fw fa-external-link'></i> View PDF")
         }
 
         {% for source in event.sources.all %}
             console.log('source: {{source}}');
         {% endfor %}
     })
-    </script>
+</script>
 {% endblock %}

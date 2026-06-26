@@ -15,6 +15,8 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import render
 from django.db.models.functions import Lower, Now
 from django.db.models import (
@@ -37,6 +39,7 @@ from django.http import (
     HttpResponseRedirect,
     HttpResponsePermanentRedirect,
     HttpResponseNotFound,
+    JsonResponse,
 )
 from django.core.serializers import serialize
 from django.core.management import call_command
@@ -78,12 +81,13 @@ from councilmatic.settings_jurisdiction import MEMBER_BIOS
 
 from opencivicdata.legislative.models import EventDocument
 
-from .utils import get_list_from_csv
+from .utils import get_list_from_csv, check_translations
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(ensure_csrf_cookie, name="get")
 class LAMetroIndexView(IndexView):
     template_name = "index/index.html"
 
@@ -112,6 +116,7 @@ class LAMetroIndexView(IndexView):
         return context
 
 
+@method_decorator(ensure_csrf_cookie, name="get")
 class LABillDetail(BillDetailView):
     model = LAMetroBill
     template_name = "legislation.html"
@@ -140,6 +145,7 @@ class LABillDetail(BillDetailView):
         return context
 
 
+@method_decorator(ensure_csrf_cookie, name="get")
 class LAMetroEventDetail(EventDetailView):
     model = LAMetroEvent
     template_name = "event/event.html"
@@ -937,6 +943,23 @@ class TagAnalyticsView(LoginRequiredMixin, View):
             )
 
         return HttpResponseRedirect(success_url)
+
+
+class TranslationFilesView(View):
+    def post(self, request, document_id):
+        entity_type = request.POST.get("entity_type")
+        if entity_type not in ("event", "bill"):
+            return JsonResponse({"error": "invalid entity_type"}, status=400)
+
+        response = check_translations(document_id, entity_type)
+        result = {"document_pdfs": [], "document_rtfs": []}
+        if response:
+            result = {
+                "document_pdfs": response["pdf"],
+                "document_rtfs": response["rtf"],
+            }
+
+        return JsonResponse(result)
 
 
 def metro_login(request):

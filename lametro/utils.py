@@ -5,12 +5,14 @@ import pytz
 import requests
 import sys
 import time
+import logging
 
 from django.conf import settings
 
 from haystack.utils.highlighting import Highlighter
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
+logger = logging.getLogger(__name__)
 
 
 class ExactHighlighter(Highlighter):
@@ -145,3 +147,33 @@ def timed_get(url, params=None, **kwargs):
         sys.settrace(None)
 
     return resp
+
+
+def check_translations(document_id, entity_type):
+    """
+    Checks translation suite for alternate files to display on this app
+    """
+    api_url = f"https://{settings.TRANSLATION_SUITE_URL}/api/document-files/"
+    data = {
+        "api_key": settings.TRANSLATION_API_KEY,
+        "document_id": document_id,
+        "entity_type": entity_type,
+    }
+
+    try:
+        response: requests.Response = timed_get(api_url, params=data, timeout=5)
+        response.raise_for_status()
+    except (
+        LAMetroRequestTimeoutException,
+        requests.Timeout,
+        requests.ConnectionError,
+    ):
+        logger.warning(f"Request to {api_url} timed out.")
+        return None
+    except requests.HTTPError:
+        logger.warning(
+            f"Request to {api_url} resulted in non-200 status code: {response.status_code}"
+        )
+        return None
+    else:
+        return response.json()

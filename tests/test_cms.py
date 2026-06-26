@@ -33,6 +33,7 @@ def test_event_admin_renders_based_on_context(
             "url": "agenda url",
             "timestamp": None,
             "manual": manual_agenda and not scraped_agenda,
+            "pk": "test_pk",
         }
 
         if manual_agenda:
@@ -43,6 +44,10 @@ def test_event_admin_renders_based_on_context(
 
     dummy_service.get_agenda = get_agenda
 
+    mocker.patch(
+        "lametro.views.check_translations",
+        return_value={"pdf": [], "rtf": []},
+    )
     with requests_mock.Mocker() as m:
         m.head(
             "https://metro.legistar.com/calendar.aspx",
