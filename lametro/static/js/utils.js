@@ -75,6 +75,23 @@ class DetailPageTranslationUtils {
         // Display links to translations as consecutive anchor tags,
         // with a separator in between each
         if (linksArr.length > 0) {
+            // Special treatment for English RTF
+            // Languages are ordered so English will always be first
+            if (file_format === "rtf") {
+                const engFile = linksArr.shift()
+                const rtfDisplay = document.getElementById(`english-${document_type}-rtf-display`)
+                const linkEl = document.createElement("a")
+                linkEl.href = engFile.url
+                linkEl.target = "_blank"
+                const icon = document.createElement("i")
+                icon.classList.add("fa", "fa-file-text-o")
+                icon.setAttribute("aria-hidden", "true")
+                linkEl.appendChild(icon)
+                linkEl.append(" " + engFile.link_text + " [RTF]")
+                rtfDisplay.appendChild(linkEl)
+                rtfDisplay.classList.remove("d-none")
+            }
+
             const translationList = document.getElementById(`${document_type}-${file_format}s`)
             const translationDisplay = document.getElementById(`${document_type}-${file_format}-display`)
             const separator = document.createElement("span")
@@ -82,10 +99,11 @@ class DetailPageTranslationUtils {
             separator.innerHTML = "|"
 
             linksArr.map((file, index, array) => {
+
                 const linkEl = document.createElement("a")
                 linkEl.href = file.url
                 linkEl.target = "_blank"
-                linkEl.innerHTML = file.link_text
+                linkEl.append(file.link_text)
                 translationList.appendChild(linkEl)
                 if (index < array.length - 1) {
                     translationList.appendChild(separator.cloneNode(true))
