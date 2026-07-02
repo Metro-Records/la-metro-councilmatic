@@ -130,3 +130,7 @@ class DetailPageTranslationUtils {
         })
     }
 }
+
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = { IndexTranslationUtils, DetailPageTranslationUtils, contactTranslationAPI, getCookie }
+}
