@@ -30,3 +30,5 @@ lametro/secrets.py
 .venv
 media/
 *.code-workspace
+
+node_modules/
