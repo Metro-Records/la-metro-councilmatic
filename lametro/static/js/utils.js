@@ -88,7 +88,7 @@ class DetailPageTranslationUtils {
                 icon.classList.add("fa-file-text-o")
                 icon.setAttribute("aria-hidden", "true")
                 linkEl.appendChild(icon)
-                linkEl.append(engFile.link_text + "[RTF]")
+                linkEl.append("&nbsp;" + engFile.link_text + "[rtf]")
                 rtfDisplay.appendChild(linkEl)
                 rtfDisplay.classList.remove("d-none")
             }
