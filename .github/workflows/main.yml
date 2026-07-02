@@ -64,3 +64,12 @@ jobs:
       run: |
         cp .env.local.example .env.local
         pytest -sv
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: npm
+    - name: Test with jest
+      run: |
+        npm ci
+        npm test
