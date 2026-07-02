@@ -83,7 +83,12 @@ class DetailPageTranslationUtils {
                 const linkEl = document.createElement("a")
                 linkEl.href = engFile.url
                 linkEl.target = "_blank"
-                linkEl.innerHTML = engFile.link_text + "(RTF)"
+                const icon = document.createElement("i")
+                icon.classList.add("fa")
+                icon.classList.add("fa-file-text-o")
+                icon.setAttribute("aria-hidden", "true")
+                linkEl.appendChild(icon)
+                linkEl.append(engFile.link_text + "[RTF]")
                 rtfDisplay.appendChild(linkEl)
                 rtfDisplay.classList.remove("d-none")
             }
@@ -99,7 +104,7 @@ class DetailPageTranslationUtils {
                 const linkEl = document.createElement("a")
                 linkEl.href = file.url
                 linkEl.target = "_blank"
-                linkEl.innerHTML = file.link_text
+                linkEl.append(file.link_text)
                 translationList.appendChild(linkEl)
                 if (index < array.length - 1) {
                     translationList.appendChild(separator.cloneNode(true))

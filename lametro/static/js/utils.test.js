@@ -120,8 +120,14 @@ describe("DetailPageTranslationUtils.renderLinks", () => {
         const englishDisplay = document.getElementById(`english-${documentType}-rtf-display`)
         const englishAnchor = englishDisplay.querySelector("a")
         expect(englishAnchor.getAttribute("href")).toBe("http://example.com/en.rtf")
-        expect(englishAnchor.textContent).toBe("English(RTF)")
+        expect(englishAnchor.textContent).toBe("English[RTF]")
         expect(englishDisplay.classList.contains("d-none")).toBe(false)
+
+        const icon = englishAnchor.querySelector("i")
+        expect(icon).not.toBeNull()
+        expect(icon.classList.contains("fa")).toBe(true)
+        expect(icon.classList.contains("fa-file-text-o")).toBe(true)
+        expect(icon.getAttribute("aria-hidden")).toBe("true")
 
         const list = document.getElementById(`${documentType}-rtfs`)
         const display = document.getElementById(`${documentType}-rtf-display`)
