@@ -471,6 +471,7 @@ class LACommitteeDetailView(CommitteeDetailView):
                 )
             )
             .exclude(person=ceo)
+            .distinct("person")
             .order_by("index", "person__family_name", "person__given_name")
         )
 
