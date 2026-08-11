@@ -12,7 +12,9 @@ order: 3
 
 ## Overview
 
-Metro uses what was SmartLogic Semaphore, and is now [Progress Semaphore Semantic Enhancement Service (SES) ](https://docs.progress.com/bundle/semaphore-5-semantic-enhancement-server-administration/page/topics/ses-admin/welcome.html), to develop semantic metadata for Metro data, creating topic-based classifications for bills. This is what enables live auto-suggestions in the Board Agenda's search, as well as the ability to select from those suggestions to perform a topic search instead of a regular text search.
+Metro uses what was SmartLogic Semaphore, and is now [Progress Semaphore Semantic Enhancement Service (SES) ](https://docs.progress.com/bundle/semaphore-5-semantic-enhancement-server-administration/page/topics/ses-admin/welcome.html), to maintain an ontology of concepts and controlled vocabulary of temrs around Metro data. The ontology describes the entities within the Metro universe and their special relations to one another, for example, a "committee" has "members" that "sponsor" "bills". Controlled vocabularies function like thesauruses such that every concept has a constellation of potential terms that are established as referring to "the same thing", for example, a "bill" is a "matter" is a "board report".
+
+This system of knowledge management enables services like tagging, topic search, and live auto-suggestions, with Metro's end goal being to help users find what they are looking for more easily.
 
 Related links:
 
@@ -23,11 +25,11 @@ Related links:
 
 Two major syncs happen nightly:
 
-(1) Metro maintains a taxonomy of terms, concepts, etc with SES. SES gets new matter/bill data from Legistar, indexes the matters/bills with respect to Metro's taxonomy, and returns those indexes back to Legistar[^1], each with its own Semaphore GUID.
+(1) As Metro makes any updates to its knowledge management system, SES indexes it all and sends a mapping of indexes/topics/concepts/terms to Semaphore GUIDs to Legistar[^1].
 
 [^1]: For all indexes, see the [/MatterIndexes endpoint](https://webapi.legistar.com/Help/Api/GET-v1-Client-MatterIndexes)). And for the indexes for any particular matter, see the [the Matters/{MatterId}/Indexes endpoint](http://webapi.legistar.com/Help/Api/GET-v1-Client-Matters-MatterId-Indexes).
 
-(2) Independently, LA Metro Councilmatic does its scrape, which includes dicarding the indexes related to any changed bill and re-populating them, so stale indexes don't persist.
+(2) Independently, LA Metro Councilmatic does its scrape of Legsitar, where Metro has added associated indexes with bills. The scrape discards the indexes related to any changed bill and re-populates them, so stale indexes don't persist.
 
 Because the bill scraper only picks up the index labels and not their GUIDs, when SES is done syncing with Legistar, it pings an endpoint on LA Metro Councilmatic to run the `refresh_guid` management command to update a lookup table mapping labels to GUIDs[^2].
 
