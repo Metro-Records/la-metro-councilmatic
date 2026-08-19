@@ -958,11 +958,32 @@ class EventRelatedEntity(EventRelatedEntity):
     bill = ProxyForeignKey(LAMetroBill, null=True, on_delete=models.SET_NULL)
 
 
+class LAMetroOrganizationManager(models.Manager):
+    """
+    Handle the display of different sets of organizations depending on the
+    context, especially hiding test committees.
+    """
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                Q(organization__extras__bodytype__iexact="Committee")
+                | Q(
+                    organization__extras__bodytype__iexact="Independent Taxpayer Oversight Committee"
+                )
+            )
+        )
+
+
 class LAMetroOrganization(Organization, SourcesMixin):
     """
     Overrides use the LAMetroEvent object, rather than the default Event
     object, so test events are hidden appropriately.
     """
+
+    committees = LAMetroOrganizationManager()
 
     class Meta:
         proxy = True
@@ -1017,11 +1038,7 @@ class LAMetroOrganization(Organization, SourcesMixin):
             end_date_dt__gt=Now(),
             organization__classification="committee",
         )
-        return (
-            cls.objects.filter(classification="committee")
-            .filter(memberships__in=current_memberships)
-            .distinct()
-        )
+        return cls.committees.filter(memberships__in=current_memberships).distinct()
 
 
 class Membership(CoreMembership):
