@@ -965,16 +965,34 @@ class LAMetroOrganizationManager(models.Manager):
     """
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(
-                Q(organization__extras__bodytype__iexact="Committee")
-                | Q(
-                    organization__extras__bodytype__iexact="Independent Taxpayer Oversight Committee"
-                )
+
+        qs = super().get_queryset()
+
+        TEST_ORGS = [
+            "zTESTz OBS Test Committee",
+            "zTESTz Finance, Budget and Audit Committee",
+            "TO BE REMOVED",
+            "VCM Draft Meeting",
+            "Test - Live Regular Meeting Test",
+            "Test - Live Committee Meeting Test",
+        ]
+
+        qs = qs.annotate(
+            test_org=Case(
+                When(
+                    organization__name__in=TEST_ORGS,
+                    then=True,
+                ),
+                When(
+                    organization__extras__bodytype__contains=["Test Committee"],
+                    then=True,
+                ),
+                default=False,
+                output_field=models.BooleanField(),
             )
         )
+
+        return qs
 
 
 class LAMetroOrganization(Organization, SourcesMixin):
@@ -983,7 +1001,7 @@ class LAMetroOrganization(Organization, SourcesMixin):
     object, so test events are hidden appropriately.
     """
 
-    committees = LAMetroOrganizationManager()
+    objects = LAMetroOrganizationManager()
 
     class Meta:
         proxy = True
@@ -1032,13 +1050,22 @@ class LAMetroOrganization(Organization, SourcesMixin):
 
     @classmethod
     def committees_with_current_members(cls):
+
+        committees = cls.objects.filter(
+            Q(organization__extras__bodytype__iexact="Committee")
+            | Q(
+                organization__extras__bodytype__iexact="Independent Taxpayer Oversight Committee"
+            )
+        )
+
         ceo = LAMetroPerson.ceo()
         current_memberships = Membership.objects.exclude(person=ceo).filter(
             start_date_dt__lte=Now(),
             end_date_dt__gt=Now(),
             organization__classification="committee",
         )
-        return cls.committees.filter(memberships__in=current_memberships).distinct()
+
+        return committees.filter(memberships__in=current_memberships).distinct()
 
 
 class Membership(CoreMembership):
