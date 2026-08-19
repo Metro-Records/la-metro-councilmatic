@@ -100,6 +100,19 @@ class LAMetroBillManager(models.Manager):
         """
         qs = super().get_queryset()
 
+        TEST_ORGS = [
+            "zTESTz OBS Test Committee",
+            "zTESTz Finance, Budget and Audit Committee",
+            "TO BE REMOVED",
+            "VCM Draft Meeting",
+            "Test - Live Regular Meeting Test",
+            "Test - Live Committee Meeting Test",
+        ]
+
+        test_orgs = Q(from_organization__name__in=TEST_ORGS) | Q(
+            from_organization__extras__bodytype="Test Committee"
+        )
+
         on_published_agenda = Q(
             eventrelatedentity__agenda_item__event__status="passed"
         ) | Q(eventrelatedentity__agenda_item__event__status="cancelled")
@@ -110,6 +123,7 @@ class LAMetroBillManager(models.Manager):
 
         qs = (
             qs.exclude(extras__restrict_view=True)
+            .exclude(test_orgs)
             .annotate(
                 board_box=Case(
                     When(
@@ -958,32 +972,11 @@ class EventRelatedEntity(EventRelatedEntity):
     bill = ProxyForeignKey(LAMetroBill, null=True, on_delete=models.SET_NULL)
 
 
-class LAMetroOrganizationManager(models.Manager):
-    """
-    Handle the display of different sets of organizations depending on the
-    context, especially hiding test committees.
-    """
-
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(
-                Q(organization__extras__bodytype__iexact="Committee")
-                | Q(
-                    organization__extras__bodytype__iexact="Independent Taxpayer Oversight Committee"
-                )
-            )
-        )
-
-
 class LAMetroOrganization(Organization, SourcesMixin):
     """
     Overrides use the LAMetroEvent object, rather than the default Event
     object, so test events are hidden appropriately.
     """
-
-    committees = LAMetroOrganizationManager()
 
     class Meta:
         proxy = True
@@ -1032,13 +1025,22 @@ class LAMetroOrganization(Organization, SourcesMixin):
 
     @classmethod
     def committees_with_current_members(cls):
+
+        committees = cls.objects.filter(
+            Q(organization__extras__bodytype__iexact="Committee")
+            | Q(
+                organization__extras__bodytype__iexact="Independent Taxpayer Oversight Committee"
+            )
+        )
+
         ceo = LAMetroPerson.ceo()
         current_memberships = Membership.objects.exclude(person=ceo).filter(
             start_date_dt__lte=Now(),
             end_date_dt__gt=Now(),
             organization__classification="committee",
         )
-        return cls.committees.filter(memberships__in=current_memberships).distinct()
+
+        return committees.filter(memberships__in=current_memberships).distinct()
 
 
 class Membership(CoreMembership):
