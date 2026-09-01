@@ -164,6 +164,9 @@
 
                     // Defined in autocomplete.js
                     window.handleSubmit(e);
+                }).catch(function(error) {
+                    console.error("reCAPTCHA validation failed:", error);
+                    alert("Unable to verify your search request. Please refresh the page and try again.");
                 });
             });
 
@@ -215,6 +218,9 @@
                             : targetUrl;
 
                         window.location = targetUrl.toString();
+                    }).catch(function(error) {
+                        console.error("reCAPTCHA validation failed:", error);
+                        alert("Unable to verify your search request. Please refresh the page and try again.");
                     })
                 }
             });
