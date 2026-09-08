@@ -1,0 +1,50 @@
+---
+date: 07/23/2026
+date-modified: last-modified
+title: "Semantic Search"
+keywords:
+  - Matter Index
+  - Topic Search
+  - SmartLogic
+  - SES
+order: 3
+---
+
+## Overview
+
+Metro uses what was SmartLogic Semaphore, and is now [Progress Semaphore Semantic Enhancement Service (SES) ](https://docs.progress.com/bundle/semaphore-5-semantic-enhancement-server-administration/page/topics/ses-admin/welcome.html), to maintain an ontology of concepts and controlled vocabulary of temrs around Metro data. The ontology describes the entities within the Metro universe and their special relations to one another, for example, a "committee" has "members" that "sponsor" "bills". Controlled vocabularies function like thesauruses such that every concept has a constellation of potential terms that are established as referring to "the same thing", for example, a "bill" is a "matter" is a "board report".
+
+This system of knowledge management enables services like tagging, topic search, and live auto-suggestions, with Metro's end goal being to help users find what they are looking for more easily.
+
+Related links:
+
+- [SmartLogic/Semaphore training notes (internal doc)](https://docs.google.com/document/d/173eIduyf5-obXr0Jzlo1N5eLs7Zbt7jJWvXicKPllwA/edit?tab=t.0)
+- [Progress Data Cloud migration](https://github.com/Metro-Records/la-metro-councilmatic/pull/1258)
+
+## Syncs
+
+Two major syncs happen nightly:
+
+(1) As Metro makes any updates to its knowledge management system, SES indexes it all and sends a mapping of indexes/topics/concepts/terms to Semaphore GUIDs to Legistar[^1].
+
+[^1]: For all indexes, see the [/MatterIndexes endpoint](https://webapi.legistar.com/Help/Api/GET-v1-Client-MatterIndexes)). And for the indexes for any particular matter, see the [the Matters/{MatterId}/Indexes endpoint](http://webapi.legistar.com/Help/Api/GET-v1-Client-Matters-MatterId-Indexes).
+
+(2) Independently, LA Metro Councilmatic does its scrape of Legsitar, where Metro has added associated indexes with bills. The scrape discards the indexes related to any changed bill and re-populates them, so stale indexes don't persist.
+
+Because the bill scraper only picks up the index labels and not their GUIDs, when SES is done syncing with Legistar, it pings an endpoint on LA Metro Councilmatic to run the `refresh_guid` management command to update a lookup table mapping labels to GUIDs[^2].
+
+[^2]:[`refresh_guid_trigger`](https://github.com/search?q=repo%3AMetro-Records%2Fla-metro-councilmatic%20refresh_guid_trigger&type=code)
+
+Further, because the SES-Legistar sync happens independently of the scrape, the `refresh_guid` command takes into account the possibility of lag, and does not get rid of any GUIDs that still exist in the Councilmatic database, regardless of their status in Legistar.
+
+Read more: [Metro/SmartLogic integration spec (internal doc)](https://docs.google.com/document/d/1m_nZv33YTvdiG2rLSxTXpMvjb00agOe2ZRo79gcpmHE/edit?tab=t.0)
+
+
+## Authentication and key rotation
+
+The SES API key expires every 90 days, so we have [a command](commands.qmd#update-ses-api-keys-on-heroku) to update it in all our Heroku environments when we're 2 weeks out from expiration. Click through the link to read more about the details of the command. It runs on prod through the Heroku Scheduler add-on.
+
+## Staging vs Production
+
+- `refresh_guid` is triggered by SES completing its sync on prod, but is scheduled to run on staging, which you can see on the Airflow dashboard.
+- The SES API key refresh is scheduled on prod through Heroku, but updates all our Heroku environments.
