@@ -44,11 +44,19 @@ class IndexTranslationUtils {
             const agendaList = document.getElementById(`agenda-${file_format}-list-${meeting_id}`)
             const agendaDisplay = document.getElementById(`agenda-${file_format}s-display-${meeting_id}`)
 
-            const fileLinks = linksArr.map(file => {
-                const linkEl = document.createElement("li")
-                linkEl.classList.add("list-group-item")
-                linkEl.innerHTML = `<a href="${file.url}" target="_blank">${file.link_text}</a>`
-                agendaList.appendChild(linkEl)
+            linksArr.map(file => {
+                const listItem = document.createElement("li")
+                listItem.classList.add("list-group-item")
+                const linkEl = document.createElement("a")
+                linkEl.href = file.url
+                linkEl.target = "_blank"
+                linkEl.append(file.link_text)
+                const engTooltipText = `Download agenda (${file.language})`
+                linkEl.setAttribute("data-bs-toggle", "tooltip")
+                linkEl.setAttribute("title", engTooltipText)
+                linkEl.setAttribute("aria-label",`${file.link_text} - ${engTooltipText}`)
+                listItem.append(linkEl)
+                agendaList.appendChild(listItem)
             })
             agendaDisplay.classList.remove("d-none")
         }
@@ -99,10 +107,13 @@ class DetailPageTranslationUtils {
             separator.innerHTML = "|"
 
             linksArr.map((file, index, array) => {
-
+                const engTooltipText = `Download ${document_type} (${file.language})`
                 const linkEl = document.createElement("a")
                 linkEl.href = file.url
                 linkEl.target = "_blank"
+                linkEl.setAttribute("data-bs-toggle", "tooltip")
+                linkEl.setAttribute("title", engTooltipText)
+                linkEl.setAttribute("aria-label",`${file.link_text} - ${engTooltipText}`)
                 linkEl.append(file.link_text)
                 translationList.appendChild(linkEl)
                 if (index < array.length - 1) {
