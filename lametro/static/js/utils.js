@@ -103,6 +103,8 @@ class DetailPageTranslationUtils {
                 const linkEl = document.createElement("a")
                 linkEl.href = file.url
                 linkEl.target = "_blank"
+                linkEl.setAttribute = ("data-bs-toggle", "tooltip")
+                linkEl.setAttribute = ("title", `Download ${document_type} (${file.language})`)
                 linkEl.append(file.link_text)
                 translationList.appendChild(linkEl)
                 if (index < array.length - 1) {
