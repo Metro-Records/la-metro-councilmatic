@@ -99,12 +99,13 @@ class DetailPageTranslationUtils {
             separator.innerHTML = "|"
 
             linksArr.map((file, index, array) => {
-
+                const engTooltipText = `Download ${document_type} (${file.language})`
                 const linkEl = document.createElement("a")
                 linkEl.href = file.url
                 linkEl.target = "_blank"
                 linkEl.setAttribute = ("data-bs-toggle", "tooltip")
-                linkEl.setAttribute = ("title", `Download ${document_type} (${file.language})`)
+                linkEl.setAttribute = ("title", engTooltipText)
+                linkEl.setAttribute = ("aria-label",`${file.link_text} - ${engTooltipText}`)
                 linkEl.append(file.link_text)
                 translationList.appendChild(linkEl)
                 if (index < array.length - 1) {
