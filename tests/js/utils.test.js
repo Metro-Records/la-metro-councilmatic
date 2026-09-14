@@ -41,6 +41,9 @@ describe("IndexTranslationUtils.renderLinks", () => {
             const anchor = li.querySelector("a")
             expect(anchor.getAttribute("href")).toBe(file.url)
             expect(anchor.getAttribute("target")).toBe("_blank")
+            expect(anchor.dataset.bsToggle).toBe("tooltip")
+            expect(anchor.getAttribute("title")).toBe(`Download agenda (${file.language})`)
+            expect(anchor.getAttribute("aria-label")).toBe(`${file.link_text} - Download agenda (${file.language})`)
             expect(anchor.textContent).toBe(file.link_text)
         })
 
@@ -93,6 +96,9 @@ describe("DetailPageTranslationUtils.renderLinks", () => {
         anchors.forEach((anchor, index) => {
             expect(anchor.getAttribute("href")).toBe(linksArr[index].url)
             expect(anchor.getAttribute("target")).toBe("_blank")
+            expect(anchor.getAttribute("title")).toBe(`Download ${documentType} (${linksArr[index].language})`)
+            expect(anchor.getAttribute("aria-label")).toBe(`${linksArr[index].link_text} - Download ${documentType} (${linksArr[index].language})`)
+            expect(anchor.dataset.bsToggle).toBe("tooltip")
             expect(anchor.textContent).toBe(linksArr[index].link_text)
         })
 
