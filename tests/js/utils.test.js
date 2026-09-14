@@ -23,8 +23,8 @@ describe("IndexTranslationUtils.renderLinks", () => {
 
     it("appends a list item per link and reveals the display", () => {
         const linksArr = [
-            { url: "http://example.com/a.pdf", link_text: "English" },
-            { url: "http://example.com/b.pdf", link_text: "Spanish" },
+            { url: "http://example.com/a.pdf", link_text: "English", language: "English" },
+            { url: "http://example.com/b.pdf", link_text: "Spanish", language: "Spanish" },
         ]
 
         IndexTranslationUtils.renderLinks(linksArr, fileFormat, meetingId)
@@ -75,9 +75,9 @@ describe("DetailPageTranslationUtils.renderLinks", () => {
         setupDom("pdf")
 
         const linksArr = [
-            { url: "http://example.com/a.pdf", link_text: "English" },
-            { url: "http://example.com/b.pdf", link_text: "Spanish" },
-            { url: "http://example.com/c.pdf", link_text: "Chinese" },
+          { url: "http://example.com/a.pdf", link_text: "English", language: "English" },
+          { url: "http://example.com/b.pdf", link_text: "Spanish", language: "Spanish" },
+          { url: "http://example.com/c.pdf", link_text: "Chinese", language: "Chinese" },
         ]
 
         DetailPageTranslationUtils.renderLinks(linksArr, "pdf", documentType)
