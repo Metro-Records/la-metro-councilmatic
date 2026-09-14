@@ -51,7 +51,7 @@ class IndexTranslationUtils {
                 linkEl.href = file.url
                 linkEl.target = "_blank"
                 linkEl.append(file.link_text)
-                const engTooltipText = `Download agenda (${file.language})`
+                const engTooltipText = `Download Agenda (${file.language})`
                 linkEl.setAttribute("data-bs-toggle", "tooltip")
                 linkEl.setAttribute("title", engTooltipText)
                 linkEl.setAttribute("aria-label",`${file.link_text} - ${engTooltipText}`)
@@ -107,7 +107,11 @@ class DetailPageTranslationUtils {
             separator.innerHTML = "|"
 
             linksArr.map((file, index, array) => {
-                const engTooltipText = `Download ${document_type} (${file.language})`
+                const docDisplayText = {
+                    'agenda': 'Agenda',
+                    'board-report': 'Board Report'
+                }
+                const engTooltipText = `Download ${docDisplayText[document_type]} (${file.language})`
                 const linkEl = document.createElement("a")
                 linkEl.href = file.url
                 linkEl.target = "_blank"
