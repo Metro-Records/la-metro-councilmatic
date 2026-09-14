@@ -56,7 +56,7 @@ services:
       - lametro-es-data:/usr/share/elasticsearch/data
 
   scrapers:
-    image: ghcr.io/metro-records/scrapers-lametro:deploy
+    image: ghcr.io/metro-records/scrapers-lametro:dev/1297-capture-matter-body-name
     stdin_open: true
     tty: true
     depends_on:
