@@ -6,10 +6,10 @@
     {{ result.last_action_date|date:'n/d/Y' }} - {{ result.last_action_description | remove_action_subj }} (most recent action)
 </p>
 
-{% if result.primary_sponsor %}
+{% if result.controlling_body %}
     <p class="small text-muted mb-0">
         <i class="fa fa-fw fa-users" aria-hidden="true"></i>
-        {{ result.primary_sponsor }}
+        {{ result.controlling_body.0 }}
     </p>
 {% endif %}
 
