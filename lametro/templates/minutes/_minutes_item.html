@@ -18,6 +18,9 @@
   </div>
 
   <div class="col-4">
+    {% if e.status == "cancelled" %}
+    <p>Cancelled</p>
+    {% endif %}
     {% for link in e.minutes_link %}
       <a href="{{ link | safe }}">Minutes {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a>
     {% endfor %}
