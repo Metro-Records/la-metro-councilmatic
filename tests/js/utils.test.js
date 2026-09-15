@@ -23,8 +23,8 @@ describe("IndexTranslationUtils.renderLinks", () => {
 
     it("appends a list item per link and reveals the display", () => {
         const linksArr = [
-            { url: "http://example.com/a.pdf", link_text: "English" },
-            { url: "http://example.com/b.pdf", link_text: "Spanish" },
+            { url: "http://example.com/a.pdf", link_text: "English", language: "English" },
+            { url: "http://example.com/b.pdf", link_text: "Spanish", language: "Spanish" },
         ]
 
         IndexTranslationUtils.renderLinks(linksArr, fileFormat, meetingId)
@@ -41,6 +41,9 @@ describe("IndexTranslationUtils.renderLinks", () => {
             const anchor = li.querySelector("a")
             expect(anchor.getAttribute("href")).toBe(file.url)
             expect(anchor.getAttribute("target")).toBe("_blank")
+            expect(anchor.dataset.bsToggle).toBe("tooltip")
+            expect(anchor.getAttribute("title")).toBe(`Download Agenda (${file.language})`)
+            expect(anchor.getAttribute("aria-label")).toBe(`${file.link_text} - Download Agenda (${file.language})`)
             expect(anchor.textContent).toBe(file.link_text)
         })
 
@@ -49,7 +52,7 @@ describe("IndexTranslationUtils.renderLinks", () => {
 })
 
 describe("DetailPageTranslationUtils.renderLinks", () => {
-    const documentType = "agenda"
+    const documentType = "board-report"
 
     function setupDom(fileFormat) {
         document.body.innerHTML = `
@@ -75,9 +78,9 @@ describe("DetailPageTranslationUtils.renderLinks", () => {
         setupDom("pdf")
 
         const linksArr = [
-            { url: "http://example.com/a.pdf", link_text: "English" },
-            { url: "http://example.com/b.pdf", link_text: "Spanish" },
-            { url: "http://example.com/c.pdf", link_text: "Chinese" },
+          { url: "http://example.com/a.pdf", link_text: "English", language: "English" },
+          { url: "http://example.com/b.pdf", link_text: "Spanish", language: "Spanish" },
+          { url: "http://example.com/c.pdf", link_text: "Chinese", language: "Chinese" },
         ]
 
         DetailPageTranslationUtils.renderLinks(linksArr, "pdf", documentType)
@@ -93,6 +96,9 @@ describe("DetailPageTranslationUtils.renderLinks", () => {
         anchors.forEach((anchor, index) => {
             expect(anchor.getAttribute("href")).toBe(linksArr[index].url)
             expect(anchor.getAttribute("target")).toBe("_blank")
+            expect(anchor.getAttribute("title")).toBe(`Download Board Report (${linksArr[index].language})`)
+            expect(anchor.getAttribute("aria-label")).toBe(`${linksArr[index].link_text} - Download Board Report (${linksArr[index].language})`)
+            expect(anchor.dataset.bsToggle).toBe("tooltip")
             expect(anchor.textContent).toBe(linksArr[index].link_text)
         })
 
