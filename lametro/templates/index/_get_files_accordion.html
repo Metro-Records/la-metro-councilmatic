@@ -5,7 +5,13 @@
     <h2 class="accordion-header">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panels-{{file_format}}-{{meeting_id}}" aria-expanded="false" aria-controls="panels-{{file_format}}-{{meeting_id}}">
         <strong><i class="fa fa-file-text-o me-1" aria-hidden="true"></i>
-        Get Agenda {{file_format|upper}}</strong>
+          Get Agenda/Translations{{" "}}
+          {% if file_format == "rtf" %}
+            (RTF - Accessible)
+          {% elif file_format == "pdf" %}
+            (PDF)
+          {% endif %}
+        </strong>
       </button>
     </h2>
     <div id="panels-{{file_format}}-{{meeting_id}}" class="accordion-collapse collapse">
