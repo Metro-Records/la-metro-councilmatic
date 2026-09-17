@@ -3,9 +3,17 @@
 <div class="accordion w-100" id="accordionAgenda-{{file_format}}-{{meeting_id}}">
   <div class="accordion-item">
     <h2 class="accordion-header">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panels-{{file_format}}-{{meeting_id}}" aria-expanded="false" aria-controls="panels-{{file_format}}-{{meeting_id}}">
-        <strong><i class="fa fa-file-text-o me-1" aria-hidden="true"></i>
-        Get Agenda {{file_format|upper}}</strong>
+      <button class="accordion-button collapsed agenda-accordion-button px-2 py-1" type="button" data-bs-toggle="collapse" data-bs-target="#panels-{{file_format}}-{{meeting_id}}" aria-expanded="false" aria-controls="panels-{{file_format}}-{{meeting_id}}">
+        <i class="fa fa-file-text-o me-1" aria-hidden="true"></i>
+        <span style="text-wrap: balance" class="px-1 small"> <strong>
+          Get Agenda/Translations{{" "}}
+          {% if file_format == "rtf" %}
+            (RTF - Accessible)
+          {% elif file_format == "pdf" %}
+            (PDF)
+          {% endif %}
+        </strong>
+        </span>
       </button>
     </h2>
     <div id="panels-{{file_format}}-{{meeting_id}}" class="accordion-collapse collapse">
