@@ -801,6 +801,7 @@ class MinutesView(EventsView):
                 "meeting": event.name,
                 "minutes_link": [],
                 "agenda_link": [],
+                "status": event.status,
             }
             try:
                 minutes_link = event.minutes_document[0].prefetched_links[0].url
