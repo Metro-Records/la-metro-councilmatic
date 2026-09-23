@@ -202,14 +202,8 @@ class LAMetroBill(Bill, SourcesMixin):
 
         if len(unique_orgs) > 1:
 
-            try:
-                board_org = Organization.objects.get(name="Board of Directors")
-            except Organization.DoesNotExist:
-                raise ValueError(
-                    "Board of Directors organization not found in database"
-                )
-
             # If one is the board, use its latest action
+            board_org = Organization.objects.get(name="Board of Directors")
             if board_org in unique_orgs:
                 # If board agenda approved, return status from the Board Meeting
                 try:
