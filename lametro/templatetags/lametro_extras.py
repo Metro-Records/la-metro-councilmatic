@@ -6,7 +6,6 @@ import urllib
 
 from django import template
 from django.utils import timezone
-from django.template.defaultfilters import stringfilter
 
 from councilmatic.settings_jurisdiction import (
     legislation_types,
@@ -348,14 +347,6 @@ def bill_status_from_event_action(description):
     if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
         return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
     return ""
-
-
-@register.filter
-@stringfilter
-def inferred_status_label(status):
-    if not status:
-        return
-    return "<span class='label label-" + status.lower() + "'>" + status + "</span>"
 
 
 @register.inclusion_tag("snippets/fiscal_year_calendars.html", takes_context=True)
