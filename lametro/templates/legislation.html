@@ -22,9 +22,12 @@
                     {{ legislation.bill_type }}
                 </span>
 
-                {% if legislation.inferred_status %}
-                    {{ legislation.inferred_status | inferred_status_label | safe }}
+              {% with status=legislation.inferred_status %}
+                {% if status %}
+                  <span class="label label-{{status|lower}}">{{ status }}</span>
                 {% endif %}
+              {% endwith %}
+
             </h2>
 
             <p>
@@ -174,7 +177,11 @@
                                             - {{ bill.extras.plain_text|prepare_title }}
                                         {% endif %}
 
-                                        {{bill.inferred_status | inferred_status_label | safe}}
+                                        {% with status=bill.inferred_status %}
+                                          {% if status %}
+                                            <span class="label label-{{status|lower}}">{{ status }}</span>
+                                          {% endif %}
+                                        {% endwith %}
                                     </td>
 
                                     <td class="text-muted small text-end">{{ bill.last_action_date|date:'n/d/Y' }}</td>

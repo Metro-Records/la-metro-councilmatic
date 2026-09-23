@@ -3,8 +3,12 @@
 <hr aria-hidden="true">
 
 <p>
-    <a class="small" href="/board-report/{{ legislation.slug }}/">{{ legislation.friendly_name }}</a>
-    {{ legislation.inferred_status | inferred_status_label | safe }}
+  <a class="small" href="/board-report/{{ legislation.slug }}/">{{ legislation.friendly_name }}</a>
+    {% with status=legislation.inferred_status %}
+      {% if status %}
+        <span class="label label-{{status|lower}}">{{ status }}</span>
+      {% endif %}
+    {% endwith %}
 </p>
 
 <div class="row">
