@@ -31,7 +31,7 @@
             </p>
           </div>
 
-          <div class="col-6 text-center">
+          <div class="col-6 text-center d-flex flex-column">
             <!-- Supplementary links -->
             {% with agenda_url=meeting.documents.all|find_agenda_url meeting_id=meeting.id %}
             {% if agenda_url %}
