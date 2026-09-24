@@ -633,6 +633,11 @@ input[type=radio][name=options] {
     color: #6B6B6B;
 }
 
+.agenda-accordion-button {
+    min-height: 3.5rem;
+    align-items: center;
+}
+
 .order-nav a.nav-link {
     margin-left: 1.2em;
 }

@@ -201,6 +201,14 @@ LA Metro Councilmatic has a basic test suite. If you need to run it, simply run:
 docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
 ```
 
+There are also JavaScript unit tests, which live in `tests/js/`. Run them with:
+
+```bash
+docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm node
+```
+
+or, on a host with Node 18+ installed, `npm ci && npm test`.
+
 ### Load testing
 
 LA Metro Councilmatic uses [Locust](https://docs.locust.io/en/stable/) for load

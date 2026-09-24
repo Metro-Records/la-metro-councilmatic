@@ -10,3 +10,14 @@ services:
       DJANGO_MANAGEPY_MIGRATE: "off"
     volumes:
       - ${PWD}/configs/test_settings_deployment.py:/app/councilmatic/settings_deployment.py
+
+  node:
+    image: node:22-slim
+    working_dir: /app
+    volumes:
+      - ${PWD}:/app
+      - lametro-node-modules:/app/node_modules
+    command: sh -c "npm ci && npx jest"
+
+volumes:
+  lametro-node-modules:

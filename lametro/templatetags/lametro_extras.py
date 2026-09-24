@@ -22,6 +22,7 @@ from lametro.models import (
     Tooltip,
 )
 from lametro.utils import ExactHighlighter, format_full_text, parse_subject
+from lametro.services import EventService
 
 
 register = template.Library()
@@ -204,6 +205,17 @@ def find_agenda_url(all_documents):
     return agenda_url
 
 
+@register.filter
+def get_agenda_pk(event):
+    """
+    Get an agenda's pk for a given event.
+    """
+    result = None
+    if agenda := EventService.get_agenda(event):
+        result = agenda["pk"]
+    return result
+
+
 @register.simple_tag(takes_context=True)
 def get_highlighted_attachment_text(context, bill):
     highlight = ExactHighlighter(context["query"])
@@ -377,3 +389,12 @@ def show_tooltip(label):
     if Tooltip.objects.filter(target=tooltip_value).exists():
         tooltip = Tooltip.objects.get(target=tooltip_value)
         return {"tooltip": tooltip.content} if not tooltip.disabled else None
+
+
+@register.filter
+def keyvalue(dict, key):
+    """
+    Convenience method to search for an item in a dict using a key stored in a variable.
+    Used as : dict_to_search|keyvalue:some_var_with_key
+    """
+    return dict.get(key)
