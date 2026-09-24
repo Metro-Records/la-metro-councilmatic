@@ -1,6 +1,14 @@
 FROM python:3.10
 LABEL maintainer "DataMade <info@datamade.us>"
 
+# Patch to account for missing Debian Bullseye packages
+RUN printf '%s\n' \
+        'deb http://archive.debian.org/debian bullseye main' \
+        '# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1147093' \
+        'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260901T022952Z/ bullseye-security main' \
+        'deb http://archive.debian.org/debian bullseye-updates main' \
+        > /etc/apt/sources.list
+
 RUN apt-get update && \
     apt-get install -y libpq-dev gcc gdal-bin gnupg && \
     apt-get install -y libxml2-dev libxslt1-dev antiword unrtf poppler-utils postgresql-client \
