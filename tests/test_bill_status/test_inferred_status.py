@@ -191,16 +191,18 @@ def test_inferred_status_two_orgs_including_board_meeting_with_approved_minutes(
     # see LAMetroBill.action_and_agendas()
     bill_action.build(
         bill=some_bill,
-        organization=second_org,
-        date=second_event_date,
-        description="withdrawn",
+        organization=board_org,
+        date=board_event_date,
+        description="carried over",
+        order=1,
     )
 
     bill_action.build(
         bill=some_bill,
-        organization=board_org,
-        date=board_event_date,
-        description="carried over",
+        organization=second_org,
+        date=second_event_date,
+        description="withdrawn",
+        order=2,
     )
 
     assert len(some_bill.actions_and_agendas) == 4
@@ -215,6 +217,7 @@ def test_inferred_status_two_orgs_including_board_meeting_with_approved_minutes(
         organization=board_org,
         date=recent_board_event_date,
         description="approved",
+        order=3,
     )
 
     assert len(some_bill.actions_and_agendas) == 6
