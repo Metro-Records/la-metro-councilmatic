@@ -169,9 +169,11 @@ def test_inferred_status_two_orgs_including_board_meeting_with_approved_minutes(
     second_org,
     board_org,
     board_event_date,
+    recent_board_event_date,
+    recent_approved_board_agenda_item,
 ):
     """
-    If a bill appoars in a board meeting,
+    If a bill appears in a board meeting,
     and the meeting minutes ARE approved:
 
     1. When the latest action is not from the board,
@@ -185,6 +187,8 @@ def test_inferred_status_two_orgs_including_board_meeting_with_approved_minutes(
     event_related_entity.build(agenda_item=second_agenda_item, bill=some_bill)
     event_related_entity.build(agenda_item=approved_board_agenda_item, bill=some_bill)
 
+    # note that order matters, not actual date
+    # see LAMetroBill.action_and_agendas()
     bill_action.build(
         bill=some_bill,
         organization=second_org,
@@ -192,15 +196,26 @@ def test_inferred_status_two_orgs_including_board_meeting_with_approved_minutes(
         description="withdrawn",
     )
 
-    assert len(some_bill.actions_and_agendas) == 3
-    assert some_bill.inferred_status == ""
-
     bill_action.build(
         bill=some_bill,
         organization=board_org,
         date=board_event_date,
-        description="approved",
+        description="carried over",
     )
 
     assert len(some_bill.actions_and_agendas) == 4
+    assert some_bill.inferred_status == ""
+
+    event_related_entity.build(
+        agenda_item=recent_approved_board_agenda_item, bill=some_bill
+    )
+
+    bill_action.build(
+        bill=some_bill,
+        organization=board_org,
+        date=recent_board_event_date,
+        description="approved",
+    )
+
+    assert len(some_bill.actions_and_agendas) == 6
     assert some_bill.inferred_status == "Approved"

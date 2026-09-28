@@ -6,6 +6,7 @@ from django.utils import timezone
 # 2 weeks ago: first event
 # 8 days ago: board meeting
 # 7 days ago: second event
+# 1 day ago: recent board meeting
 
 
 @pytest.fixture
@@ -21,6 +22,11 @@ def board_event_date():
 @pytest.fixture
 def second_event_date():
     return (timezone.now() - timedelta(weeks=1)).strftime("%Y-%m-%d")
+
+
+@pytest.fixture
+def recent_board_event_date():
+    return (timezone.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
 
 # Create orgs
@@ -101,6 +107,16 @@ def unapproved_board_event(event, board_event_date, board_org):
     )
 
 
+@pytest.fixture
+def recent_approved_board_event(event, recent_board_event_date, board_org):
+    return event.build(
+        name=board_org.name,
+        start_date="{} 12:00".format(recent_board_event_date),
+        id="ocd-event/recent-approved-" + board_org.slug,
+        extras={"approved_minutes": True},
+    )
+
+
 # Create agenda items and event participants
 
 # At the moment, participant objects don't need to be exposed, so just
@@ -122,7 +138,6 @@ def first_agenda_item(
 @pytest.fixture
 def first_agenda_item_order_2(
     event_agenda_item,
-    first_org,
     first_event,
 ):
 
@@ -151,6 +166,18 @@ def approved_board_agenda_item(
 
     event_participant.build(event=approved_board_event, organization=board_org)
     return event_agenda_item.build(event=approved_board_event)
+
+
+@pytest.fixture
+def recent_approved_board_agenda_item(
+    event_agenda_item,
+    event_participant,
+    board_org,
+    recent_approved_board_event,
+):
+
+    event_participant.build(event=recent_approved_board_event, organization=board_org)
+    return event_agenda_item.build(event=recent_approved_board_event)
 
 
 @pytest.fixture
