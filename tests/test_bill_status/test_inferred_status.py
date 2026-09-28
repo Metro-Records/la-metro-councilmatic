@@ -2,27 +2,27 @@ import pytest
 
 
 @pytest.mark.django_db
-def test_inferred_status_no_agendas_or_actions(bill):
+def test_inferred_status_no_agendas_or_actions(
+    bill, first_agenda_item, second_agenda_item, event_related_entity
+):
     """
-    Test inferred status returns empty string if no actions or agendas.
+    Test inferred status returns empty string if no actions,
+    given 0, 1, or 1+ agendas.
     """
+
     some_bill = bill.build()
 
     assert len(some_bill.actions_and_agendas) == 0
     assert some_bill.inferred_status == ""
 
-
-@pytest.mark.django_db
-def test_inferred_status_one_agenda_no_actions(
-    bill, event_related_entity, first_agenda_item
-):
-    """
-    Test inferred status returns empty string if scheduled on one agenda, but no actions.
-    """
-    some_bill = bill.build()
     event_related_entity.build(agenda_item=first_agenda_item, bill=some_bill)
 
     assert len(some_bill.actions_and_agendas) == 1
+    assert some_bill.inferred_status == ""
+
+    event_related_entity.build(agenda_item=second_agenda_item, bill=some_bill)
+
+    assert len(some_bill.actions_and_agendas) == 2
     assert some_bill.inferred_status == ""
 
 
@@ -37,7 +37,7 @@ def test_inferred_status_one_org_agenda_actions(
     board_org,
 ):
     """
-    Test inferred status with only one meeting type returns current action status.
+    Test inferred status returns current action status.
     """
     some_bill = bill.build()
 
@@ -61,21 +61,6 @@ def test_inferred_status_one_org_agenda_actions(
 
     assert len(some_bill.actions_and_agendas) == 3
     assert some_bill.inferred_status == "Active"
-
-
-@pytest.mark.django_db
-def test_inferred_status_two_agendas_no_actions(
-    bill, event_related_entity, first_agenda_item, second_agenda_item, board_org
-):
-    """
-    Test inferred status returns empty string if scheduled on multiple agendas, but no actions.
-    """
-    some_bill = bill.build()
-    event_related_entity.build(agenda_item=first_agenda_item, bill=some_bill)
-    event_related_entity.build(agenda_item=second_agenda_item, bill=some_bill)
-
-    assert len(some_bill.actions_and_agendas) == 2
-    assert some_bill.inferred_status == ""
 
 
 @pytest.mark.django_db
@@ -103,8 +88,10 @@ def test_inferred_status_two_orgs_no_board(
     board_org,
 ):
     """
-    Test inferred status returns only "Active" statuses, else "", with two non-board organizations.
     This case was the cause of issue #1278.
+
+    If the bill appears in two non-board meetings,
+    test inferred status returns only "Active" statuses, else "",
     """
     some_bill = bill.build()
 
@@ -152,8 +139,9 @@ def test_inferred_status_two_orgs_including_unapproved_board(
     board_org,
 ):
     """
-    Test inferred status returns only "Active" or "" when the board is one of the organizations,
-    but the board meeting agenda is not approved.
+    If the bill appears in a board meeting,
+    and the meeting minutes are NOT approved,
+    test inferred status returns only "Active" or ""
     """
     some_bill = bill.build()
     event_related_entity.build(agenda_item=second_agenda_item, bill=some_bill)
@@ -161,8 +149,8 @@ def test_inferred_status_two_orgs_including_unapproved_board(
 
     bill_action.build(
         bill=some_bill,
-        date=second_event_date,
         organization=second_org,
+        date=second_event_date,
         description=description,
     )
 
@@ -171,7 +159,7 @@ def test_inferred_status_two_orgs_including_unapproved_board(
 
 
 @pytest.mark.django_db
-def test_inferred_status_two_orgs_including_approved_board_no_board_action(
+def test_inferred_status_two_orgs_including_board_meeting_with_approved_minutes(
     bill,
     bill_action,
     event_related_entity,
@@ -180,10 +168,18 @@ def test_inferred_status_two_orgs_including_approved_board_no_board_action(
     second_event_date,
     second_org,
     board_org,
+    board_event_date,
 ):
     """
-    Test inferred status returns "" when board meeting minutes are approved but
-    the latest action is not from the board.
+    If a bill appoars in a board meeting,
+    and the meeting minutes ARE approved:
+
+    1. When the latest action is not from the board,
+       test inferred status returns ""
+
+    2. When the latest action is from the board,
+       test inferred status returns the matching status
+
     """
     some_bill = bill.build()
     event_related_entity.build(agenda_item=second_agenda_item, bill=some_bill)
@@ -199,39 +195,11 @@ def test_inferred_status_two_orgs_including_approved_board_no_board_action(
     assert len(some_bill.actions_and_agendas) == 3
     assert some_bill.inferred_status == ""
 
-
-@pytest.mark.django_db
-def test_inferred_status_two_orgs_including_approved_board_yes_board_action(
-    bill,
-    bill_action,
-    event_related_entity,
-    second_agenda_item,
-    approved_board_agenda_item,
-    second_event_date,
-    second_org,
-    board_event_date,
-    board_org,
-):
-    """
-    Test inferred status returns last board action status (not overall last
-    action status) when board agenda approved and there is a board action.
-    """
-
-    some_bill = bill.build()
-    event_related_entity.build(agenda_item=second_agenda_item, bill=some_bill)
-    event_related_entity.build(agenda_item=approved_board_agenda_item, bill=some_bill)
-
     bill_action.build(
         bill=some_bill,
+        organization=board_org,
         date=board_event_date,
         description="approved",
-        organization=board_org,
-    )
-    bill_action.build(
-        bill=some_bill,
-        date=second_event_date,
-        description="withdrawn",
-        organization=second_org,
     )
 
     assert len(some_bill.actions_and_agendas) == 4

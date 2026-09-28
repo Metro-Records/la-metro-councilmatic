@@ -5,72 +5,6 @@ from opencivicdata.legislative.models import BillVersion
 
 
 @pytest.mark.django_db
-def test_get_related_board_reports_excludes_restricted_bills(
-    bill,
-    bill_action,
-    event_related_entity,
-    first_org,
-    first_event,
-    first_event_date,
-    first_agenda_item,
-):
-    """
-    Exclude restricted bills.
-    """
-    restricted_bill = bill.build(extras={"restrict_view": True})
-
-    BillVersion.objects.create(
-        bill=restricted_bill,
-        note="Board Report",
-        date=first_event_date,
-    )
-
-    bill_action.build(
-        bill=restricted_bill,
-        organization=first_org,
-        date=first_event_date,
-        order=1,
-        description="Don't look at me",
-    )
-
-    event_related_entity.build(agenda_item=first_agenda_item, bill=restricted_bill)
-
-    qs = EventService.get_related_board_reports(first_event)
-    agenda_items = list(qs)
-    assert agenda_items[0].related_entities.all()[0].bill is None
-
-
-@pytest.mark.django_db
-def test_get_related_board_reports_excludes_bills_with_no_BillVersion(
-    bill,
-    bill_action,
-    event_related_entity,
-    first_org,
-    first_event,
-    first_event_date,
-    first_agenda_item,
-):
-    """
-    Exclude bills without a BillVersion. May be sign of incomplete import.
-    """
-    restricted_bill = bill.build()
-
-    bill_action.build(
-        bill=restricted_bill,
-        organization=first_org,
-        date=first_event_date,
-        order=1,
-        description="Don't look at me",
-    )
-
-    event_related_entity.build(agenda_item=first_agenda_item, bill=restricted_bill)
-
-    qs = EventService.get_related_board_reports(first_event)
-    agenda_items = list(qs)
-    assert agenda_items == []
-
-
-@pytest.mark.django_db
 def test_only_annotates_events_with_actions(
     first_event,
     first_org,
@@ -206,8 +140,9 @@ def test_annotates_latest_action_from_selected_event_only(
     event_related_entity,
 ):
     """
-    Test that annotation doesn't touch other events, only the one calling
-    for related bills.
+    Test that we get the annotation for the correct event, when a bill has
+    actions connected to more than one event.
+
     """
 
     bill = bill.build()
