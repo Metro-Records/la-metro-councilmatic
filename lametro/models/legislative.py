@@ -951,6 +951,22 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
             start_time__gte=today_utc, start_time__lt=tomorrow_utc
         ).prefetch_related("broadcast", "location")
 
+    @classmethod
+    def possibly_deleted_meetings(cls):
+        """
+        Get a queryset of candidate events to check against Legistar to see
+        if they've been deleted.
+
+        Candidates events are those without media, without minutes,
+        and without "test" in the name.
+        """
+
+        return (
+            cls.objects.filter(media__isnull=True)
+            .exclude(documents__note__icontains="minutes")
+            .exclude(name__icontains="test")
+        )
+
     @property
     def display_status(self):
         if self.status == "cancelled":
