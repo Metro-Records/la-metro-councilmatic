@@ -228,7 +228,15 @@
                     {% include 'search/_tags.html' %}
                 </li>
             {% empty %}
-                <li>{% include 'search/_empty_search_message.html' %}</li>
+                <li>
+                    {% if form.errors.captcha %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.errors.captcha|join:" " }}
+                        </div>
+                    {% else %}
+                        {% include 'search/_empty_search_message.html' %}
+                    {% endif %}
+                </li>
 
             {% endfor %}
         </ul>
