@@ -28,7 +28,7 @@ class Command(BaseCommand):
     are not found, that is, that have actually been deleted.
     """
 
-    def handle(self):
+    def handle(self, *args, **options):
 
         key = settings.LEGISTAR_TOKEN
 
@@ -41,8 +41,23 @@ class Command(BaseCommand):
 
         possible_deletions = LAMetroEvent.possibly_deleted_meetings()
 
+        logger.info(f"{len(possible_deletions)} possibly deleted meetings found")
+
+        deleted_count = 0
+
         for d in possible_deletions:
-            url = d.api_source
+            url = str(d.api_source)
+            web = str(d.web_source)
             if url:
-                d.extras["deleted_in_legistar"] = check_deleted(url, key)
+                deleted = check_deleted(url, key)
+                if deleted:
+                    print(f"DEL: {d.event} not found. See {web}")
+                d.extras["deleted_in_legistar"] = deleted
                 d.save()
+
+                if deleted:
+                    deleted_count += 1
+
+        logger.info(
+            f"{deleted_count}/{len(possible_deletions)} events marked as deleted"
+        )
