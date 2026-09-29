@@ -29,6 +29,7 @@ from lametro.models import (
     Alert,
     BoardMemberDetails,
     CommitteeDisplaySettings,
+    DeletedEventDisplaySettings,
     LAMetroOrganization,
     EventNotice,
     FiscalYearCalendar,
@@ -341,6 +342,26 @@ class CommitteeDisplaySettingsForm(forms.ModelForm):
 
 
 CommitteeDisplaySettings.base_form_class = CommitteeDisplaySettingsForm
+
+
+class DeletedEventDisplaySettingsForm(forms.ModelForm):
+    class Meta:
+        model = DeletedEventDisplaySettings
+        fields = ("deleted_events",)
+        widgets = {"deleted_events": forms.CheckboxSelectMultiple}
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("for_user", None)
+        super().__init__(*args, **kwargs)
+
+        self.fields[
+            "deleted_events"
+        ].queryset = LAMetroEvent.possibly_deleted_meetings().filter(
+            extras__deleted_in_legistar=True
+        )
+
+
+DeletedEventDisplaySettings.base_form_class = DeletedEventDisplaySettingsForm
 
 
 register_snippet(AlertViewSet)

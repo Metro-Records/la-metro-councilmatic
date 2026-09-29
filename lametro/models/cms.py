@@ -429,6 +429,30 @@ class CommitteeDisplaySettings(BaseGenericSetting):
         return "Committee Display Settings"
 
 
+@register_setting
+class DeletedEventDisplaySettings(BaseGenericSetting):
+    """
+    Allowlist of events to display on the website, despite having been deleted in Legistar.
+    """
+
+    include_in_dump = True
+
+    deleted_events = models.ManyToManyField(
+        "lametro.LAMetroEvent",
+        blank=True,
+        related_name="+",
+        limit_choices_to={"extras": {"deleted_in_legistar": True}},
+        help_text=("Select which deleted events to show on the website."),
+    )
+
+    panels = [
+        FieldPanel("deleted_events"),
+    ]
+
+    def __str__(self):
+        return "Deleted Event Display Settings"
+
+
 class Tooltip(models.Model):
     include_in_dump = True
 
