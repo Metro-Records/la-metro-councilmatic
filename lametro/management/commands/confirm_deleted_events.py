@@ -10,20 +10,15 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
-def check_deleted(url: str):
+def check_deleted(url: str, key: str = ""):
     """
     Check API response, return True if response is NOT ok.
     """
-    key = settings.LEGISTAR_TOKEN
 
-    if not key:
-        raise ValueError(
-            "No API key found, please provide one in your "
-            "environment variables so no events are "
-            "incorrectly marked deleted"
-        )
+    if key:
+        url = url + "?token={}".format(key)
 
-    res = requests.get(url + "?token={}".format(key))
+    res = requests.get(url)
     return not res.ok
 
 
@@ -35,10 +30,19 @@ class Command(BaseCommand):
 
     def handle(self):
 
+        key = settings.LEGISTAR_TOKEN
+
+        if not key:
+            raise ValueError(
+                "No API key found, please provide one in your "
+                "environment variables so no events are "
+                "incorrectly marked deleted"
+            )
+
         possible_deletions = LAMetroEvent.possibly_deleted_meetings()
 
         for d in possible_deletions:
             url = d.api_source
             if url:
-                d.extras["deleted_in_legistar"] = check_deleted(url)
+                d.extras["deleted_in_legistar"] = check_deleted(url, key)
                 d.save()
