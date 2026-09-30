@@ -354,7 +354,7 @@ class DeletedEventDisplaySettingsForm(forms.ModelForm):
         kwargs.pop("for_user", None)
         super().__init__(*args, **kwargs)
 
-        self.fields["deleted_events"]
+        self.fields["deleted_events"].queryset = LAMetroEvent.deleted_meetings()
 
 
 DeletedEventDisplaySettings.base_form_class = DeletedEventDisplaySettingsForm
