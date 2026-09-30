@@ -671,6 +671,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             .facet("motion_by")
             .facet("significant_date")
             .facet("plan_program_policy")
+            .facet("matter_body_name")
         )
 
         data = None

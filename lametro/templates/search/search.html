@@ -75,6 +75,13 @@
                 {% include 'search/_search_filter.html' %}
             {% endwith %}
 
+            <!-- Body -->
+            {% if facets.fields.matter_body_name %}
+                {% with facet_name='matter_body_name' facet_label='Body' item_list=facets.fields.matter_body_name selected_list=selected_facets.matter_body_name %}
+                    {% include 'search/_search_filter.html' %}
+                {% endwith %}
+            {% endif %}
+
             <!-- Motion By -->
             {% if facets.fields.motion_by %}
                 {% with facet_name='motion_by' facet_label='Motion By' item_list=facets.fields.motion_by selected_list=selected_facets.motion_by %}
