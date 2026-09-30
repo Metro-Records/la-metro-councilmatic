@@ -228,7 +228,7 @@ class LAMetroEventsView(EventsView):
             event__extras__approved_minutes=True, note__icontains="minutes"
         )
 
-        # A base queryset for non-test objects with media
+        # A base queryset for non-test objects, with media prefetched
         media_events = LAMetroEvent.objects.with_media()
 
         # Did the user set date boundaries?
