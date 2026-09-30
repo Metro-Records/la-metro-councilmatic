@@ -934,14 +934,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         Get a queryset of candidate events to check against Legistar to see
         if they've been deleted.
 
-        Candidates events are those without media, without minutes,
-        and without "test" in the name.
+        Candidates events are those without media and without minutes.
         """
 
-        return (
-            cls.unfiltered.filter(media__isnull=True)
-            .exclude(documents__note__icontains="minutes")
-            .exclude(name__icontains="test")
+        return cls.unfiltered.filter(media__isnull=True).exclude(
+            documents__note__icontains="minutes"
         )
 
     @classmethod
