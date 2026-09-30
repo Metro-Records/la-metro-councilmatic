@@ -441,7 +441,7 @@ class DeletedEventDisplaySettings(BaseGenericSetting):
         "lametro.LAMetroEvent",
         blank=True,
         related_name="+",
-        limit_choices_to={"extras": {"deleted_in_legistar": True}},
+        limit_choices_to=models.Q(extras__deleted_in_legistar=True),
         help_text=("Select which deleted events to show on the website."),
     )
 
