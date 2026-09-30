@@ -60,7 +60,7 @@ class Command(BaseCommand):
         for d in possible_deletions:
             url = str(d.api_source)
             web = str(d.web_source)
-            if url:
+            if url and not d.extras["deleted_in_legistar"]:
                 deleted = check_deleted(url, key)
                 if deleted:
                     print(f"DEL: {d.event} not found. See {web}")
