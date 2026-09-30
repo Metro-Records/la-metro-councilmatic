@@ -77,7 +77,7 @@ from lametro.forms import (
 from lametro.services import EventService
 from lametro.exceptions import HerokuRequestError
 
-from councilmatic.settings_jurisdiction import MEMBER_BIOS
+from councilmatic.settings_jurisdiction import MEMBER_BIOS, TEST_BODIES
 
 from opencivicdata.legislative.models import EventDocument
 
@@ -673,6 +673,10 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             .facet("plan_program_policy")
             .facet("matter_body_name")
         )
+
+        # Should we include test bills in search results?
+        if not settings.SHOW_TEST_OBJECTS:
+            sqs = sqs.exclude(matter_body_name__in=TEST_BODIES)
 
         data = None
         kwargs = {

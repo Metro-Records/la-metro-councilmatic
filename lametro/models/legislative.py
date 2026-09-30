@@ -42,8 +42,11 @@ from lametro.utils import (
     timed_get,
     LAMetroRequestTimeoutException,
 )
-from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
-
+from councilmatic.settings_jurisdiction import (
+    BILL_STATUS_DESCRIPTIONS,
+    MEMBER_BIOS,
+    TEST_BODIES,
+)
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 logger = logging.getLogger(__name__)
@@ -99,6 +102,10 @@ class LAMetroBillManager(models.Manager):
         may slip through the crevices of Councilmatic display logic.
         """
         qs = super().get_queryset()
+
+        # Should we return test bills?
+        if not settings.SHOW_TEST_OBJECTS:
+            qs = qs.exclude(extras__matter_body_name__in=TEST_BODIES)
 
         on_published_agenda = Q(
             eventrelatedentity__agenda_item__event__status="passed"
