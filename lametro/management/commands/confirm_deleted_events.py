@@ -63,12 +63,13 @@ class Command(BaseCommand):
             if url and not d.extras["deleted_in_legistar"]:
                 deleted = check_deleted(url, key)
                 if deleted:
-                    print(f"DEL: {d.event} not found. See {web}")
+                    logger.info(f"DEL: {d.event} not found. See {web}")
+                    deleted_count += 1
                 d.extras["deleted_in_legistar"] = deleted
                 d.save()
 
-                if deleted:
-                    deleted_count += 1
+            if d.extras["deleted_in_legistar"]:
+                logger.info(f"DEL: {d.event} already marked as deleted. See {web}")
 
         logger.info(
             f"{deleted_count}/{len(possible_deletions)} events marked as deleted"
