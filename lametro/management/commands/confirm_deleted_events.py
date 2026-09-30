@@ -22,6 +22,15 @@ def check_deleted(url: str, key: str = ""):
     return not res.ok
 
 
+def legistar_online() -> bool:
+    """
+    Check if Legistar API is online.
+    """
+
+    res = requests.get("https://webapi.legistar.com/v1/metro/bodytypes")
+    return res.status_code == 200
+
+
 class Command(BaseCommand):
     """
     Check Legistar for possibly deleted events, and flag all events that
@@ -44,6 +53,9 @@ class Command(BaseCommand):
         logger.info(f"{len(possible_deletions)} possibly deleted meetings found")
 
         deleted_count = 0
+
+        if not legistar_online():
+            raise Exception("Legistar API not reachable.")
 
         for d in possible_deletions:
             url = str(d.api_source)
