@@ -45,14 +45,15 @@ class Command(BaseCommand):
             raise ValueError(
                 "No API key found, please provide one in your "
                 "environment variables so no events are "
-                "incorrectly marked deleted"
+                "incorrectly marked deleted."
             )
 
         possible_deletions = LAMetroEvent.possibly_deleted_meetings()
 
-        logger.info(f"{len(possible_deletions)} possibly deleted meetings found")
+        logger.info(f"{len(possible_deletions)} possibly deleted meetings found.")
 
         deleted_count = 0
+        skipped_count = 0
 
         if not legistar_online():
             raise Exception("Legistar API not reachable.")
@@ -69,8 +70,10 @@ class Command(BaseCommand):
                 d.save()
 
             if d.extras["deleted_in_legistar"]:
-                logger.info(f"DEL: {d.event} already marked as deleted. See {web}")
+                logger.info(f"SKIP: {d.event} already marked as deleted. See {web}")
+                skipped_count += 1
 
         logger.info(
-            f"{deleted_count}/{len(possible_deletions)} events marked as deleted"
+            f"{deleted_count}/{len(possible_deletions)} events marked as deleted.\n",
+            f"{skipped_count} already marked items still in database.",
         )
