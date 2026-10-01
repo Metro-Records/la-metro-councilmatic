@@ -36,6 +36,7 @@ from councilmatic_core.models import (
     Membership as CoreMembership,
 )
 
+from lametro.models.cms import DeletedEventDisplaySettings
 from lametro.utils import (
     format_full_text,
     parse_subject,
@@ -490,7 +491,24 @@ class LAMetroEventManager(EventManager):
         when getting event querysets. If a test event slips through, it is
         likely because we used the default Event to get the queryset.
         """
-        return super().get_queryset().exclude(location__name__icontains="test")
+
+        qs = super().get_queryset().exclude(location__name__icontains="test")
+
+        # hide deleted events, but allow overridden events to show
+        override = DeletedEventDisplaySettings.deleted_events.through.objects.values(
+            "lametroevent_id"
+        )
+
+        deleted = (
+            super()
+            .get_queryset()
+            .filter(extras__deleted_in_legistar=True)
+            .exclude(pk__in=override)
+        )
+
+        qs = qs.exclude(id__in=deleted)
+
+        return qs
 
     def including_test_events(self):
         return super().get_queryset()
@@ -602,6 +620,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     CURRENT_MEETING_WINDOW_IN_HOURS = 6
 
     objects = LAMetroEventManager()
+    unfiltered = EventManager()
 
     class Meta:
         proxy = True
@@ -908,6 +927,26 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         return cls.objects.filter(
             start_time__gte=today_utc, start_time__lt=tomorrow_utc
         ).prefetch_related("broadcast", "location")
+
+    @classmethod
+    def possibly_deleted_meetings(cls):
+        """
+        Get a queryset of candidate events to check against Legistar to see
+        if they've been deleted.
+
+        Candidates events are those without media and without minutes.
+        """
+
+        return cls.unfiltered.filter(media__isnull=True).exclude(
+            documents__note__icontains="minutes"
+        )
+
+    @classmethod
+    def deleted_meetings(cls):
+        """
+        Meetings in board agendas site DB, but not in Legistar.
+        """
+        return cls.unfiltered.filter(extras__deleted_in_legistar=True)
 
     @property
     def display_status(self):

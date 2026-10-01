@@ -29,6 +29,7 @@ from lametro.models import (
     Alert,
     BoardMemberDetails,
     CommitteeDisplaySettings,
+    DeletedEventDisplaySettings,
     LAMetroOrganization,
     EventNotice,
     FiscalYearCalendar,
@@ -343,6 +344,22 @@ class CommitteeDisplaySettingsForm(forms.ModelForm):
 CommitteeDisplaySettings.base_form_class = CommitteeDisplaySettingsForm
 
 
+class DeletedEventDisplaySettingsForm(forms.ModelForm):
+    class Meta:
+        model = DeletedEventDisplaySettings
+        fields = ("deleted_events",)
+        widgets = {"deleted_events": forms.CheckboxSelectMultiple}
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("for_user", None)
+        super().__init__(*args, **kwargs)
+
+        self.fields["deleted_events"].queryset = LAMetroEvent.deleted_meetings()
+
+
+DeletedEventDisplaySettings.base_form_class = DeletedEventDisplaySettingsForm
+
+
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
@@ -488,14 +505,14 @@ def register_analytics_menu_item():
     )
 
 
-# Construct settings menu without Committee Display Settings, then add it to main menu
+# Construct settings menu without certain items
 @hooks.register("construct_settings_menu")
 def hide_user_menu_item(request, menu_items):
-    menu_items[:] = [
-        item for item in menu_items if item.name != "committee-display-settings"
-    ]
+    exclude = ["committee-display-settings", "deleted-event-display-settings"]
+    menu_items[:] = [item for item in menu_items if item.name not in exclude]
 
 
+# Add those items to the main menu
 @hooks.register("register_admin_menu_item")
 def register_committee_display_settings_menu_item():
     return MenuItem(
@@ -503,4 +520,16 @@ def register_committee_display_settings_menu_item():
         reverse("wagtailsettings:edit", args=["lametro", "committeedisplaysettings"]),
         icon_name="list-ul",
         order=204,
+    )
+
+
+@hooks.register("register_admin_menu_item")
+def register_deleted_event_display_settings_menu_item():
+    return MenuItem(
+        "Deleted Event Display Settings",
+        reverse(
+            "wagtailsettings:edit", args=["lametro", "deletedeventdisplaysettings"]
+        ),
+        icon_name="list-ul",
+        order=205,
     )
