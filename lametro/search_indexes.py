@@ -25,6 +25,7 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
     significant_date = indexes.MultiValueField(faceted=True)
     motion_by = indexes.MultiValueField(faceted=True)
     plan_program_policy = indexes.MultiValueField(faceted=True)
+    matter_body_name = indexes.CharField(faceted=True)
 
     # Preloaded fields for display
     listing_description = indexes.CharField(indexed=False)
@@ -124,6 +125,9 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
     def prepare_plan_program_policy(self, obj):
         return self._topics_from_classification(obj, "plan_program_policy_exact")
+
+    def prepare_matter_body_name(self, obj):
+        return obj.extras.get("matter_body_name")
 
     def _topics_from_classification(self, obj, classification):
         """
