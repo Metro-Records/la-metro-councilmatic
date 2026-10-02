@@ -355,10 +355,10 @@ def get_events_with_manual_broadcasts():
 
 
 @register.filter
-def bill_status_from_last_action(description):
+def bill_status_from_event_action(description):
     if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
         return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
-    return None
+    return ""
 
 
 @register.inclusion_tag("snippets/fiscal_year_calendars.html", takes_context=True)
