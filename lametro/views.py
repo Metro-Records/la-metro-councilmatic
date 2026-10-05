@@ -5,7 +5,7 @@ from dateutil import parser
 import requests
 import logging
 
-from haystack.query import SearchQuerySet
+from haystack.query import SearchQuerySet, SQ
 
 import pytz
 
@@ -676,7 +676,10 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
 
         # Should we include test bills in search results?
         if not settings.SHOW_TEST_OBJECTS:
-            sqs = sqs.exclude(matter_body_name__in=TEST_BODIES)
+            test_obj_filter = ~SQ(extras__matter_body_name__in=TEST_BODIES) | SQ(
+                extras__matter_body_name__isnull=True
+            )
+            sqs = sqs.filter(test_obj_filter)
 
         data = None
         kwargs = {

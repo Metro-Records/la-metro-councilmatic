@@ -105,7 +105,10 @@ class LAMetroBillManager(models.Manager):
 
         # Should we return test bills?
         if not settings.SHOW_TEST_OBJECTS:
-            qs = qs.exclude(extras__matter_body_name__in=TEST_BODIES)
+            test_obj_filter = ~Q(extras__matter_body_name__in=TEST_BODIES) | Q(
+                extras__matter_body_name__isnull=True
+            )
+            qs = qs.filter(test_obj_filter)
 
         on_published_agenda = Q(
             eventrelatedentity__agenda_item__event__status="passed"
