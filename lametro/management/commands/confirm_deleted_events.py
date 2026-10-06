@@ -67,7 +67,8 @@ class Command(BaseCommand):
                     logger.info(f"DEL: {d.event} not found. See {web}")
                     deleted_count += 1
                 d.extras["deleted_in_legistar"] = deleted
-                d.save()
+
+            LAMetroEvent.objects.bulk_update(possible_deletions, ["extras"])
 
             if d.extras["deleted_in_legistar"]:
                 logger.info(f"SKIP: {d.event} already marked as deleted. See {web}")
