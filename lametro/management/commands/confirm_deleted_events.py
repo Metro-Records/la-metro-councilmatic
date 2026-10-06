@@ -48,8 +48,10 @@ class Command(BaseCommand):
                 "incorrectly marked deleted."
             )
 
-        possible_deletions = LAMetroEvent.unfiltered.filter(media__isnull=True).exclude(
-            documents__note__icontains="minutes"
+        possible_deletions = (
+            LAMetroEvent.objects.including_test_and_deleted_events.filter(
+                media__isnull=True
+            ).exclude(documents__note__icontains="minutes")
         )
 
         logger.info(f"{len(possible_deletions)} possibly deleted meetings found.")

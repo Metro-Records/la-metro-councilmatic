@@ -148,7 +148,9 @@ def event(db, jurisdiction):
             event = LAMetroEvent.objects.create(**event_info)
 
             # Get event from queryset so it has the start_time annotation from the manager
-            metro_event = LAMetroEvent.objects.including_test_events().get(id=event.id)
+            metro_event = LAMetroEvent.objects.including_test_and_deleted_events().get(
+                id=event.id
+            )
 
             if metro_event.start_time < datetime.now(timezone.utc) and has_broadcast:
                 EventBroadcast.objects.create(event=metro_event)

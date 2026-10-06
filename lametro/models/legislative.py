@@ -530,8 +530,10 @@ class LAMetroEventManager(EventManager):
     def get_queryset(self):
         """
         NOTE: Be sure to use LAMetroEvent, rather than the base Event class,
-        when getting event querysets. If a test event slips through, it is
-        likely because we used the default Event to get the queryset.
+        when getting event querysets. If a test event or deleted event slips
+        through, it is likely because we used the default Event to get the
+        queryset.
+
         """
 
         qs = super().get_queryset().exclude(location__name__icontains="test")
@@ -552,7 +554,7 @@ class LAMetroEventManager(EventManager):
 
         return qs
 
-    def including_test_events(self):
+    def including_test_and_deleted_events(self):
         return super().get_queryset()
 
     def with_media(self):
@@ -662,7 +664,6 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     CURRENT_MEETING_WINDOW_IN_HOURS = 6
 
     objects = LAMetroEventManager()
-    unfiltered = EventManager()
 
     class Meta:
         proxy = True
@@ -739,7 +740,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         )
 
         return (
-            cls.objects.including_test_events()
+            cls.objects.including_test_and_deleted_events()
             .prefetch_related("broadcast")
             .filter(
                 start_time__gte=current_window_start,
