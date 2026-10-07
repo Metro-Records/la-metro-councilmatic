@@ -93,10 +93,11 @@ class Command(BaseCommand):
                 skipped_count += 1
 
         if (len(to_mark_deleted) - deleted_test_count) > max_failsafe:
-            raise Exception(
+            logger.error(
                 f"Failsafe: More than {max_failsafe} events flagged as deleted, "
-                "not including {deleted_test_count} test events."
+                f"not including {deleted_test_count} test events."
             )
+            raise Exception("Failsafe")
         else:
             LAMetroEvent.objects.bulk_update(to_mark_deleted, ["extras"])
 
