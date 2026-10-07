@@ -65,7 +65,7 @@ class Command(BaseCommand):
 
         logger.info(f"{len(possible_deletions)} possibly deleted meetings found.")
 
-        deleted_count: int = 0
+        to_mark_deleted = []
         deleted_test_count: int = 0
         skipped_count: int = 0
         max_failsafe: int = options["max"]
@@ -79,7 +79,7 @@ class Command(BaseCommand):
             if url and "deleted_in_legistar" not in d.extras:
                 deleted = check_deleted(url, key)
                 if deleted:
-                    deleted_count += 1
+                    to_mark_deleted.append(d)
                     logger.info(f"DEL: {d.event} not found. See {web}")
 
                     if "test" in d.event.lower():
@@ -91,16 +91,16 @@ class Command(BaseCommand):
                 logger.info(f"SKIP: {d.event} already marked as deleted. See {web}")
                 skipped_count += 1
 
-        if (deleted_count - deleted_test_count) > max_failsafe:
+        if (len(to_mark_deleted) - deleted_test_count) > max_failsafe:
             raise Exception(
                 f"Failsafe: More than {max_failsafe} events flagged as deleted, "
                 "not including {deleted_test_count} test events."
             )
         else:
-            LAMetroEvent.objects.bulk_update(possible_deletions, ["extras"])
+            LAMetroEvent.objects.bulk_update(to_mark_deleted, ["extras"])
 
         logger.info(
-            f"{deleted_count}/{len(possible_deletions)} events marked as deleted, "
-            "including {deleted_test_count} test events.\n",
+            f"{len(to_mark_deleted)}/{len(possible_deletions)} events marked as deleted, "
+            f"including {deleted_test_count} test events.\n"
             f"{skipped_count} already marked items still in database.",
         )
