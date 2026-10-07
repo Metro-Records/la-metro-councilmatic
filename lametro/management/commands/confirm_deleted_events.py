@@ -99,6 +99,7 @@ class Command(BaseCommand):
             LAMetroEvent.objects.bulk_update(possible_deletions, ["extras"])
 
         logger.info(
-            f"{deleted_count}/{len(possible_deletions)} events marked as deleted.\n",
+            f"{deleted_count}/{len(possible_deletions)} events marked as deleted, "
+            "including {deleted_test_count} test events.\n",
             f"{skipped_count} already marked items still in database.",
         )
