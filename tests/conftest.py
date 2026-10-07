@@ -9,6 +9,7 @@ from opencivicdata.legislative.models import (
     EventAgendaItem,
     EventRelatedEntity,
     EventParticipant,
+    EventSource,
 )
 from opencivicdata.core.models import Jurisdiction, Division
 from opencivicdata.legislative.models import EventDocument, BillAction, EventLocation
@@ -132,6 +133,7 @@ def legislative_session(db, jurisdiction):
 def event(db, jurisdiction):
     class EventFactory:
         def build(self, has_broadcast=True, **kwargs):
+
             event_info = {
                 "id": "ocd-event/17fdaaa3-0aba-4df0-9893-2c2e8e94d18d",
                 "created_at": "2017-05-27 11:10:46.574-05",
@@ -158,6 +160,27 @@ def event(db, jurisdiction):
             return metro_event
 
     return EventFactory()
+
+
+@pytest.fixture
+def event_source(db, event):
+    class EventSourceFactory:
+        def build(self, **kwargs):
+            event_source_info = {
+                "note": "web",
+                "url": "url.com.fake",
+            }
+
+            if not kwargs.get("event"):
+                kwargs["event"] = event.build()
+
+            event_source_info.update(kwargs)
+
+            event_source = EventSource.objects.create(**event_source_info)
+
+            return event_source
+
+    return EventSourceFactory()
 
 
 @pytest.fixture
