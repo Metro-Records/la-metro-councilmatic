@@ -206,11 +206,14 @@ class LAMetroBill(Bill, SourcesMixin):
             latest_statuses = {}
             for org in unique_orgs:
                 for a in reversed(aa):
-                    if a.get("organization") == org and a["description"] == "withdrawn":
-                        pass
-                    elif a.get("organization") == org:
-                        latest_statuses[org] = self._status(a["description"])
-                        break
+                    if a.get("organization") == org:
+                        org_status = self._status(a["description"])
+                        print(org_status)
+                        if not org_status or org_status in ["Withdrawn", "None"]:
+                            break
+                        else:
+                            latest_statuses[org] = org_status
+                            break
 
             # After dropping withdrawn, if only one org left, use that status
             if len(latest_statuses) == 1:
