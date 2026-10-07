@@ -37,6 +37,15 @@ class Command(BaseCommand):
     are not found, that is, that have actually been deleted.
     """
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--max",
+            required=False,
+            default=10,
+            type=int,
+            help="Max number of items allowed to be flagged as deleted in Legistar at once (not counting test events).",
+        )
+
     def handle(self, *args, **options):
 
         key = settings.LEGISTAR_TOKEN
@@ -56,8 +65,10 @@ class Command(BaseCommand):
 
         logger.info(f"{len(possible_deletions)} possibly deleted meetings found.")
 
-        deleted_count = 0
-        skipped_count = 0
+        deleted_count: int = 0
+        deleted_test_count: int = 0
+        skipped_count: int = 0
+        max_failsafe: int = options["max"]
 
         if not legistar_online():
             raise Exception("Legistar API not reachable.")
@@ -68,15 +79,24 @@ class Command(BaseCommand):
             if url and not d.extras["deleted_in_legistar"]:
                 deleted = check_deleted(url, key)
                 if deleted:
-                    logger.info(f"DEL: {d.event} not found. See {web}")
                     deleted_count += 1
+                    logger.info(f"DEL: {d.event} not found. See {web}")
+
+                    if "test" in d.event.lower():
+                        deleted_test_count += 1
+
                 d.extras["deleted_in_legistar"] = deleted
 
-            LAMetroEvent.objects.bulk_update(possible_deletions, ["extras"])
-
-            if d.extras["deleted_in_legistar"]:
+            elif d.extras["deleted_in_legistar"]:
                 logger.info(f"SKIP: {d.event} already marked as deleted. See {web}")
                 skipped_count += 1
+
+        if (deleted_count - deleted_test_count) > max_failsafe:
+            raise Exception(
+                f"Failsafe: More than {max_failsafe} events flagged as deleted."
+            )
+        else:
+            LAMetroEvent.objects.bulk_update(possible_deletions, ["extras"])
 
         logger.info(
             f"{deleted_count}/{len(possible_deletions)} events marked as deleted.\n",
