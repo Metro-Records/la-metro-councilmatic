@@ -77,12 +77,13 @@ class Command(BaseCommand):
             url = str(d.api_source)
             web = str(d.web_source)
             if url and "deleted_in_legistar" not in d.extras:
+
                 deleted = check_deleted(url, key)
                 if deleted:
                     to_mark_deleted.append(d)
                     logger.info(f"DEL: {d.event} not found. See {web}")
 
-                    if "test" in d.event.lower():
+                    if "test" in d.event.name.lower():
                         deleted_test_count += 1
 
                 d.extras["deleted_in_legistar"] = deleted
