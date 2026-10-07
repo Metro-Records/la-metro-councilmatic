@@ -19,13 +19,14 @@
   </div>
 
   <div class="col-4">
-    {% if e.status == "cancelled" %}
-    <small class="label label-stale">Cancelled</small>
-    {% endif %}
 
     {% for link in e.agenda_link %}
       <a href="{{ link | safe }}">Agenda {% if not forloop.first %}{{ forloop.counter }}{% endif %}</a>
     {% endfor %}
+    {% if e.status == "cancelled" %}
+      <small class="label label-stale">Cancelled</small>
+    {% endif %}
+
   </div>
 
   <div class="col-4">
