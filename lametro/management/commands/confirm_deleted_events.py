@@ -93,7 +93,8 @@ class Command(BaseCommand):
 
         if (deleted_count - deleted_test_count) > max_failsafe:
             raise Exception(
-                f"Failsafe: More than {max_failsafe} events flagged as deleted."
+                f"Failsafe: More than {max_failsafe} events flagged as deleted, "
+                "not including {deleted_test_count} test events."
             )
         else:
             LAMetroEvent.objects.bulk_update(possible_deletions, ["extras"])
