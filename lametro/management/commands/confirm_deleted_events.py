@@ -58,9 +58,9 @@ class Command(BaseCommand):
             )
 
         possible_deletions = (
-            LAMetroEvent.objects.including_test_and_deleted_events.filter(
-                media__isnull=True
-            ).exclude(documents__note__icontains="minutes")
+            LAMetroEvent.objects.including_test_and_deleted_events()
+            .filter(media__isnull=True)
+            .exclude(documents__note__icontains="minutes")
         )
 
         logger.info(f"{len(possible_deletions)} possibly deleted meetings found.")
@@ -76,7 +76,7 @@ class Command(BaseCommand):
         for d in possible_deletions:
             url = str(d.api_source)
             web = str(d.web_source)
-            if url and not d.extras["deleted_in_legistar"]:
+            if url and "deleted_in_legistar" not in d.extras:
                 deleted = check_deleted(url, key)
                 if deleted:
                     deleted_count += 1
@@ -87,7 +87,7 @@ class Command(BaseCommand):
 
                 d.extras["deleted_in_legistar"] = deleted
 
-            elif d.extras["deleted_in_legistar"]:
+            elif d.extras.get("deleted_in_legistar"):
                 logger.info(f"SKIP: {d.event} already marked as deleted. See {web}")
                 skipped_count += 1
 
