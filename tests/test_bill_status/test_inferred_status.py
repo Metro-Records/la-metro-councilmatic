@@ -67,8 +67,8 @@ def test_inferred_status_one_org_agenda_actions(
 @pytest.mark.parametrize(
     "first_description, second_description, expected",
     [
-        ("Withdrawn", "Received", ""),
-        ("Carried over", "Withdrawn", ""),
+        ("Withdrawn", "Received", "Received"),
+        ("Failed", "Adopted as amended", ""),
         ("Received", "Carried over", "Active"),
     ],
 )
@@ -89,6 +89,8 @@ def test_inferred_status_two_orgs_no_board(
 ):
     """
     This case was the cause of issue #1278.
+
+    If Withdrawn is one of the statuses, don't count it, surface the other one.
 
     If the bill appears in two non-board meetings,
     test inferred status returns only "Active" statuses, else "",
@@ -121,7 +123,7 @@ def test_inferred_status_two_orgs_no_board(
 @pytest.mark.parametrize(
     "description, expected",
     [
-        ("Withdrawn", ""),
+        ("Withdrawn", "Received"),
         ("Received", ""),
         ("Forwarded without recommendation", "Active"),
     ],
@@ -134,6 +136,7 @@ def test_inferred_status_two_orgs_including_unapproved_board(
     second_org,
     unapproved_board_agenda_item,
     second_event_date,
+    board_event_date,
     description,
     expected,
     board_org,
@@ -154,7 +157,14 @@ def test_inferred_status_two_orgs_including_unapproved_board(
         description=description,
     )
 
-    assert len(some_bill.actions_and_agendas) == 3
+    bill_action.build(
+        bill=some_bill,
+        organization=board_org,
+        date=board_event_date,
+        description="received",
+    )
+
+    assert len(some_bill.actions_and_agendas) == 4
     assert some_bill.inferred_status == expected
 
 
@@ -201,7 +211,7 @@ def test_inferred_status_two_orgs_including_board_meeting_with_approved_minutes(
         bill=some_bill,
         organization=second_org,
         date=second_event_date,
-        description="withdrawn",
+        description="failed",
         order=2,
     )
 
