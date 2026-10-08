@@ -36,6 +36,7 @@ from councilmatic_core.models import (
     Membership as CoreMembership,
 )
 
+from lametro.models.cms import DeletedEventDisplaySettings
 from lametro.utils import (
     format_full_text,
     parse_subject,
@@ -529,12 +530,31 @@ class LAMetroEventManager(EventManager):
     def get_queryset(self):
         """
         NOTE: Be sure to use LAMetroEvent, rather than the base Event class,
-        when getting event querysets. If a test event slips through, it is
-        likely because we used the default Event to get the queryset.
-        """
-        return super().get_queryset().exclude(location__name__icontains="test")
+        when getting event querysets. If a test event or deleted event slips
+        through, it is likely because we used the default Event to get the
+        queryset.
 
-    def including_test_events(self):
+        """
+
+        qs = super().get_queryset().exclude(location__name__icontains="test")
+
+        # hide deleted events, but allow overridden events to show
+        override = DeletedEventDisplaySettings.deleted_events.through.objects.values(
+            "lametroevent_id"
+        )
+
+        deleted = (
+            super()
+            .get_queryset()
+            .filter(extras__deleted_in_legistar=True)
+            .exclude(pk__in=override)
+        )
+
+        qs = qs.exclude(id__in=deleted)
+
+        return qs
+
+    def including_test_and_deleted_events(self):
         return super().get_queryset()
 
     def with_media(self):
@@ -720,7 +740,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         )
 
         return (
-            cls.objects.including_test_events()
+            cls.objects.including_test_and_deleted_events()
             .prefetch_related("broadcast")
             .filter(
                 start_time__gte=current_window_start,
