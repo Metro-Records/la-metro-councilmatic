@@ -196,35 +196,51 @@ class LAMetroBill(Bill, SourcesMixin):
             return ""
         status = self._status(latest.description)
 
-        # If on the agenda of more than one org, see if one is the Board of Directors
+        # Get all actions and agenda to find all involved organizations
         aa = self.actions_and_agendas
         unique_orgs = {a["organization"] for a in aa if "organization" in a}
 
         if len(unique_orgs) > 1:
 
-            # If one is the board, use its latest action
-            board_org = Organization.objects.get(name="Board of Directors")
-            if board_org in unique_orgs:
-                # If board agenda approved, return status from the Board Meeting
-                try:
-                    LAMetroEvent.objects.get(
-                        participants__entity_type="organization",
-                        participants__organization=board_org.id,
-                        start_time__date=latest.date,
-                        extras__approved_minutes=True,
-                    )
-                    for a in reversed(aa):
-                        if a.get("organization") == board_org:
-                            return self._status(a["description"])
+            # Get the latest action per organization and drop "withdrawn" orgs
+            latest_statuses = {}
+            for org in unique_orgs:
+                for a in reversed(aa):
+                    if a.get("organization") == org:
+                        org_status = self._status(a["description"])
+                        print(org_status)
+                        if not org_status or org_status in ["Withdrawn", "None"]:
+                            break
+                        else:
+                            latest_statuses[org] = org_status
+                            break
 
-                # If board agenda not approved, fall through
-                except LAMetroEvent.DoesNotExist:
-                    pass
+            # After dropping withdrawn, if only one org left, use that status
+            if len(latest_statuses) == 1:
+                for remaining_status in latest_statuses.values():
+                    return remaining_status
+            # If there are still multiple orgs, and one is the board, use its latest action
+            else:
+                board_org = Organization.objects.get(name="Board of Directors")
+                if board_org in unique_orgs:
+                    # If board agenda approved, return status from the Board Meeting
+                    try:
+                        LAMetroEvent.objects.get(
+                            participants__entity_type="organization",
+                            participants__organization=board_org.id,
+                            start_time__date=latest.date,
+                            extras__approved_minutes=True,
+                        )
+                        return latest_statuses[board_org]
 
-            # If board is not one of the orgs, only Active tag allowed
-            return status if status == "Active" else ""
+                    # If board agenda not approved, fall through
+                    except LAMetroEvent.DoesNotExist:
+                        pass
 
-        # Only one org involved just return latest status
+                # If board is not one of the orgs, only Active tag allowed
+                return status if status == "Active" else ""
+
+        # Only one org involved ever just return latest status
         return status
 
     # LA METRO CUSTOMIZATION
