@@ -44,6 +44,7 @@ env = environ.Env(
     LEGISTAR_TOKEN=(str, ""),
     TRANSLATION_SUITE_URL=(str, ""),
     TRANSLATION_API_KEY=(str, ""),
+    SHOW_TEST_OBJECTS=(bool, True),
 )
 
 # Core Django Settings
@@ -55,6 +56,11 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+
+# If False, site will not show detail pages or search results for bills
+# whose MatterBodyName that matches values included in TEST_BODIES in
+# councilmatic/settings_jurisdiction.py
+SHOW_TEST_OBJECTS = env.bool("SHOW_TEST_OBJECTS")
 
 # Derive allowed origins from configured hosts
 CSRF_TRUSTED_ORIGINS = []

@@ -5,7 +5,7 @@ from dateutil import parser
 import requests
 import logging
 
-from haystack.query import SearchQuerySet
+from haystack.query import SearchQuerySet, SQ
 
 import pytz
 
@@ -77,7 +77,7 @@ from lametro.forms import (
 from lametro.services import EventService
 from lametro.exceptions import HerokuRequestError
 
-from councilmatic.settings_jurisdiction import MEMBER_BIOS
+from councilmatic.settings_jurisdiction import MEMBER_BIOS, TEST_BODIES
 
 from opencivicdata.legislative.models import EventDocument
 
@@ -673,6 +673,13 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             .facet("plan_program_policy")
             .facet("matter_body_name")
         )
+
+        # Should we include test bills in search results?
+        if not settings.SHOW_TEST_OBJECTS:
+            test_obj_filter = ~SQ(extras__matter_body_name__in=TEST_BODIES) | SQ(
+                extras__matter_body_name__isnull=True
+            )
+            sqs = sqs.filter(test_obj_filter)
 
         data = None
         kwargs = {
