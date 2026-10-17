@@ -670,8 +670,10 @@ def test_test_events_only_shown_on_homepage_when_current(event, client, jurisdic
         assert event_test.name not in response.content.decode("utf-8")
         assert event_regular.name in response.content.decode("utf-8")
 
-        streaming_test_event = LAMetroEvent.objects.including_test_events().filter(
-            id=event_test.id
+        streaming_test_event = (
+            LAMetroEvent.objects.including_test_and_deleted_events().filter(
+                id=event_test.id
+            )
         )
 
         with patch.object(
