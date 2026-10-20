@@ -7,6 +7,7 @@ import requests
 import logging
 
 from haystack.query import SearchQuerySet
+from haystack.views import FacetedSearchView
 
 import pytz
 
@@ -44,7 +45,6 @@ from django.core.serializers import serialize
 from django.core.management import call_command
 from django.core.cache import cache
 
-from councilmatic_core.views import CouncilmaticFacetedSearchView
 from councilmatic_core.models import Organization, Membership
 
 from opencivicdata.core.models import PersonLink
@@ -657,7 +657,7 @@ class LAPersonDetailView(DetailView):
         return context
 
 
-class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
+class LAMetroCouncilmaticFacetedSearchView(FacetedSearchView):
     def __init__(self, *args, **kwargs):
         kwargs["form_class"] = LAMetroCouncilmaticSearchForm
         super(LAMetroCouncilmaticFacetedSearchView, self).__init__(*args, **kwargs)
