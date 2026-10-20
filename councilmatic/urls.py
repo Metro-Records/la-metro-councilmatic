@@ -12,9 +12,6 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from councilmatic_core.views import CouncilmaticSearchForm, pdfviewer
-from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
-
 from lametro.api import (
     PublicComment,
     refresh_guid_trigger,
@@ -41,10 +38,11 @@ from lametro.views import (
     MinutesView,
     TagAnalyticsView,
     TranslationFilesView,
+    pdfviewer,
     pong,
     test_logging,
 )
-from lametro.feeds import LAMetroPersonDetailFeed
+from lametro.feeds import CouncilmaticFacetedSearchFeed, LAMetroPersonDetailFeed
 
 
 patterns = (
@@ -56,9 +54,7 @@ patterns = (
         ),
         url(
             r"^search/",
-            LAMetroCouncilmaticFacetedSearchView(
-                searchqueryset=EmptySearchQuerySet, form_class=CouncilmaticSearchForm
-            ),
+            LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet),
             name="search",
         ),
         url(r"^archive-search", LAMetroArchiveSearch.as_view(), name="archive-search"),

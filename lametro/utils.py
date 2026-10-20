@@ -1,4 +1,5 @@
 import csv
+import datetime
 import os
 import re
 import pytz
@@ -13,6 +14,15 @@ from haystack.utils.highlighting import Highlighter
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 logger = logging.getLogger(__name__)
+
+
+def to_datetime(date, local=False):
+    dt = datetime.datetime(date.year, date.month, date.day)
+
+    if local:
+        return pytz.timezone(settings.TIME_ZONE).localize(dt)
+
+    return dt
 
 
 class ExactHighlighter(Highlighter):
