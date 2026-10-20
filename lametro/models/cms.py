@@ -395,7 +395,7 @@ class EventAgenda(models.Model):
         super().delete()
 
     def get_url(self):
-        return reverse("lametro:events", kwargs={"slug": self.event.slug})
+        return reverse("lametro:event", kwargs={"slug": self.event.slug})
 
 
 @register_setting
