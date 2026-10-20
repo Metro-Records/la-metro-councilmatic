@@ -18,6 +18,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import render
 from django.templatetags.static import static
@@ -1057,6 +1058,11 @@ def metro_login(request):
 def metro_logout(request):
     logout(request)
     return HttpResponseRedirect("/")
+
+
+@xframe_options_exempt
+def pdfviewer(request):
+    return render(request, "pdfviewer.html")
 
 
 def pong(request):

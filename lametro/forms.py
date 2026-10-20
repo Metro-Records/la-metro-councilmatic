@@ -1,10 +1,19 @@
 from captcha.fields import ReCaptchaField
 from captcha.fields import ReCaptchaV3
 from haystack.backends import SQ
+from haystack.forms import FacetedSearchForm
 from haystack.inputs import Raw
 from haystack.query import EmptySearchQuerySet
 
-from councilmatic_core.views import CouncilmaticSearchForm
+
+class CouncilmaticSearchForm(FacetedSearchForm):
+    def __init__(self, *args, **kwargs):
+        self.load_all = True
+
+        super(CouncilmaticSearchForm, self).__init__(*args, **kwargs)
+
+    def no_query_found(self):
+        return self.searchqueryset.all()
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
