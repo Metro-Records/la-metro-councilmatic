@@ -479,11 +479,11 @@ class LACommitteeDetailView(DetailView):
 
         committee = context["committee"]
 
+        description = None
+
         if getattr(settings, "COMMITTEE_DESCRIPTIONS", None):
             description = settings.COMMITTEE_DESCRIPTIONS.get(committee.slug)
             context["committee_description"] = description
-
-        description = None
 
         seo = {
             **settings.SITE_META,
