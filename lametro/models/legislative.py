@@ -1015,7 +1015,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
 
     @property
     def event_page_url(self):
-        link = reverse("lametro:events", args=(self.slug,))
+        link = reverse("lametro:event", args=(self.slug,))
         return link
 
 

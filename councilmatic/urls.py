@@ -79,9 +79,9 @@ patterns = (
         url(
             r"^event/(?P<slug>[^/]+)/$",
             never_cache(LAMetroEventDetail.as_view()),
-            name="events",
+            name="event",
         ),
-        url(r"^events/$", LAMetroEventsView.as_view(), name="event"),
+        url(r"^events/$", LAMetroEventsView.as_view(), name="events"),
         url(
             r"^person/(?P<slug>[^/]+)/rss/$",
             LAMetroPersonDetailFeed(),
