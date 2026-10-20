@@ -172,6 +172,8 @@ class LAMetroEventDetail(DetailView):
             "title": "%s Event - %s" % (event.name, settings.SITE_META["site_name"]),
         }
 
+        participant_names = [p.entity_name for p in event.participants.all()]
+
         more_context = {
             "USING_ECOMMENT": settings.USING_ECOMMENT,
             "minutes": EventService.get_minutes(event),
@@ -179,6 +181,7 @@ class LAMetroEventDetail(DetailView):
             "agenda": EventService.get_agenda(event),
             "manage_agenda_url": EventService.get_manage_agenda_url(event),
             "notices": EventService.get_notices(event),
+            "participants": Organization.objects.filter(name__in=participant_names),
             "seo": seo,
         }
 
