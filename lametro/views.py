@@ -45,7 +45,6 @@ from django.core.management import call_command
 from django.core.cache import cache
 
 from councilmatic_core.views import (
-    PersonDetailView,
     EventsView,
     CouncilmaticFacetedSearchView,
 )
@@ -524,7 +523,7 @@ class LACommitteeDetailView(DetailView):
         return context
 
 
-class LAPersonDetailView(PersonDetailView):
+class LAPersonDetailView(DetailView):
     model = LAMetroPerson
     template_name = "person/person.html"
     context_object_name = "person"
@@ -552,7 +551,7 @@ class LAPersonDetailView(PersonDetailView):
                 response = HttpResponseNotFound()
             else:
                 response = HttpResponsePermanentRedirect(
-                    reverse("person", args=[person.slug])
+                    reverse("lametro:person", args=[person.slug])
                 )
 
         return response
