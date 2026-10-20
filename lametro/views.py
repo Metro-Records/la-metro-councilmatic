@@ -44,10 +44,7 @@ from django.core.serializers import serialize
 from django.core.management import call_command
 from django.core.cache import cache
 
-from councilmatic_core.views import (
-    EventsView,
-    CouncilmaticFacetedSearchView,
-)
+from councilmatic_core.views import CouncilmaticFacetedSearchView
 from councilmatic_core.models import Organization, Membership
 
 from opencivicdata.core.models import PersonLink
@@ -808,7 +805,7 @@ class LAMetroContactView(LAMetroIndexView):
     template_name = "contact.html"
 
 
-class MinutesView(EventsView):
+class MinutesView(TemplateView):
     template_name = "minutes/minutes.html"
 
     def _get_historical_events(self, start_datetime=None, end_datetime=None):
