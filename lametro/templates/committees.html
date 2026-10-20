@@ -36,22 +36,6 @@
                         <td>{{ committee.current_members | length }}</td>
                     </tr>
                 {% endfor %}
-
-                {% for committee in ad_hoc_list %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'lametro:committee' committee.slug %}">{{ committee.name | committee_topic_only }}</a>
-                        </td>
-                        <td>
-                            {% for person in committee %}
-                                {% if person.role == 'Chair' %}
-                                    {{ person.9 }}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
-                        <td>{{ committee | length }}</td>
-                    </tr>
-                {% endfor %}
             </tbody>
         </table>
     </div>
