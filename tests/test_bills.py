@@ -16,6 +16,8 @@ from councilmatic_core.models import Event
 from lametro.models import LAMetroBill
 from lametro.utils import format_full_text
 
+from councilmatic.settings_jurisdiction import TEST_BODIES
+
 
 # This collection of tests checks the functionality of Bill-specific views, helper functions, and relations.
 def test_bill_url(client, bill):
@@ -296,3 +298,49 @@ def test_private_bill(client, bill):
     url = reverse("lametro:bill_detail", kwargs={"slug": private_bill.slug})
     response = client.get(url)
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_bill_manager_handles_test_bills(
+    bill, event, event_agenda_item, event_related_entity, settings
+):
+    # Make some test bills
+    num_test_bills = len(TEST_BODIES)
+    for i in range(num_test_bills):
+        bill_id = f"ocd-bill/{str(uuid4())}"
+        the_bill = bill.build(
+            id=bill_id,
+            slug=f"2026-test-{i}",
+            extras={"restrict_view": False, "matter_body_name": TEST_BODIES[i]},
+        )
+
+        # Add to an agenda so it's caught by the default bill manager
+        the_event = event.build(id=f"ocd-event/{str(uuid4())}", status="passed")
+        the_agenda_item = event_agenda_item.build(event=the_event)
+        event_related_entity.build(bill=the_bill, agenda_item=the_agenda_item)
+        the_event.save()
+
+    # Do the same for some regular bills
+    num_reg_bills = 5
+    for i in range(num_reg_bills):
+        b = bill.build(
+            id=f"ocd-bill/{str(uuid4())}",
+            slug=f"2026-reg-{i}",
+            extras={"restrict_view": False},
+        )
+        e = event.build(id=f"ocd-event/{str(uuid4())}", status="passed")
+        the_agenda_item = event_agenda_item.build(event=e)
+        event_related_entity.build(bill=b, agenda_item=the_agenda_item)
+        e.save()
+
+    settings.SHOW_TEST_OBJECTS = True
+    expected_num_bills = num_test_bills + num_reg_bills
+    assert (
+        LAMetroBill.objects.count() == expected_num_bills
+    ), "Should include test bills when SHOW_TEST_OBJECTS is True"
+
+    settings.SHOW_TEST_OBJECTS = False
+    expected_num_bills = num_reg_bills
+    assert (
+        LAMetroBill.objects.count() == expected_num_bills
+    ), "Should not include test bills when SHOW_TEST_OBJECTS is False"
