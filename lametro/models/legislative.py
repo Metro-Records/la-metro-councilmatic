@@ -44,7 +44,6 @@ from lametro.utils import (
 )
 from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
 
-
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 logger = logging.getLogger(__name__)
 
@@ -536,7 +535,7 @@ class LiveMediaMixin(object):
     def _valid(self, media_url):
         try:
             response = timed_get(media_url)
-        except (LAMetroRequestTimeoutException, requests.Timeout):
+        except (LAMetroRequestTimeoutException, requests.RequestException):
             return False
 
         if (
