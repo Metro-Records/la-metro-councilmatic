@@ -10,6 +10,10 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
+class DeletedEventsCommandException(Exception):
+    pass
+
+
 def check_deleted(url: str, key: str = ""):
     """
     Check API response, return True if response is NOT ok.
@@ -51,7 +55,7 @@ class Command(BaseCommand):
         key = settings.LEGISTAR_TOKEN
 
         if not key:
-            raise ValueError(
+            raise DeletedEventsCommandException(
                 "No API key found, please provide one in your "
                 "environment variables so no events are "
                 "incorrectly marked deleted."
@@ -71,7 +75,7 @@ class Command(BaseCommand):
         max_failsafe: int = options["max"]
 
         if not legistar_online():
-            raise Exception("Legistar API not reachable.")
+            raise DeletedEventsCommandException("Legistar API not reachable.")
 
         for d in possible_deletions:
             url = str(d.api_source)
@@ -93,11 +97,10 @@ class Command(BaseCommand):
                 skipped_count += 1
 
         if (len(to_mark_deleted) - deleted_test_count) > max_failsafe:
-            logger.error(
+            raise DeletedEventsCommandException(
                 f"Failsafe: More than {max_failsafe} events flagged as deleted, "
                 f"not including {deleted_test_count} test events."
             )
-            raise Exception("Failsafe")
         else:
             LAMetroEvent.objects.bulk_update(to_mark_deleted, ["extras"])
 
