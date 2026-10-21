@@ -631,7 +631,7 @@ class LiveMediaMixin(object):
     def _valid(self, media_url):
         try:
             response = timed_get(media_url)
-        except (LAMetroRequestTimeoutException, requests.Timeout):
+        except (LAMetroRequestTimeoutException, requests.RequestException):
             return False
 
         if (
