@@ -7,7 +7,7 @@ URLS_TO_TEST = [
     "lametro:archive-search",
     "lametro:committees",
     "lametro:council_members",
-    "lametro:event",
+    "lametro:events",
     "lametro:contact",
     "lametro:minutes",
     "lametro:search",
