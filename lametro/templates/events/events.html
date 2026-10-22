@@ -214,15 +214,16 @@
         <aside class="col-md-3 px-0 px-md-2">
             {% include 'events/_events_info_blurb.html' %}
 
+            {% slugurl 'about' as about_url %}
             <div>
                 <p class="my-2">
-                    <a href="{% url 'about' %}#rules"><i class="fa fa-gavel" aria-hidden="true"></i> Board Room Rules</a>
+                    <a href="{{ about_url }}#rules"><i class="fa fa-gavel" aria-hidden="true"></i> Board Room Rules</a>
                 </p>
                 <p class="my-2">
-                    <a href="{% url 'about' %}#procedures"><i class="fa fa-book" aria-hidden="true"></i> Rules &amp; Procedures</a>
+                    <a href="{{ about_url }}#procedures"><i class="fa fa-book" aria-hidden="true"></i> Rules &amp; Procedures</a>
                 </p>
                 <p class="my-2">
-                    <a href="{% url 'about' %}#visit"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit Metro Headquarters Building</a>
+                    <a href="{{ about_url }}#visit"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit Metro Headquarters Building</a>
                 </p>
             </div>
         </aside>
