@@ -471,7 +471,7 @@ def test_delete_button_shows(
     event, admin_client, django_user_model, mocker, event_name
 ):
     e = event.build(name=event_name)
-    event_template = reverse("lametro:events", args=[e.slug])
+    event_template = reverse("lametro:event", args=[e.slug])
 
     api_source = "http://webapi.legistar.com/v1/metro/events/{0}".format(e.slug)
 
@@ -527,7 +527,7 @@ def test_delete_event(event, client, admin_client):
     assert event_in_db.exists()
 
     delete_event = reverse("delete_event", args=[e.slug])
-    admin_redirect_url = reverse("lametro:event")
+    admin_redirect_url = reverse("lametro:events")
 
     user_response = client.get(delete_event)
     assert user_response.url != admin_redirect_url
@@ -546,7 +546,7 @@ def test_private_event(client, event, event_location):
     private_event.location = location
     private_event.save()
 
-    url = reverse("lametro:events", args=[private_event.slug])
+    url = reverse("lametro:event", args=[private_event.slug])
     response = client.get(url)
 
     assert response.status_code == 404
@@ -619,7 +619,7 @@ def test_live_comment_details_display_as_expected(
         return_value={"pdf": [], "rtf": []},
     )
 
-    url = reverse("lametro:events", args=[test_event.slug])
+    url = reverse("lametro:event", args=[test_event.slug])
     response = client.get(url)
     response_content = response.content.decode("utf-8")
 
@@ -635,7 +635,7 @@ def test_test_events_not_shown_on_event_listing(event, client, jurisdiction):
     event_regular = event.build(name="Live Regular Meeting", id=101)
 
     # Check the events calendar
-    url = reverse("lametro:event")
+    url = reverse("lametro:events")
     response = client.get(url)
 
     assert event_test.name not in response.content.decode("utf-8")
@@ -723,7 +723,7 @@ def test_manual_broadcast_permissions(event, client, admin_client, mocker):
     """
     test_event = event.build(has_broadcast=False)
 
-    detail_url = reverse("lametro:events", args=[test_event.slug])
+    detail_url = reverse("lametro:event", args=[test_event.slug])
     make_manual_url = reverse(
         "manual_event_live_link", kwargs={"event_slug": test_event.slug}
     )
@@ -740,6 +740,7 @@ def test_manual_broadcast_permissions(event, client, admin_client, mocker):
     response = admin_client.get(detail_url)
     assert publish_text in response.content.decode("utf-8")
     response = admin_client.get(make_manual_url, follow=True)
+
     assert response.status_code == 200
     assert watch_text in response.content.decode("utf-8")
 
@@ -758,12 +759,12 @@ def test_manually_broadcasted_events(event, admin_client, mocker):
     make_manual_url = reverse(
         "manual_event_live_link", kwargs={"event_slug": test_event.slug}
     )
-    detail_url = reverse("lametro:events", args=[test_event.slug])
+    detail_url = reverse("lametro:event", args=[test_event.slug])
 
     # Create the broadcast
     admin_client.get(make_manual_url)
 
-    response = admin_client.get(reverse("index"))
+    response = admin_client.get(reverse("lametro:index"))
     assert "Current Meeting" in response.content.decode("utf-8")
 
     current_meeting_str = 'meeting currently has a manually published "Watch Live" link'
