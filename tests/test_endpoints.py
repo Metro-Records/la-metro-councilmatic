@@ -38,6 +38,15 @@ def test_urls_accessibility(
 
 
 @pytest.mark.django_db
+def test_search_with_query_renders_results_header(client):
+    url = reverse("lametro:search")
+    response = client.get(url, {"q": "mobility"})
+
+    assert response.status_code == 200
+    assert b"mobility" in response.content
+
+
+@pytest.mark.django_db
 def test_council_members_renders_board_members(client, metro_organization, membership):
     """
     Create membership and make sure that we actually get content, not empty template.
