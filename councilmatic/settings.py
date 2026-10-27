@@ -195,7 +195,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "councilmatic_core.views.city_context",
+                "lametro.context_processors.city_context",
                 "lametro.context_processors.recaptcha_public_key",
             ],
         },
