@@ -5,8 +5,6 @@ from haystack.backends import SQ
 from haystack.forms import FacetedSearchForm
 from haystack.inputs import Raw
 from haystack.query import EmptySearchQuerySet
-
-
 from councilmatic.settings_jurisdiction import TEST_BODIES
 
 
@@ -18,7 +16,6 @@ class CouncilmaticSearchForm(FacetedSearchForm):
 
     def no_query_found(self):
         return self.searchqueryset.all()
-
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
