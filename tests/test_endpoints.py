@@ -34,3 +34,19 @@ def test_urls_accessibility(
     url = reverse(url_name)
     response = client.get(url)
     assert response.status_code == 200, f"{url} should return 200 status code"
+
+
+@pytest.mark.django_db
+def test_council_members_renders_board_members(client, metro_organization, membership):
+    """
+    Create membership and make sure that we actually get content, not empty template.
+    """
+    board = metro_organization.build(name=OCD_CITY_COUNCIL_NAME)
+    person = membership.build(organization=board, role="Board Member").person
+
+    url = reverse("lametro:council_members")
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert person.name.encode() in response.content
+    assert f"/person/{person.slug}/".encode() in response.content
