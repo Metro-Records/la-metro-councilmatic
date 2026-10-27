@@ -44,7 +44,7 @@ env = environ.Env(
     LEGISTAR_TOKEN=(str, ""),
     TRANSLATION_SUITE_URL=(str, ""),
     TRANSLATION_API_KEY=(str, ""),
-    SHOW_TEST_OBJECTS=(bool, True),
+    SHOW_TEST_OBJECTS=(bool, False),
 )
 
 # Core Django Settings
