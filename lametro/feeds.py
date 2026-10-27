@@ -3,10 +3,9 @@ import urllib
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.urls import reverse
+from django.utils.feedgenerator import Rss201rev2Feed
 
 from haystack.query import SearchQuerySet
-
-from councilmatic_core.feeds import PersonDetailFeed
 
 from lametro.models import LAMetroBill, LAMetroPerson
 from lametro.utils import to_datetime
@@ -92,11 +91,16 @@ class CouncilmaticFacetedSearchFeed(Feed):
         return bills
 
 
-class LAMetroPersonDetailFeed(PersonDetailFeed):
+class LAMetroPersonDetailFeed(Feed):
     """The PersonDetailFeed provides an RSS feed for a given committee member,
     returning the most recent 20 bills for which they are the primary sponsor;
     and for each bill, the list of sponsores and the action history.
     """
+
+    title_template = "feeds/person_detail_item_title.html"
+    description_template = "feeds/person_detail_item_description.html"
+    feed_type = Rss201rev2Feed
+    NUM_RECENT_BILLS = 20
 
     model = LAMetroPerson
 
@@ -104,6 +108,26 @@ class LAMetroPersonDetailFeed(PersonDetailFeed):
         o = LAMetroPerson.objects.get(slug=slug)
 
         return o
+
+    def title(self, obj):
+        return (
+            settings.SITE_META["site_name"]
+            + ": "
+            + settings.CITY_VOCAB["COUNCIL_MEMBER"]
+            + " %s: Recently Sponsored Bills" % obj.name
+        )
+
+    def link(self, obj):
+        return reverse("lametro:person", args=(obj.slug,))
+
+    def item_link(self, bill):
+        return reverse("lametro:bill_detail", args=(bill.slug,))
+
+    def item_pubdate(self, bill):
+        return to_datetime(bill.last_action_date)
+
+    def description(self, obj):
+        return "Recent sponsored bills from " + obj.name + "."
 
     def items(self, person):
         person.committee_sponsorships
