@@ -11,6 +11,7 @@ from django.db.models.expressions import RawSQL
 from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.urls import reverse
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -433,6 +434,12 @@ class LAMetroPerson(Person, SourcesMixin):
     @property
     def slug_name(self):
         return slugify(self.name)
+
+    @property
+    def link_html(self):
+        return "<a href='{}'>{}</a>".format(
+            reverse("lametro:person", args=[self.slug]), self.name
+        )
 
     @property
     def latest_council_membership(self):
@@ -1012,6 +1019,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     def has_manual_broadcast(self):
         return self.broadcast.filter(is_manually_live=True).exists()
 
+    @property
+    def event_page_url(self):
+        link = reverse("lametro:event", args=(self.slug,))
+        return link
+
 
 class EventBroadcast(models.Model):
     """
@@ -1054,6 +1066,20 @@ class LAMetroOrganization(Organization, SourcesMixin):
 
     class Meta:
         proxy = True
+
+    @property
+    def link_html(self):
+        link_fmt = '<a href="{0}">{1}</a>'
+
+        if self.classification == "committee":
+            link_path = reverse("lametro:committee", args=(self.slug,))
+            return link_fmt.format(link_path, self.name)
+
+        if self.classification == "legislature":
+            link_path = reverse("lametro:council_members")
+            return link_fmt.format(link_path, self.name)
+
+        return self.name
 
     @property
     def recent_events(self):

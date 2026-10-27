@@ -242,7 +242,7 @@ legislation_types = [
     },
     {
         "name": "Board Box / Board Correspondence",
-        "search_term": "board box",
+        "search_term": "board correspondence",
         "html_id": "board-box",
         "fa_icon": "commenting-o",
         "html_desc": True,

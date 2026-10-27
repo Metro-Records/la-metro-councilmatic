@@ -1,4 +1,4 @@
-{% load adv_cache extras lametro_extras static wagtailcore_tags wagtailuserbar %}
+{% load adv_cache lametro_extras static wagtailcore_tags wagtailuserbar %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,9 +49,12 @@
                             </a>
                             <ul class="dropdown-menu shadow rounded-bottom">
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:council_members' %}">Board of Directors</a></li>
-                                <li><a class="dropdown-item dropdown-size" href="{% url 'committees' %}">Committees</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:committees' %}">Committees</a></li>
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:contact' %}">Contact Us</a></li>
-                                <li><a class="dropdown-item dropdown-size" href="{% slugurl 'about' %}">About Us</a></li>
+                                {% slugurl 'about' as about_url %}
+                                {% if about_url %}
+                                    <li><a class="dropdown-item dropdown-size" href="{{ about_url }}">About Us</a></li>
+                                {% endif %}
                                 {% slugurl 'board-policies' as bp_url %}
                                 {% if bp_url != None %}
                                     <li><a class="dropdown-item dropdown-size" href="{{ bp_url }}">Board Policies</a></li>
@@ -72,7 +75,7 @@
                                 Meetings
                             </a>
                             <ul class="dropdown-menu shadow rounded-bottom">
-                                <li><a class="dropdown-item dropdown-size" href="{% url 'events' %}">{{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></li>
+                                <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:events' %}">{{ CITY_VOCAB.EVENTS }} &amp; Agendas</a></li>
                                 <li><a class="dropdown-item dropdown-size" href="{% url 'lametro:minutes' %}">Minutes</a></li>
                             </ul>
                         </li>
@@ -112,7 +115,10 @@
             </div>
             <ul class="nav col-md-6 justify-content-around justify-content-md-end list-unstyled">
                 <li class="ms-3"><a href="{% url 'lametro:contact' %}">Contact Us</a></li>
-                <li class="ms-3"><a href="{% slugurl 'about' %}">About Us</a></li>
+                {% slugurl 'about' as about_url %}
+                {% if about_url %}
+                    <li class="ms-3"><a href="{{ about_url }}">About Us</a></li>
+                {% endif %}
                 <li class="ms-3"><a href="{% url 'wagtailadmin_home' %}">Metro Login</a></li>
             </ul>
         </footer>

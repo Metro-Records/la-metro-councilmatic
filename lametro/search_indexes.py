@@ -1,13 +1,40 @@
 import json
+import re
 
+from django.utils.html import strip_tags
 from haystack import indexes
-from councilmatic_core.haystack_indexes import BillIndex
 
 from lametro.models import LAMetroBill, LAMetroSubject
 from lametro.utils import format_full_text, parse_subject
 
 
-class LAMetroBillIndex(BillIndex, indexes.Indexable):
+def clean_html(text):
+    value = strip_tags(text).replace("\n", "")
+    return re.sub(r"&(?:\w+|#\d+);", "", value)
+
+
+class LAMetroBillIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(
+        document=True,
+        use_template=True,
+        template_name="search/indexes/councilmatic_core/bill_text.txt",
+    )
+    slug = indexes.CharField(model_attr="slug", indexed=False)
+    id = indexes.CharField(model_attr="id", indexed=False)
+    description = indexes.CharField(model_attr="title", boost=1.25)
+    source_url = indexes.CharField(model_attr="sources__url", indexed=False)
+    source_note = indexes.CharField(model_attr="sources__note")
+    abstract = indexes.CharField(
+        model_attr="abstracts__abstract", boost=1.25, default=""
+    )
+
+    friendly_name = indexes.CharField()
+    sponsorships = indexes.MultiValueField(faceted=True)
+    last_action_date = indexes.DateTimeField()
+    inferred_status = indexes.CharField(faceted=True)
+    legislative_session = indexes.CharField(faceted=True)
+    ocr_full_text = indexes.CharField(model_attr="ocr_full_text", default="")
+
     topics = indexes.MultiValueField(faceted=True)
     attachment_text = indexes.CharField()
     viewable = indexes.BooleanField()
@@ -36,6 +63,22 @@ class LAMetroBillIndex(BillIndex, indexes.Indexable):
 
     def get_model(self):
         return LAMetroBill
+
+    def get_updated_field(self):
+        return "updated_at"
+
+    def prepare_friendly_name(self, obj):
+        return obj.friendly_name
+
+    def prepare_inferred_status(self, obj):
+        return obj.inferred_status
+
+    def prepare_last_action_date(self, obj):
+        if obj.last_action_date:
+            return obj.last_action_date
+
+    def prepare_ocr_full_text(self, obj):
+        return clean_html(obj.ocr_full_text)
 
     def prepare_controlling_body(self, obj):
         return None
