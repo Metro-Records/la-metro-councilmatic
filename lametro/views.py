@@ -46,7 +46,7 @@ from django.core.serializers import serialize
 from django.core.management import call_command
 from django.core.cache import cache
 
-from councilmatic_core.models import Organization, Membership
+from councilmatic_core.models import Membership
 
 from opencivicdata.core.models import PersonLink
 
@@ -178,7 +178,9 @@ class LAMetroEventDetail(DetailView):
             "agenda": EventService.get_agenda(event),
             "manage_agenda_url": EventService.get_manage_agenda_url(event),
             "notices": EventService.get_notices(event),
-            "participants": Organization.objects.filter(name__in=participant_names),
+            "participants": LAMetroOrganization.objects.filter(
+                name__in=participant_names
+            ),
             "seo": seo,
         }
 
@@ -385,7 +387,7 @@ class LABoardMembersView(ListView):
         return maps
 
     def get_queryset(self):
-        board = Organization.objects.get(name=settings.OCD_CITY_COUNCIL_NAME)
+        board = LAMetroOrganization.objects.get(name=settings.OCD_CITY_COUNCIL_NAME)
 
         memberships = board.memberships.filter(
             Q(role="Board Member") | Q(role="Nonvoting Board Member")

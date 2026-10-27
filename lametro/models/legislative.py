@@ -1068,6 +1068,20 @@ class LAMetroOrganization(Organization, SourcesMixin):
         proxy = True
 
     @property
+    def link_html(self):
+        link_fmt = '<a href="{0}">{1}</a>'
+
+        if self.classification == "committee":
+            link_path = reverse("lametro:committee", args=(self.slug,))
+            return link_fmt.format(link_path, self.name)
+
+        if self.classification == "legislature":
+            link_path = reverse("lametro:council_members")
+            return link_fmt.format(link_path, self.name)
+
+        return self.name
+
+    @property
     def recent_events(self):
         events = LAMetroEvent.objects.filter(participants__organization=self)
         events = events.order_by("-start_time")
