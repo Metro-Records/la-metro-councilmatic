@@ -46,8 +46,6 @@ from django.core.serializers import serialize
 from django.core.management import call_command
 from django.core.cache import cache
 
-from councilmatic_core.models import Membership
-
 from opencivicdata.core.models import PersonLink
 
 from lametro.models import (
@@ -60,6 +58,7 @@ from lametro.models import (
     EventBroadcast,
     BoardMemberDetails,
     CommitteeDisplaySettings,
+    Membership,
 )
 from lametro.forms import (
     LAMetroCouncilmaticSearchForm,
