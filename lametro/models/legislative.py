@@ -436,6 +436,12 @@ class LAMetroPerson(Person, SourcesMixin):
         return slugify(self.name)
 
     @property
+    def link_html(self):
+        return "<a href='{}'>{}</a>".format(
+            reverse("lametro:person", args=[self.slug]), self.name
+        )
+
+    @property
     def latest_council_membership(self):
         filter_kwarg = {
             "organization__name": settings.OCD_CITY_COUNCIL_NAME,

@@ -12,13 +12,13 @@ from councilmatic.settings_jurisdiction import (
     BILL_STATUS_DESCRIPTIONS,
 )
 from councilmatic.settings import PIC_BASE_URL
-from councilmatic_core.models import Person
 
 from lametro.models import (
     app_timezone,
     Alert,
     EventBroadcast,
     FiscalYearCalendar,
+    LAMetroPerson,
     Tooltip,
 )
 from lametro.utils import ExactHighlighter, format_full_text, parse_subject
@@ -30,7 +30,7 @@ register = template.Library()
 
 @register.filter
 def call_link_html(person_id):
-    person = Person.objects.get(id=person_id)
+    person = LAMetroPerson.objects.get(id=person_id)
     url = person.link_html
     return url
 
