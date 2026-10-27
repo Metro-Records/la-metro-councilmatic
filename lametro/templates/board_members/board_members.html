@@ -75,7 +75,7 @@
                         <p><strong>(2) Sectors</strong> – As defined by the California League of Cities, all the incorporated and unincorporated areas in Los Angeles County, excluding the City of Los Angeles, are divided into four sectors. Each sector nominates one representative, which is approved and appointed by all members of the California League of Cities, to serve on the Metro Board.</p>
                         <p><strong>(3) City of Los Angeles</strong> – Residents within the City of Los Angeles are represented by the mayor and three city appointees on the Metro Board.</p>
                         <p><strong>(4) Caltrans District 7</strong> - The Governor of California appoints a non-voting member to the Metro Board. The California Department of Transportation (Caltrans) District 7 Director is the current appointee. Caltrans District 7 includes Los Angeles and Ventura counties.</p>
-                        <p>Learn more about <a href='{{ about_url }}#about-la-metro'>Metro Board appointments</a>.</p>
+                        {% if about_url %}<p>Learn more about <a href='{{ about_url }}#about-la-metro'>Metro Board appointments</a>.</p>{% endif %}
                         <p>Click the Learn More tooltip again to dismiss.</p>"
                         aria-label="Learn more about this map. The three layers of this map show areas from which members of the Metro Board of Directors are nominated:
                         1. Los Angeles County Districts – The elected representative from each district from the Los Angeles County Board of Supervisors serves on the Metro Board.
