@@ -310,12 +310,15 @@ def get_list(querydict, key):
 
 
 @register.filter
-def get_bill_type_link(bill_type):
+def get_bill_type_link(bill_type, about_url):
+    if not about_url:
+        return None
+
     for legislation_type in legislation_types:
         if legislation_type["search_term"].upper() == bill_type.upper():
-            return f'/about#{legislation_type["html_id"]}'
+            return f'{about_url}#{legislation_type["html_id"]}'
 
-    return ""
+    return None
 
 
 @register.filter
