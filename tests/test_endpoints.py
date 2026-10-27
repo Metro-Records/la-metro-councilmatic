@@ -11,6 +11,7 @@ URLS_TO_TEST = [
     "lametro:contact",
     "lametro:minutes",
     "lametro:search",
+    "pdfviewer",
 ]
 
 
