@@ -60,3 +60,29 @@ def test_council_members_renders_board_members(client, metro_organization, membe
     assert response.status_code == 200
     assert person.name.encode() in response.content
     assert f"/person/{person.slug}/".encode() in response.content
+
+
+@pytest.mark.django_db
+def test_event_detail_renders_committee_participant_link(
+    client, event, event_participant, metro_organization
+):
+    """
+    Regression test: event detail builds its "participants" context by
+    querying Organization directly by name (see LAMetroEventDetail),
+    rather than traversing the participant relation, so it's easy for
+    that query to silently fall back to the base (non-LAMetro) model
+    and lose the LAMetroOrganization.link_html override.
+    """
+    committee = metro_organization.build(
+        name="Construction Committee", classification="committee"
+    )
+    this_event = event.build()
+    event_participant.build(
+        event=this_event, organization=committee, name=committee.name
+    )
+
+    url = reverse("lametro:event", args=(this_event.slug,))
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert f"/committee/{committee.slug}/".encode() in response.content
