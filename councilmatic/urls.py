@@ -42,16 +42,10 @@ from lametro.views import (
     pong,
     test_logging,
 )
-from lametro.feeds import CouncilmaticFacetedSearchFeed, LAMetroPersonDetailFeed
 
 
 patterns = (
     [
-        url(
-            r"^search/rss/",
-            CouncilmaticFacetedSearchFeed(),
-            name="councilmatic_search_feed",
-        ),
         url(
             r"^search/",
             LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet),
@@ -78,11 +72,6 @@ patterns = (
             name="event",
         ),
         url(r"^events/$", LAMetroEventsView.as_view(), name="events"),
-        url(
-            r"^person/(?P<slug>[^/]+)/rss/$",
-            LAMetroPersonDetailFeed(),
-            name="person_feed",
-        ),
         url(
             r"^google66b34bb6957ad66c.html/$", GoogleView.as_view(), name="google_view"
         ),

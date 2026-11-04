@@ -28,11 +28,6 @@
                     <i class='fa fa-fw fa-calendar-o' aria-hidden="true"></i>
                     Committee {{ CITY_VOCAB.EVENTS }}
                 </h2>
-                <small class="rss">
-                    <a href="events/rss/" title="RSS feed for Committe Events by {{committee.name}}" aria-label="RSS feed for Committe Events by {{committee.name}}">
-                        <i class="fa fa-rss-square" aria-hidden="true"></i>
-                    </a>
-                </small>
             </div>
 
             {% for event in committee.recent_events %}
