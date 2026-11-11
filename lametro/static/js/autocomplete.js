@@ -1,24 +1,49 @@
 var SmartLogic = {
   query: {},
-  getToken: async function() {
-    tokenNeeded = !window.localStorage.getItem('ses_token')
+  // Returns a promise that resolves to true if a usable SES token is
+  // available and false otherwise, so that problems with
+  // SmartLogic never prevent the search bar from being configured.
+  getToken: function() {
+    var deferred = $.Deferred()
 
-    msInHour = 3600000
-    tokenExpired =
-      (Date.now() - window.localStorage.getItem('ses_issued')) / msInHour >= 1
+    try {
+      var tokenNeeded = !window.localStorage.getItem('ses_token')
 
-    if (tokenNeeded || tokenExpired) {
-      return $.get('/smartlogic/token/')
-        .then(function(response) {
+      var msInHour = 3600000
+      var tokenExpired =
+        (Date.now() - window.localStorage.getItem('ses_issued')) / msInHour >= 1
+
+      if (!tokenNeeded && !tokenExpired) {
+        return deferred.resolve(true).promise()
+      }
+
+      $.get('/smartlogic/token/')
+        .done(function(response) {
+          if (!response || !response.access_token) {
+            console.error('SES API token missing from response. Autocomplete is disabled.')
+            deferred.resolve(false)
+            return
+          }
+
           window.localStorage.setItem('ses_token', response.access_token)
           window.localStorage.setItem('ses_issued', Date.now())
+          deferred.resolve(true)
         })
         .fail(function() {
           console.error(
             'Failed to retrieve SES API token. Autocomplete is disabled.'
           )
+          window.localStorage.removeItem('ses_token')
+          window.localStorage.removeItem('ses_issued')
+          deferred.resolve(false)
         })
+    } catch (err) {
+      // e.g., localStorage is unavailable
+      console.error('Could not retrieve SES API token. Autocomplete is disabled.', err)
+      deferred.resolve(false)
     }
+
+    return deferred.promise()
   },
   buildServiceUrl: function(query) {
     // Remove slashes from term, as not to confuse routing
@@ -93,11 +118,28 @@ function initAutocomplete(formElement, inputElement) {
   var $input = $(inputElement)
   var currentQuery
 
-  function configureSearchBar() {
-    $input
-      .select2({
-        tags: true,
-        placeholder: 'Search for a keyword or use "double quotes" to search for a phrase',
+  function configureSearchBar(autocompleteEnabled) {
+    var options = {
+      tags: true,
+      placeholder: 'Search for a keyword or use "double quotes" to search for a phrase',
+      containerCssClass: 'input-lg form-control form-lg autocomplete-search',
+      createTag: function(params) {
+        var term = $.trim(params.term)
+
+        if (term === '') {
+          return null
+        }
+
+        return {
+          id: term,
+          text: term,
+          newTag: true,
+        }
+      },
+    }
+
+    if (autocompleteEnabled) {
+      $.extend(options, {
         ajax: {
           url: SmartLogic.buildServiceUrl,
           headers: {
@@ -109,28 +151,19 @@ function initAutocomplete(formElement, inputElement) {
         templateResult: function(state) {
           return state.loading ? state.text : SmartLogic.highlightResult(state)
         },
-        containerCssClass: 'input-lg form-control form-lg autocomplete-search',
         minimumInputLength: 3,
         language: {
           inputTooShort: function(args) {
             return 'Enter 3 or more characters to view suggestions.'
           },
         },
-        createTag: function(params) {
-          var term = $.trim(params.term)
-
-          if (term === '') {
-            return null
-          }
-
-          return {
-            id: term,
-            text: term,
-            newTag: true,
-          }
-        },
       })
+    }
+
+    $input
+      .select2(options)
       .on('select2:closing', function(e) {
+
         /* By default, Select2 clears input when the user clicks inside the
            search bar or the input loses focus. We want to retain that input.
            I adapted this solution from this comment:
@@ -156,23 +189,71 @@ function initAutocomplete(formElement, inputElement) {
       })
   }
 
-  // Make sure our Smartlogic token is set before setting up search bar
-  SmartLogic.getToken().then(configureSearchBar)
+  // Fall back to a plain text input if Select2 can't be set up at all, e.g.,
+  // if the library failed to load.
+  function useFallbackSearchBar() {
+    var $fallback = $('<input type="text" class="form-control input-lg" />')
+      .attr('id', $input.attr('id'))
+      .attr('aria-label', $input.attr('aria-label'))
+      .attr('aria-describedby', $input.attr('aria-describedby'))
+      .attr('placeholder', 'Search for a keyword or use "double quotes" to search for a phrase')
+      .val(
+        $input
+          .find('option:selected')
+          .map(function() { return $(this).text() })
+          .get()
+          .join(' AND ')
+      )
 
-  function handleSubmit(e) {
-    var terms = $('#search-bar')
-      .select2('data')
-      .map(function(el) {
+    $input.replaceWith($fallback)
+    $input = $fallback
+  }
+
+  // Try to get a SmartLogic token before setting up the search bar. If that
+  // fails, set up the search bar without autocomplete.
+  SmartLogic.getToken().then(function(autocompleteEnabled) {
+    try {
+      configureSearchBar(autocompleteEnabled)
+    } catch (err) {
+      console.error('Failed to configure search bar. Falling back to plain input.', err)
+      useFallbackSearchBar()
+    }
+  })
+
+  function getSearchTerms() {
+    // Plain text input fallback
+    if ($input.is('input')) {
+      var value = $.trim($input.val())
+      return value ? [value] : []
+    }
+
+    var terms
+
+    if ($input.hasClass('select2-hidden-accessible')) {
+      terms = $input.select2('data').map(function(el) {
         return el.id
       })
+    } else {
+      // Select2 hasn't been initialized (yet)
+      terms = $input
+        .find('option:selected')
+        .map(function() { return $(this).val() })
+        .get()
+    }
 
     // Grab the input text
-    var pendingTerm = $('.select2-search input').prop('value')
+    var pendingTerm = $.trim($('.select2-search input').prop('value') || '')
 
     // If there's a pending term, add it to the query
     if (pendingTerm !== '') {
       terms.push(pendingTerm)
     }
+
+    return terms
+  }
+
+  function handleSubmit(e) {
+    var terms = getSearchTerms()
 
     var queryString = terms.join(' AND ')
 
