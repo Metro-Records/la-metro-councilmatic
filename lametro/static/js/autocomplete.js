@@ -147,6 +147,25 @@ function initAutocomplete(formElement, inputElement) {
             Authorization: 'Bearer ' + window.localStorage.getItem('ses_token'),
           },
           processResults: SmartLogic.transformResponse,
+          transport: function(params, success, failure) {
+            var $request = $.ajax(params)
+
+            $request.then(success)
+            $request.fail(function(jqXHR, textStatus) {
+              // Select2 aborts in-flight requests as the user types; those
+              // aren't SmartLogic failures.
+              if (textStatus !== 'abort') {
+                console.error('SmartLogic request failed. Autocomplete is disabled.')
+                // Get a fresh token on the next page load
+                window.localStorage.removeItem('ses_token')
+                window.localStorage.removeItem('ses_issued')
+                hideDropdown()
+              }
+              failure()
+            })
+
+            return $request
+          },
         },
         templateResult: function(state) {
           return state.loading ? state.text : SmartLogic.highlightResult(state)
@@ -160,8 +179,20 @@ function initAutocomplete(formElement, inputElement) {
       })
     }
 
+    // When SmartLogic is unavailable, the dropdown would only echo back
+    // what the user typed, so hide it. Select2 still works as a tag input:
+    // Enter adds the typed term, and submitting includes any pending text.
+    function hideDropdown() {
+      $input.data('select2').$dropdown.hide()
+    }
+
+    $input.select2(options)
+
+    if (!autocompleteEnabled) {
+      hideDropdown()
+    }
+
     $input
-      .select2(options)
       .on('select2:closing', function(e) {
 
         /* By default, Select2 clears input when the user clicks inside the
