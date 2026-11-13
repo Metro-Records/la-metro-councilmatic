@@ -27,11 +27,11 @@
                     </form>
                 </div>
                 <div class="col-lg-4 my-2 my-lg-0">
-                    <a href="{% url 'events' %}?show=all" class="btn btn-primary d-inline-block px-lg-2">
+                    <a href="{% url 'lametro:events' %}?show=all" class="btn btn-primary d-inline-block px-lg-2">
                         <i class="fa fa-list" aria-hidden="true"></i>
                         All meetings
                     </a>
-                    <a href="{% url 'events' %}" class="btn btn-teal d-inline-block px-lg-2">
+                    <a href="{% url 'lametro:events' %}" class="btn btn-teal d-inline-block px-lg-2">
                         <i class="fa fa-repeat" aria-hidden="true"></i>
                         Reset
                     </a>
@@ -80,11 +80,11 @@
                 </ul>
 
                 {% if 'show' in request.GET and request.GET.show == 'future' %}
-                    <a href="{% url 'events' %}" class="btn btn-primary" id="fewer-upcoming-events">
+                    <a href="{% url 'lametro:events' %}" class="btn btn-primary" id="fewer-upcoming-events">
                         <i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i>Show fewer upcoming meetings
                     </a>
                 {% else %}
-                    <a href="{% url 'events' %}?show=future#upcoming-meetings" class="btn btn-primary" id="more-upcoming-events">
+                    <a href="{% url 'lametro:events' %}?show=future#upcoming-meetings" class="btn btn-primary" id="more-upcoming-events">
                         <i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i>Show all upcoming meetings
                     </a>
                 {% endif %}
@@ -113,11 +113,11 @@
                 </ul>
 
                 {% if 'show' in request.GET and request.GET.show == 'past' %}
-                    <a href="{% url 'events' %}" class="btn btn-primary mb-5" id="fewer-events">
+                    <a href="{% url 'lametro:events' %}" class="btn btn-primary mb-5" id="fewer-events">
                         <i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings
                     </a>
                 {% else %}
-                    <a href="{% url 'events' %}?show=past#past-meetings" class="btn btn-primary mb-5" id="more-events">
+                    <a href="{% url 'lametro:events' %}?show=past#past-meetings" class="btn btn-primary mb-5" id="more-events">
                         <i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings
                     </a>
                 {% endif %}
@@ -147,11 +147,11 @@
                 </ul>
 
                 {% if 'show' in request.GET and request.GET.show == 'past' %}
-                    <a href="{% url 'events' %}" class="btn btn-primary mb-5" id="fewer-events">
+                    <a href="{% url 'lametro:events' %}" class="btn btn-primary mb-5" id="fewer-events">
                         <i class="fa fa-fw fa-chevron-up" aria-hidden="true"></i> Show fewer past meetings
                     </a>
                 {% else %}
-                    <a href="{% url 'events' %}?show=past#past-meetings" class="btn btn-primary mb-5" id="more-events">
+                    <a href="{% url 'lametro:events' %}?show=past#past-meetings" class="btn btn-primary mb-5" id="more-events">
                         <i class="fa fa-fw fa-chevron-down" aria-hidden="true"></i> Show all past meetings
                     </a>
                 {% endif %}
@@ -214,17 +214,20 @@
         <aside class="col-md-3 px-0 px-md-2">
             {% include 'events/_events_info_blurb.html' %}
 
-            <div>
-                <p class="my-2">
-                    <a href="{% url 'about' %}#rules"><i class="fa fa-gavel" aria-hidden="true"></i> Board Room Rules</a>
-                </p>
-                <p class="my-2">
-                    <a href="{% url 'about' %}#procedures"><i class="fa fa-book" aria-hidden="true"></i> Rules &amp; Procedures</a>
-                </p>
-                <p class="my-2">
-                    <a href="{% url 'about' %}#visit"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit Metro Headquarters Building</a>
-                </p>
-            </div>
+            {% slugurl 'about' as about_url %}
+            {% if about_url %}
+                <div>
+                    <p class="my-2">
+                        <a href="{{ about_url }}#rules"><i class="fa fa-gavel" aria-hidden="true"></i> Board Room Rules</a>
+                    </p>
+                    <p class="my-2">
+                        <a href="{{ about_url }}#procedures"><i class="fa fa-book" aria-hidden="true"></i> Rules &amp; Procedures</a>
+                    </p>
+                    <p class="my-2">
+                        <a href="{{ about_url }}#visit"><i class="fa fa-map-marker" aria-hidden="true"></i> Visit Metro Headquarters Building</a>
+                    </p>
+                </div>
+            {% endif %}
         </aside>
 
     </section>

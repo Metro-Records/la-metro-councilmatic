@@ -53,7 +53,7 @@ def test_event_admin_renders_based_on_context(
             "https://metro.legistar.com/calendar.aspx",
             status_code=200 if legistar_ok else 500,
         )
-        resp = admin_client.get(reverse("lametro:events", kwargs={"slug": event.slug}))
+        resp = admin_client.get(reverse("lametro:event", kwargs={"slug": event.slug}))
         page_content = resp.content.decode("utf-8")
 
     possible_text = [

@@ -50,6 +50,8 @@ env = environ.Env(
 # Core Django Settings
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+APP_NAME = "lametro"
+
 # Take missing environment variables from .env.local file
 environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
 
@@ -188,12 +190,13 @@ TEMPLATES = [
         "DIRS": [os.path.join(BASE_DIR, "lametro/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
+            "debug": DEBUG,
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "councilmatic_core.views.city_context",
+                "lametro.context_processors.city_context",
                 "lametro.context_processors.recaptcha_public_key",
             ],
         },

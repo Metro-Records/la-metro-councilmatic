@@ -12,9 +12,6 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from councilmatic_core.views import CouncilmaticSearchForm, pdfviewer
-from councilmatic_core.feeds import CouncilmaticFacetedSearchFeed
-
 from lametro.api import (
     PublicComment,
     refresh_guid_trigger,
@@ -41,10 +38,11 @@ from lametro.views import (
     MinutesView,
     TagAnalyticsView,
     TranslationFilesView,
+    pdfviewer,
     pong,
     test_logging,
 )
-from lametro.feeds import LAMetroPersonDetailFeed
+from lametro.feeds import CouncilmaticFacetedSearchFeed, LAMetroPersonDetailFeed
 
 
 patterns = (
@@ -56,9 +54,7 @@ patterns = (
         ),
         url(
             r"^search/",
-            LAMetroCouncilmaticFacetedSearchView(
-                searchqueryset=EmptySearchQuerySet, form_class=CouncilmaticSearchForm
-            ),
+            LAMetroCouncilmaticFacetedSearchView(searchqueryset=EmptySearchQuerySet),
             name="search",
         ),
         url(r"^archive-search", LAMetroArchiveSearch.as_view(), name="archive-search"),
@@ -79,9 +75,9 @@ patterns = (
         url(
             r"^event/(?P<slug>[^/]+)/$",
             never_cache(LAMetroEventDetail.as_view()),
-            name="events",
+            name="event",
         ),
-        url(r"^events/$", LAMetroEventsView.as_view(), name="event"),
+        url(r"^events/$", LAMetroEventsView.as_view(), name="events"),
         url(
             r"^person/(?P<slug>[^/]+)/rss/$",
             LAMetroPersonDetailFeed(),
@@ -134,7 +130,6 @@ urlpatterns = [
     path("cms/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("", include(wagtail_urls)),
-    url(r"", include("councilmatic_core.urls")),
     url(r"^test-logging/$", test_logging, name="test_logging"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

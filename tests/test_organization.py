@@ -40,7 +40,7 @@ def test_membership_context(client, metro_organization, membership, metro_person
     }
     membership.build(**membership_info)
 
-    url = reverse("committee_detail", kwargs={"slug": organization.slug})
+    url = reverse("lametro:committee", kwargs={"slug": organization.slug})
     response = client.get(url)
 
     memberships = response.context["non_ceos"]
