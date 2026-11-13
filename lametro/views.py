@@ -833,8 +833,12 @@ class MinutesView(TemplateView):
             obj["start_time"] = timezone.make_aware(
                 datetime.strptime(obj["date"], "%Y-%m-%d")
             ).date()
-            obj["agenda_link"] = obj["agenda_link"].split("\n")
-            obj["minutes_link"] = obj["minutes_link"].split("\n")
+            obj["agenda_link"] = (
+                obj["agenda_link"].split("\n") if obj["agenda_link"] else []
+            )
+            obj["minutes_link"] = (
+                obj["minutes_link"].split("\n") if obj["minutes_link"] else []
+            )
 
         return filtered_historical_events
 
