@@ -21,7 +21,7 @@ from lametro.models import (
     FiscalYearCalendar,
     Tooltip,
 )
-from lametro.utils import ExactHighlighter, format_full_text, parse_subject
+from lametro.utils import format_full_text, parse_subject
 from lametro.services import EventService
 
 
@@ -214,12 +214,6 @@ def get_agenda_pk(event):
     if agenda := EventService.get_agenda(event):
         result = agenda["pk"]
     return result
-
-
-@register.simple_tag(takes_context=True)
-def get_highlighted_attachment_text(context, bill):
-    highlight = ExactHighlighter(context["query"])
-    return highlight.highlight(bill.attachment_text)
 
 
 @register.filter
