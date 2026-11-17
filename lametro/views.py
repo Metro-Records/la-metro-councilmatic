@@ -76,6 +76,7 @@ from lametro.forms import (
 )
 from lametro.services import EventService
 from lametro.exceptions import HerokuRequestError
+from lametro.search_backend import SEARCH_HIGHLIGHT_OPTIONS
 
 from councilmatic.settings_jurisdiction import MEMBER_BIOS
 
@@ -671,6 +672,7 @@ class LAMetroCouncilmaticFacetedSearchView(CouncilmaticFacetedSearchView):
             .facet("motion_by")
             .facet("significant_date")
             .facet("plan_program_policy")
+            .highlight(**SEARCH_HIGHLIGHT_OPTIONS)
         )
 
         data = None

@@ -1,6 +1,5 @@
 {% load extras %}
 {% load lametro_extras %}
-{% load highlight %}
 
 <p>
     <a class="small me-1" target='_blank' href="{% url 'lametro:bill_detail' r.slug %}" aria-label="{{ r.friendly_name }} - link opens in a new tab">
@@ -13,11 +12,12 @@
     <div class="col-10 col-sm-11">
         {% if query %}
             <p class="search-result">
-                {% if r.highlighted.text.0 %}
+                {% if r.highlighted.text %}
                     {{ r.highlighted.text.0|safe }}
+                {% elif r.highlighted.attachment_text %}
+                    {{ r.highlighted.attachment_text.0|safe }}
                 {% else %}
-                    {% get_highlighted_attachment_text r as highlighted_text %}
-                    {{ highlighted_text|safe}}
+                    {{ r.listing_description | short_blurb }}
                 {% endif %}
             </p>
         {% else %}
