@@ -1,8 +1,13 @@
+import logging
+
+import elasticsearch
 from haystack import connections
 from haystack.backends.elasticsearch7_backend import (
     Elasticsearch7SearchBackend,
     Elasticsearch7SearchEngine,
 )
+
+logger = logging.getLogger(__name__)
 
 SEARCH_HIGHLIGHT_OPTIONS = {
     "fields": {"text": {}, "attachment_text": {}},
@@ -10,9 +15,6 @@ SEARCH_HIGHLIGHT_OPTIONS = {
     "number_of_fragments": 1,
     # HTML-escape the source text, since snippets are rendered with |safe
     "encoder": "html",
-    # attachment_text can be very long. Only analyze the first 1M characters
-    # (the index default limit) instead of erroring on longer fields.
-    "max_analyzed_offset": 1000000,
 }
 
 
@@ -49,6 +51,10 @@ class LAMetroElasticsearchBackend(Elasticsearch7SearchBackend):
     - Leave large full-text fields out of search responses. They can be
       megabytes per result and are only needed by Elasticsearch to match and
       highlight, not for rendering results. They are still indexed and stored.
+    - Fall back to unhighlighted results when a matching document has a
+      highlighted field longer than index.highlight.max_analyzed_offset
+      (1M characters by default). Elasticsearch fails the whole search in
+      that case, and versions before 7.12 can't cap it per request.
     """
 
     EXCLUDED_SOURCE_FIELDS = ["text", "full_text", "ocr_full_text", "attachment_text"]
@@ -56,6 +62,20 @@ class LAMetroElasticsearchBackend(Elasticsearch7SearchBackend):
     def __init__(self, connection_alias, **connection_options):
         super().__init__(connection_alias, **connection_options)
         self.conn = _ExcludeSourceFieldsClient(self.conn, self.EXCLUDED_SOURCE_FIELDS)
+
+    def search(self, query_string, **kwargs):
+        try:
+            return super().search(query_string, **kwargs)
+        except elasticsearch.RequestError as e:
+            if not kwargs.get("highlight") or "max_analyzed_offset" not in str(e.info):
+                raise
+
+            logger.warning(
+                "Search for %r matched a document too long to highlight; "
+                "returning results without highlighting.",
+                query_string,
+            )
+            return super().search(query_string, **{**kwargs, "highlight": False})
 
     def _process_results(self, raw_results, *args, **kwargs):
         content_field = (
