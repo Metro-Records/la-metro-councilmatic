@@ -485,7 +485,7 @@ def test_delete_button_shows(
 
     source_matcher = re.compile(api_source)
     cal_matcher = re.compile("https://metro.legistar.com/calendar.aspx")
-    running_events_matcher = re.compile("http://metro.granicus.com/running_events.php")
+    running_events_matcher = re.compile("https://metro.granicus.com/running_events.php")
 
     delete_button_text = (
         "This event does not exist in Legistar. It may have "
