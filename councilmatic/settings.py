@@ -100,6 +100,10 @@ DATABASES["default"] = dj_database_url.parse(
     ssl_require=True if os.getenv("POSTGRES_REQUIRE_SSL") else False,
 )
 
+# Django 6 changed the default to BigAutoField. Keep existing integer primary
+# keys rather than migrating every table.
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 HAYSTACK_CONNECTIONS = {
     "default": {
         "ENGINE": "haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine",
@@ -138,6 +142,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "django.contrib.postgres",
     "haystack",
     "opencivicdata.core",
     "opencivicdata.legislative",

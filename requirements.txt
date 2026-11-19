@@ -1,6 +1,6 @@
 django-councilmatic[all] @ git+https://github.com/datamade/django-councilmatic.git@5.x
 https://github.com/opencivicdata/python-legistar-scraper/zipball/master
-Django>=6.0,<6.1
+Django>=6.0,<6.2
 psycopg2-binary>=2.8
 django-debug-toolbar>=7.0,<9
 sentry-sdk[django]==1.39.2
@@ -20,6 +20,7 @@ whitenoise
 python-dotenv==0.20.0
 esprima==4.0.1
 wagtail>=7.3,<8.2
+django-adv-cache-tag
 
 # Development
 django-debug-toolbar
