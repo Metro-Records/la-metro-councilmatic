@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-22.04
     services:
       postgres:
-        image: postgis/postgis:14-3.2
+        image: postgis/postgis:17-3.7
         env:
           POSTGRES_DB: lametro
           POSTGRES_PASSWORD: postgres
