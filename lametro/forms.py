@@ -1,6 +1,6 @@
 from django.conf import settings
-from captcha.fields import ReCaptchaField
-from captcha.fields import ReCaptchaV3
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV3
 from haystack.backends import SQ
 from haystack.forms import FacetedSearchForm
 from haystack.inputs import Raw
@@ -19,7 +19,7 @@ class CouncilmaticSearchForm(FacetedSearchForm):
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
-    captcha = ReCaptchaField(widget=ReCaptchaV3)
+    captcha = ReCaptchaField(widget=ReCaptchaV3(action="form"))
 
     def __init__(self, *args, **kwargs):
         if kwargs.get("search_corpus"):
