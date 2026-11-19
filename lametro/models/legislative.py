@@ -1364,7 +1364,7 @@ class TranslationNotification(models.Model):
         constraints = [
             # Ensure only one of the related entity types is assigned
             models.CheckConstraint(
-                check=(Q(bill__isnull=False) & Q(event__isnull=True))
+                condition=(Q(bill__isnull=False) & Q(event__isnull=True))
                 | (Q(bill__isnull=True) & Q(event__isnull=False)),
                 name="only_one_entity",
             )
