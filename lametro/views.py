@@ -624,7 +624,14 @@ class LAPersonDetailView(DetailView):
                 settings.CITY_COUNCIL_NAME,
             )
         seo["title"] = "%s - %s" % (person.name, settings.SITE_META["site_name"])
-        seo["image"] = static(person.headshot.url)
+        # django-councilmatic 5.x dropped Person.headshot; headshots now live on
+        # BoardMemberDetails as Wagtail images.
+        details = context["person_details"]
+        seo["image"] = (
+            details.headshot.get_rendition("width-640").url
+            if details and details.headshot
+            else static("images/headshot_placeholder.png")
+        )
         context["seo"] = seo
 
         if person.committee_sponsorships:
