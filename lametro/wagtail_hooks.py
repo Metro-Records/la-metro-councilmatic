@@ -22,6 +22,7 @@ from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, CreateView
 from wagtail.admin.menu import MenuItem
+from wagtail.admin.userbar import BaseItem
 
 from lametro.services import EventService
 
@@ -59,6 +60,10 @@ class AlertFilterSet(django_filters.FilterSet):
             return Alert.objects.all()
         else:
             return queryset
+
+    class Meta:
+        model = Alert
+        fields = []
 
 
 class AlertViewSet(SnippetViewSet):
@@ -250,7 +255,7 @@ class EventAgendaForm(forms.ModelForm):
         widgets = {"document": AdminDocumentChooser}
 
     def __init__(self, *args, **kwargs):
-        del kwargs["for_user"]
+        kwargs.pop("for_user", None)
 
         super().__init__(*args, **kwargs)
 
@@ -307,6 +312,10 @@ class TooltipFilterSet(django_filters.FilterSet):
             return Tooltip.objects.all()
         else:
             return queryset
+
+    class Meta:
+        model = Tooltip
+        fields = []
 
 
 class TooltipViewSet(SnippetViewSet):
@@ -372,7 +381,7 @@ register_snippet(EventAgendaViewSet)
 register_snippet(TooltipViewSet)
 
 
-class UserBarLink:
+class UserBarLink(BaseItem):
     icon_name = "edit"
 
     def get_icon(self):
@@ -381,10 +390,12 @@ class UserBarLink:
             <svg class="icon icon-{0} w-action-icon" aria-hidden="true">
                 <use href="#icon-{0}"></use>
             </svg>
-            """.format(
-                self.icon_name
-            )
+            """,
+            self.icon_name,
         )
+
+    def render_html(self, parent_context):
+        return self.render(parent_context.get("request"))
 
     def render(self, request, href=None):
         if href is None:
@@ -400,9 +411,10 @@ class UserBarLink:
                     {2}
                 </a>
             </li>
-            """.format(
-                href, self.get_icon(), link_text
-            )
+            """,
+            href,
+            self.get_icon(),
+            link_text,
         )
 
 
@@ -425,9 +437,8 @@ class BoardMemberEditLink(UserBarLink):
             return super().render(request, href=href)
 
     def get_href(self, request):
-        try:
-            slug = request.resolver_match.kwargs["slug"]
-        except KeyError:
+        # resolver_match is None when rendering e.g. a 404 page
+        if not (slug := getattr(request.resolver_match, "kwargs", {}).get("slug")):
             return
 
         try:
@@ -448,9 +459,8 @@ class EventAgendaLink(UserBarLink):
             return super().render(request, href=href)
 
     def get_href(self, request):
-        try:
-            slug = request.resolver_match.kwargs["slug"]
-        except KeyError:
+        # resolver_match is None when rendering e.g. a 404 page
+        if not (slug := getattr(request.resolver_match, "kwargs", {}).get("slug")):
             return
 
         try:
@@ -480,7 +490,7 @@ class GoogleAnalyticsLink(UserBarLink):
 
 
 @hooks.register("construct_wagtail_userbar")
-def add_viewset_links(request, items):
+def add_viewset_links(request, items, page):
     items.extend([BoardMemberEditLink(), EventAgendaLink(), GoogleAnalyticsLink()])
     for link in (AlertViewSet, EventNoticeViewSet, FiscalYearCalendarViewSet):
         items.append(ViewSetLink(link))
