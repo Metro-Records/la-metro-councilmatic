@@ -698,16 +698,17 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         queryset.
         """
         running_events = cache.get("running_events")
-        if not running_events:
+        if running_events is None:
             try:
                 running_events = timed_get(
-                    "http://metro.granicus.com/running_events.php"
+                    "https://metro.granicus.com/running_events.php"
                 )
 
             except (LAMetroRequestTimeoutException, requests.RequestException) as e:
                 logger.warning(e)
-                running_events = cls.objects.none()
-                return running_events
+                # Cache an empty Response if Granicus request fails
+                running_events = requests.Response()
+                return cls.objects.none()
 
             finally:
                 # Cache running events for one minute

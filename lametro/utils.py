@@ -125,7 +125,10 @@ def timed_get(url, params=None, **kwargs):
     See https://stackoverflow.com/a/71453648
     """
 
-    TOTAL_TIMEOUT = kwargs.get("timeout", settings.REQUEST_TIMEOUT)
+    # Pass the timeout through to requests as well: the trace function below
+    # can't interrupt a socket that's blocked waiting for data.
+    kwargs.setdefault("timeout", settings.REQUEST_TIMEOUT)
+    TOTAL_TIMEOUT = kwargs["timeout"]
 
     def trace_function(frame, event, arg):
         """
