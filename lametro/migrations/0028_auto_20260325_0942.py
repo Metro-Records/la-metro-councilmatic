@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="translationnotification",
             constraint=models.CheckConstraint(
-                check=models.Q(
+                condition=models.Q(
                     models.Q(("bill__isnull", False), ("event__isnull", True)),
                     models.Q(("bill__isnull", True), ("event__isnull", False)),
                     _connector="OR",

@@ -39,8 +39,12 @@
         }
     ];
 
-    var layer = new L.Google('ROADMAP', {mapOptions: {styles: google_map_styles}});
+    var layer = new L.Google('ROADMAP');
     map.addLayer(layer);
+    // leaflet-google ignores mapOptions.styles, so style the Google map directly
+    if (layer._google) {
+        layer._google.setOptions({styles: google_map_styles});
+    }
 
     var searchResultsLayer = new L.LayerGroup();
     searchResultsLayer.addTo(map);
@@ -235,7 +239,7 @@
         }
     }
 
-    districts = L.geoJson({{ map_geojson_districts|safe }}, {
+    districts = L.geoJSON({{ map_geojson_districts|safe }}, {
         style: {
                 "color": districtColor,
                 "weight": 1,
@@ -246,7 +250,7 @@
     });
 
 
-    sectors = L.geoJson({{ map_geojson_sectors|safe }}, {
+    sectors = L.geoJSON({{ map_geojson_sectors|safe }}, {
         style: {
                 "color": sectorColor,
                 "weight": 1,
@@ -256,7 +260,7 @@
         onEachFeature: onEachFeatureSectors
     });
 
-    los_angeles_city = L.geoJson({{ map_geojson_city|safe }}, {
+    los_angeles_city = L.geoJSON({{ map_geojson_city|safe }}, {
         style: {
                 "color": cityColor,
                 "weight": 1,
@@ -266,7 +270,7 @@
         onEachFeature: onEachFeatureCity
     });
 
-    caltrans = L.geoJson({{ map_geojson_caltrans|safe }}, {
+    caltrans = L.geoJSON({{ map_geojson_caltrans|safe }}, {
         style: {
                 "color": caltransColor,
                 "weight": 1,

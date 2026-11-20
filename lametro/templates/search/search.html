@@ -1,6 +1,6 @@
 {% extends "base_with_margins.html" %}
 
-{% load static extras lametro_extras %}
+{% load static lametro_extras %}
 
 {% block title %}
     {% if request.GET.q %}
@@ -74,6 +74,13 @@
             {% with facet_name='bill_type' facet_label='Legislation Type' item_list=facets.fields.bill_type selected_list=selected_facets.bill_type %}
                 {% include 'search/_search_filter.html' %}
             {% endwith %}
+
+            <!-- Body -->
+            {% if facets.fields.matter_body_name %}
+                {% with facet_name='matter_body_name' facet_label='Body' item_list=facets.fields.matter_body_name selected_list=selected_facets.matter_body_name %}
+                    {% include 'search/_search_filter.html' %}
+                {% endwith %}
+            {% endif %}
 
             <!-- Motion By -->
             {% if facets.fields.motion_by %}
@@ -196,18 +203,6 @@
                 <h2 class="modal-links d-inline-block h3">
                     {% include 'search/_search_results_header.html' %}
                 </h2>
-
-                <small class="rss">
-                    {% if query and selected_facets %}
-                        <a href="/search/rss/?q={{request.GET.q | query_encode_no_plus}}{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value | query_encode_no_plus}}{% endfor %}{% endfor %}" title="RSS feed" aria-label="RSS feed">
-                    {% elif selected_facets %}
-                        <a href="/search/rss/?{% for key, values in selected_facets.items %}{% for value in values %}&selected_facets={{key}}:{{value | query_encode_no_plus}}{% endfor %}{% endfor %}" title="RSS feed" aria-label="RSS feed">
-                    {% else %}
-                        <a href="/search/rss/?q={{request.GET.q | query_encode_no_plus}}" title="RSS feed" aria-label="RSS feed">
-                    {% endif %}
-
-                    <i class="fa fa-rss-square" aria-hidden="true"></i></a>
-                </small>
             </div>
 
             <div class="container-fluid">
@@ -228,7 +223,15 @@
                     {% include 'search/_tags.html' %}
                 </li>
             {% empty %}
-                <li>{% include 'search/_empty_search_message.html' %}</li>
+                <li>
+                    {% if form.errors.captcha %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.errors.captcha|join:" " }}
+                        </div>
+                    {% else %}
+                        {% include 'search/_empty_search_message.html' %}
+                    {% endif %}
+                </li>
 
             {% endfor %}
         </ul>

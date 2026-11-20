@@ -400,3 +400,15 @@ USING_NOTIFICATIONS = False
 
 # Set this to True to show online public comment links while meetings are ongoing
 USING_ECOMMENT = False
+
+# If settings.SHOW_TEST_OBJECTS is set to False, bills with a
+# MatterBodyName in Legistar that matches any of these test bodies
+# should not be shown on the site
+TEST_BODIES = [
+    "zTESTz OBS Test Committee",
+    "zTESTz Finance, Budget and Audit Committee",
+    "TO BE REMOVED",
+    "VCM Draft Meeting",
+    "Test - Live Regular Meeting Test",
+    "Test - Live Committee Meeting Test",
+]

@@ -1,14 +1,25 @@
-from captcha.fields import ReCaptchaField
-from captcha.fields import ReCaptchaV3
+from django.conf import settings
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV3
 from haystack.backends import SQ
+from haystack.forms import FacetedSearchForm
 from haystack.inputs import Raw
 from haystack.query import EmptySearchQuerySet
+from councilmatic.settings_jurisdiction import TEST_BODIES
 
-from councilmatic_core.views import CouncilmaticSearchForm
+
+class CouncilmaticSearchForm(FacetedSearchForm):
+    def __init__(self, *args, **kwargs):
+        self.load_all = True
+
+        super(CouncilmaticSearchForm, self).__init__(*args, **kwargs)
+
+    def no_query_found(self):
+        return self.searchqueryset.all()
 
 
 class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
-    captcha = ReCaptchaField(widget=ReCaptchaV3)
+    captcha = ReCaptchaField(widget=ReCaptchaV3(action="form"))
 
     def __init__(self, *args, **kwargs):
         if kwargs.get("search_corpus"):
@@ -95,5 +106,12 @@ class LAMetroCouncilmaticSearchForm(CouncilmaticSearchForm):
             else:
                 # Combine full text and tag search results
                 sqs = self._full_text_search(sqs) | self._topic_search(sqs)
+
+        # Should we include test bills in search results? Apply this after
+        # combining the keyword and topic searches, since Haystack mangles
+        # OR'd subtrees when combining querysets. Bills without a
+        # matter_body_name are not excluded by the negated filter.
+        if not settings.SHOW_TEST_OBJECTS:
+            sqs = sqs.filter(~SQ(matter_body_name__in=TEST_BODIES))
 
         return sqs

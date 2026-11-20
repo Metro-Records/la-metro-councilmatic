@@ -11,6 +11,7 @@ from django.db.models.expressions import RawSQL
 from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.urls import reverse
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -36,13 +37,18 @@ from councilmatic_core.models import (
     Membership as CoreMembership,
 )
 
+from lametro.models.cms import DeletedEventDisplaySettings
 from lametro.utils import (
     format_full_text,
     parse_subject,
     timed_get,
     LAMetroRequestTimeoutException,
 )
-from councilmatic.settings_jurisdiction import BILL_STATUS_DESCRIPTIONS, MEMBER_BIOS
+from councilmatic.settings_jurisdiction import (
+    BILL_STATUS_DESCRIPTIONS,
+    MEMBER_BIOS,
+    TEST_BODIES,
+)
 
 app_timezone = pytz.timezone(settings.TIME_ZONE)
 logger = logging.getLogger(__name__)
@@ -99,6 +105,13 @@ class LAMetroBillManager(models.Manager):
         """
         qs = super().get_queryset()
 
+        # Should we return test bills?
+        if not settings.SHOW_TEST_OBJECTS:
+            test_obj_filter = ~Q(extras__matter_body_name__in=TEST_BODIES) | Q(
+                extras__matter_body_name__isnull=True
+            )
+            qs = qs.filter(test_obj_filter)
+
         on_published_agenda = Q(
             eventrelatedentity__agenda_item__event__status="passed"
         ) | Q(eventrelatedentity__agenda_item__event__status="cancelled")
@@ -130,16 +143,25 @@ class LAMetroBillManager(models.Manager):
 
         return qs
 
-    def with_latest_actions(self):
-        latest_action = BillAction.objects.filter(bill=OuterRef("pk")).order_by(
-            "-order"
-        )
+    def with_event_action_description(self, event):
+        """
+        Annotate each bill with the action description for the given event.
+        """
 
-        qs = self.annotate(
-            last_action_description=Subquery(latest_action.values("description")[:1])
-        )
+        date = datetime.strptime(event.start_date[:10], "%Y-%m-%d").date()
+        org = event.participants.filter(entity_type="organization").values(
+            "organization_id"
+        )[:1]
 
-        return qs
+        action = BillAction.objects.filter(
+            bill=OuterRef("pk"),
+            organization_id=Subquery(org),
+            date=date,
+        ).order_by("-order")
+
+        return self.annotate(
+            event_action_description=Subquery(action.values("description")[:1])
+        )
 
 
 class LAMetroBill(Bill, SourcesMixin):
@@ -165,24 +187,73 @@ class LAMetroBill(Bill, SourcesMixin):
 
         return "{0} - {1}".format(self.identifier, title.upper())
 
-    # LA METRO CUSTOMIZATION
-    @property
-    def inferred_status(self):
-        # Get most recent action.
-        action = self.actions.last()
-
-        # Get description of that action.
-        if action:
-            description = action.description
-        else:
-            description = ""
-
-        return self._status(description)
-
     def _status(self, description):
         if description and description.upper() in BILL_STATUS_DESCRIPTIONS.keys():
             return BILL_STATUS_DESCRIPTIONS[description.upper()]["search_term"]
         return None
+
+    # LA METRO CUSTOMIZATION
+    @property
+    def inferred_status(self):
+        """
+        Infer the status of a bill for tagging on Bill Detail and Search views.
+
+        Depends on how many different meetings the bill shows up in, see:
+        https://github.com/Metro-Records/la-metro-councilmatic/issues/1278#issuecomment-3549489723
+        """
+
+        # Find the latest action and action description
+        latest = self.current_action
+        if not latest:
+            return ""
+        status = self._status(latest.description)
+
+        # Get all actions and agenda to find all involved organizations
+        aa = self.actions_and_agendas
+        unique_orgs = {a["organization"] for a in aa if "organization" in a}
+
+        if len(unique_orgs) > 1:
+
+            # Get the latest action per organization and drop "withdrawn" orgs
+            latest_statuses = {}
+            for org in unique_orgs:
+                for a in reversed(aa):
+                    if a.get("organization") == org:
+                        org_status = self._status(a["description"])
+                        print(org_status)
+                        if not org_status or org_status in ["Withdrawn", "None"]:
+                            break
+                        else:
+                            latest_statuses[org] = org_status
+                            break
+
+            # After dropping withdrawn, if only one org left, use that status
+            if len(latest_statuses) == 1:
+                for remaining_status in latest_statuses.values():
+                    return remaining_status
+            # If there are still multiple orgs, and one is the board, use its latest action
+            else:
+                board_org = Organization.objects.get(name="Board of Directors")
+                if board_org in unique_orgs:
+                    # If board agenda approved, return status from the Board Meeting
+                    try:
+                        LAMetroEvent.objects.get(
+                            participants__entity_type="organization",
+                            participants__organization=board_org.id,
+                            start_time__date=latest.date,
+                            extras__approved_minutes=True,
+                        )
+                        return latest_statuses[board_org]
+
+                    # If board agenda not approved, fall through
+                    except LAMetroEvent.DoesNotExist:
+                        pass
+
+                # If board is not one of the orgs, only Active tag allowed
+                return status if status == "Active" else ""
+
+        # Only one org involved ever just return latest status
+        return status
 
     # LA METRO CUSTOMIZATION
     @property
@@ -365,6 +436,12 @@ class LAMetroPerson(Person, SourcesMixin):
         return slugify(self.name)
 
     @property
+    def link_html(self):
+        return "<a href='{}'>{}</a>".format(
+            reverse("lametro:person", args=[self.slug]), self.name
+        )
+
+    @property
     def latest_council_membership(self):
         filter_kwarg = {
             "organization__name": settings.OCD_CITY_COUNCIL_NAME,
@@ -486,12 +563,31 @@ class LAMetroEventManager(EventManager):
     def get_queryset(self):
         """
         NOTE: Be sure to use LAMetroEvent, rather than the base Event class,
-        when getting event querysets. If a test event slips through, it is
-        likely because we used the default Event to get the queryset.
-        """
-        return super().get_queryset().exclude(location__name__icontains="test")
+        when getting event querysets. If a test event or deleted event slips
+        through, it is likely because we used the default Event to get the
+        queryset.
 
-    def including_test_events(self):
+        """
+
+        qs = super().get_queryset().exclude(location__name__icontains="test")
+
+        # hide deleted events, but allow overridden events to show
+        override = DeletedEventDisplaySettings.deleted_events.through.objects.values(
+            "lametroevent_id"
+        )
+
+        deleted = (
+            super()
+            .get_queryset()
+            .filter(extras__deleted_in_legistar=True)
+            .exclude(pk__in=override)
+        )
+
+        qs = qs.exclude(id__in=deleted)
+
+        return qs
+
+    def including_test_and_deleted_events(self):
         return super().get_queryset()
 
     def with_media(self):
@@ -677,7 +773,7 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
         )
 
         return (
-            cls.objects.including_test_events()
+            cls.objects.including_test_and_deleted_events()
             .prefetch_related("broadcast")
             .filter(
                 start_time__gte=current_window_start,
@@ -923,6 +1019,11 @@ class LAMetroEvent(Event, LiveMediaMixin, SourcesMixin):
     def has_manual_broadcast(self):
         return self.broadcast.filter(is_manually_live=True).exists()
 
+    @property
+    def event_page_url(self):
+        link = reverse("lametro:event", args=(self.slug,))
+        return link
+
 
 class EventBroadcast(models.Model):
     """
@@ -965,6 +1066,20 @@ class LAMetroOrganization(Organization, SourcesMixin):
 
     class Meta:
         proxy = True
+
+    @property
+    def link_html(self):
+        link_fmt = '<a href="{0}">{1}</a>'
+
+        if self.classification == "committee":
+            link_path = reverse("lametro:committee", args=(self.slug,))
+            return link_fmt.format(link_path, self.name)
+
+        if self.classification == "legislature":
+            link_path = reverse("lametro:council_members")
+            return link_fmt.format(link_path, self.name)
+
+        return self.name
 
     @property
     def recent_events(self):
@@ -1249,7 +1364,7 @@ class TranslationNotification(models.Model):
         constraints = [
             # Ensure only one of the related entity types is assigned
             models.CheckConstraint(
-                check=(Q(bill__isnull=False) & Q(event__isnull=True))
+                condition=(Q(bill__isnull=False) & Q(event__isnull=True))
                 | (Q(bill__isnull=True) & Q(event__isnull=False)),
                 name="only_one_entity",
             )

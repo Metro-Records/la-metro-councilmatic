@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 from django import forms
 from django.utils.html import format_html, strip_tags
+from django.utils.safestring import mark_safe
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from html import unescape
@@ -155,10 +156,11 @@ class Alert(models.Model):
 
     def content(self):
         return format_html(
-            "<div class='list-display-wrapper'>"
-            + expand_db_html(self.description)
-            + f"<span class='button button-small alert-{self.type}'>{self.get_type_display()}</span>"
-            + "</div>"
+            "<div class='list-display-wrapper'>{}"
+            "<span class='button button-small alert-{}'>{}</span></div>",
+            mark_safe(expand_db_html(self.description)),
+            self.type,
+            self.get_type_display(),
         )
 
     class Meta:
@@ -169,6 +171,15 @@ class CheckboxSelectMultipleList(forms.CheckboxSelectMultiple):
     def format_value(self, value):
         if isinstance(value, str):
             return value.split(",")
+        return super().format_value(value)
+
+
+def default_broadcast_conditions():
+    return list(EventNotice.BROADCAST_CONDITION_CHOICES[0])
+
+
+def default_comment_conditions():
+    return list(EventNotice.COMMENT_CONDITION_CHOICES[0])
 
 
 class EventNotice(models.Model):
@@ -202,11 +213,11 @@ class EventNotice(models.Model):
 
     broadcast_conditions = ArrayField(
         models.CharField(max_length=255, choices=BROADCAST_CONDITION_CHOICES),
-        default=list(BROADCAST_CONDITION_CHOICES[0]),
+        default=default_broadcast_conditions,
     )
     comment_conditions = ArrayField(
         models.CharField(max_length=255, choices=COMMENT_CONDITION_CHOICES),
-        default=list(COMMENT_CONDITION_CHOICES[0]),
+        default=default_comment_conditions,
     )
     message = RichTextField(
         features=[
@@ -395,7 +406,7 @@ class EventAgenda(models.Model):
         super().delete()
 
     def get_url(self):
-        return reverse("lametro:events", kwargs={"slug": self.event.slug})
+        return reverse("lametro:event", kwargs={"slug": self.event.slug})
 
 
 @register_setting
@@ -427,6 +438,29 @@ class CommitteeDisplaySettings(BaseGenericSetting):
 
     def __str__(self):
         return "Committee Display Settings"
+
+
+@register_setting
+class DeletedEventDisplaySettings(BaseGenericSetting):
+    """
+    Allowlist of events to display on the website, despite having been deleted in Legistar.
+    """
+
+    include_in_dump = True
+
+    deleted_events = models.ManyToManyField(
+        "lametro.LAMetroEvent",
+        blank=True,
+        related_name="+",
+        help_text=("Select which deleted events to show on the website."),
+    )
+
+    panels = [
+        FieldPanel("deleted_events"),
+    ]
+
+    def __str__(self):
+        return "Deleted Event Display Settings"
 
 
 class Tooltip(models.Model):

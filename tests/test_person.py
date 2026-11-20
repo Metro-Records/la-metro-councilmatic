@@ -1,7 +1,9 @@
 import pytest
 
+from django.views.generic import DetailView
+
 from .conftest import get_uid_chunk
-from lametro.views import PersonDetailView, LAPersonDetailView
+from lametro.views import LAPersonDetailView
 
 
 @pytest.mark.django_db
@@ -15,7 +17,7 @@ def test_person_page_redirects(client, metro_person, mocker):
     # routing cases appropriately, not the particular contents of a
     # returned view. So, in the case of a happy routing, we'll mock
     # the response of a successful dispatch
-    mocker.patch.object(PersonDetailView, "dispatch", return_value=response)
+    mocker.patch.object(DetailView, "dispatch", return_value=response)
 
     # Assert navigating to a valid slug works.
 

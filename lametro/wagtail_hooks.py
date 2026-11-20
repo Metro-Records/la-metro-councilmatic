@@ -22,6 +22,7 @@ from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, CreateView
 from wagtail.admin.menu import MenuItem
+from wagtail.admin.userbar import BaseItem
 
 from lametro.services import EventService
 
@@ -29,6 +30,7 @@ from lametro.models import (
     Alert,
     BoardMemberDetails,
     CommitteeDisplaySettings,
+    DeletedEventDisplaySettings,
     LAMetroOrganization,
     EventNotice,
     FiscalYearCalendar,
@@ -58,6 +60,10 @@ class AlertFilterSet(django_filters.FilterSet):
             return Alert.objects.all()
         else:
             return queryset
+
+    class Meta:
+        model = Alert
+        fields = []
 
 
 class AlertViewSet(SnippetViewSet):
@@ -249,7 +255,7 @@ class EventAgendaForm(forms.ModelForm):
         widgets = {"document": AdminDocumentChooser}
 
     def __init__(self, *args, **kwargs):
-        del kwargs["for_user"]
+        kwargs.pop("for_user", None)
 
         super().__init__(*args, **kwargs)
 
@@ -307,6 +313,10 @@ class TooltipFilterSet(django_filters.FilterSet):
         else:
             return queryset
 
+    class Meta:
+        model = Tooltip
+        fields = []
+
 
 class TooltipViewSet(SnippetViewSet):
     model = Tooltip
@@ -343,6 +353,26 @@ class CommitteeDisplaySettingsForm(forms.ModelForm):
 CommitteeDisplaySettings.base_form_class = CommitteeDisplaySettingsForm
 
 
+class DeletedEventDisplaySettingsForm(forms.ModelForm):
+    class Meta:
+        model = DeletedEventDisplaySettings
+        fields = ("deleted_events",)
+        widgets = {"deleted_events": forms.CheckboxSelectMultiple}
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("for_user", None)
+        super().__init__(*args, **kwargs)
+
+        self.fields[
+            "deleted_events"
+        ].queryset = LAMetroEvent.objects.including_test_and_deleted_events().filter(
+            extras__deleted_in_legistar=True
+        )
+
+
+DeletedEventDisplaySettings.base_form_class = DeletedEventDisplaySettingsForm
+
+
 register_snippet(AlertViewSet)
 register_snippet(EventNoticeViewSet)
 register_snippet(FiscalYearCalendarViewSet)
@@ -351,7 +381,7 @@ register_snippet(EventAgendaViewSet)
 register_snippet(TooltipViewSet)
 
 
-class UserBarLink:
+class UserBarLink(BaseItem):
     icon_name = "edit"
 
     def get_icon(self):
@@ -360,10 +390,12 @@ class UserBarLink:
             <svg class="icon icon-{0} w-action-icon" aria-hidden="true">
                 <use href="#icon-{0}"></use>
             </svg>
-            """.format(
-                self.icon_name
-            )
+            """,
+            self.icon_name,
         )
+
+    def render_html(self, parent_context):
+        return self.render(parent_context.get("request"))
 
     def render(self, request, href=None):
         if href is None:
@@ -379,9 +411,10 @@ class UserBarLink:
                     {2}
                 </a>
             </li>
-            """.format(
-                href, self.get_icon(), link_text
-            )
+            """,
+            href,
+            self.get_icon(),
+            link_text,
         )
 
 
@@ -404,9 +437,8 @@ class BoardMemberEditLink(UserBarLink):
             return super().render(request, href=href)
 
     def get_href(self, request):
-        try:
-            slug = request.resolver_match.kwargs["slug"]
-        except KeyError:
+        # resolver_match is None when rendering e.g. a 404 page
+        if not (slug := getattr(request.resolver_match, "kwargs", {}).get("slug")):
             return
 
         try:
@@ -427,9 +459,8 @@ class EventAgendaLink(UserBarLink):
             return super().render(request, href=href)
 
     def get_href(self, request):
-        try:
-            slug = request.resolver_match.kwargs["slug"]
-        except KeyError:
+        # resolver_match is None when rendering e.g. a 404 page
+        if not (slug := getattr(request.resolver_match, "kwargs", {}).get("slug")):
             return
 
         try:
@@ -459,7 +490,7 @@ class GoogleAnalyticsLink(UserBarLink):
 
 
 @hooks.register("construct_wagtail_userbar")
-def add_viewset_links(request, items):
+def add_viewset_links(request, items, page):
     items.extend([BoardMemberEditLink(), EventAgendaLink(), GoogleAnalyticsLink()])
     for link in (AlertViewSet, EventNoticeViewSet, FiscalYearCalendarViewSet):
         items.append(ViewSetLink(link))
@@ -488,14 +519,14 @@ def register_analytics_menu_item():
     )
 
 
-# Construct settings menu without Committee Display Settings, then add it to main menu
+# Construct settings menu without certain items
 @hooks.register("construct_settings_menu")
 def hide_user_menu_item(request, menu_items):
-    menu_items[:] = [
-        item for item in menu_items if item.name != "committee-display-settings"
-    ]
+    exclude = ["committee-display-settings", "deleted-event-display-settings"]
+    menu_items[:] = [item for item in menu_items if item.name not in exclude]
 
 
+# Add those items to the main menu
 @hooks.register("register_admin_menu_item")
 def register_committee_display_settings_menu_item():
     return MenuItem(
@@ -503,4 +534,16 @@ def register_committee_display_settings_menu_item():
         reverse("wagtailsettings:edit", args=["lametro", "committeedisplaysettings"]),
         icon_name="list-ul",
         order=204,
+    )
+
+
+@hooks.register("register_admin_menu_item")
+def register_deleted_event_display_settings_menu_item():
+    return MenuItem(
+        "Deleted Event Display Settings",
+        reverse(
+            "wagtailsettings:edit", args=["lametro", "deletedeventdisplaysettings"]
+        ),
+        icon_name="list-ul",
+        order=205,
     )

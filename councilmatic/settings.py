@@ -44,10 +44,13 @@ env = environ.Env(
     LEGISTAR_TOKEN=(str, ""),
     TRANSLATION_SUITE_URL=(str, ""),
     TRANSLATION_API_KEY=(str, ""),
+    SHOW_TEST_OBJECTS=(bool, False),
 )
 
 # Core Django Settings
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+APP_NAME = "lametro"
 
 # Take missing environment variables from .env.local file
 environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
@@ -55,6 +58,11 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env.local"))
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DJANGO_DEBUG")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+
+# If False, site will not show detail pages or search results for bills
+# whose MatterBodyName that matches values included in TEST_BODIES in
+# councilmatic/settings_jurisdiction.py
+SHOW_TEST_OBJECTS = env.bool("SHOW_TEST_OBJECTS")
 
 # Derive allowed origins from configured hosts
 CSRF_TRUSTED_ORIGINS = []
@@ -78,7 +86,7 @@ if env("LOCAL_DOCKER"):
     INTERNAL_IPS = [ip[:-1] + "1" for ip in ips] + ["127.0.0.1"]
 
 if DEBUG:
-    SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+    SILENCED_SYSTEM_CHECKS = ["django_recaptcha.recaptcha_test_key_error"]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -91,6 +99,10 @@ DATABASES["default"] = dj_database_url.parse(
     engine="django.contrib.gis.db.backends.postgis",
     ssl_require=True if os.getenv("POSTGRES_REQUIRE_SSL") else False,
 )
+
+# Django 6 changed the default to BigAutoField. Keep existing integer primary
+# keys rather than migrating every table.
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 HAYSTACK_CONNECTIONS = {
     "default": {
@@ -130,6 +142,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "django.contrib.postgres",
     "haystack",
     "opencivicdata.core",
     "opencivicdata.legislative",
@@ -138,7 +151,7 @@ INSTALLED_APPS = (
     "adv_cache_tag",
     "debug_toolbar",
     "template_profiler_panel",
-    "captcha",
+    "django_recaptcha",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.contrib.settings",
@@ -182,12 +195,13 @@ TEMPLATES = [
         "DIRS": [os.path.join(BASE_DIR, "lametro/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
+            "debug": DEBUG,
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "councilmatic_core.views.city_context",
+                "lametro.context_processors.city_context",
                 "lametro.context_processors.recaptcha_public_key",
             ],
         },
@@ -224,7 +238,7 @@ MEDIA_URL = "/media/"
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY")
 if not (RECAPTCHA_PUBLIC_KEY and RECAPTCHA_PRIVATE_KEY):
-    SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+    SILENCED_SYSTEM_CHECKS = ["django_recaptcha.recaptcha_test_key_error"]
 
 SMART_LOGIC_KEY = env("SMART_LOGIC_KEY")
 
@@ -262,11 +276,13 @@ if AWS_S3_ACCESS_KEY_ID and AWS_S3_SECRET_ACCESS_KEY:
     print(
         f"AWS configured. Uploading and retrieving headshots from {AWS_STORAGE_BUCKET_NAME}..."
     )
-    from django.core.files.storage import get_storage_class
-
     AWS_QUERYSTRING_AUTH = False
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    COUNCILMATIC_HEADSHOT_STORAGE_BACKEND = get_storage_class(DEFAULT_FILE_STORAGE)
+    STORAGES = {
+        "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+        },
+    }
 
 else:
     print("AWS not configured. Defaulting to local storage...")
