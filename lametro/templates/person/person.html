@@ -189,12 +189,13 @@
                     ]
                 }
             ];
-            var layer = new L.Google('ROADMAP', {
-                animate: false,
-                mapOptions: {styles: google_map_styles}
-            });
+            var layer = new L.Google('ROADMAP');
             map.addLayer(layer);
-            var geojson = L.geoJson({{ map_geojson |safe }}, {
+            // leaflet-google ignores mapOptions.styles, so style the Google map directly
+            if (layer._google) {
+                layer._google.setOptions({styles: google_map_styles});
+            }
+            var geojson = L.geoJSON({{ map_geojson |safe }}, {
                 style: {
                         "color": "#3D8A8E",
                         "weight": 1.2,
